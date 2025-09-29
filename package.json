@@ -1,0 +1,44 @@
+{
+  "name": "plp-contract-agreement",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "prisma:seed": "npx ts-node --compiler-options '{\"module\":\"commonjs\"}' prisma/seed.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "prisma": {
+    "seed": "ts-node --compiler-options '{\"module\":\"commonjs\"}' prisma/seed.ts"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.0.2",
+    "@prisma/client": "^6.16.2",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.15",
+    "@types/react-dom": "^19.1.9",
+    "@types/react-signature-canvas": "^1.0.7",
+    "antd": "^5.27.4",
+    "autoprefixer": "^10.4.21",
+    "dayjs": "^1.11.18",
+    "next": "^15.5.4",
+    "postcss": "^8.5.6",
+    "prisma": "^6.16.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-signature-canvas": "^1.1.0-alpha.2",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}

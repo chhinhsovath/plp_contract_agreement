@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model contract_types {
+  id                Int        @id @default(autoincrement())
+  type_name_khmer   String
+  type_name_english String?
+  template_file     String?
+  created_at        DateTime   @default(now())
+  updated_at        DateTime   @updatedAt
+  contracts         contracts[]
+}
+
+model contracts {
+  id                      Int                @id @default(autoincrement())
+  contract_number         String             @unique
+  contract_type_id        Int
+  contract_type           contract_types     @relation(fields: [contract_type_id], references: [id])
+
+  // Party A (ភាគី ក)
+  party_a_name            String
+  party_a_position        String?
+  party_a_organization    String?
+
+  // Party B (ភាគី ខ)
+  party_b_name            String
+  party_b_position        String?
+  party_b_organization    String?
+
+  // Contract details
+  start_date              DateTime
+  end_date                DateTime
+  location                String?
+
+  // Additional fields based on contract type
+  additional_data         Json?
+
+  // Status
+  status                  String             @default("draft") // draft, pending_signature, signed, completed
+
+  // Signatures
+  party_a_signature       String?            // Base64 encoded signature
+  party_a_signed_date     DateTime?
+  party_b_signature       String?            // Base64 encoded signature
+  party_b_signed_date     DateTime?
+
+  // Metadata
+  created_by              String?
+  created_at              DateTime           @default(now())
+  updated_at              DateTime           @updatedAt
+
+  contract_fields         contract_fields[]
+  attachments            attachments[]
+}
+
+model contract_fields {
+  id              Int        @id @default(autoincrement())
+  contract_id     Int
+  contract        contracts  @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  field_name      String
+  field_value     String?
+  field_type      String     // text, number, date, dropdown
+  is_required     Boolean    @default(false)
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt
+
+  @@unique([contract_id, field_name])
+}
+
+model attachments {
+  id              Int        @id @default(autoincrement())
+  contract_id     Int
+  contract        contracts  @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  file_name       String
+  file_path       String
+  file_type       String
+  file_size       Int
+  uploaded_at     DateTime   @default(now())
+}
