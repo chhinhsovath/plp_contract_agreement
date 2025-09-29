@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Table, Button, Tag, Space, Typography, Input, message, Modal } from 'antd'
-import { SearchOutlined, EyeOutlined, EditOutlined, DeleteOutlined, HomeOutlined } from '@ant-design/icons'
+import { Table, Button, Tag, Space, Typography, Input, message, Modal, Result } from 'antd'
+import { SearchOutlined, EyeOutlined, EditOutlined, DeleteOutlined, HomeOutlined, LockOutlined } from '@ant-design/icons'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import ContractPreview from '@/components/ContractPreview'
 import { CONTRACT_TYPES } from '@/types/contract'
+import { UserRole } from '@/lib/roles'
 
 const { Title } = Typography
 const { Search } = Input
@@ -16,10 +18,37 @@ export default function ContractsPage() {
   const [searchText, setSearchText] = useState('')
   const [previewContract, setPreviewContract] = useState<any>(null)
   const [showPreview, setShowPreview] = useState(false)
+  const [userRole, setUserRole] = useState<string>('')
+  const [isAuthorized, setIsAuthorized] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
-    fetchContracts()
+    checkAuthorization()
   }, [])
+
+  const checkAuthorization = async () => {
+    try {
+      const response = await fetch('/api/auth/session')
+      if (response.ok) {
+        const data = await response.json()
+        const role = data.user?.role
+        setUserRole(role)
+
+        // Only SUPER_ADMIN and ADMIN can access this page
+        if (role === UserRole.SUPER_ADMIN || role === UserRole.ADMIN) {
+          setIsAuthorized(true)
+          fetchContracts()
+        } else {
+          setIsAuthorized(false)
+        }
+      } else {
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error)
+      router.push('/login')
+    }
+  }
 
   const fetchContracts = async () => {
     setLoading(true)
@@ -166,6 +195,38 @@ export default function ContractsPage() {
     contract.party_a_name.toLowerCase().includes(searchText.toLowerCase()) ||
     contract.party_b_name.toLowerCase().includes(searchText.toLowerCase())
   )
+
+  // Show unauthorized message if user doesn't have permission
+  if (!isAuthorized && userRole) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-7xl mx-auto">
+          <Result
+            status="403"
+            icon={<LockOutlined className="text-6xl text-red-500" />}
+            title={<span className="font-hanuman text-2xl">សិទ្ធិមិនគ្រប់គ្រាន់</span>}
+            subTitle={
+              <span className="font-hanuman">
+                អ្នកមិនមានសិទ្ធិចូលមើលទំព័រនេះទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រងប្រព័ន្ធរបស់អ្នក។
+              </span>
+            }
+            extra={[
+              <Link key="home" href="/">
+                <Button type="primary" className="btn-khmer-primary font-hanuman">
+                  ត្រឡប់ទៅទំព័រដើម
+                </Button>
+              </Link>,
+              <Link key="new" href="/contracts/new">
+                <Button className="font-hanuman">
+                  បង្កើតកិច្ចព្រមព្រៀងថ្មី
+                </Button>
+              </Link>,
+            ]}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">

@@ -31,23 +31,62 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // Check role-based access for PARTNER users
-  if (payload.role === 'PARTNER') {
+  // Role-based access control
+  const userRole = payload.role as string
+
+  // Define restricted paths and their allowed roles
+  const restrictedPaths: Record<string, string[]> = {
+    '/contracts': ['SUPER_ADMIN', 'ADMIN'], // Contract list view
+    '/admin': ['SUPER_ADMIN'], // Admin pages
+    '/api/admin': ['SUPER_ADMIN'], // Admin API endpoints
+  }
+
+  // Check if current path is restricted
+  for (const [restrictedPath, allowedRoles] of Object.entries(restrictedPaths)) {
+    if (path.startsWith(restrictedPath)) {
+      if (!allowedRoles.includes(userRole)) {
+        // Redirect unauthorized users to home page
+        return NextResponse.redirect(new URL('/', request.url))
+      }
+    }
+  }
+
+  // Special handling for PARTNER users
+  if (userRole === 'PARTNER') {
     // Partners can only access contract forms and their own profile
     const allowedPartnerPaths = [
       '/contracts/new',
-      '/contracts/edit',
+      '/contract/edit',
       '/profile',
       '/api/contracts',
       '/api/auth/logout',
-      '/api/auth/session'
+      '/api/auth/session',
+      '/'
     ]
 
     const isAllowed = allowedPartnerPaths.some(allowed => path.startsWith(allowed))
 
-    if (!isAllowed && path !== '/') {
-      // Redirect partners to contracts page if trying to access restricted areas
+    if (!isAllowed) {
+      // Redirect partners to contracts/new page if trying to access restricted areas
       return NextResponse.redirect(new URL('/contracts/new', request.url))
+    }
+  }
+
+  // Restrict other roles as needed
+  const roleHierarchy: Record<string, string[]> = {
+    'VIEWER': ['/', '/contracts/new', '/contract/edit', '/profile', '/api/contracts', '/api/auth'],
+    'OFFICER': ['/', '/contracts/new', '/contract/edit', '/profile', '/api/contracts', '/api/auth'],
+    'COORDINATOR': ['/', '/contracts/new', '/contract/edit', '/profile', '/api/contracts', '/api/auth'],
+    'MANAGER': ['/', '/contracts/new', '/contract/edit', '/profile', '/api/contracts', '/api/auth'],
+  }
+
+  if (userRole in roleHierarchy) {
+    const allowedPaths = roleHierarchy[userRole]
+    const isAllowed = allowedPaths.some(allowed => path.startsWith(allowed))
+
+    if (!isAllowed && path !== '/') {
+      // Redirect to home page for unauthorized access
+      return NextResponse.redirect(new URL('/', request.url))
     }
   }
 
