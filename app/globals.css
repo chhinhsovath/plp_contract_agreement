@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@300;400;500;600;700&display=swap');
-
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 255, 255, 255;
@@ -11,7 +9,10 @@
 }
 
 body {
-  font-family: 'Noto Sans Khmer', 'Khmer OS', sans-serif;
+  font-family: 'Hanuman', sans-serif !important;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -19,4 +20,36 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+/* Apply Hanuman font globally with higher specificity */
+* {
+  font-family: 'Hanuman', sans-serif !important;
+}
+
+/* Ensure Hanuman font for all text elements */
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, button, input, textarea, select,
+.ant-typography,
+.ant-btn,
+.ant-input,
+.ant-select,
+.ant-form-item-label > label,
+.ant-card,
+.ant-tabs-tab,
+.font-hanuman {
+  font-family: 'Hanuman', sans-serif !important;
+}
+
+/* Khmer numbering styles */
+.khmer-number-list {
+  counter-reset: section;
+  list-style-type: none;
+}
+
+.khmer-number-list li::before {
+  counter-increment: section;
+  content: counter(section, decimal) ". ";
+  font-weight: 700;
+  margin-right: 0.5rem;
 }

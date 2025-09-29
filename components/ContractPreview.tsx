@@ -73,23 +73,47 @@ const ContractPreview: React.FC<ContractPreviewProps> = ({ contract, contractTyp
       <Divider />
 
       <div className="mb-6">
-        <h3 className="font-bold mb-4">១. រយៈពេលនៃកិច្ចព្រមព្រៀង</h3>
-        <p className="ml-4">
+        <h3 className="font-bold mb-4 text-lg font-hanuman">មាត្រា ១៖ គោលបំណង</h3>
+        <p className="ml-8">
+          កិច្ចព្រមព្រៀងនេះមានគោលបំណងកំណត់ការទទួលខុសត្រូវ និងកាតព្វកិច្ចរបស់ភាគីទាំងពីរក្នុងការអនុវត្តការងារតាមតួនាទី។
+        </p>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="font-bold mb-4 text-lg font-hanuman">មាត្រា ២៖ រយៈពេលនៃកិច្ចព្រមព្រៀង</h3>
+        <p className="ml-8">
           កិច្ចព្រមព្រៀងនេះមានសុពលភាពចាប់ពីថ្ងៃទី {formatDate(contract.start_date)}
           ដល់ថ្ងៃទី {formatDate(contract.end_date)}
         </p>
       </div>
 
       <div className="mb-6">
-        <h3 className="font-bold mb-4">២. ទីកន្លែង</h3>
-        <p className="ml-4">{contract.location}</p>
+        <h3 className="font-bold mb-4 text-lg font-hanuman">មាត្រា ៣៖ ទីកន្លែង</h3>
+        <p className="ml-8">{contract.location}</p>
       </div>
 
       <div className="mb-6">
-        <h3 className="font-bold mb-4">៣. លក្ខខណ្ឌនិងការទទួលខុសត្រូវ</h3>
-        <div className="ml-4 space-y-2">
-          <p>ភាគីទាំងពីរយល់ព្រមអនុវត្តតាមលក្ខខណ្ឌដែលបានកំណត់ក្នុងកិច្ចព្រមព្រៀងនេះ។</p>
-          <p>ការផ្លាស់ប្តូរណាមួយត្រូវធ្វើឡើងដោយការព្រមព្រៀងរវាងភាគីទាំងពីរ។</p>
+        <h3 className="font-bold mb-4 text-lg font-hanuman">មាត្រា ៤៖ លក្ខខណ្ឌនិងការទទួលខុសត្រូវ</h3>
+        <div className="ml-8 space-y-2">
+          <p className="flex"><span className="mr-2 font-bold">៤.១</span> ភាគី ក ត្រូវទទួលខុសត្រូវលើការផ្តល់ការណែនាំ និងការគាំទ្រដល់ភាគី ខ។</p>
+          <p className="flex"><span className="mr-2 font-bold">៤.២</span> ភាគី ខ ត្រូវអនុវត្តការងារតាមផែនការដែលបានកំណត់។</p>
+          <p className="flex"><span className="mr-2 font-bold">៤.៣</span> ភាគីទាំងពីរត្រូវរាយការណ៍អំពីវឌ្ឍនភាពការងារជាប្រចាំ។</p>
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="font-bold mb-4 text-lg font-hanuman">មាត្រា ៥៖ ការវាយតម្លៃ</h3>
+        <div className="ml-8 space-y-2">
+          <p className="flex"><span className="mr-2 font-bold">៥.១</span> ការវាយតម្លៃត្រូវធ្វើឡើងប្រចាំត្រីមាស។</p>
+          <p className="flex"><span className="mr-2 font-bold">៥.២</span> លទ្ធផលវាយតម្លៃជាមូលដ្ឋានសម្រាប់កែលម្អការអនុវត្ត។</p>
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="font-bold mb-4 text-lg font-hanuman">មាត្រា ៦៖ ការកែប្រែនិងបញ្ចប់កិច្ចព្រមព្រៀង</h3>
+        <div className="ml-8 space-y-2">
+          <p className="flex"><span className="mr-2 font-bold">៦.១</span> ការផ្លាស់ប្តូរណាមួយត្រូវធ្វើឡើងដោយការព្រមព្រៀងជាលាយលក្ខណ៍អក្សររវាងភាគីទាំងពីរ។</p>
+          <p className="flex"><span className="mr-2 font-bold">៦.២</span> កិច្ចព្រមព្រៀងអាចបញ្ចប់មុនកាលកំណត់ប្រសិនបើមានការព្រមព្រៀងរវាងភាគីទាំងពីរ។</p>
         </div>
       </div>
 

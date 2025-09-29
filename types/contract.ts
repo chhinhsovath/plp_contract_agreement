@@ -41,8 +41,8 @@ export interface ContractField {
 export const CONTRACT_TYPES = [
   {
     id: 1,
-    type_name_khmer: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាង គបស និង គបក',
-    type_name_english: 'Performance Agreement between PMU and PCU',
+    type_name_khmer: '១. កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាង គបស និង គបក',
+    type_name_english: '1. Performance Agreement between PMU and PCU',
     fields: [
       { field_name: 'project_name', field_type: 'text', is_required: true },
       { field_name: 'budget', field_type: 'number', is_required: true },
@@ -51,8 +51,8 @@ export const CONTRACT_TYPES = [
   },
   {
     id: 2,
-    type_name_khmer: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងប្រធាន គបក និងប្រធានគម្រោង',
-    type_name_english: 'Performance Agreement between PCU Chief and Project Manager',
+    type_name_khmer: '២. កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងប្រធាន គបក និងប្រធានគម្រោង',
+    type_name_english: '2. Performance Agreement between PCU Chief and Project Manager',
     fields: [
       { field_name: 'responsibilities', field_type: 'text', is_required: true },
       { field_name: 'targets', field_type: 'text', is_required: true },
@@ -61,8 +61,8 @@ export const CONTRACT_TYPES = [
   },
   {
     id: 3,
-    type_name_khmer: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងប្រធានគម្រោង និងមន្រ្តីគម្រោងតាមតំបន់',
-    type_name_english: 'Performance Agreement between Project Manager and Regional Officers',
+    type_name_khmer: '៣. កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងប្រធានគម្រោង និងមន្រ្តីគម្រោងតាមតំបន់',
+    type_name_english: '3. Performance Agreement between Project Manager and Regional Officers',
     fields: [
       { field_name: 'region', field_type: 'text', is_required: true },
       { field_name: 'regional_targets', field_type: 'text', is_required: true },
@@ -71,8 +71,13 @@ export const CONTRACT_TYPES = [
   },
   {
     id: 4,
-    type_name_khmer: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋម និងការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ',
-    type_name_english: 'Performance Agreement between Primary Department and District Education Office',
+    type_name_khmer: '៤. កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋម និងការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ',
+    type_name_english: '4. Performance Agreement between Primary Department and District Education Office',
+    default_party_a: {
+      name: 'លោកបណ្ឌិត កាន់ ពុទ្ធី',
+      position: 'ប្រធាននាយកដ្ឋានបឋមសិក្សា',
+      organization: 'នាយកដ្ឋានបឋមសិក្សា'
+    },
     fields: [
       { field_name: 'district', field_type: 'text', is_required: true },
       { field_name: 'number_of_schools', field_type: 'number', is_required: true },
@@ -81,8 +86,13 @@ export const CONTRACT_TYPES = [
   },
   {
     id: 5,
-    type_name_khmer: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋម និងសាលាបឋមសិក្សា',
-    type_name_english: 'Performance Agreement between Primary Department and Primary School',
+    type_name_khmer: '៥. កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋម និងសាលាបឋមសិក្សា',
+    type_name_english: '5. Performance Agreement between Primary Department and Primary School',
+    default_party_a: {
+      name: 'លោកបណ្ឌិត កាន់ ពុទ្ធី',
+      position: 'ប្រធាននាយកដ្ឋានបឋមសិក្សា',
+      organization: 'នាយកដ្ឋានបឋមសិក្សា'
+    },
     fields: [
       { field_name: 'school_name', field_type: 'text', is_required: true },
       { field_name: 'student_count', field_type: 'number', is_required: true },

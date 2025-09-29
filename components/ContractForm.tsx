@@ -26,6 +26,18 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
 
   const contractType = CONTRACT_TYPES.find(t => t.id === contractTypeId)
 
+  // Set default values if available
+  React.useEffect(() => {
+    if (contractType && (contractType as any).default_party_a) {
+      const defaults = (contractType as any).default_party_a
+      form.setFieldsValue({
+        party_a_name: defaults.name,
+        party_a_position: defaults.position,
+        party_a_organization: defaults.organization
+      })
+    }
+  }, [contractType, form])
+
   const steps = [
     { title: 'ព័ត៌មានទូទៅ', description: 'បំពេញព័ត៌មានកិច្ចព្រមព្រៀង' },
     { title: 'ព័ត៌មានលម្អិត', description: 'បំពេញព័ត៌មានបន្ថែម' },
@@ -336,3 +348,5 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
     </>
   )
 }
+
+export default ContractForm

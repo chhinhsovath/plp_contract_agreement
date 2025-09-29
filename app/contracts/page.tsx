@@ -144,11 +144,12 @@ export default function ContractsPage() {
             icon={<EyeOutlined />}
             onClick={() => handlePreview(record)}
           />
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => message.info('កំពុងអភិវឌ្ឍមុខងារកែប្រែ')}
-          />
+          <Link href={`/contract/edit/${record.id}`}>
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+            />
+          </Link>
           <Button
             type="text"
             danger

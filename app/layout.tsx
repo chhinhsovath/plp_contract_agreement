@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { ConfigProvider } from 'antd'
 import khKH from 'antd/locale/km_KH'
+import '@ant-design/v5-patch-for-react-19'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -15,13 +16,42 @@ export default function RootLayout({
 }) {
   return (
     <html lang="km">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@100..900&display=swap" rel="stylesheet" />
+      </head>
       <body>
         <ConfigProvider
           locale={khKH}
           theme={{
             token: {
-              fontFamily: "'Noto Sans Khmer', 'Khmer OS', sans-serif",
+              fontFamily: "'Hanuman', sans-serif",
               colorPrimary: '#1890ff',
+              fontSize: 16,
+            },
+            components: {
+              Typography: {
+                fontFamily: "'Hanuman', sans-serif",
+              },
+              Button: {
+                fontFamily: "'Hanuman', sans-serif",
+              },
+              Input: {
+                fontFamily: "'Hanuman', sans-serif",
+              },
+              Select: {
+                fontFamily: "'Hanuman', sans-serif",
+              },
+              Card: {
+                fontFamily: "'Hanuman', sans-serif",
+              },
+              Tabs: {
+                fontFamily: "'Hanuman', sans-serif",
+              },
+              Form: {
+                fontFamily: "'Hanuman', sans-serif",
+              },
             },
           }}
         >

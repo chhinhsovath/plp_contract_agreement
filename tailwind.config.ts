@@ -9,7 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        'khmer': ['Noto Sans Khmer', 'Khmer OS', 'sans-serif'],
+        'sans': ['Hanuman', 'sans-serif'],
+        'hanuman': ['Hanuman', 'sans-serif'],
+        'khmer': ['Hanuman', 'sans-serif'],
       },
       colors: {
         primary: '#1890ff',
