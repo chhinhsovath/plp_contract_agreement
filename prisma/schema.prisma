@@ -13,6 +13,7 @@ model users {
   phone_number    String    @unique
   passcode        String    // Last 4 digits of phone
   role            String    @default("PARTNER") // SUPER_ADMIN, ADMIN, MANAGER, COORDINATOR, OFFICER, VIEWER, PARTNER
+  contract_type   Int?      // User's primary contract type (1-5)
   organization    String?
   position        String?
   email           String?

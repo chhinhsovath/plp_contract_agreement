@@ -20,6 +20,8 @@ export async function GET() {
         id: true,
         full_name: true,
         phone_number: true,
+        role: true,
+        contract_type: true,
         organization: true,
         position: true,
         email: true,

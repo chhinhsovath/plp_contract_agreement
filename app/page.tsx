@@ -263,7 +263,21 @@ export default function HomePage() {
   ]
 
   // Browse Contracts Component
-  const BrowseContracts = () => (
+  const BrowseContracts = () => {
+    // Filter contracts based on user's contract type if they're a PARTNER
+    let contractsToShow = CONTRACT_DETAILS
+
+    if (user?.role === UserRole.PARTNER && user?.contract_type) {
+      // Partners only see their assigned contract type
+      contractsToShow = CONTRACT_DETAILS.filter(detail => detail.id === user.contract_type)
+    } else if (user?.contract_type && user?.role !== UserRole.SUPER_ADMIN && user?.role !== UserRole.ADMIN) {
+      // Other users see their primary contract type first, then others
+      const primaryContract = CONTRACT_DETAILS.find(d => d.id === user.contract_type)
+      const otherContracts = CONTRACT_DETAILS.filter(d => d.id !== user.contract_type)
+      contractsToShow = primaryContract ? [primaryContract, ...otherContracts] : CONTRACT_DETAILS
+    }
+
+    return (
     <>
       <div className="text-center mb-12">
         <Title level={1} className="text-blue-800 font-hanuman mb-4">
@@ -271,12 +285,16 @@ export default function HomePage() {
         </Title>
         <Paragraph className="text-xl text-gray-700 max-w-3xl mx-auto">
           សូមស្វាគមន៍មកកាន់ប្រព័ន្ធគ្រប់គ្រងកិច្ចព្រមព្រៀងសម្រាប់គម្រោង PLP។
-          ប្រព័ន្ធនេះត្រូវបានរចនាឡើងដើម្បីសម្រួលដំណើរការបង្កើត និងគ្រប់គ្រងកិច្ចព្រមព្រៀងសមិទ្ធកម្មផ្សេងៗ។
+          {user?.role === UserRole.PARTNER && user?.contract_type && (
+            <div className="mt-2 text-amber-600">
+              អ្នកអាចបង្កើតតែកិច្ចព្រមព្រៀង {CONTRACT_DETAILS.find(d => d.id === user.contract_type)?.title} ប៉ុណ្ណោះ
+            </div>
+          )}
         </Paragraph>
       </div>
 
       <Row gutter={[24, 24]}>
-        {CONTRACT_DETAILS.map((detail) => (
+        {contractsToShow.map((detail) => (
           <Col xs={24} md={12} lg={8} key={detail.id}>
             <Card
               hoverable
@@ -379,6 +397,7 @@ export default function HomePage() {
       </div>
     </>
   )
+  }
 
   // Dashboard Component
   const Dashboard = () => (

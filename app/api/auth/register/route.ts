@@ -5,7 +5,7 @@ import { UserRole } from '@/lib/roles'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { full_name, phone_number, passcode, organization, position, email } = body
+    const { full_name, phone_number, passcode, contract_type, organization, position, email } = body
 
     // Check if phone number already exists
     const existingUser = await prisma.users.findUnique({
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
         phone_number,
         passcode, // In production, this should be hashed
         role,
+        contract_type,
         organization,
         position,
         email,
