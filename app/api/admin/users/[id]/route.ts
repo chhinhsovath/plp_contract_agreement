@@ -5,7 +5,7 @@ import { UserRole, hasPermission, canManageUser } from '@/lib/roles'
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get token from cookies
@@ -20,6 +20,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
+    const params = await context.params
     const userId = parseInt(params.id)
     const body = await request.json()
     const currentUserRole = payload.role as UserRole

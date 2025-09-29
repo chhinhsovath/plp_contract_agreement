@@ -4,9 +4,10 @@ import { prisma } from '@/lib/prisma'
 // GET single contract
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params
     const id = parseInt(params.id)
     const contract = await prisma.contracts.findUnique({
       where: { id },
@@ -36,9 +37,10 @@ export async function GET(
 // UPDATE contract
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params
     const id = parseInt(params.id)
     const body = await request.json()
 
@@ -95,9 +97,10 @@ export async function PUT(
 // DELETE contract
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params
     const id = parseInt(params.id)
 
     // Delete related fields first

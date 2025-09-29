@@ -67,7 +67,7 @@ export default function HomePage() {
       disabled: true,
     },
     {
-      type: 'divider',
+      type: 'divider' as const,
     },
     ...(hasPermission(user?.role as UserRole, 'users.read') ? [{
       key: 'manage-users',

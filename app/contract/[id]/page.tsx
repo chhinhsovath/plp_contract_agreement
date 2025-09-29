@@ -32,11 +32,12 @@ export default function ContractPage() {
     }
 
     // Set default values if available when form tab is active
-    if (template.defaultPartyA && form && activeTab === '2') {
+    if ((template as any).defaultPartyA && form && activeTab === '2') {
+      const defaultPartyA = (template as any).defaultPartyA
       form.setFieldsValue({
-        party_a_name: template.defaultPartyA.name,
-        party_a_position: template.defaultPartyA.position,
-        party_a_organization: template.defaultPartyA.organization
+        party_a_name: defaultPartyA.name,
+        party_a_position: defaultPartyA.position,
+        party_a_organization: defaultPartyA.organization
       })
     }
   }, [template, form, router, activeTab])
