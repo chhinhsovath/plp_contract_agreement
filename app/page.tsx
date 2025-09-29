@@ -1,23 +1,93 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button, Card, Col, Row, Typography, Space, Dropdown, Avatar, message } from 'antd'
-import { FileTextOutlined, EditOutlined, FileAddOutlined, FolderOpenOutlined, UserOutlined, LogoutOutlined, TeamOutlined, SettingOutlined } from '@ant-design/icons'
+import { Button, Card, Col, Row, Typography, Space, Dropdown, Avatar, message, Tabs, Badge, Statistic, Tag, Table, Empty, Spin } from 'antd'
+import { FileTextOutlined, EditOutlined, FileAddOutlined, FolderOpenOutlined, UserOutlined, LogoutOutlined, TeamOutlined, DashboardOutlined, CheckCircleOutlined, ClockCircleOutlined, FileDoneOutlined, FormOutlined, BankOutlined, SolutionOutlined, BookOutlined, HomeOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { getAvailableContractIds, getContractTemplate } from '@/lib/contract-templates'
 import { UserRole, getRoleLabel, hasPermission } from '@/lib/roles'
 
-const { Title, Text } = Typography
+const { Title, Text, Paragraph } = Typography
+const { TabPane } = Tabs
+
+// Contract type detailed descriptions
+const CONTRACT_DETAILS = [
+  {
+    id: 1,
+    icon: <BankOutlined className="text-4xl" />,
+    color: '#0047AB',
+    title: 'កិច្ចព្រមព្រៀង PMU-PCU',
+    subtitle: 'គបស និង គបក',
+    description: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាង គណៈគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ (PMU) និង គណៈគ្រប់គ្រងគម្រោងតាមខេត្ត (PCU)',
+    parties: ['គណៈគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ', 'គណៈគ្រប់គ្រងគម្រោងតាមខេត្ត'],
+    purpose: 'កំណត់ការទទួលខុសត្រូវ និងសមិទ្ធកម្មរវាងថ្នាក់ជាតិ និងខេត្ត',
+    duration: '១ឆ្នាំ',
+  },
+  {
+    id: 2,
+    icon: <SolutionOutlined className="text-4xl" />,
+    color: '#DC143C',
+    title: 'កិច្ចព្រមព្រៀង PCU-Project Manager',
+    subtitle: 'គបក និងប្រធានគម្រោង',
+    description: 'កិច្ចព្រមព្រៀងរវាងប្រធាន គណៈគ្រប់គ្រងគម្រោងតាមខេត្ត និង ប្រធានគម្រោង',
+    parties: ['ប្រធាន គបក', 'ប្រធានគម្រោង'],
+    purpose: 'កំណត់ការអនុវត្តគម្រោងនៅថ្នាក់មូលដ្ឋាន',
+    duration: '១ឆ្នាំ',
+  },
+  {
+    id: 3,
+    icon: <TeamOutlined className="text-4xl" />,
+    color: '#FFD700',
+    title: 'កិច្ចព្រមព្រៀង Project Manager-Regional',
+    subtitle: 'ប្រធានគម្រោង និងមន្រ្តីតំបន់',
+    description: 'កិច្ចព្រមព្រៀងរវាងប្រធានគម្រោង និង មន្រ្តីគម្រោងតាមតំបន់',
+    parties: ['ប្រធានគម្រោង', 'មន្រ្តីគម្រោងតំបន់'],
+    purpose: 'សម្របសម្រួលការងារគម្រោងនៅតាមតំបន់នីមួយៗ',
+    duration: '១ឆ្នាំ',
+  },
+  {
+    id: 4,
+    icon: <BookOutlined className="text-4xl" />,
+    color: '#52c41a',
+    title: 'កិច្ចព្រមព្រៀង DoE-District Office',
+    subtitle: 'នាយកដ្ឋានបឋម និងការិយាល័យស្រុក',
+    description: 'កិច្ចព្រមព្រៀងរវាងនាយកដ្ឋានអប់រំបឋមសិក្សា និង ការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ',
+    parties: ['នាយកដ្ឋានអប់រំបឋមសិក្សា', 'ការិយាល័យអប់រំស្រុក'],
+    purpose: 'គាំទ្រការអប់រំបឋមសិក្សានៅថ្នាក់ស្រុក',
+    duration: '១ឆ្នាំសិក្សា',
+  },
+  {
+    id: 5,
+    icon: <HomeOutlined className="text-4xl" />,
+    color: '#1890ff',
+    title: 'កិច្ចព្រមព្រៀង DoE-School',
+    subtitle: 'នាយកដ្ឋានបឋម និងសាលា',
+    description: 'កិច្ចព្រមព្រៀងរវាងនាយកដ្ឋានអប់រំបឋមសិក្សា និង សាលាបឋមសិក្សា',
+    parties: ['នាយកដ្ឋានអប់រំបឋមសិក្សា', 'នាយកសាលា'],
+    purpose: 'លើកកម្ពស់គុណភាពអប់រំនៅសាលាបឋមសិក្សា',
+    duration: '១ឆ្នាំសិក្សា',
+  },
+]
 
 export default function HomePage() {
   const router = useRouter()
   const contractIds = getAvailableContractIds()
   const [user, setUser] = useState<any>(null)
+  const [contracts, setContracts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState('browse')
 
   useEffect(() => {
     // Check session on mount
     checkSession()
   }, [])
+
+  useEffect(() => {
+    // Fetch contracts when user is available
+    if (user) {
+      fetchUserContracts()
+    }
+  }, [user])
 
   const checkSession = async () => {
     try {
@@ -28,6 +98,39 @@ export default function HomePage() {
       }
     } catch (error) {
       console.error('Session check failed:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchUserContracts = async () => {
+    if (!user) return
+
+    try {
+      const response = await fetch('/api/contracts')
+      if (response.ok) {
+        const data = await response.json()
+        // Filter contracts based on user role
+        if (user.role === UserRole.PARTNER) {
+          // Partners only see their own signed contracts
+          const filtered = data.filter((contract: any) =>
+            contract.created_by_id === user.id &&
+            (contract.party_a_signature || contract.party_b_signature)
+          )
+          setContracts(filtered)
+        } else if (user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN) {
+          // Admins see all contracts
+          setContracts(data)
+        } else {
+          // Other roles see contracts they created
+          const filtered = data.filter((contract: any) =>
+            contract.created_by_id === user.id
+          )
+          setContracts(filtered)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch contracts:', error)
     }
   }
 
@@ -83,6 +186,330 @@ export default function HomePage() {
     },
   ]
 
+  // Dashboard statistics
+  const getStatistics = () => {
+    const total = contracts.length
+    const signed = contracts.filter((c: any) => c.party_a_signature && c.party_b_signature).length
+    const pending = contracts.filter((c: any) => !c.party_a_signature || !c.party_b_signature).length
+    const draft = contracts.filter((c: any) => c.status === 'draft').length
+
+    return { total, signed, pending, draft }
+  }
+
+  const stats = getStatistics()
+
+  // Contract status tag
+  const getStatusTag = (contract: any) => {
+    if (contract.party_a_signature && contract.party_b_signature) {
+      return <Tag color="success" icon={<CheckCircleOutlined />}>បានចុះហត្ថលេខា</Tag>
+    } else if (contract.party_a_signature || contract.party_b_signature) {
+      return <Tag color="warning" icon={<ClockCircleOutlined />}>រង់ចាំចុះហត្ថលេខា</Tag>
+    } else {
+      return <Tag color="default">ពង្រាង</Tag>
+    }
+  }
+
+  // Table columns for dashboard
+  const columns = [
+    {
+      title: 'លេខកិច្ចព្រមព្រៀង',
+      dataIndex: 'contract_number',
+      key: 'contract_number',
+      render: (text: string, record: any) => (
+        <a onClick={() => router.push(`/contract/edit/${record.id}`)}>
+          {text}
+        </a>
+      ),
+    },
+    {
+      title: 'ប្រភេទ',
+      dataIndex: 'contract_type_id',
+      key: 'contract_type_id',
+      render: (id: number) => {
+        const detail = CONTRACT_DETAILS.find(d => d.id === id)
+        return detail?.title || `ប្រភេទ ${id}`
+      },
+    },
+    {
+      title: 'ភាគី ក',
+      dataIndex: 'party_a_name',
+      key: 'party_a_name',
+    },
+    {
+      title: 'ភាគី ខ',
+      dataIndex: 'party_b_name',
+      key: 'party_b_name',
+    },
+    {
+      title: 'ស្ថានភាព',
+      key: 'status',
+      render: (_: any, record: any) => getStatusTag(record),
+    },
+    {
+      title: 'សកម្មភាព',
+      key: 'action',
+      render: (_: any, record: any) => (
+        <Space size="middle">
+          <Button
+            type="link"
+            size="small"
+            onClick={() => router.push(`/contract/edit/${record.id}`)}
+          >
+            មើល/កែសម្រួល
+          </Button>
+        </Space>
+      ),
+    },
+  ]
+
+  // Browse Contracts Component
+  const BrowseContracts = () => (
+    <>
+      <div className="text-center mb-12">
+        <Title level={1} className="text-blue-800 font-hanuman mb-4">
+          ប្រព័ន្ធកិច្ចព្រមព្រៀងសមិទ្ធកម្ម PLP
+        </Title>
+        <Paragraph className="text-xl text-gray-700 max-w-3xl mx-auto">
+          សូមស្វាគមន៍មកកាន់ប្រព័ន្ធគ្រប់គ្រងកិច្ចព្រមព្រៀងសម្រាប់គម្រោង PLP។
+          ប្រព័ន្ធនេះត្រូវបានរចនាឡើងដើម្បីសម្រួលដំណើរការបង្កើត និងគ្រប់គ្រងកិច្ចព្រមព្រៀងសមិទ្ធកម្មផ្សេងៗ។
+        </Paragraph>
+      </div>
+
+      <Row gutter={[24, 24]}>
+        {CONTRACT_DETAILS.map((detail) => (
+          <Col xs={24} md={12} lg={8} key={detail.id}>
+            <Card
+              hoverable
+              className="h-full shadow-lg hover:shadow-xl transition-all duration-300 khmer-border"
+              style={{ borderTop: `4px solid ${detail.color}` }}
+            >
+              <Space direction="vertical" className="w-full" size="large">
+                <div className="text-center" style={{ color: detail.color }}>
+                  {detail.icon}
+                </div>
+
+                <div className="text-center">
+                  <Badge count={detail.id} style={{ backgroundColor: detail.color }}>
+                    <Title level={4} className="font-hanuman mb-2">
+                      {detail.title}
+                    </Title>
+                  </Badge>
+                  <Text className="text-gray-600 font-hanuman">
+                    {detail.subtitle}
+                  </Text>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <Paragraph className="font-hanuman text-sm mb-3">
+                    {detail.description}
+                  </Paragraph>
+
+                  <div className="space-y-2">
+                    <div>
+                      <Text strong className="font-hanuman">ភាគី:</Text>
+                      <ul className="mt-1 text-sm">
+                        {detail.parties.map((party, idx) => (
+                          <li key={idx} className="lotus-decoration">{party}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <Text strong className="font-hanuman">គោលបំណង:</Text>
+                      <Paragraph className="text-sm mt-1">{detail.purpose}</Paragraph>
+                    </div>
+
+                    <div>
+                      <Text strong className="font-hanuman">រយៈពេល:</Text>
+                      <Text className="text-sm ml-2">{detail.duration}</Text>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  type="primary"
+                  icon={<FileAddOutlined />}
+                  size="large"
+                  className="w-full btn-khmer-primary"
+                  onClick={() => router.push(`/contract/${detail.id}`)}
+                >
+                  បង្កើតកិច្ចព្រមព្រៀង
+                </Button>
+              </Space>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+
+      <div className="mt-16">
+        <Card className="khmer-header text-white">
+          <Title level={3} className="text-white font-hanuman mb-4">
+            អំពីប្រព័ន្ធកិច្ចព្រមព្រៀង PLP
+          </Title>
+          <Row gutter={[32, 32]}>
+            <Col xs={24} md={8}>
+              <div className="text-center">
+                <FileDoneOutlined className="text-5xl mb-3" style={{ color: '#FFD700' }} />
+                <Title level={4} className="text-white font-hanuman">ងាយស្រួលប្រើប្រាស់</Title>
+                <Text className="text-gray-200">
+                  ទម្រង់សាមញ្ញ និងច្បាស់លាស់សម្រាប់បង្កើតកិច្ចព្រមព្រៀង
+                </Text>
+              </div>
+            </Col>
+            <Col xs={24} md={8}>
+              <div className="text-center">
+                <CheckCircleOutlined className="text-5xl mb-3" style={{ color: '#FFD700' }} />
+                <Title level={4} className="text-white font-hanuman">តាមដានងាយស្រួល</Title>
+                <Text className="text-gray-200">
+                  តាមដានស្ថានភាពកិច្ចព្រមព្រៀងនិងការចុះហត្ថលេខា
+                </Text>
+              </div>
+            </Col>
+            <Col xs={24} md={8}>
+              <div className="text-center">
+                <TeamOutlined className="text-5xl mb-3" style={{ color: '#FFD700' }} />
+                <Title level={4} className="text-white font-hanuman">គ្រប់គ្រងតួនាទី</Title>
+                <Text className="text-gray-200">
+                  ប្រព័ន្ធអនុញ្ញាតតាមតួនាទីសម្រាប់សុវត្ថិភាព
+                </Text>
+              </div>
+            </Col>
+          </Row>
+        </Card>
+      </div>
+    </>
+  )
+
+  // Dashboard Component
+  const Dashboard = () => (
+    <>
+      <div className="mb-8">
+        <Title level={2} className="font-hanuman">
+          <DashboardOutlined /> ផ្ទាំងគ្រប់គ្រងកិច្ចព្រមព្រៀង
+        </Title>
+        {user?.role === UserRole.PARTNER && (
+          <Text className="text-gray-600 font-hanuman">
+            អ្នកអាចមើលតែកិច្ចព្រមព្រៀងដែលបានចុះហត្ថលេខារបស់អ្នកប៉ុណ្ណោះ
+          </Text>
+        )}
+      </div>
+
+      {/* Statistics Cards */}
+      <Row gutter={[16, 16]} className="mb-8">
+        <Col xs={24} sm={12} md={6}>
+          <Card className="text-center">
+            <Statistic
+              title="កិច្ចព្រមព្រៀងសរុប"
+              value={stats.total}
+              prefix={<FileTextOutlined />}
+              valueStyle={{ color: '#1890ff' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={6}>
+          <Card className="text-center">
+            <Statistic
+              title="បានចុះហត្ថលេខា"
+              value={stats.signed}
+              prefix={<CheckCircleOutlined />}
+              valueStyle={{ color: '#52c41a' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={6}>
+          <Card className="text-center">
+            <Statistic
+              title="រង់ចាំចុះហត្ថលេខា"
+              value={stats.pending}
+              prefix={<ClockCircleOutlined />}
+              valueStyle={{ color: '#faad14' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={6}>
+          <Card className="text-center">
+            <Statistic
+              title="ពង្រាង"
+              value={stats.draft}
+              prefix={<EditOutlined />}
+              valueStyle={{ color: '#8c8c8c' }}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Contracts Table */}
+      <Card>
+        <Title level={4} className="font-hanuman mb-4">
+          បញ្ជីកិច្ចព្រមព្រៀងរបស់អ្នក
+        </Title>
+        {loading ? (
+          <div className="text-center py-8">
+            <Spin size="large" tip="កំពុងដំណើរការ..." />
+          </div>
+        ) : contracts.length > 0 ? (
+          <Table
+            columns={columns}
+            dataSource={contracts}
+            rowKey="id"
+            pagination={{
+              pageSize: 10,
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
+            }}
+            className="font-hanuman"
+          />
+        ) : (
+          <Empty
+            description={
+              <span className="font-hanuman">
+                មិនមានកិច្ចព្រមព្រៀង
+              </span>
+            }
+          >
+            <Button
+              type="primary"
+              onClick={() => setActiveTab('browse')}
+              className="font-hanuman"
+            >
+              បង្កើតកិច្ចព្រមព្រៀងថ្មី
+            </Button>
+          </Empty>
+        )}
+      </Card>
+
+      {/* Quick Actions for Admin */}
+      {(user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN) && (
+        <Card className="mt-8 bg-blue-50">
+          <Title level={4} className="font-hanuman mb-4">
+            សកម្មភាពរហ័ស
+          </Title>
+          <Space size="large" wrap>
+            <Button
+              type="primary"
+              icon={<FolderOpenOutlined />}
+              size="large"
+              onClick={() => router.push('/contracts')}
+              className="font-hanuman"
+            >
+              មើលកិច្ចព្រមព្រៀងទាំងអស់
+            </Button>
+            {user?.role === UserRole.SUPER_ADMIN && (
+              <Button
+                icon={<TeamOutlined />}
+                size="large"
+                onClick={() => router.push('/admin/users')}
+                className="font-hanuman"
+              >
+                គ្រប់គ្រងអ្នកប្រើប្រាស់
+              </Button>
+            )}
+          </Space>
+        </Card>
+      )}
+    </>
+  )
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header with user info */}
@@ -103,114 +530,43 @@ export default function HomePage() {
       </div>
 
       <div className="max-w-7xl mx-auto p-8">
-        <div className="text-center mb-12">
-          <Title level={1} className="text-blue-800 font-hanuman mb-4">
-            ប្រព័ន្ធកិច្ចព្រមព្រៀងសមិទ្ធកម្ម PLP
-          </Title>
-          <Text className="text-xl text-gray-700">
-            សូមជ្រើសរើសប្រភេទកិច្ចព្រមព្រៀងដែលអ្នកចង់បង្កើត
-          </Text>
-        </div>
-
-        <Row gutter={[24, 24]}>
-          {contractIds.map((id) => {
-            const template = getContractTemplate(id)
-            if (!template) return null
-
-            return (
-              <Col xs={24} md={12} key={id}>
-                <Card
-                  hoverable
-                  className="h-full shadow-lg hover:shadow-xl transition-shadow duration-300"
-                  onClick={() => handleNavigateToContract(id)}
-                >
-                  <Space direction="vertical" className="w-full">
-                    <div className="flex items-center justify-between">
-                      <FileTextOutlined className="text-5xl text-blue-600" />
-                      <div className="text-3xl font-bold text-gray-400">
-                        {id}
-                      </div>
-                    </div>
-                    <Title level={4} className="text-gray-800 font-hanuman mt-4">
-                      {template.title}
-                    </Title>
-                    {template.subtitle && (
-                      <Text className="text-gray-600 text-sm">
-                        {template.subtitle}
-                      </Text>
-                    )}
-                    <div className="mt-4">
-                      <Button
-                        type="primary"
-                        icon={<FileAddOutlined />}
-                        size="large"
-                        className="w-full"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleNavigateToContract(id)
-                        }}
-                      >
-                        បង្កើតកិច្ចព្រមព្រៀង
-                      </Button>
-                    </div>
-                  </Space>
-                </Card>
-              </Col>
-            )
-          })}
-
-          <Col xs={24} md={12}>
-            <Card
-              hoverable
-              className="h-full bg-gradient-to-br from-green-50 to-emerald-50 shadow-lg hover:shadow-xl transition-shadow duration-300"
-              onClick={handleNavigateToList}
+        {/* Main content with tabs */}
+        {user ? (
+          <Tabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            size="large"
+            className="font-hanuman"
+            tabBarStyle={{ marginBottom: 32 }}
+          >
+            <TabPane
+              tab={
+                <span>
+                  <FormOutlined />
+                  ប្រភេទកិច្ចព្រមព្រៀង
+                </span>
+              }
+              key="browse"
             >
-              <Space direction="vertical" className="w-full">
-                <div className="flex items-center justify-between">
-                  <FolderOpenOutlined className="text-5xl text-green-600" />
-                  <EditOutlined className="text-3xl text-gray-400" />
-                </div>
-                <Title level={4} className="text-gray-800 font-hanuman mt-4">
-                  កិច្ចព្រមព្រៀងដែលបានរក្សាទុក
-                </Title>
-                <Text className="text-gray-600">
-                  មើល កែសម្រួល និងគ្រប់គ្រងកិច្ចព្រមព្រៀងដែលបានបង្កើតរួច
-                </Text>
-                <div className="mt-4">
-                  <Button
-                    type="primary"
-                    icon={<FolderOpenOutlined />}
-                    size="large"
-                    className="w-full bg-green-600 border-green-600 hover:bg-green-700"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleNavigateToList()
-                    }}
-                  >
-                    ចូលទៅកាន់បញ្ជី
-                  </Button>
-                </div>
-              </Space>
-            </Card>
-          </Col>
-        </Row>
+              <BrowseContracts />
+            </TabPane>
 
-        <div className="mt-12 text-center">
-          <Card className="bg-blue-50 border-blue-200">
-            <Space direction="vertical" size="small">
-              <Title level={4} className="text-blue-800 mb-2">
-                📋 ប្រភេទកិច្ចព្រមព្រៀងដែលមាន
-              </Title>
-              <ul className="text-left max-w-3xl mx-auto space-y-2">
-                <li>✅ កិច្ចព្រមព្រៀងរវាង គបស និង គបក (PMU-PCU)</li>
-                <li>✅ កិច្ចព្រមព្រៀងរវាងប្រធាន គបក និងប្រធានគម្រោង</li>
-                <li>✅ កិច្ចព្រមព្រៀងរវាងប្រធានគម្រោង និងមន្រ្តីគម្រោងតាមតំបន់</li>
-                <li>✅ កិច្ចព្រមព្រៀងរវាងនាយកដ្ឋានបឋម និងការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ</li>
-                <li>✅ កិច្ចព្រមព្រៀងរវាងនាយកដ្ឋានបឋម និងសាលាបឋមសិក្សា</li>
-              </ul>
-            </Space>
-          </Card>
-        </div>
+            <TabPane
+              tab={
+                <span>
+                  <DashboardOutlined />
+                  ផ្ទាំងគ្រប់គ្រង
+                  {contracts.length > 0 && <Badge count={contracts.length} offset={[10, 0]} />}
+                </span>
+              }
+              key="dashboard"
+            >
+              <Dashboard />
+            </TabPane>
+          </Tabs>
+        ) : (
+          <BrowseContracts />
+        )}
       </div>
     </div>
   )
