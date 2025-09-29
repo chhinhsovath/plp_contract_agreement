@@ -107,13 +107,14 @@ export default function UsersManagementPage() {
   }
 
   const getRoleColor = (role: UserRole) => {
-    const colors = {
+    const colors: Record<UserRole, string> = {
       SUPER_ADMIN: 'red',
       ADMIN: 'orange',
       MANAGER: 'blue',
       COORDINATOR: 'green',
       OFFICER: 'cyan',
       VIEWER: 'default',
+      PARTNER: 'purple',
     }
     return colors[role] || 'default'
   }

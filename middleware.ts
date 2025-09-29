@@ -31,11 +31,32 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
+  // Check role-based access for PARTNER users
+  if (payload.role === 'PARTNER') {
+    // Partners can only access contract forms and their own profile
+    const allowedPartnerPaths = [
+      '/contracts/new',
+      '/contracts/edit',
+      '/profile',
+      '/api/contracts',
+      '/api/auth/logout',
+      '/api/auth/session'
+    ]
+
+    const isAllowed = allowedPartnerPaths.some(allowed => path.startsWith(allowed))
+
+    if (!isAllowed && path !== '/') {
+      // Redirect partners to contracts page if trying to access restricted areas
+      return NextResponse.redirect(new URL('/contracts/new', request.url))
+    }
+  }
+
   // Add user info to headers for API routes
   if (path.startsWith('/api/')) {
     const requestHeaders = new Headers(request.headers)
     requestHeaders.set('x-user-id', String(payload.userId))
     requestHeaders.set('x-user-phone', String(payload.phone_number))
+    requestHeaders.set('x-user-role', String(payload.role))
 
     return NextResponse.next({
       request: {

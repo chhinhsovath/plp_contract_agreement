@@ -4,7 +4,8 @@ export enum UserRole {
   MANAGER = 'MANAGER',
   COORDINATOR = 'COORDINATOR',
   OFFICER = 'OFFICER',
-  VIEWER = 'VIEWER'
+  VIEWER = 'VIEWER',
+  PARTNER = 'PARTNER'
 }
 
 export interface RoleDefinition {
@@ -118,6 +119,20 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleDefinition> = {
       'users.read_own',
       'users.update_own',
       'reports.view_public'
+    ]
+  },
+  [UserRole.PARTNER]: {
+    name: 'Partner',
+    nameKhmer: 'ដៃគូ',
+    description: 'External partner with access to contract forms only',
+    descriptionKhmer: 'ដៃគូខាងក្រៅ អាចចូលប្រើទម្រង់កិច្ចព្រមព្រៀងតែប៉ុណ្ណោះ',
+    level: 5,
+    permissions: [
+      'contracts.create_draft',
+      'contracts.read_own',
+      'contracts.update_own_draft',
+      'users.read_own',
+      'users.update_own'
     ]
   }
 }

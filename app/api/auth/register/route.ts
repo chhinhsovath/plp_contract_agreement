@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     // Determine role based on phone number
     // 077806680 is the SUPER_ADMIN
-    let role = UserRole.VIEWER // Default role
+    let role = UserRole.PARTNER // Default role is now PARTNER
     if (phone_number === '077806680') {
       role = UserRole.SUPER_ADMIN
     }

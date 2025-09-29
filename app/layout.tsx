@@ -27,8 +27,16 @@ export default function RootLayout({
           theme={{
             token: {
               fontFamily: "'Hanuman', sans-serif",
-              colorPrimary: '#1890ff',
+              colorPrimary: '#0047AB', // Cambodian flag blue
+              colorSuccess: '#52c41a',
+              colorWarning: '#faad14',
+              colorError: '#DC143C', // Cambodian flag red
+              colorInfo: '#1890ff',
+              colorTextBase: '#333333',
+              colorBgBase: '#ffffff',
+              borderRadius: 8,
               fontSize: 16,
+              colorBorder: '#d9d9d9',
             },
             components: {
               Typography: {

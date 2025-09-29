@@ -12,7 +12,7 @@ model users {
   full_name       String
   phone_number    String    @unique
   passcode        String    // Last 4 digits of phone
-  role            String    @default("VIEWER") // SUPER_ADMIN, ADMIN, MANAGER, COORDINATOR, OFFICER, VIEWER
+  role            String    @default("PARTNER") // SUPER_ADMIN, ADMIN, MANAGER, COORDINATOR, OFFICER, VIEWER, PARTNER
   organization    String?
   position        String?
   email           String?
