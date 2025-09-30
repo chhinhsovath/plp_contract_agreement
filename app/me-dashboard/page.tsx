@@ -6,6 +6,7 @@ import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutl
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
+import { CONTRACT_INDICATORS, CONTRACT_ACTIVITIES, getIndicatorsByContract, getActivitiesByContract } from '@/lib/contract-indicators'
 import { UserRole } from '@/lib/roles'
 
 const { Title, Text, Paragraph } = Typography
@@ -110,93 +111,62 @@ export default function MEDashboardPage() {
 
   const dashboardData = calculateDashboardStats()
 
-  // Sample indicators data
-  const indicatorsData = [
-    {
-      key: '1',
-      code: 'IND-001',
-      name: 'ចំនួនគ្រូបង្រៀនដែលបានទទួលការបណ្តុះបណ្តាល',
-      type: 'output',
-      baseline: 0,
-      target: 500,
-      current: 320,
-      progress: 64,
-      status: 'on-track'
-    },
-    {
-      key: '2',
-      code: 'IND-002',
-      name: 'ភាគរយសាលារៀនដែលបានទទួលសម្ភារៈថ្មី',
-      type: 'outcome',
-      baseline: 20,
-      target: 80,
-      current: 55,
-      progress: 58,
-      status: 'on-track'
-    },
-    {
-      key: '3',
-      code: 'IND-003',
-      name: 'អត្រាសិស្សចូលរៀនបឋមសិក្សា',
-      type: 'impact',
-      baseline: 85,
-      target: 95,
-      current: 88,
-      progress: 30,
-      status: 'delayed'
+  // Get real indicators based on user role and selected contract
+  const getFilteredIndicators = () => {
+    if (user?.role === UserRole.PARTNER && user?.contract_type) {
+      return getIndicatorsByContract(user.contract_type)
+    } else if (selectedContract) {
+      return getIndicatorsByContract(selectedContract)
     }
-  ]
+    return getIndicatorsByContract(null) // Return all if admin with no filter
+  }
 
-  // Sample activities data
-  const activitiesData = [
-    {
-      key: '1',
-      code: 'ACT-001',
-      name: 'វគ្គបណ្តុះបណ្តាលគ្រូបង្រៀនថ្នាក់ទី១-៣',
-      status: 'ongoing',
-      startDate: '2024-01-15',
-      endDate: '2024-03-30',
-      progress: 75,
-      budget: 50000,
-      spent: 37500
-    },
-    {
-      key: '2',
-      code: 'ACT-002',
-      name: 'ចែកចាយសម្ភារៈសិក្សាដល់សាលា',
-      status: 'completed',
-      startDate: '2024-02-01',
-      endDate: '2024-02-28',
-      progress: 100,
-      budget: 75000,
-      spent: 72000
+  // Get real activities based on user role and selected contract
+  const getFilteredActivities = () => {
+    if (user?.role === UserRole.PARTNER && user?.contract_type) {
+      return getActivitiesByContract(user.contract_type)
+    } else if (selectedContract) {
+      return getActivitiesByContract(selectedContract)
     }
-  ]
+    return getActivitiesByContract(null) // Return all if admin with no filter
+  }
 
-  // Sample milestones data
-  const milestonesData = [
-    {
-      key: '1',
-      name: 'បញ្ចប់វគ្គបណ្តុះបណ្តាលដំណាក់កាលទី១',
-      dueDate: '2024-01-31',
-      status: 'achieved',
-      activity: 'ACT-001'
-    },
-    {
-      key: '2',
-      name: 'ការវាយតម្លៃពាក់កណ្តាលគម្រោង',
-      dueDate: '2024-02-15',
-      status: 'pending',
-      activity: 'ACT-003'
-    },
-    {
-      key: '3',
-      name: 'របាយការណ៍ត្រីមាសទី១',
-      dueDate: '2024-03-31',
-      status: 'overdue',
-      activity: 'ACT-004'
-    }
-  ]
+  const indicatorsData = getFilteredIndicators().map((ind, index) => ({
+    ...ind,
+    key: ind.id || `ind-${index}`
+  }))
+
+  const activitiesData = getFilteredActivities().map((act, index) => ({
+    ...act,
+    key: act.id || `act-${index}`,
+    responsible: act.responsible || 'មិនបានកំណត់'
+  }))
+
+  // Get milestones from project plans
+  const getMilestonesData = () => {
+    const milestones: any[] = []
+    projectPlans.forEach(plan => {
+      plan.deliverables.forEach((deliverable: any) => {
+        if (deliverable.milestones) {
+          deliverable.milestones.forEach((milestone: any) => {
+            milestones.push({
+              key: milestone.id,
+              name: milestone.name,
+              dueDate: milestone.date,
+              status: milestone.completed ? 'achieved' :
+                      (dayjs(milestone.date).isBefore(dayjs()) ? 'overdue' : 'pending'),
+              activity: deliverable.id,
+              contractType: plan.contractType,
+              deliverableName: deliverable.name
+            })
+          })
+        }
+      })
+    })
+    return milestones
+  }
+
+  const milestonesData = getMilestonesData()
 
   const indicatorColumns = [
     {
@@ -228,12 +198,22 @@ export default function MEDashboardPage() {
       title: 'គោលដៅ',
       dataIndex: 'target',
       key: 'target',
-      width: 80
+      width: 100,
+      render: (target: any) => {
+        return typeof target === 'string' ? target : target?.toLocaleString()
+      }
     },
     {
       title: 'បច្ចុប្បន្ន',
       dataIndex: 'current',
       key: 'current',
+      width: 80,
+      render: (current: any) => current?.toLocaleString() || 'គ្មាន'
+    },
+    {
+      title: 'ឯកតា',
+      dataIndex: 'unit',
+      key: 'unit',
       width: 80
     },
     {
@@ -274,7 +254,21 @@ export default function MEDashboardPage() {
     {
       title: 'សកម្មភាព',
       dataIndex: 'name',
-      key: 'name'
+      key: 'name',
+      render: (name: string, record: any) => (
+        <div>
+          <Text strong>{name}</Text>
+          {record.description && (
+            <div className="text-gray-500 text-sm">{record.description}</div>
+          )}
+        </div>
+      )
+    },
+    {
+      title: 'ទទួលខុសត្រូវ',
+      dataIndex: 'responsible',
+      key: 'responsible',
+      width: 150
     },
     {
       title: 'ស្ថានភាព',
@@ -336,9 +330,10 @@ export default function MEDashboardPage() {
     },
     {
       title: 'សកម្មភាព',
-      dataIndex: 'activity',
-      key: 'activity',
-      width: 120
+      dataIndex: 'deliverableName',
+      key: 'deliverableName',
+      width: 200,
+      render: (name: string) => name || 'មិនបានកំណត់'
     },
     {
       title: 'កាលបរិច្ឆេទ',
