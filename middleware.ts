@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { verifyToken } from './lib/auth'
 
 // Routes that don't require authentication
-const publicRoutes = ['/login', '/register', '/api/auth/login', '/api/auth/register']
+const publicRoutes = ['/login', '/register', '/api/auth/login', '/api/auth/register', '/demo-login', '/api/demo/reset']
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname

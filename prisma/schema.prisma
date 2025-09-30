@@ -29,6 +29,9 @@ model users {
   contract_read_time    Int?      // Time spent reading in seconds
   ip_address_signed     String?   // IP address when signed
 
+  // Demo user tracking
+  last_reset_at         DateTime? // Track when demo user was last reset
+
   contracts_created contracts[] @relation("UserContracts")
 
   @@index([phone_number])

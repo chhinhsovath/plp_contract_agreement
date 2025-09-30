@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, Button, Row, Col, Typography, Tag, message, Spin, Divider, Alert } from 'antd'
 import { UserOutlined, LoginOutlined, CrownOutlined, TeamOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
+import { checkAndResetDemoUsers } from '@/lib/demo-reset-checker'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -104,6 +105,35 @@ export default function DemoLoginPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [resetStatus, setResetStatus] = useState<any>(null)
+
+  useEffect(() => {
+    // Check and reset demo users if needed when page loads
+    checkAndResetDemoUsers()
+
+    // Also check the current reset status
+    checkResetStatus()
+
+    // Set up periodic checking every hour for long-running sessions
+    const interval = setInterval(() => {
+      checkAndResetDemoUsers()
+      checkResetStatus()
+    }, 60 * 60 * 1000) // Check every hour
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const checkResetStatus = async () => {
+    try {
+      const response = await fetch('/api/demo/reset')
+      if (response.ok) {
+        const status = await response.json()
+        setResetStatus(status)
+      }
+    } catch (error) {
+      console.error('Failed to check reset status:', error)
+    }
+  }
 
   const handleQuickLogin = async (user: any) => {
     setLoading(true)
@@ -190,6 +220,21 @@ export default function DemoLoginPage() {
           showIcon
           className="mb-6 font-hanuman"
         />
+
+        {/* Reset Status Info */}
+        {resetStatus && (
+          <Alert
+            message="ព័ត៌មានអំពីការកំណត់ឡើងវិញ"
+            description={
+              resetStatus.needsReset
+                ? 'ទិន្នន័យនឹងត្រូវបានកំណត់ឡើងវិញឥឡូវនេះ...'
+                : `ការកំណត់ឡើងវិញបន្ទាប់ក្នុងរយៈពេល ${resetStatus.hoursUntilNextReset?.toFixed(1) || '24'} ម៉ោង`
+            }
+            type="info"
+            showIcon
+            className="mb-6 font-hanuman"
+          />
+        )}
 
         {loading && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
