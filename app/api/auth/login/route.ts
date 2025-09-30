@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createToken, setAuthCookie } from '@/lib/auth'
+import { handleApiError, unauthorizedError, validationError, forbiddenError } from '@/lib/api-error-handler'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
     const { phone_number, passcode } = body
+
+    // Validation
+    if (!phone_number) {
+      return validationError('Phone number is required', { phone_number: 'Required field' })
+    }
+    if (!passcode) {
+      return validationError('Passcode is required', { passcode: 'Required field' })
+    }
 
     // Find user by phone number
     const user = await prisma.users.findUnique({
@@ -27,26 +36,17 @@ export async function POST(request: Request) {
     })
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'លេខទូរស័ព្ទមិនត្រឹមត្រូវ' },
-        { status: 401 }
-      )
+      return unauthorizedError('លេខទូរស័ព្ទមិនត្រឹមត្រូវ')
     }
 
     // Check if user is active
     if (!user.is_active) {
-      return NextResponse.json(
-        { error: 'គណនីរបស់អ្នកត្រូវបានផ្អាក' },
-        { status: 401 }
-      )
+      return forbiddenError('គណនីរបស់អ្នកត្រូវបានផ្អាក')
     }
 
     // Verify passcode (in production, compare hashed passwords)
     if (user.passcode !== passcode) {
-      return NextResponse.json(
-        { error: 'លេខសម្ងាត់មិនត្រឹមត្រូវ' },
-        { status: 401 }
-      )
+      return unauthorizedError('លេខសម្ងាត់មិនត្រឹមត្រូវ')
     }
 
     // Update last login
@@ -92,10 +92,6 @@ export async function POST(request: Request) {
 
     return response
   } catch (error) {
-    console.error('Login error:', error)
-    return NextResponse.json(
-      { error: 'កំហុសក្នុងការចូលប្រើប្រាស់' },
-      { status: 500 }
-    )
+    return handleApiError(error, '/api/auth/login')
   }
 }

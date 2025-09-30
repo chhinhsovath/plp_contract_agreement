@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { handleApiError, createSuccessResponse, notFoundError, validationError } from '@/lib/api-error-handler'
 
 // GET single contract
 export async function GET(
@@ -9,6 +10,11 @@ export async function GET(
   try {
     const params = await context.params
     const id = parseInt(params.id)
+
+    if (isNaN(id)) {
+      return validationError('Invalid contract ID', { id: 'Must be a valid number' })
+    }
+
     const contract = await prisma.contracts.findUnique({
       where: { id },
       include: {
@@ -18,19 +24,12 @@ export async function GET(
     })
 
     if (!contract) {
-      return NextResponse.json(
-        { error: 'Contract not found' },
-        { status: 404 }
-      )
+      return notFoundError('Contract')
     }
 
-    return NextResponse.json(contract)
+    return createSuccessResponse(contract, 'Contract fetched successfully')
   } catch (error) {
-    console.error('Error fetching contract:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch contract' },
-      { status: 500 }
-    )
+    return handleApiError(error, `/api/contracts/${(await context.params).id}`)
   }
 }
 
@@ -42,6 +41,11 @@ export async function PUT(
   try {
     const params = await context.params
     const id = parseInt(params.id)
+
+    if (isNaN(id)) {
+      return validationError('Invalid contract ID', { id: 'Must be a valid number' })
+    }
+
     const body = await request.json()
 
     const contract = await prisma.contracts.update({
@@ -84,13 +88,9 @@ export async function PUT(
       })
     }
 
-    return NextResponse.json(contract)
+    return createSuccessResponse(contract, 'Contract updated successfully')
   } catch (error) {
-    console.error('Error updating contract:', error)
-    return NextResponse.json(
-      { error: 'Failed to update contract' },
-      { status: 500 }
-    )
+    return handleApiError(error, `/api/contracts/${(await context.params).id}`)
   }
 }
 
@@ -103,6 +103,10 @@ export async function DELETE(
     const params = await context.params
     const id = parseInt(params.id)
 
+    if (isNaN(id)) {
+      return validationError('Invalid contract ID', { id: 'Must be a valid number' })
+    }
+
     // Delete related fields first
     await prisma.contract_fields.deleteMany({
       where: { contract_id: id },
@@ -113,12 +117,11 @@ export async function DELETE(
       where: { id },
     })
 
-    return NextResponse.json({ message: 'Contract deleted successfully' })
-  } catch (error) {
-    console.error('Error deleting contract:', error)
-    return NextResponse.json(
-      { error: 'Failed to delete contract' },
-      { status: 500 }
+    return createSuccessResponse(
+      { id },
+      'Contract deleted successfully'
     )
+  } catch (error) {
+    return handleApiError(error, `/api/contracts/${(await context.params).id}`)
   }
 }

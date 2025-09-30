@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { handleApiError, createSuccessResponse, validationError } from '@/lib/api-error-handler'
 
 export async function GET() {
   try {
@@ -13,19 +14,35 @@ export async function GET() {
       },
     })
 
-    return NextResponse.json(contracts)
+    return createSuccessResponse(contracts, 'Contracts fetched successfully')
   } catch (error) {
-    console.error('Error fetching contracts:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch contracts' },
-      { status: 500 }
-    )
+    return handleApiError(error, '/api/contracts')
   }
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
+
+    // Validation
+    if (!body.contract_number) {
+      return validationError('Contract number is required', { contract_number: 'Required field' })
+    }
+    if (!body.contract_type_id) {
+      return validationError('Contract type is required', { contract_type_id: 'Required field' })
+    }
+    if (!body.party_a_name) {
+      return validationError('Party A name is required', { party_a_name: 'Required field' })
+    }
+    if (!body.party_b_name) {
+      return validationError('Party B name is required', { party_b_name: 'Required field' })
+    }
+    if (!body.start_date) {
+      return validationError('Start date is required', { start_date: 'Required field' })
+    }
+    if (!body.end_date) {
+      return validationError('End date is required', { end_date: 'Required field' })
+    }
 
     const contract = await prisma.contracts.create({
       data: {
@@ -63,12 +80,8 @@ export async function POST(request: Request) {
       })
     }
 
-    return NextResponse.json(contract, { status: 201 })
+    return createSuccessResponse(contract, 'Contract created successfully', 201)
   } catch (error) {
-    console.error('Error creating contract:', error)
-    return NextResponse.json(
-      { error: 'Failed to create contract' },
-      { status: 500 }
-    )
+    return handleApiError(error, '/api/contracts')
   }
 }
