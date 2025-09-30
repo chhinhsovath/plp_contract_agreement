@@ -162,10 +162,24 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
             <h3 className="text-center text-lg font-bold mb-4">{contract.title}</h3>
 
             <div className="mb-4">
-              <strong>ភាគី ក:</strong> {contract.partyA}
+              <strong>ភាគី ក:</strong>
+              <div className="ml-4">
+                <p>{contract.partyA}</p>
+                {contract.partyASignatory && (
+                  <>
+                    <p className="text-sm text-gray-600">តំណាងដោយ: {contract.partyASignatory}</p>
+                    <p className="text-sm text-gray-600">មុខតំណែង: {contract.partyAPosition}</p>
+                  </>
+                )}
+              </div>
             </div>
             <div className="mb-4">
-              <strong>ភាគី ខ:</strong> {contract.partyB}
+              <strong>ភាគី ខ:</strong>
+              <div className="ml-4">
+                <p>{contract.partyB}</p>
+                <p className="text-sm text-gray-600">តំណាងដោយ: {user?.full_name}</p>
+                <p className="text-sm text-gray-600">មុខតំណែង: {user?.position || user?.role}</p>
+              </div>
             </div>
 
             <Divider />
@@ -183,26 +197,59 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
             <Divider />
 
             {/* Signature Section */}
-            {user?.signature_data && (
-              <div className="mt-8">
-                <h4 className="font-bold">ហត្ថលេខា:</h4>
-                <div className="flex justify-around mt-4">
-                  <div className="text-center">
-                    <img
-                      src={user.signature_data}
-                      alt="Signature"
-                      className="border p-2 mb-2"
-                      style={{ maxWidth: '200px', height: '80px' }}
-                    />
-                    <Text className="font-hanuman">{user.full_name}</Text>
-                    <br />
-                    <Text type="secondary" className="text-xs">
-                      {dayjs(user.contract_signed_date).format('DD/MM/YYYY HH:mm')}
+            <div className="mt-8">
+              <h4 className="font-bold">ហត្ថលេខា និងការបញ្ជាក់:</h4>
+              <div className="grid grid-cols-2 gap-8 mt-8">
+                {/* Party A Signature */}
+                <div className="text-center">
+                  <p className="font-bold mb-2">ភាគី ក</p>
+                  {contract.partyASignatory && (
+                    <>
+                      <p className="text-sm">{contract.partyASignatory}</p>
+                      <p className="text-sm text-gray-600 mb-4">{contract.partyAPosition}</p>
+                    </>
+                  )}
+                  {contract.partyASignature ? (
+                    <div className="mb-2">
+                      <img
+                        src={contract.partyASignature}
+                        alt="Party A Signature"
+                        className="mx-auto border p-2"
+                        style={{ maxWidth: '200px', height: '80px', objectFit: 'contain' }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-20 border-b-2 border-gray-400 mb-2"></div>
+                  )}
+                  <Text className="text-sm text-gray-500">ហត្ថលេខា និងត្រា</Text>
+                </div>
+
+                {/* Party B Signature */}
+                <div className="text-center">
+                  <p className="font-bold mb-2">ភាគី ខ</p>
+                  <p className="text-sm">{user?.full_name}</p>
+                  <p className="text-sm text-gray-600 mb-4">{user?.position || contract.partyB}</p>
+                  {user?.signature_data ? (
+                    <div className="mb-2">
+                      <img
+                        src={user.signature_data}
+                        alt="Party B Signature"
+                        className="mx-auto border p-2"
+                        style={{ maxWidth: '200px', height: '80px', objectFit: 'contain' }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-20 border-b-2 border-gray-400 mb-2"></div>
+                  )}
+                  <Text className="text-sm text-gray-500">ហត្ថលេខា និងត្រា</Text>
+                  {user?.contract_signed_date && (
+                    <Text type="secondary" className="text-xs block mt-2">
+                      ចុះហត្ថលេខា: {dayjs(user.contract_signed_date).format('DD/MM/YYYY HH:mm')}
                     </Text>
-                  </div>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
 
             <div className="mt-8 text-center text-gray-500">
               <p>*** ចុងបញ្ចប់នៃកិច្ចសន្យា ***</p>

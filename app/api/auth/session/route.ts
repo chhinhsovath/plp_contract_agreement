@@ -28,6 +28,9 @@ export async function GET() {
         is_active: true,
         contract_signed: true,
         contract_signed_date: true,
+        signature_data: true,  // Include signature data
+        contract_read_time: true,
+        ip_address_signed: true,
       },
     })
 
