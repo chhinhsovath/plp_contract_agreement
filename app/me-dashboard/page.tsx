@@ -6,7 +6,6 @@ import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutl
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
-import { CONTRACT_INDICATORS, CONTRACT_ACTIVITIES, getIndicatorsByContract, getActivitiesByContract } from '@/lib/contract-indicators'
 import { UserRole } from '@/lib/roles'
 
 const { Title, Text, Paragraph } = Typography
@@ -28,6 +27,10 @@ export default function MEDashboardPage() {
   const [selectedContract, setSelectedContract] = useState<number | null>(null)
   const [user, setUser] = useState<any>(null)
   const [projectPlans, setProjectPlans] = useState<any[]>([])
+  const [indicators, setIndicators] = useState<any[]>([])
+  const [activities, setActivities] = useState<any[]>([])
+  const [loadingIndicators, setLoadingIndicators] = useState(false)
+  const [loadingActivities, setLoadingActivities] = useState(false)
 
   useEffect(() => {
     checkSession()
@@ -37,6 +40,8 @@ export default function MEDashboardPage() {
     // Load project plans based on user role and selected contract
     if (user) {
       loadProjectPlans()
+      fetchIndicators()
+      fetchActivities()
     }
   }, [user, selectedContract])
 
@@ -58,6 +63,40 @@ export default function MEDashboardPage() {
       router.push('/login')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Fetch indicators from database
+  const fetchIndicators = async () => {
+    setLoadingIndicators(true)
+    try {
+      const params = selectedContract ? `?contractType=${selectedContract}` : ''
+      const response = await fetch(`/api/me/indicators${params}`)
+      if (response.ok) {
+        const data = await response.json()
+        setIndicators(data.indicators)
+      }
+    } catch (error) {
+      console.error('Failed to fetch indicators:', error)
+    } finally {
+      setLoadingIndicators(false)
+    }
+  }
+
+  // Fetch activities from database
+  const fetchActivities = async () => {
+    setLoadingActivities(true)
+    try {
+      const params = selectedContract ? `?contractType=${selectedContract}` : ''
+      const response = await fetch(`/api/me/activities${params}`)
+      if (response.ok) {
+        const data = await response.json()
+        setActivities(data.activities)
+      }
+    } catch (error) {
+      console.error('Failed to fetch activities:', error)
+    } finally {
+      setLoadingActivities(false)
     }
   }
 
@@ -111,35 +150,39 @@ export default function MEDashboardPage() {
 
   const dashboardData = calculateDashboardStats()
 
-  // Get real indicators based on user role and selected contract
-  const getFilteredIndicators = () => {
-    if (user?.role === UserRole.PARTNER && user?.contract_type) {
-      return getIndicatorsByContract(user.contract_type)
-    } else if (selectedContract) {
-      return getIndicatorsByContract(selectedContract)
-    }
-    return getIndicatorsByContract(null) // Return all if admin with no filter
-  }
-
-  // Get real activities based on user role and selected contract
-  const getFilteredActivities = () => {
-    if (user?.role === UserRole.PARTNER && user?.contract_type) {
-      return getActivitiesByContract(user.contract_type)
-    } else if (selectedContract) {
-      return getActivitiesByContract(selectedContract)
-    }
-    return getActivitiesByContract(null) // Return all if admin with no filter
-  }
-
-  const indicatorsData = getFilteredIndicators().map((ind, index) => ({
-    ...ind,
-    key: ind.id || `ind-${index}`
+  // Format indicators data for table
+  const indicatorsData = indicators.map((ind) => ({
+    key: ind.id,
+    code: ind.indicator_code,
+    name: ind.indicator_name_khmer,
+    name_english: ind.indicator_name_english,
+    type: ind.indicator_type,
+    baseline: ind.baseline_value,
+    target: ind.target_value,
+    current: ind.current,
+    unit: ind.measurement_unit,
+    frequency: ind.frequency,
+    progress: ind.progress,
+    status: ind.status,
+    activities: ind.activities
   }))
 
-  const activitiesData = getFilteredActivities().map((act, index) => ({
-    ...act,
-    key: act.id || `act-${index}`,
-    responsible: act.responsible || 'មិនបានកំណត់'
+  // Format activities data for table
+  const activitiesData = activities.map((act) => ({
+    key: act.id,
+    code: act.activity_code,
+    name: act.activity_name_khmer,
+    name_english: act.activity_name_english,
+    status: act.status,
+    startDate: act.planned_start,
+    endDate: act.planned_end,
+    progress: act.progress,
+    budget: act.budget_allocated,
+    spent: act.budget_spent,
+    budgetUtilization: act.budgetUtilization,
+    responsible: act.responsible_person || 'មិនបានកំណត់',
+    location: act.location,
+    indicator: act.indicator
   }))
 
   // Get milestones from project plans
@@ -684,7 +727,7 @@ export default function MEDashboardPage() {
                   columns={indicatorColumns}
                   dataSource={indicatorsData}
                   pagination={{ pageSize: 10 }}
-                  loading={loading}
+                  loading={loadingIndicators}
                 />
               )
             },
@@ -701,7 +744,7 @@ export default function MEDashboardPage() {
                   columns={activityColumns}
                   dataSource={activitiesData}
                   pagination={{ pageSize: 10 }}
-                  loading={loading}
+                  loading={loadingActivities}
                 />
               )
             },
