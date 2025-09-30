@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Button, Row, Col, Typography, Tag, message, Spin, Divider, Alert } from 'antd'
-import { UserOutlined, LoginOutlined, CrownOutlined, TeamOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
+import { Card, Button, Row, Col, Typography, Tag, message, Spin, Divider, Alert, Modal } from 'antd'
+import { UserOutlined, LoginOutlined, CrownOutlined, TeamOutlined, SafetyCertificateOutlined, ReloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { checkAndResetDemoUsers } from '@/lib/demo-reset-checker'
 
@@ -106,6 +106,7 @@ export default function DemoLoginPage() {
   const [loading, setLoading] = useState(false)
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [resetStatus, setResetStatus] = useState<any>(null)
+  const [resetting, setResetting] = useState(false)
 
   useEffect(() => {
     // Check and reset demo users if needed when page loads
@@ -195,6 +196,72 @@ export default function DemoLoginPage() {
     }
   }
 
+  const handleForceReset = () => {
+    Modal.confirm({
+      title: 'បញ្ជាក់ការកំណត់ឡើងវិញ',
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <div className="font-hanuman">
+          <p>តើអ្នកពិតជាចង់កំណត់ទិន្នន័យអ្នកប្រើប្រាស់សាកល្បងឡើងវិញមែនទេ?</p>
+          <p className="text-sm text-gray-500 mt-2">សកម្មភាពនេះនឹងលុបទិន្នន័យទាំងអស់ដែលបានបង្កើតដោយអ្នកប្រើប្រាស់សាកល្បង រួមមាន:</p>
+          <ul className="text-sm text-gray-500 mt-1">
+            <li>• ហត្ថលេខាលើកិច្ចសន្យា</li>
+            <li>• ទិន្នន័យ M&E ដែលបានប្រមូល</li>
+            <li>• របាយការណ៍ដែលបានបង្កើត</li>
+            <li>• កិច្ចសន្យាដែលបានបង្កើត</li>
+          </ul>
+        </div>
+      ),
+      okText: 'បាទ/ចាស កំណត់ឡើងវិញ',
+      cancelText: 'បោះបង់',
+      okButtonProps: { danger: true },
+      className: 'font-hanuman',
+      onOk: async () => {
+        setResetting(true)
+        try {
+          const response = await fetch('/api/demo/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ force: true })
+          })
+
+          if (response.ok) {
+            const result = await response.json()
+            message.success('ទិន្នន័យអ្នកប្រើប្រាស់សាកល្បងត្រូវបានកំណត់ឡើងវិញដោយជោគជ័យ!')
+
+            // Update reset status
+            await checkResetStatus()
+
+            // Show stats
+            Modal.info({
+              title: 'លទ្ធផលនៃការកំណត់ឡើងវិញ',
+              content: (
+                <div className="font-hanuman">
+                  <p>ការកំណត់ឡើងវិញបានបញ្ចប់:</p>
+                  <ul className="mt-2">
+                    <li>• អ្នកប្រើប្រាស់បានកំណត់ឡើងវិញ: {result.stats.resetUsers}</li>
+                    <li>• ទិន្នន័យបានលុប: {result.stats.deletedDataCollections}</li>
+                    <li>• កិច្ចសន្យាបានលុប: {result.stats.deletedContracts}</li>
+                    <li>• របាយការណ៍បានលុប: {result.stats.deletedReports}</li>
+                  </ul>
+                </div>
+              ),
+              okText: 'យល់ព្រម',
+              className: 'font-hanuman'
+            })
+          } else {
+            message.error('មានបញ្ហាក្នុងការកំណត់ឡើងវិញ')
+          }
+        } catch (error) {
+          console.error('Reset error:', error)
+          message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+        } finally {
+          setResetting(false)
+        }
+      }
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto">
@@ -221,20 +288,42 @@ export default function DemoLoginPage() {
           className="mb-6 font-hanuman"
         />
 
-        {/* Reset Status Info */}
-        {resetStatus && (
-          <Alert
-            message="ព័ត៌មានអំពីការកំណត់ឡើងវិញ"
-            description={
-              resetStatus.needsReset
-                ? 'ទិន្នន័យនឹងត្រូវបានកំណត់ឡើងវិញឥឡូវនេះ...'
-                : `ការកំណត់ឡើងវិញបន្ទាប់ក្នុងរយៈពេល ${resetStatus.hoursUntilNextReset?.toFixed(1) || '24'} ម៉ោង`
-            }
-            type="info"
-            showIcon
-            className="mb-6 font-hanuman"
-          />
-        )}
+        {/* Force Reset Button and Status */}
+        <Card className="mb-6 shadow-md">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              {resetStatus && (
+                <div className="font-hanuman">
+                  <Text strong className="text-lg">ស្ថានភាពទិន្នន័យសាកល្បង</Text>
+                  <br />
+                  <Text type="secondary">
+                    {resetStatus.needsReset
+                      ? 'ទិន្នន័យនឹងត្រូវបានកំណត់ឡើងវិញឥឡូវនេះ...'
+                      : resetStatus.lastResetAt
+                      ? `កំណត់ឡើងវិញចុងក្រោយ: ${new Date(resetStatus.lastResetAt).toLocaleString('km-KH')} • បន្ទាប់ក្នុង ${resetStatus.hoursUntilNextReset?.toFixed(1) || '24'}ម៉ោង`
+                      : 'មិនទាន់បានកំណត់ឡើងវិញទេ'}
+                  </Text>
+                </div>
+              )}
+            </div>
+            <Button
+              type="primary"
+              danger
+              icon={<ReloadOutlined />}
+              loading={resetting}
+              onClick={handleForceReset}
+              size="large"
+              className="font-hanuman"
+            >
+              កំណត់ទិន្នន័យឡើងវិញឥឡូវនេះ
+            </Button>
+          </div>
+          <Divider className="my-3" />
+          <Text type="secondary" className="text-xs font-hanuman">
+            <ExclamationCircleOutlined className="mr-1" />
+            ប្រើប៊ូតុងនេះដើម្បីសម្អាតទិន្នន័យសាកល្បងទាំងអស់ និងចាប់ផ្តើមឡើងវិញជាមួយគណនីថ្មី។ ល្អសម្រាប់ការសាកល្បងច្រើនដងក្នុងមួយថ្ងៃ។
+          </Text>
+        </Card>
 
         {loading && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
