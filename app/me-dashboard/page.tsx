@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message, Dropdown, Avatar, Modal, Form, Input } from 'antd'
+import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message, Dropdown, Avatar, Modal, Form, Input, Spin } from 'antd'
 import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
@@ -13,6 +13,165 @@ import DataCollectionForm from './components/DataCollectionForm'
 
 const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
+
+// Mobile Card Components
+const IndicatorMobileCard = ({ indicator, onEdit, onDelete, onAddData, userRole }: any) => (
+  <Card className="mb-3 shadow-sm" size="small">
+    <div className="space-y-2">
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          <Tag color={
+            indicator.type === 'output' ? 'blue' :
+            indicator.type === 'outcome' ? 'green' : 'purple'
+          } className="mb-2">
+            {indicator.type.toUpperCase()}
+          </Tag>
+          <Text strong className="block font-hanuman">{indicator.name}</Text>
+          <Text className="text-xs text-gray-500 block">{indicator.code}</Text>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 text-sm">
+        <div>
+          <Text className="text-gray-600 font-hanuman">គោលដៅ:</Text>
+          <Text className="ml-1 font-medium">{indicator.target}</Text>
+        </div>
+        <div>
+          <Text className="text-gray-600 font-hanuman">បច្ចុប្បន្ន:</Text>
+          <Text className="ml-1 font-medium">{indicator.current || 'គ្មាន'}</Text>
+        </div>
+      </div>
+
+      <div>
+        <div className="flex justify-between items-center mb-1">
+          <Text className="text-xs text-gray-600 font-hanuman">វឌ្ឍនភាព</Text>
+          <Text className="text-xs">{indicator.progress}%</Text>
+        </div>
+        <Progress
+          percent={indicator.progress}
+          size="small"
+          status={indicator.status === 'delayed' ? 'exception' : 'active'}
+        />
+      </div>
+
+      <div className="flex justify-between items-center pt-2 border-t">
+        <Tag color={
+          indicator.status === 'on-track' ? 'green' :
+          indicator.status === 'delayed' ? 'orange' :
+          indicator.status === 'at-risk' ? 'red' : 'blue'
+        }>
+          {indicator.status === 'on-track' ? 'តាមគម្រោង' :
+           indicator.status === 'delayed' ? 'យឺត' :
+           indicator.status === 'at-risk' ? 'មានហានិភ័យ' : 'សម្រេច'}
+        </Tag>
+        <Space size="small">
+          <Button size="small" icon={<SaveOutlined />} onClick={() => onAddData(indicator.key)}>
+            បញ្ចូល
+          </Button>
+          {(userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) && (
+            <Button size="small" icon={<EditOutlined />} onClick={() => onEdit(indicator)} />
+          )}
+        </Space>
+      </div>
+    </div>
+  </Card>
+)
+
+const ActivityMobileCard = ({ activity, onEdit, userRole }: any) => (
+  <Card className="mb-3 shadow-sm" size="small">
+    <div className="space-y-2">
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          <Text strong className="block font-hanuman">{activity.name}</Text>
+          <Text className="text-xs text-gray-500 block">{activity.code}</Text>
+        </div>
+        <Tag color={
+          activity.status === 'planned' ? 'default' :
+          activity.status === 'ongoing' ? 'processing' :
+          activity.status === 'completed' ? 'success' :
+          activity.status === 'delayed' ? 'warning' : 'error'
+        }>
+          {activity.status === 'planned' ? 'គម្រោង' :
+           activity.status === 'ongoing' ? 'កំពុងដំណើរការ' :
+           activity.status === 'completed' ? 'បានបញ្ចប់' :
+           activity.status === 'delayed' ? 'យឺតយ៉ាវ' : 'បានលុបចោល'}
+        </Tag>
+      </div>
+
+      <div className="space-y-1 text-sm">
+        <div className="flex justify-between">
+          <Text className="text-gray-600 font-hanuman">ទទួលខុសត្រូវ:</Text>
+          <Text className="font-medium">{activity.responsible}</Text>
+        </div>
+        <div className="flex justify-between">
+          <Text className="text-gray-600 font-hanuman">រយៈពេល:</Text>
+          <Text className="text-xs">
+            {dayjs(activity.startDate).format('DD/MM/YYYY')} - {dayjs(activity.endDate).format('DD/MM/YYYY')}
+          </Text>
+        </div>
+      </div>
+
+      <div>
+        <div className="flex justify-between items-center mb-1">
+          <Text className="text-xs text-gray-600 font-hanuman">វឌ្ឍនភាព</Text>
+          <Text className="text-xs">{activity.progress}%</Text>
+        </div>
+        <Progress percent={activity.progress} size="small" />
+      </div>
+
+      <div>
+        <div className="flex justify-between items-center mb-1">
+          <Text className="text-xs text-gray-600 font-hanuman">ថវិកា</Text>
+          <Text className="text-xs">${activity.spent.toLocaleString()} / ${activity.budget.toLocaleString()}</Text>
+        </div>
+        <Progress
+          percent={Math.round((activity.spent / activity.budget) * 100)}
+          size="small"
+          strokeColor="#52c41a"
+        />
+      </div>
+
+      {(userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN || userRole === UserRole.MANAGER) && (
+        <div className="pt-2 border-t text-right">
+          <Button size="small" icon={<EditOutlined />} onClick={() => onEdit(activity)}>
+            កែសម្រួល
+          </Button>
+        </div>
+      )}
+    </div>
+  </Card>
+)
+
+const MilestoneMobileCard = ({ milestone }: any) => (
+  <Card className="mb-3 shadow-sm" size="small">
+    <div className="space-y-2">
+      <div className="flex justify-between items-start">
+        <Text strong className="block font-hanuman flex-1">{milestone.name}</Text>
+        <Tag color={
+          milestone.status === 'pending' ? 'default' :
+          milestone.status === 'achieved' ? 'success' : 'error'
+        } icon={
+          milestone.status === 'pending' ? <ClockCircleOutlined /> :
+          milestone.status === 'achieved' ? <CheckCircleOutlined /> : <ClockCircleOutlined />
+        }>
+          {milestone.status === 'pending' ? 'រង់ចាំ' :
+           milestone.status === 'achieved' ? 'សម្រេច' : 'ហួសកាលកំណត់'}
+        </Tag>
+      </div>
+
+      <div className="space-y-1 text-sm">
+        <div className="flex justify-between">
+          <Text className="text-gray-600 font-hanuman">សកម្មភាព:</Text>
+          <Text className="font-medium text-right">{milestone.deliverableName || 'មិនបានកំណត់'}</Text>
+        </div>
+        <div className="flex justify-between">
+          <Text className="text-gray-600 font-hanuman">កាលបរិច្ឆេទ:</Text>
+          <Text className="font-medium">{dayjs(milestone.dueDate).format('DD/MM/YYYY')}</Text>
+        </div>
+      </div>
+    </div>
+  </Card>
+)
 
 // Contract type mapping
 const CONTRACT_TYPES = {
@@ -1094,12 +1253,15 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                           setEditingIndicator(null)
                           setShowIndicatorForm(true)
                         }}
+                        className="w-full sm:w-auto"
                       >
                         បង្កើតសូចនាករថ្មី
                       </Button>
                     </div>
                   )}
-                  <div className="overflow-x-auto">
+
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
                     <Table
                       columns={indicatorColumns}
                       dataSource={indicatorsData}
@@ -1107,6 +1269,28 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                       loading={loadingIndicators}
                       scroll={{ x: 1200 }}
                     />
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="block md:hidden">
+                    {loadingIndicators ? (
+                      <div className="text-center py-8">
+                        <Spin />
+                      </div>
+                    ) : indicatorsData.length > 0 ? (
+                      indicatorsData.map((indicator: any) => (
+                        <IndicatorMobileCard
+                          key={indicator.key}
+                          indicator={indicator}
+                          onEdit={handleEditIndicator}
+                          onDelete={handleDeleteIndicator}
+                          onAddData={handleAddDataCollection}
+                          userRole={user?.role}
+                        />
+                      ))
+                    ) : (
+                      <Empty description="គ្មានសូចនាករ" />
+                    )}
                   </div>
                 </div>
               )
@@ -1130,12 +1314,15 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                           setEditingActivity(null)
                           setShowActivityForm(true)
                         }}
+                        className="w-full sm:w-auto"
                       >
                         បង្កើតសកម្មភាពថ្មី
                       </Button>
                     </div>
                   )}
-                  <div className="overflow-x-auto">
+
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
                     <Table
                       columns={activityColumns}
                       dataSource={activitiesData}
@@ -1143,6 +1330,26 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                       loading={loadingActivities}
                       scroll={{ x: 1200 }}
                     />
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="block md:hidden">
+                    {loadingActivities ? (
+                      <div className="text-center py-8">
+                        <Spin />
+                      </div>
+                    ) : activitiesData.length > 0 ? (
+                      activitiesData.map((activity: any) => (
+                        <ActivityMobileCard
+                          key={activity.key}
+                          activity={activity}
+                          onEdit={handleEditActivity}
+                          userRole={user?.role}
+                        />
+                      ))
+                    ) : (
+                      <Empty description="គ្មានសកម្មភាព" />
+                    )}
                   </div>
                 </div>
               )
@@ -1156,14 +1363,35 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </span>
               ),
               children: (
-                <div className="overflow-x-auto">
-                  <Table
-                    columns={milestoneColumns}
-                    dataSource={milestonesData}
-                    pagination={{ pageSize: 10 }}
-                    loading={loading}
-                    scroll={{ x: 800 }}
-                  />
+                <div>
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <Table
+                      columns={milestoneColumns}
+                      dataSource={milestonesData}
+                      pagination={{ pageSize: 10 }}
+                      loading={loading}
+                      scroll={{ x: 800 }}
+                    />
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="block md:hidden">
+                    {loading ? (
+                      <div className="text-center py-8">
+                        <Spin />
+                      </div>
+                    ) : milestonesData.length > 0 ? (
+                      milestonesData.map((milestone: any) => (
+                        <MilestoneMobileCard
+                          key={milestone.key}
+                          milestone={milestone}
+                        />
+                      ))
+                    ) : (
+                      <Empty description="គ្មានចំណុចសំខាន់" />
+                    )}
+                  </div>
                 </div>
               )
             },
