@@ -103,3 +103,154 @@ model attachments {
   file_size       Int
   uploaded_at     DateTime   @default(now())
 }
+
+// ============================================
+// M&E (Monitoring & Evaluation) Models
+// ============================================
+
+model me_indicators {
+  id                    Int                     @id @default(autoincrement())
+  indicator_code        String                  @unique
+  indicator_name_khmer  String
+  indicator_name_english String?
+  indicator_type        String                  // output, outcome, impact
+  measurement_unit      String                  // number, percentage, text, boolean
+  baseline_value        Float?
+  target_value          Float
+  frequency             String                  // monthly, quarterly, annually
+  contract_type         Int?                    // Related to which contract type (1-5)
+  description           String?
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+
+  activities            me_activities[]
+  data_collections      me_data_collection[]
+}
+
+model me_activities {
+  id                    Int                     @id @default(autoincrement())
+  activity_code         String                  @unique
+  activity_name_khmer   String
+  activity_name_english String?
+  indicator_id          Int
+  indicator             me_indicators           @relation(fields: [indicator_id], references: [id])
+  contract_id           Int?
+  planned_start         DateTime
+  planned_end           DateTime
+  actual_start          DateTime?
+  actual_end            DateTime?
+  status                String                  @default("planned") // planned, ongoing, completed, delayed, cancelled
+  budget_allocated      Float?
+  budget_spent          Float?
+  responsible_person    String?
+  location              String?
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+
+  milestones            me_milestones[]
+  data_collections      me_data_collection[]
+}
+
+model me_milestones {
+  id                    Int                     @id @default(autoincrement())
+  milestone_name        String
+  activity_id           Int
+  activity              me_activities           @relation(fields: [activity_id], references: [id])
+  due_date              DateTime
+  completion_date       DateTime?
+  status                String                  @default("pending") // pending, achieved, overdue
+  progress_percentage   Int                     @default(0)
+  deliverables          String?                 // JSON array of deliverables
+  notes                 String?
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+}
+
+model me_beneficiaries {
+  id                    Int                     @id @default(autoincrement())
+  beneficiary_code      String                  @unique
+  full_name             String
+  gender                String                  // male, female, other
+  age                   Int?
+  phone_number          String?
+  location_province     String
+  location_district     String
+  location_commune      String?
+  location_village      String?
+  school_name           String?
+  grade_level           String?
+  teacher_type          String?                 // primary, secondary, etc.
+  special_needs         Boolean                 @default(false)
+  notes                 String?
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+
+  data_collections      me_data_collection[]
+  trainings             me_training_attendance[]
+}
+
+model me_data_collection {
+  id                    Int                     @id @default(autoincrement())
+  indicator_id          Int
+  indicator             me_indicators           @relation(fields: [indicator_id], references: [id])
+  activity_id           Int?
+  activity              me_activities?          @relation(fields: [activity_id], references: [id])
+  beneficiary_id        Int?
+  beneficiary           me_beneficiaries?       @relation(fields: [beneficiary_id], references: [id])
+  collection_date       DateTime
+  value_numeric         Float?
+  value_text            String?
+  value_boolean         Boolean?
+  data_source           String?                 // survey, observation, document, system
+  collector_name        String?
+  collector_id          Int?
+  verification_status   String                  @default("pending") // pending, verified, rejected
+  verified_by           String?
+  verified_date         DateTime?
+  location_province     String?
+  location_district     String?
+  notes                 String?
+  attachments           Json?                   // JSON array of attachment URLs
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+
+  @@index([collection_date])
+  @@index([indicator_id, collection_date])
+}
+
+model me_training_attendance {
+  id                    Int                     @id @default(autoincrement())
+  training_name         String
+  training_date         DateTime
+  beneficiary_id        Int
+  beneficiary           me_beneficiaries        @relation(fields: [beneficiary_id], references: [id])
+  attendance_status     String                  // present, absent, excused
+  pre_test_score        Float?
+  post_test_score       Float?
+  certificate_issued    Boolean                 @default(false)
+  feedback_score        Int?                    // 1-5 rating
+  notes                 String?
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+
+  @@index([training_date])
+  @@index([beneficiary_id])
+}
+
+model me_reports {
+  id                    Int                     @id @default(autoincrement())
+  report_type           String                  // monthly, quarterly, annual, ad-hoc
+  report_period_start   DateTime
+  report_period_end     DateTime
+  generated_by          String
+  generated_date        DateTime                @default(now())
+  report_data           Json                    // Aggregated data snapshot
+  summary               String?
+  recommendations       String?
+  attachments           Json?                   // JSON array of attachment URLs
+  status                String                  @default("draft") // draft, submitted, approved
+  approved_by           String?
+  approved_date         DateTime?
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+}

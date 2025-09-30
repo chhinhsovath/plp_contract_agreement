@@ -172,6 +172,12 @@ export default function HomePage() {
     {
       type: 'divider' as const,
     },
+    ...(hasPermission(user?.role as UserRole, 'contracts.read') ? [{
+      key: 'me-dashboard',
+      label: 'ផ្ទាំងគ្រប់គ្រង M&E',
+      icon: <DashboardOutlined />,
+      onClick: () => router.push('/me-dashboard'),
+    }] : []),
     ...(hasPermission(user?.role as UserRole, 'users.read') ? [{
       key: 'manage-users',
       label: 'គ្រប់គ្រងអ្នកប្រើប្រាស់',
