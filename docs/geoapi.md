@@ -749,9 +749,9 @@ curl -X POST "https://geoapi.openplp.com/api/provinces" \
   -d '{"province_name_kh": "ខេត្តថ្មី", "province_name_en": "New Province", "province_code": 26}'
 
 # Using httpie
-http GET localhost:3000/api/districts province_code==1
+http GET https://geoapi.openplp.com/api/districts province_code==1
 
-http POST localhost:3000/api/villages \
+http POST https://geoapi.openplp.com/api/villages \
   village_name_kh="ភូមិថ្មី" \
   village_name_en="New Village" \
   commune_code:=1010101
