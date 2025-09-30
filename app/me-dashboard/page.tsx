@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select } from 'antd'
-import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined } from '@ant-design/icons'
+import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox } from 'antd'
+import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
+import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
+import { UserRole } from '@/lib/roles'
 
-const { Title, Text } = Typography
-const { TabPane } = Tabs
+const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
 
 // Contract type mapping
@@ -24,18 +25,90 @@ export default function MEDashboardPage() {
   const [loading, setLoading] = useState(false)
   const [dateRange, setDateRange] = useState([dayjs().subtract(30, 'days'), dayjs()])
   const [selectedContract, setSelectedContract] = useState<number | null>(null)
+  const [user, setUser] = useState<any>(null)
+  const [projectPlans, setProjectPlans] = useState<any[]>([])
 
-  // Mock data for demonstration
-  const [dashboardData, setDashboardData] = useState({
-    totalIndicators: 25,
-    activeActivities: 12,
-    completedActivities: 8,
-    totalBeneficiaries: 1250,
-    overallProgress: 65,
-    dataCollectionRate: 78,
-    upcomingMilestones: 5,
-    pendingReports: 3
-  })
+  useEffect(() => {
+    checkSession()
+  }, [])
+
+  useEffect(() => {
+    // Load project plans based on user role and selected contract
+    if (user) {
+      loadProjectPlans()
+    }
+  }, [user, selectedContract])
+
+  const checkSession = async () => {
+    try {
+      const response = await fetch('/api/auth/session')
+      if (response.ok) {
+        const data = await response.json()
+        setUser(data.user)
+        // Set initial contract filter for PARTNER users
+        if (data.user.role === UserRole.PARTNER && data.user.contract_type) {
+          setSelectedContract(data.user.contract_type)
+        }
+      } else {
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Session check failed:', error)
+      router.push('/login')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadProjectPlans = () => {
+    // Filter project plans based on user role
+    let filteredPlans = []
+
+    if (user.role === UserRole.PARTNER && user.contract_type) {
+      // Partners only see their contract type
+      filteredPlans = getProjectPlanByContract(user.contract_type)
+    } else if (user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN) {
+      // Admins can see all or filtered
+      filteredPlans = getProjectPlanByContract(selectedContract)
+    } else {
+      // Other roles see selected contract
+      filteredPlans = getProjectPlanByContract(selectedContract || user.contract_type)
+    }
+
+    setProjectPlans(filteredPlans)
+  }
+
+  // Calculate dashboard statistics from project plans
+  const calculateDashboardStats = () => {
+    let totalDeliverables = 0
+    let completedDeliverables = 0
+    let inProgressDeliverables = 0
+    let totalProgress = 0
+
+    projectPlans.forEach((plan: any) => {
+      plan.deliverables.forEach((d: any) => {
+        totalDeliverables++
+        if (d.status === 'completed') completedDeliverables++
+        if (d.status === 'in-progress') inProgressDeliverables++
+        totalProgress += d.progress
+      })
+    })
+
+    const upcomingMilestones = getUpcomingMilestones(projectPlans, 30)
+    const delayedDeliverables = getDelayedDeliverables(projectPlans)
+
+    return {
+      totalDeliverables,
+      completedDeliverables,
+      inProgressDeliverables,
+      overallProgress: totalDeliverables > 0 ? Math.round(totalProgress / totalDeliverables) : 0,
+      upcomingMilestones: upcomingMilestones.length,
+      delayedDeliverables: delayedDeliverables.length,
+      totalBudget: projectPlans.reduce((sum, p) => sum + (p.totalBudget || 0), 0)
+    }
+  }
+
+  const dashboardData = calculateDashboardStats()
 
   // Sample indicators data
   const indicatorsData = [
@@ -295,15 +368,156 @@ export default function MEDashboardPage() {
     }
   ]
 
+  // Timeline component for project plan
+  const renderProjectTimeline = () => {
+    if (projectPlans.length === 0) {
+      return (
+        <Empty
+          description={
+            <span className="font-hanuman">គ្មានផែនការគម្រោង</span>
+          }
+        />
+      )
+    }
+
+    return (
+      <div>
+        {projectPlans.map((plan: any, planIndex: number) => (
+          <div key={planIndex} className="mb-8">
+            <div className="mb-4">
+              <Title level={4} className="font-hanuman text-blue-800">
+                {plan.contractName}
+              </Title>
+              <Space className="font-hanuman text-gray-600">
+                <FieldTimeOutlined />
+                <Text>រយៈពេល: {plan.projectDuration}</Text>
+                {plan.totalBudget && (
+                  <>
+                    <Text>|</Text>
+                    <Text>ថវិកា: ${plan.totalBudget.toLocaleString()}</Text>
+                  </>
+                )}
+                <Text>|</Text>
+                <Text>វឌ្ឍនភាព: {calculateProjectProgress(plan.deliverables)}%</Text>
+              </Space>
+            </div>
+
+            <Timeline mode="left">
+              {plan.deliverables.map((deliverable: any) => {
+                const statusIcons: any = {
+                  'completed': <CheckCircleOutlined className="text-green-500" />,
+                  'in-progress': <SyncOutlined className="text-blue-500" spin />,
+                  'delayed': <ClockCircleOutlined className="text-red-500" />,
+                  'planned': <ClockCircleOutlined className="text-gray-400" />
+                }
+                const statusIcon = statusIcons[deliverable.status]
+
+                const isDelayed = dayjs(deliverable.endDate).isBefore(dayjs()) && deliverable.progress < 100
+
+                return (
+                  <Timeline.Item
+                    key={deliverable.id}
+                    dot={statusIcon}
+                    color={isDelayed ? 'red' : deliverable.status === 'completed' ? 'green' : deliverable.status === 'in-progress' ? 'blue' : 'gray'}
+                  >
+                    <Card className="shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1">
+                          <Text strong className="font-hanuman text-lg">
+                            {deliverable.name}
+                          </Text>
+                          {deliverable.description && (
+                            <Paragraph className="font-hanuman text-gray-600 text-sm mt-1">
+                              {deliverable.description}
+                            </Paragraph>
+                          )}
+                        </div>
+                        <Badge
+                          status={
+                            isDelayed ? 'error' :
+                            deliverable.status === 'completed' ? 'success' :
+                            deliverable.status === 'in-progress' ? 'processing' :
+                            'default'
+                          }
+                          text={
+                            <span className="font-hanuman">
+                              {isDelayed ? 'ហួសកាលកំណត់' :
+                               deliverable.status === 'completed' ? 'បានបញ្ចប់' :
+                               deliverable.status === 'in-progress' ? 'កំពុងដំណើរការ' :
+                               'គម្រោង'}
+                            </span>
+                          }
+                        />
+                      </div>
+
+                      <Space className="font-hanuman text-sm text-gray-600 mb-3">
+                        <CalendarOutlined />
+                        <Text>
+                          {dayjs(deliverable.startDate).format('DD/MM/YYYY')} -
+                          {dayjs(deliverable.endDate).format('DD/MM/YYYY')}
+                        </Text>
+                        <Text>|</Text>
+                        <TeamOutlined />
+                        <Text>{deliverable.responsible}</Text>
+                      </Space>
+
+                      <Progress
+                        percent={deliverable.progress}
+                        status={isDelayed ? 'exception' : deliverable.progress === 100 ? 'success' : 'active'}
+                        strokeColor={isDelayed ? '#ff4d4f' : undefined}
+                      />
+
+                      {deliverable.milestones && deliverable.milestones.length > 0 && (
+                        <div className="mt-4 pl-4 border-l-2 border-gray-200">
+                          <Text type="secondary" className="font-hanuman text-sm">ចំណុចសំខាន់:</Text>
+                          {deliverable.milestones.map((milestone: any) => (
+                            <div key={milestone.id} className="mt-2">
+                              <Checkbox
+                                checked={milestone.completed}
+                                disabled
+                                className="font-hanuman"
+                              >
+                                <Space>
+                                  <Text className={milestone.completed ? 'line-through text-gray-400' : ''}>
+                                    {milestone.name}
+                                  </Text>
+                                  <Text type="secondary" className="text-xs">
+                                    ({dayjs(milestone.date).format('DD/MM/YYYY')})
+                                  </Text>
+                                </Space>
+                              </Checkbox>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {deliverable.dependencies && deliverable.dependencies.length > 0 && (
+                        <div className="mt-3">
+                          <Text type="secondary" className="font-hanuman text-sm">
+                            ពឹងផ្អែកលើ: {deliverable.dependencies.join(', ')}
+                          </Text>
+                        </div>
+                      )}
+                    </Card>
+                  </Timeline.Item>
+                )
+              })}
+            </Timeline>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
       <div className="mb-6">
         <Title level={2} className="font-hanuman text-blue-800 mb-2">
           <DashboardOutlined className="mr-2" />
-          ផ្ទាំងគ្រប់គ្រង M&E
+          ផ្ទាំងគ្រប់គ្រង M&E និងផែនការគម្រោង
         </Title>
         <Text className="text-gray-600 font-hanuman">
-          តាមដានវឌ្ឍនភាព និងវាយតម្លៃលទ្ធផលគម្រោង
+          តាមដានវឌ្ឍនភាព វាយតម្លៃលទ្ធផល និងផែនការគម្រោង
         </Text>
       </div>
 
@@ -315,7 +529,9 @@ export default function MEDashboardPage() {
             <Select
               style={{ width: 200 }}
               placeholder="ជ្រើសរើសប្រភេទ"
-              allowClear
+              value={selectedContract}
+              allowClear={user?.role !== UserRole.PARTNER}
+              disabled={user?.role === UserRole.PARTNER}
               onChange={setSelectedContract}
             >
               {Object.entries(CONTRACT_TYPES).map(([key, value]) => (
@@ -344,9 +560,9 @@ export default function MEDashboardPage() {
         <Col xs={24} sm={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title={<span className="font-hanuman">សូចនាករសរុប</span>}
-              value={dashboardData.totalIndicators}
-              prefix={<FundProjectionScreenOutlined className="text-blue-500" />}
+              title={<span className="font-hanuman">សកម្មភាពសរុប</span>}
+              value={dashboardData.totalDeliverables}
+              prefix={<ProjectOutlined className="text-blue-500" />}
               valueStyle={{ color: '#1890ff' }}
             />
           </Card>
@@ -354,9 +570,9 @@ export default function MEDashboardPage() {
         <Col xs={24} sm={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title={<span className="font-hanuman">សកម្មភាពសកម្ម</span>}
-              value={dashboardData.activeActivities}
-              prefix={<RiseOutlined className="text-green-500" />}
+              title={<span className="font-hanuman">បានបញ្ចប់</span>}
+              value={dashboardData.completedDeliverables}
+              prefix={<CheckCircleOutlined className="text-green-500" />}
               valueStyle={{ color: '#52c41a' }}
             />
           </Card>
@@ -364,11 +580,10 @@ export default function MEDashboardPage() {
         <Col xs={24} sm={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title={<span className="font-hanuman">អ្នកទទួលផលសរុប</span>}
-              value={dashboardData.totalBeneficiaries}
-              prefix={<TeamOutlined className="text-purple-500" />}
-              valueStyle={{ color: '#722ed1' }}
-              suffix="នាក់"
+              title={<span className="font-hanuman">កំពុងដំណើរការ</span>}
+              value={dashboardData.inProgressDeliverables}
+              prefix={<SyncOutlined className="text-orange-500" />}
+              valueStyle={{ color: '#fa8c16' }}
             />
           </Card>
         </Col>
@@ -389,76 +604,104 @@ export default function MEDashboardPage() {
         </Col>
       </Row>
 
+      {/* Show alert for delayed deliverables */}
+      {dashboardData.delayedDeliverables > 0 && (
+        <Alert
+          message={`មានសកម្មភាពចំនួន ${dashboardData.delayedDeliverables} ហួសកាលកំណត់`}
+          description="សូមពិនិត្យ និងធ្វើបច្ចុប្បន្នភាពស្ថានភាពសកម្មភាព"
+          type="warning"
+          showIcon
+          icon={<AlertOutlined />}
+          className="mb-4 font-hanuman"
+          closable
+        />
+      )}
+
       {/* Data Tabs */}
       <Card className="shadow-sm">
-        <Tabs defaultActiveKey="indicators" size="large">
-          <TabPane
-            tab={
-              <span className="font-hanuman">
-                <FundProjectionScreenOutlined className="mr-2" />
-                សូចនាករ
-              </span>
+        <Tabs
+          defaultActiveKey="timeline"
+          size="large"
+          items={[
+            {
+              key: 'timeline',
+              label: (
+                <span className="font-hanuman">
+                  <CalendarOutlined className="mr-2" />
+                  ផែនការគម្រោង
+                </span>
+              ),
+              children: renderProjectTimeline()
+            },
+            {
+              key: 'indicators',
+              label: (
+                <span className="font-hanuman">
+                  <FundProjectionScreenOutlined className="mr-2" />
+                  សូចនាករ
+                </span>
+              ),
+              children: (
+                <Table
+                  columns={indicatorColumns}
+                  dataSource={indicatorsData}
+                  pagination={{ pageSize: 10 }}
+                  loading={loading}
+                />
+              )
+            },
+            {
+              key: 'activities',
+              label: (
+                <span className="font-hanuman">
+                  <RiseOutlined className="mr-2" />
+                  សកម្មភាព
+                </span>
+              ),
+              children: (
+                <Table
+                  columns={activityColumns}
+                  dataSource={activitiesData}
+                  pagination={{ pageSize: 10 }}
+                  loading={loading}
+                />
+              )
+            },
+            {
+              key: 'milestones',
+              label: (
+                <span className="font-hanuman">
+                  <CheckCircleOutlined className="mr-2" />
+                  ចំណុចសំខាន់
+                </span>
+              ),
+              children: (
+                <Table
+                  columns={milestoneColumns}
+                  dataSource={milestonesData}
+                  pagination={{ pageSize: 10 }}
+                  loading={loading}
+                />
+              )
+            },
+            {
+              key: 'reports',
+              label: (
+                <span className="font-hanuman">
+                  <FileTextOutlined className="mr-2" />
+                  របាយការណ៍
+                </span>
+              ),
+              children: (
+                <div className="text-center py-8">
+                  <Text className="font-hanuman text-gray-500">
+                    មុខងារនេះនឹងមានក្នុងពេលឆាប់ៗនេះ
+                  </Text>
+                </div>
+              )
             }
-            key="indicators"
-          >
-            <Table
-              columns={indicatorColumns}
-              dataSource={indicatorsData}
-              pagination={{ pageSize: 10 }}
-              loading={loading}
-            />
-          </TabPane>
-
-          <TabPane
-            tab={
-              <span className="font-hanuman">
-                <RiseOutlined className="mr-2" />
-                សកម្មភាព
-              </span>
-            }
-            key="activities"
-          >
-            <Table
-              columns={activityColumns}
-              dataSource={activitiesData}
-              pagination={{ pageSize: 10 }}
-              loading={loading}
-            />
-          </TabPane>
-
-          <TabPane
-            tab={
-              <span className="font-hanuman">
-                <CheckCircleOutlined className="mr-2" />
-                ចំណុចសំខាន់
-              </span>
-            }
-            key="milestones"
-          >
-            <Table
-              columns={milestoneColumns}
-              dataSource={milestonesData}
-              pagination={{ pageSize: 10 }}
-              loading={loading}
-            />
-          </TabPane>
-
-          <TabPane
-            tab={
-              <span className="font-hanuman">
-                <FileTextOutlined className="mr-2" />
-                របាយការណ៍
-              </span>
-            }
-            key="reports"
-          >
-            <div className="text-center py-8">
-              <Text className="font-hanuman text-gray-500">
-                មុខងារនេះនឹងមានក្នុងពេលឆាប់ៗនេះ
-              </Text>
-            </div>
-          </TabPane>
-        </Tabs>
+          ]}
+        />
       </Card>
     </div>
   )
