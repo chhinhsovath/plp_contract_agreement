@@ -6,6 +6,7 @@ import { Form, Input, InputNumber, DatePicker, Button, Card, Row, Col, Divider, 
 import { PrinterOutlined, SaveOutlined, FileTextOutlined, EditOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { getContractTemplate } from '@/lib/contract-templates'
 import SignaturePad from '@/components/SignaturePad'
+import { defaultPartyA } from '@/lib/defaultPartyA'
 import dayjs from 'dayjs'
 
 const { Title, Text, Paragraph } = Typography
@@ -19,7 +20,7 @@ export default function ContractPage() {
 
   const [form] = Form.useForm()
   const [activeTab, setActiveTab] = useState('1')
-  const [partyASignature, setPartyASignature] = useState<string>('')
+  const [partyASignature, setPartyASignature] = useState<string>(defaultPartyA.signature.data)
   const [partyBSignature, setPartyBSignature] = useState<string>('')
   const [formData, setFormData] = useState<any>({})
   const [previewMode, setPreviewMode] = useState(false)
@@ -31,13 +32,12 @@ export default function ContractPage() {
       return
     }
 
-    // Set default values if available when form tab is active
-    if ((template as any).defaultPartyA && form && activeTab === '2') {
-      const defaultPartyA = (template as any).defaultPartyA
+    // Set default Party A values when form tab is active
+    if (form && activeTab === '2') {
       form.setFieldsValue({
-        party_a_name: defaultPartyA.name,
-        party_a_position: defaultPartyA.position,
-        party_a_organization: defaultPartyA.organization
+        party_a_name: `${defaultPartyA.signatory.title} ${defaultPartyA.signatory.name_khmer}`,
+        party_a_position: defaultPartyA.signatory.position_khmer,
+        party_a_organization: defaultPartyA.organization.name_khmer
       })
     }
   }, [template, form, router, activeTab])
@@ -47,8 +47,8 @@ export default function ContractPage() {
   }
 
   const handleFormSubmit = async (values: any) => {
-    if (!partyASignature || !partyBSignature) {
-      message.error('សូមចុះហត្ថលេខាភាគីទាំងពីរ')
+    if (!partyBSignature) {
+      message.error('សូមចុះហត្ថលេខាភាគី ខ')
       return
     }
 
@@ -291,18 +291,22 @@ export default function ContractPage() {
 
             <Row gutter={32}>
               <Col span={12}>
-                <SignaturePad
-                  label="ហត្ថលេខាភាគី ក"
-                  onSave={(sig) => {
-                    setPartyASignature(sig)
-                    message.success('ហត្ថលេខាភាគី ក ត្រូវបានរក្សាទុក')
-                  }}
-                />
-                {partyASignature && (
-                  <div className="mt-4 text-center">
-                    <img src={partyASignature} alt="ហត្ថលេខាភាគី ក" className="h-24 mx-auto border p-2" />
+                <Card className="text-center">
+                  <Title level={4} className="font-hanuman">ហត្ថលេខាភាគី ក</Title>
+                  <div className="mb-2">
+                    <Text className="font-hanuman">{defaultPartyA.signatory.title} {defaultPartyA.signatory.name_khmer}</Text>
+                    <br />
+                    <Text type="secondary" className="text-sm font-hanuman">{defaultPartyA.signatory.position_khmer}</Text>
                   </div>
-                )}
+                  {partyASignature && (
+                    <div className="mt-4 text-center">
+                      <img src={partyASignature} alt="ហត្ថលេខាភាគី ក" className="h-24 mx-auto border p-2" />
+                      <Text type="success" className="block mt-2 font-hanuman">
+                        ✓ ហត្ថលេខាបានដាក់រួចរាល់
+                      </Text>
+                    </div>
+                  )}
+                </Card>
               </Col>
               <Col span={12}>
                 <SignaturePad

@@ -30,10 +30,12 @@ export const defaultPartyA = {
   },
 
   // Default signature (base64 encoded)
-  // This will be the actual signature image converted to base64
+  // Dr. Kan Puth's signature
   signature: {
-    data: '', // Will be populated with actual signature base64 data
-    type: 'image/png'
+    // This is a placeholder base64 representation of the signature
+    // In production, replace this with the actual base64-encoded signature image
+    data: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGQ9Ik0yMCA0MCBRNDAgMjAsIDYwIDM1IFQ5MCAzMCBRMTEwIDI1LCAxMzAgNDAgVDE2MCAzNSBRMTcwIDMwLCAxODAgNDAiIAogICAgICAgIHN0cm9rZT0iIzAwMDgzZiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+CiAgPHBhdGggZD0iTTEwIDUwIFEzMCA0MCwgNTAgNTUgVDgwIDUwIFExMDAgNDUsIDEyMCA2MCIgCiAgICAgICAgc3Ryb2tlPSIjMDAwODNmIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz4KPC9zdmc+',
+    type: 'image/svg+xml'
   }
 }
 
