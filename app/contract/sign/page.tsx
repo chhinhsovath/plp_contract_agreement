@@ -228,10 +228,10 @@ export default function ContractSignPage() {
           <div
             ref={contractRef}
             onScroll={handleScroll}
-            className="h-96 overflow-y-auto p-4 bg-white border rounded"
-            style={{ maxHeight: '500px' }}
+            className="overflow-y-auto p-4 bg-white border rounded"
+            style={{ height: '500px', maxHeight: '500px', overflowY: 'scroll' }}
           >
-            <div className="prose prose-sm max-w-none font-hanuman">
+            <div className="prose prose-sm max-w-none font-hanuman" style={{ minHeight: '800px' }}>
               <h3 className="text-center text-lg font-bold mb-4">{contract.title}</h3>
 
               <div className="mb-4">
@@ -243,20 +243,51 @@ export default function ContractSignPage() {
 
               <Divider />
 
-              <h4 className="font-bold">មុខងារនិងទំនួលខុសត្រូវ:</h4>
-              <ul>
+              <h4 className="font-bold">មាត្រា ១: គោលបំណង</h4>
+              <p className="mb-4">
+                កិច្ចព្រមព្រៀងនេះមានគោលបំណងកំណត់ការទទួលខុសត្រូវ និងកាតព្វកិច្ចរបស់ភាគីទាំងពីរក្នុងការអនុវត្តគម្រោងកម្មវិធីអប់រំ។
+                ភាគីទាំងពីរយល់ព្រមអនុវត្តតាមលក្ខខណ្ឌ និងកាតព្វកិច្ចដែលបានកំណត់ក្នុងកិច្ចព្រមព្រៀងនេះ។
+              </p>
+
+              <h4 className="font-bold">មាត្រា ២: មុខងារនិងទំនួលខុសត្រូវ:</h4>
+              <ul className="mb-6">
                 {contract.responsibilities?.map((resp: string, idx: number) => (
-                  <li key={idx}>{resp}</li>
+                  <li key={idx} className="mb-2">{resp}</li>
                 ))}
               </ul>
 
-              <h4 className="font-bold mt-4">លក្ខខណ្ឌនៃកិច្ចព្រមព្រៀង:</h4>
-              <div dangerouslySetInnerHTML={{ __html: contract.content }} />
+              <h4 className="font-bold">មាត្រា ៣: លក្ខខណ្ឌនៃកិច្ចព្រមព្រៀង:</h4>
+              <div dangerouslySetInnerHTML={{ __html: contract.content }} className="mb-6" />
+
+              <h4 className="font-bold">មាត្រា ៤: រយៈពេលនៃកិច្ចព្រមព្រៀង</h4>
+              <p className="mb-4">
+                កិច្ចព្រមព្រៀងនេះមានសុពលភាពរយៈពេល ១ឆ្នាំ ចាប់ពីថ្ងៃចុះហត្ថលេខា។
+                ការបន្តកិច្ចព្រមព្រៀងត្រូវធ្វើឡើងដោយការព្រមព្រៀងរវាងភាគីទាំងពីរ។
+              </p>
+
+              <h4 className="font-bold">មាត្រា ៥: ការតាមដាន និងវាយតម្លៃ</h4>
+              <p className="mb-4">
+                ភាគីទាំងពីរយល់ព្រមធ្វើការតាមដាន និងវាយតម្លៃការអនុវត្តកិច្ចព្រមព្រៀងជាប្រចាំត្រីមាស។
+                របាយការណ៍វឌ្ឍនភាពត្រូវដាក់ជូនភាគីពាក់ព័ន្ធតាមពេលវេលាដែលបានកំណត់។
+              </p>
+
+              <h4 className="font-bold">មាត្រា ៦: ការកែប្រែកិច្ចព្រមព្រៀង</h4>
+              <p className="mb-4">
+                រាល់ការកែប្រែលើខ្លឹមសារនៃកិច្ចព្រមព្រៀងនេះ ត្រូវធ្វើឡើងជាលាយលក្ខណ៍អក្សរ
+                និងមានការយល់ព្រមពីភាគីទាំងពីរ។
+              </p>
+
+              <h4 className="font-bold">មាត្រា ៧: ការទទួលខុសត្រូវផ្នែកច្បាប់</h4>
+              <p className="mb-8">
+                ភាគីទាំងពីរយល់ព្រមគោរពតាមច្បាប់ និងបទប្បញ្ញត្តិជាធរមានទាំងអស់។
+                ក្នុងករណីមានវិវាទកើតឡើង ភាគីទាំងពីរនឹងដោះស្រាយតាមការចរចា និងការសម្របសម្រួល។
+              </p>
 
               <Divider />
 
               <div className="mt-8 text-center text-gray-500">
-                <p>*** ចុងបញ្ចប់នៃកិច្ចសន្យា ***</p>
+                <p className="font-bold">*** ចុងបញ្ចប់នៃកិច្ចសន្យា ***</p>
+                <p className="text-sm mt-4">សូមអានដោយប្រុងប្រយ័ត្ន មុនពេលចុះហត្ថលេខា</p>
               </div>
             </div>
           </div>
