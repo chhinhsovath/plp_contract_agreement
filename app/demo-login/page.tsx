@@ -11,82 +11,89 @@ const { Title, Text, Paragraph } = Typography
 const demoUsers = [
   {
     category: 'agreement',
-    categoryName: '📋 Agreement Partners',
+    categoryName: '📋 ដៃគូកិច្ចព្រមព្រៀង',
     users: [
       {
         id: 1,
-        name: 'PMU-PCU Coordinator',
+        name: 'អ្នកសម្របសម្រួល PMU-PCU',
         phone: '0771111111',
         passcode: '1111',
-        role: 'PARTNER',
-        contractType: 'PMU-PCU Agreement',
-        description: 'Provincial Coordination Unit',
+        role: 'ដៃគូ',
+        roleEn: 'PARTNER',
+        contractType: 'កិច្ចព្រមព្រៀង PMU-PCU',
+        description: 'គណៈកម្មាធិការសម្របសម្រួលខេត្ត',
         color: 'blue'
       },
       {
         id: 2,
-        name: 'PCU-PM Manager',
+        name: 'អ្នកគ្រប់គ្រង PCU-PM',
         phone: '0772222222',
         passcode: '2222',
-        role: 'PARTNER',
-        contractType: 'PCU-Project Manager',
-        description: 'Project Management Office',
+        role: 'ដៃគូ',
+        roleEn: 'PARTNER',
+        contractType: 'កិច្ចព្រមព្រៀង PCU-អ្នកគ្រប់គ្រងគម្រោង',
+        description: 'ការិយាល័យគ្រប់គ្រងគម្រោង',
         color: 'green'
       },
       {
         id: 3,
-        name: 'Regional Coordinator',
+        name: 'អ្នកសម្របសម្រួលតំបន់',
         phone: '0773333333',
         passcode: '3333',
-        role: 'PARTNER',
-        contractType: 'PM-Regional Agreement',
-        description: 'Regional Coordination Office',
+        role: 'ដៃគូ',
+        roleEn: 'PARTNER',
+        contractType: 'កិច្ចព្រមព្រៀង PM-តំបន់',
+        description: 'ការិយាល័យសម្របសម្រួលតំបន់',
         color: 'orange'
       },
       {
         id: 4,
-        name: 'District Education Officer',
+        name: 'មន្ត្រីអប់រំស្រុក',
         phone: '0774444444',
         passcode: '4444',
-        role: 'PARTNER',
-        contractType: 'DoE-District Agreement',
-        description: 'District Office of Education',
+        role: 'ដៃគូ',
+        roleEn: 'PARTNER',
+        contractType: 'កិច្ចព្រមព្រៀង DoE-ការិយាល័យស្រុក',
+        description: 'ការិយាល័យអប់រំស្រុក',
         color: 'purple'
       },
       {
         id: 5,
-        name: 'School Director',
+        name: 'នាយកសាលា',
         phone: '0775555555',
         passcode: '5555',
-        role: 'PARTNER',
-        contractType: 'DoE-School Agreement',
-        description: 'Primary School',
+        role: 'ដៃគូ',
+        roleEn: 'PARTNER',
+        contractType: 'កិច្ចព្រមព្រៀង DoE-សាលារៀន',
+        description: 'សាលាបឋមសិក្សា',
         color: 'cyan'
       }
     ]
   },
   {
     category: 'admin',
-    categoryName: '👨‍💼 Administrative Users',
+    categoryName: '👨‍💼 អ្នកគ្រប់គ្រងប្រព័ន្ធ',
     users: [
       {
         id: 6,
-        name: 'System Administrator',
+        name: 'អ្នកគ្រប់គ្រងប្រព័ន្ធ',
         phone: '0776666666',
         passcode: '6666',
-        role: 'ADMIN',
-        contractType: 'All Contracts',
-        description: 'Can manage all contracts and data',
+        role: 'រដ្ឋបាល',
+        roleEn: 'ADMIN',
+        contractType: 'គ្រប់កិច្ចសន្យាទាំងអស់',
+        description: 'អាចគ្រប់គ្រងកិច្ចសន្យា និងទិន្នន័យទាំងអស់',
         color: 'gold'
       },
       {
         id: 7,
-        name: 'Super Administrator',
+        name: 'អ្នកគ្រប់គ្រងកម្រិតខ្ពស់',
         phone: '077806680',
         passcode: '6680',
-        role: 'SUPER_ADMIN',
-        contractType: 'Full System Access',
-        description: 'Complete system control',
+        role: 'រដ្ឋបាលកម្រិតខ្ពស់',
+        roleEn: 'SUPER_ADMIN',
+        contractType: 'សិទ្ធិប្រើប្រាស់ពេញលេញ',
+        description: 'គ្រប់គ្រងប្រព័ន្ធទាំងស្រុង',
         color: 'red'
       }
     ]
@@ -117,7 +124,7 @@ export default function DemoLoginPage() {
         message.success(`ចូលប្រព័ន្ធជោគជ័យ! សូមស្វាគមន៍ ${user.name}`)
 
         // Redirect based on role
-        if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN') {
+        if (user.roleEn === 'SUPER_ADMIN' || user.roleEn === 'ADMIN') {
           router.push('/admin/users')
         } else {
           router.push('/me-dashboard')
@@ -134,8 +141,8 @@ export default function DemoLoginPage() {
     }
   }
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
+  const getRoleIcon = (roleEn: string) => {
+    switch (roleEn) {
       case 'SUPER_ADMIN':
         return <CrownOutlined />
       case 'ADMIN':
@@ -145,8 +152,8 @@ export default function DemoLoginPage() {
     }
   }
 
-  const getRoleColor = (role: string) => {
-    switch (role) {
+  const getRoleColor = (roleEn: string) => {
+    switch (roleEn) {
       case 'SUPER_ADMIN':
         return 'red'
       case 'ADMIN':
@@ -163,30 +170,30 @@ export default function DemoLoginPage() {
         <Card className="mb-6 text-center shadow-lg">
           <Title level={2} className="text-blue-800 font-hanuman mb-2">
             <UserOutlined className="mr-2" />
-            Demo Login Portal
+            ទំព័រចូលប្រព័ន្ធសាកល្បង
           </Title>
           <Paragraph className="text-gray-600 font-hanuman text-lg mb-0">
             ជ្រើសរើសគណនីសាកល្បងដើម្បីចូលប្រព័ន្ធភ្លាមៗ
           </Paragraph>
-          <Text type="secondary" className="block mt-2">
-            Quick access for testing • No credentials needed
+          <Text type="secondary" className="block mt-2 font-hanuman">
+            ចូលប្រើភ្លាមៗសម្រាប់ការសាកល្បង • មិនចាំបាច់បញ្ចូលលេខសម្ងាត់
           </Text>
         </Card>
 
         {/* Warning Alert */}
         <Alert
-          message="Development Environment Only"
-          description="This page is for testing purposes only and should not be accessible in production."
+          message="សម្រាប់តែការសាកល្បងប៉ុណ្ណោះ"
+          description="ទំព័រនេះសម្រាប់តែការសាកល្បងប៉ុណ្ណោះ មិនគួរប្រើនៅក្នុងការដំណើរការជាផ្លូវការទេ។"
           type="warning"
           showIcon
-          className="mb-6"
+          className="mb-6 font-hanuman"
         />
 
         {loading && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
             <Card>
               <Spin size="large" />
-              <p className="mt-4 text-center">កំពុងចូលប្រព័ន្ធ...</p>
+              <p className="mt-4 text-center font-hanuman">កំពុងចូលប្រព័ន្ធ...</p>
             </Card>
           </div>
         )}
@@ -209,27 +216,27 @@ export default function DemoLoginPage() {
                     <div className="text-center">
                       {/* Role Icon */}
                       <div className="text-4xl mb-3" style={{ color: user.color }}>
-                        {getRoleIcon(user.role)}
+                        {getRoleIcon(user.roleEn)}
                       </div>
 
                       {/* User Name */}
-                      <Title level={5} className="mb-2">
+                      <Title level={5} className="mb-2 font-hanuman">
                         {user.name}
                       </Title>
 
                       {/* Role Badge */}
-                      <Tag color={getRoleColor(user.role)} className="mb-3">
+                      <Tag color={getRoleColor(user.roleEn)} className="mb-3 font-hanuman">
                         {user.role}
                       </Tag>
 
                       {/* Contract Type */}
                       <div className="mb-2">
-                        <Text type="secondary" className="block text-xs">Contract Type:</Text>
-                        <Text strong className="text-sm">{user.contractType}</Text>
+                        <Text type="secondary" className="block text-xs font-hanuman">ប្រភេទកិច្ចសន្យា:</Text>
+                        <Text strong className="text-sm font-hanuman">{user.contractType}</Text>
                       </div>
 
                       {/* Description */}
-                      <Paragraph className="text-gray-500 text-xs mb-3">
+                      <Paragraph className="text-gray-500 text-xs mb-3 font-hanuman">
                         {user.description}
                       </Paragraph>
 
@@ -237,8 +244,8 @@ export default function DemoLoginPage() {
 
                       {/* Credentials (for reference) */}
                       <div className="bg-gray-50 rounded p-2 mb-3">
-                        <Text className="text-xs text-gray-500 block">
-                          📱 {user.phone} | 🔑 {user.passcode}
+                        <Text className="text-xs text-gray-500 block font-hanuman">
+                          📱 លេខទូរស័ព្ទ: {user.phone} | 🔑 លេខសម្ងាត់: {user.passcode}
                         </Text>
                       </div>
 
@@ -263,12 +270,12 @@ export default function DemoLoginPage() {
 
         {/* Footer */}
         <Card className="mt-8 text-center bg-gray-50">
-          <Text type="secondary">
-            💡 Tip: Click any card to instantly login with that user's credentials
+          <Text type="secondary" className="font-hanuman">
+            💡 ព័ត៌មាន: ចុចលើកាតណាមួយដើម្បីចូលប្រព័ន្ធភ្លាមៗ
           </Text>
           <br />
-          <Text type="secondary" className="text-xs">
-            This page is unlisted and only accessible via direct URL
+          <Text type="secondary" className="text-xs font-hanuman">
+            ទំព័រនេះមិនបង្ហាញជាសាធារណៈ អាចចូលប្រើបានតែតាម URL ផ្ទាល់ប៉ុណ្ណោះ
           </Text>
         </Card>
       </div>
