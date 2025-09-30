@@ -29,13 +29,12 @@ export const defaultPartyA = {
     address_english: 'Phnom Penh, Cambodia'
   },
 
-  // Default signature (base64 encoded)
-  // Dr. Kan Puth's actual signature - accurate representation
+  // Default signature (actual image file)
+  // Dr. Kan Puth's actual signature from public/signatures/image.png
   signature: {
-    // SVG that accurately represents Dr. Kan Puth's actual handwritten signature
-    // Based on the actual signature image provided
-    data: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDwhLS0gRHIuIEthbiBQdXRoJ3MgYWN0dWFsIHNpZ25hdHVyZSByZXByZXNlbnRhdGlvbiAtLT4KICAKICA8IS0tIE1haW4gZmxvd2luZyBzdHJva2UgdGhhdCBmb3JtcyB0aGUgc2lnbmF0dXJlIC0tPgogIDxwYXRoIGQ9Ik0yMCA0NSBDMJUGMTUSIDI4IDQ1LCAzNSAzMiBDNDAgMjUsIDQ1IDI1LCA1MiAzMiBDNTggMzgsIDYyIDQ1LCA2OCA0MCBDNZUGMZASIDM1LDggMzcgQzg1IDQwLCA5MCAzMCwgOTcgMzUgQzEwMiA0MCwgMTA2IDQ1LCAxMTIgMzggQzExOCAzMCwgMTIyIDI1LCAxMjggMzIgQzEzNSA0MCwgMTQwIDQ1LCAxNDcgMzggQzE1NCAzMCwgMTU4IDI4LCAxNjQgMzUgQzE3MCA0MiwgMTc1IDQ1LCAxODIgNDAgQzE4OCAzNSwgMTkyIDMyLCAxOTggMzggQzIwNSA0NSwgMjEwIDQ1LCAyMTUgNDIiCiAgICAgICAgc3Ryb2tlPSIjMWEyYzVhIiBzdHJva2Utd2lkdGg9IjIuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgCiAgPCEtLSBMb29waW5nIHN0cm9rZSBpbiB0aGUgbWlkZGxlIC0tPgogIDxwYXRoIGQ9Ik05MCAzNSBDOTAgNTAsIDk1IDU1LCAxMDAgNTAgQzEwNSA0NSwgMTA4IDM1LCAxMDUgMzAgQzEwMiAyNSwgOTggMjUsIDk1IDMwIgogICAgICAgIHN0cm9rZT0iIzFhMmM1YSIgc3Ryb2tlLXdpZHRoPSIxLjgiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIAogIDwhLS0gRmluYWwgZmxvdXJpc2ggc3Ryb2tlIC0tPgogIDxwYXRoIGQ9Ik0xODAgNDAgQzE5MCA0NSwgMjAwIDQyLCAyMTAgNDUiCiAgICAgICAgc3Ryb2tlPSIjMWEyYzVhIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==',
-    type: 'image/svg+xml'
+    // Path to the actual signature image in public directory
+    data: '/signatures/image.png',
+    type: 'image/png'
   }
 }
 
