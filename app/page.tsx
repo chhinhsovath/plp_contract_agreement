@@ -473,17 +473,20 @@ export default function HomePage() {
             <Spin size="large" tip="កំពុងដំណើរការ..." />
           </div>
         ) : contracts.length > 0 ? (
-          <Table
-            columns={columns}
-            dataSource={contracts}
-            rowKey="id"
-            pagination={{
-              pageSize: 10,
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
-            }}
-            className="font-hanuman"
-          />
+          <div className="overflow-x-auto">
+            <Table
+              columns={columns}
+              dataSource={contracts}
+              rowKey="id"
+              pagination={{
+                pageSize: 10,
+                showTotal: (total, range) =>
+                  `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
+              }}
+              className="font-hanuman"
+              scroll={{ x: 800 }}
+            />
+          </div>
         ) : (
           <Empty
             description={
@@ -539,22 +542,22 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header with user info */}
       <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
-          <Title level={3} className="mb-0 text-blue-800 font-hanuman">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
+          <Title level={3} className="mb-0 text-blue-800 font-hanuman text-base md:text-xl">
             PLP Contract System
           </Title>
           {user && (
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
               <Button type="text" className="flex items-center space-x-2">
                 <Avatar icon={<UserOutlined />} className="bg-blue-500" />
-                <span className="font-hanuman">{user.full_name}</span>
+                <span className="font-hanuman hidden sm:inline">{user.full_name}</span>
               </Button>
             </Dropdown>
           )}
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-8">
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
         {/* Main content with tabs */}
         {user ? (
           <Tabs

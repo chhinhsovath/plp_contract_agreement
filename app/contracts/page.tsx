@@ -229,12 +229,12 @@ export default function ContractsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6 flex justify-between items-center">
-          <Title level={2}>បញ្ជីកិច្ចព្រមព្រៀង</Title>
+        <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <Title level={2} className="mb-0">បញ្ជីកិច្ចព្រមព្រៀង</Title>
           <Link href="/">
-            <Button icon={<HomeOutlined />}>
+            <Button icon={<HomeOutlined />} className="w-full sm:w-auto">
               ត្រឡប់ទៅទំព័រដើម
             </Button>
           </Link>
@@ -248,20 +248,23 @@ export default function ContractsPage() {
             size="large"
             onSearch={setSearchText}
             onChange={(e) => setSearchText(e.target.value)}
-            style={{ maxWidth: 400 }}
+            className="w-full sm:max-w-md"
           />
         </div>
 
-        <Table
-          columns={columns}
-          dataSource={filteredContracts}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
-          }}
-        />
+        <div className="overflow-x-auto">
+          <Table
+            columns={columns}
+            dataSource={filteredContracts}
+            loading={loading}
+            rowKey="id"
+            pagination={{
+              pageSize: 10,
+              showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
+            }}
+            scroll={{ x: 1000 }}
+          />
+        </div>
       </div>
 
       <Modal

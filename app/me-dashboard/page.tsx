@@ -935,11 +935,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
 
       {/* Filters */}
       <Card className="mb-4 shadow-sm">
-        <Space size="large" wrap>
-          <div>
-            <Text className="font-hanuman mr-2">ប្រភេទកិច្ចព្រមព្រៀង:</Text>
+        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="flex-1 min-w-[200px]">
+            <Text className="font-hanuman block mb-2">ប្រភេទកិច្ចព្រមព្រៀង:</Text>
             <Select
-              style={{ width: 200 }}
+              className="w-full"
               placeholder="ជ្រើសរើសប្រភេទ"
               value={selectedContract}
               allowClear={user?.role !== UserRole.PARTNER}
@@ -953,43 +953,48 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
               ))}
             </Select>
           </div>
-          <div>
-            <Text className="font-hanuman mr-2">រយៈពេល:</Text>
+          <div className="flex-1 min-w-[280px]">
+            <Text className="font-hanuman block mb-2">រយៈពេល:</Text>
             <RangePicker
+              className="w-full"
               value={dateRange as any}
               onChange={(dates) => setDateRange(dates as any)}
               format="DD/MM/YYYY"
             />
           </div>
-          <Button
-            type="primary"
-            icon={<BarChartOutlined />}
-            onClick={handleGenerateReport}
-            loading={loading}
-          >
-            បង្កើតរបាយការណ៍
-          </Button>
-          {user?.role === UserRole.PARTNER && user?.contract_signed && (
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <Button
-              icon={<FileDoneOutlined />}
-              onClick={() => router.push(`/contract/view/${user.contract_type}`)}
+              type="primary"
+              icon={<BarChartOutlined />}
+              onClick={handleGenerateReport}
+              loading={loading}
+              className="w-full sm:w-auto"
             >
-              មើលកិច្ចសន្យារបស់ខ្ញុំ
+              បង្កើតរបាយការណ៍
             </Button>
-          )}
+            {user?.role === UserRole.PARTNER && user?.contract_signed && (
+              <Button
+                icon={<FileDoneOutlined />}
+                onClick={() => router.push(`/contract/view/${user.contract_type}`)}
+                className="w-full sm:w-auto"
+              >
+                មើលកិច្ចសន្យារបស់ខ្ញុំ
+              </Button>
+            )}
 
-          {/* Force Reset Button for Demo Users */}
-          {user?.phone && ['077806680', '077806681', '077806682', '077806683', '077806684', '077806685'].includes(user.phone) && (
-            <Button
-              icon={<ReloadOutlined />}
-              onClick={handleForceReset}
-              loading={resettingDemo}
-              className="font-hanuman"
-            >
-              កំណត់ឡើងវិញ
-            </Button>
-          )}
-        </Space>
+            {/* Force Reset Button for Demo Users */}
+            {user?.phone && ['077806680', '077806681', '077806682', '077806683', '077806684', '077806685'].includes(user.phone) && (
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={handleForceReset}
+                loading={resettingDemo}
+                className="font-hanuman w-full sm:w-auto"
+              >
+                កំណត់ឡើងវិញ
+              </Button>
+            )}
+          </div>
+        </div>
       </Card>
 
       {/* Statistics Cards */}
@@ -1094,12 +1099,15 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                       </Button>
                     </div>
                   )}
-                  <Table
-                    columns={indicatorColumns}
-                    dataSource={indicatorsData}
-                    pagination={{ pageSize: 10 }}
-                    loading={loadingIndicators}
-                  />
+                  <div className="overflow-x-auto">
+                    <Table
+                      columns={indicatorColumns}
+                      dataSource={indicatorsData}
+                      pagination={{ pageSize: 10 }}
+                      loading={loadingIndicators}
+                      scroll={{ x: 1200 }}
+                    />
+                  </div>
                 </div>
               )
             },
@@ -1127,12 +1135,15 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                       </Button>
                     </div>
                   )}
-                  <Table
-                    columns={activityColumns}
-                    dataSource={activitiesData}
-                    pagination={{ pageSize: 10 }}
-                    loading={loadingActivities}
-                  />
+                  <div className="overflow-x-auto">
+                    <Table
+                      columns={activityColumns}
+                      dataSource={activitiesData}
+                      pagination={{ pageSize: 10 }}
+                      loading={loadingActivities}
+                      scroll={{ x: 1200 }}
+                    />
+                  </div>
                 </div>
               )
             },
@@ -1145,12 +1156,15 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </span>
               ),
               children: (
-                <Table
-                  columns={milestoneColumns}
-                  dataSource={milestonesData}
-                  pagination={{ pageSize: 10 }}
-                  loading={loading}
-                />
+                <div className="overflow-x-auto">
+                  <Table
+                    columns={milestoneColumns}
+                    dataSource={milestonesData}
+                    pagination={{ pageSize: 10 }}
+                    loading={loading}
+                    scroll={{ x: 800 }}
+                  />
+                </div>
               )
             },
             {
