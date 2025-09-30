@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message } from 'antd'
-import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined } from '@ant-design/icons'
+import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message, Dropdown, Avatar, Modal, Form, Input } from 'antd'
+import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
@@ -40,6 +40,10 @@ export default function MEDashboardPage() {
   const [editingIndicator, setEditingIndicator] = useState<any>(null)
   const [editingActivity, setEditingActivity] = useState<any>(null)
   const [selectedIndicatorForData, setSelectedIndicatorForData] = useState<number | undefined>(undefined)
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
+  const [passwordForm] = Form.useForm()
+  const [changingPassword, setChangingPassword] = useState(false)
+  const [resettingDemo, setResettingDemo] = useState(false)
 
   useEffect(() => {
     checkSession()
@@ -727,16 +731,206 @@ export default function MEDashboardPage() {
     )
   }
 
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' })
+      if (response.ok) {
+        message.success('ចាកចេញដោយជោគជ័យ')
+        router.push('/login')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការចាកចេញ')
+    }
+  }
+
+  // Handle change password
+  const handleChangePassword = async (values: any) => {
+    setChangingPassword(true)
+    try {
+      const response = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: values.currentPassword,
+          newPassword: values.newPassword
+        })
+      })
+
+      if (response.ok) {
+        message.success('បានផ្លាស់ប្តូរពាក្យសម្ងាត់ដោយជោគជ័យ')
+        setShowChangePasswordModal(false)
+        passwordForm.resetFields()
+      } else {
+        message.error('ពាក្យសម្ងាត់បច្ចុប្បន្នមិនត្រឹមត្រូវ')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការផ្លាស់ប្តូរពាក្យសម្ងាត់')
+    } finally {
+      setChangingPassword(false)
+    }
+  }
+
+  // Handle force reset for demo users
+  const handleForceReset = async () => {
+    setResettingDemo(true)
+    try {
+      const response = await fetch('/api/demo/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force: true })
+      })
+
+      if (response.ok) {
+        message.success('កំណត់ដាក់ទិន្នន័យសាកល្បងឡើងវិញដោយជោគជ័យ')
+        // Refresh the page to show updated data
+        window.location.reload()
+      } else {
+        message.error('មានបញ្ហាក្នុងការកំណត់ឡើងវិញ')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+    } finally {
+      setResettingDemo(false)
+    }
+  }
+
+  // Handle generate report
+  const handleGenerateReport = async () => {
+    setLoading(true)
+    try {
+      // Create report data
+      const reportData = {
+        contractType: selectedContract,
+        dateRange: dateRange,
+        statistics: dashboardData,
+        indicators: indicators,
+        activities: activities,
+        projectPlans: projectPlans,
+        generatedBy: user?.full_name,
+        generatedAt: new Date().toISOString()
+      }
+
+      // Convert to downloadable format
+      const reportContent = generateReportContent(reportData)
+      downloadReport(reportContent, `ME_Report_${dayjs().format('YYYY-MM-DD')}.txt`)
+
+      message.success('របាយការណ៍ត្រូវបានបង្កើតដោយជោគជ័យ')
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការបង្កើតរបាយការណ៍')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Generate report content
+  const generateReportContent = (data: any) => {
+    const { contractType, dateRange, statistics, indicators, activities, generatedBy, generatedAt } = data
+
+    return `
+==========================================
+របាយការណ៍ M&E និងផែនការគម្រោង
+M&E and Project Plan Report
+==========================================
+
+សេចក្តីសង្ខេប / Summary:
+- បង្កើតដោយ / Generated by: ${generatedBy}
+- កាលបរិច្ឆេទ / Date: ${dayjs(generatedAt).format('DD/MM/YYYY HH:mm')}
+- ប្រភេទកិច្ចព្រមព្រៀង / Contract Type: ${contractType ? CONTRACT_TYPES[contractType as keyof typeof CONTRACT_TYPES] : 'ទាំងអស់'}
+- រយៈពេល / Period: ${dayjs(dateRange[0]).format('DD/MM/YYYY')} - ${dayjs(dateRange[1]).format('DD/MM/YYYY')}
+
+ស្ថិតិសង្ខេប / Statistics Summary:
+==========================================
+- សកម្មភាពសរុប / Total Activities: ${statistics.totalActivities}
+- បានបញ្ចប់ / Completed: ${statistics.completedDeliverables}
+- កំពុងដំណើរការ / In Progress: ${statistics.inProgressDeliverables}
+- ហួសកាលកំណត់ / Delayed: ${statistics.delayedDeliverables}
+- វឌ្ឍនភាពរួម / Overall Progress: ${statistics.overallProgress}%
+
+សូចនាករ / Indicators (${indicators.length}):
+==========================================
+${indicators.map((ind: any, index: number) => `
+${index + 1}. ${ind.indicator_name_khmer} (${ind.indicator_code})
+   - ប្រភេទ / Type: ${ind.indicator_type}
+   - គោលដៅ / Target: ${ind.target_value}
+   - សមិទ្ធផល / Achievement: ${ind.current_value}
+   - វឌ្ឍនភាព / Progress: ${ind.progress}%
+   - ស្ថានភាព / Status: ${ind.status}
+`).join('')}
+
+សកម្មភាព / Activities (${activities.length}):
+==========================================
+${activities.map((act: any, index: number) => `
+${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
+   - ស្ថានភាព / Status: ${act.status}
+   - ទីតាំង / Location: ${act.location}
+   - កាលបរិច្ឆេទ / Date: ${dayjs(act.activity_date).format('DD/MM/YYYY')}
+`).join('')}
+
+==========================================
+ចុងបញ្ចប់របាយការណ៍ / End of Report
+==========================================
+`
+  }
+
+  // Download report function
+  const downloadReport = (content: string, filename: string) => {
+    const element = document.createElement('a')
+    const file = new Blob([content], { type: 'text/plain;charset=utf-8' })
+    element.href = URL.createObjectURL(file)
+    element.download = filename
+    document.body.appendChild(element)
+    element.click()
+    document.body.removeChild(element)
+  }
+
   return (
     <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
-      <div className="mb-6">
-        <Title level={2} className="font-hanuman text-blue-800 mb-2">
-          <DashboardOutlined className="mr-2" />
-          ផ្ទាំងគ្រប់គ្រង M&E និងផែនការគម្រោង
-        </Title>
-        <Text className="text-gray-600 font-hanuman">
-          តាមដានវឌ្ឍនភាព វាយតម្លៃលទ្ធផល និងផែនការគម្រោង
-        </Text>
+      <div className="mb-6 flex justify-between items-start">
+        <div>
+          <Title level={2} className="font-hanuman text-blue-800 mb-2">
+            <DashboardOutlined className="mr-2" />
+            ផ្ទាំងគ្រប់គ្រង M&E និងផែនការគម្រោង
+          </Title>
+          <Text className="text-gray-600 font-hanuman">
+            តាមដានវឌ្ឍនភាព វាយតម្លៃលទ្ធផល និងផែនការគម្រោង
+          </Text>
+        </div>
+
+        {/* User Profile Dropdown */}
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: 'profile',
+                icon: <UserOutlined />,
+                label: <span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>,
+              },
+              {
+                key: 'change-password',
+                icon: <KeyOutlined />,
+                label: <span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>,
+                onClick: () => setShowChangePasswordModal(true)
+              },
+              { type: 'divider' },
+              {
+                key: 'logout',
+                icon: <LogoutOutlined />,
+                label: <span className="font-hanuman">ចាកចេញ</span>,
+                onClick: handleLogout
+              }
+            ]
+          }}
+          placement="bottomRight"
+        >
+          <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+            <Avatar icon={<UserOutlined />} className="mr-2" />
+            <div className="text-right">
+              <div className="font-hanuman text-sm font-medium">{user?.full_name}</div>
+              <div className="font-hanuman text-xs text-gray-500">{user?.role}</div>
+            </div>
+          </div>
+        </Dropdown>
       </div>
 
       {/* Filters */}
@@ -767,7 +961,12 @@ export default function MEDashboardPage() {
               format="DD/MM/YYYY"
             />
           </div>
-          <Button type="primary" icon={<BarChartOutlined />}>
+          <Button
+            type="primary"
+            icon={<BarChartOutlined />}
+            onClick={handleGenerateReport}
+            loading={loading}
+          >
             បង្កើតរបាយការណ៍
           </Button>
           {user?.role === UserRole.PARTNER && user?.contract_signed && (
@@ -776,6 +975,18 @@ export default function MEDashboardPage() {
               onClick={() => router.push(`/contract/view/${user.contract_type}`)}
             >
               មើលកិច្ចសន្យារបស់ខ្ញុំ
+            </Button>
+          )}
+
+          {/* Force Reset Button for Demo Users */}
+          {user?.phone && ['077806680', '077806681', '077806682', '077806683', '077806684', '077806685'].includes(user.phone) && (
+            <Button
+              icon={<ReloadOutlined />}
+              onClick={handleForceReset}
+              loading={resettingDemo}
+              className="font-hanuman"
+            >
+              កំណត់ឡើងវិញ
             </Button>
           )}
         </Space>
@@ -1004,6 +1215,83 @@ export default function MEDashboardPage() {
         }}
         indicatorId={selectedIndicatorForData}
       />
+
+      {/* Change Password Modal */}
+      <Modal
+        title={<span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>}
+        open={showChangePasswordModal}
+        onCancel={() => {
+          setShowChangePasswordModal(false)
+          passwordForm.resetFields()
+        }}
+        footer={null}
+        width={400}
+      >
+        <Form
+          form={passwordForm}
+          onFinish={handleChangePassword}
+          layout="vertical"
+        >
+          <Form.Item
+            name="currentPassword"
+            label={<span className="font-hanuman">ពាក្យសម្ងាត់បច្ចុប្បន្ន</span>}
+            rules={[{ required: true, message: 'សូមបញ្ចូលពាក្យសម្ងាត់បច្ចុប្បន្ន' }]}
+          >
+            <Input.Password placeholder="ពាក្យសម្ងាត់បច្ចុប្បន្ន" />
+          </Form.Item>
+
+          <Form.Item
+            name="newPassword"
+            label={<span className="font-hanuman">ពាក្យសម្ងាត់ថ្មី</span>}
+            rules={[
+              { required: true, message: 'សូមបញ្ចូលពាក្យសម្ងាត់ថ្មី' },
+              { min: 6, message: 'ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច 6 តួអក្សរ' }
+            ]}
+          >
+            <Input.Password placeholder="ពាក្យសម្ងាត់ថ្មី" />
+          </Form.Item>
+
+          <Form.Item
+            name="confirmPassword"
+            label={<span className="font-hanuman">បញ្ជាក់ពាក្យសម្ងាត់ថ្មី</span>}
+            dependencies={['newPassword']}
+            rules={[
+              { required: true, message: 'សូមបញ្ជាក់ពាក្យសម្ងាត់ថ្មី' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('newPassword') === value) {
+                    return Promise.resolve()
+                  }
+                  return Promise.reject(new Error('ពាក្យសម្ងាត់មិនដូចគ្នា'))
+                }
+              })
+            ]}
+          >
+            <Input.Password placeholder="បញ្ជាក់ពាក្យសម្ងាត់ថ្មី" />
+          </Form.Item>
+
+          <Form.Item className="mb-0">
+            <Space className="w-full justify-end">
+              <Button
+                onClick={() => {
+                  setShowChangePasswordModal(false)
+                  passwordForm.resetFields()
+                }}
+              >
+                បោះបង់
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={changingPassword}
+                className="font-hanuman"
+              >
+                ផ្លាស់ប្តូរ
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   )
 }
