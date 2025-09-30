@@ -1,12 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox } from 'antd'
-import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined } from '@ant-design/icons'
+import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message } from 'antd'
+import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
 import { UserRole } from '@/lib/roles'
+import IndicatorForm from './components/IndicatorForm'
+import ActivityForm from './components/ActivityForm'
+import DataCollectionForm from './components/DataCollectionForm'
 
 const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
@@ -31,6 +34,12 @@ export default function MEDashboardPage() {
   const [activities, setActivities] = useState<any[]>([])
   const [loadingIndicators, setLoadingIndicators] = useState(false)
   const [loadingActivities, setLoadingActivities] = useState(false)
+  const [showIndicatorForm, setShowIndicatorForm] = useState(false)
+  const [showActivityForm, setShowActivityForm] = useState(false)
+  const [showDataCollectionForm, setShowDataCollectionForm] = useState(false)
+  const [editingIndicator, setEditingIndicator] = useState<any>(null)
+  const [editingActivity, setEditingActivity] = useState<any>(null)
+  const [selectedIndicatorForData, setSelectedIndicatorForData] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     checkSession()
@@ -98,6 +107,53 @@ export default function MEDashboardPage() {
     } finally {
       setLoadingActivities(false)
     }
+  }
+
+  const handleEditIndicator = (indicator: any) => {
+    setEditingIndicator(indicator)
+    setShowIndicatorForm(true)
+  }
+
+  const handleDeleteIndicator = async (id: number) => {
+    try {
+      const response = await fetch(`/api/me/indicators/${id}`, {
+        method: 'DELETE'
+      })
+      if (response.ok) {
+        message.success('សូចនាករបានលុប')
+        fetchIndicators()
+      } else {
+        message.error('មិនអាចលុបសូចនាករបាន')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការលុបសូចនាករ')
+    }
+  }
+
+  const handleEditActivity = (activity: any) => {
+    setEditingActivity(activity)
+    setShowActivityForm(true)
+  }
+
+  const handleDeleteActivity = async (id: number) => {
+    try {
+      const response = await fetch(`/api/me/activities/${id}`, {
+        method: 'DELETE'
+      })
+      if (response.ok) {
+        message.success('សកម្មភាពបានលុប')
+        fetchActivities()
+      } else {
+        message.error('មិនអាចលុបសកម្មភាពបាន')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការលុបសកម្មភាព')
+    }
+  }
+
+  const handleAddDataCollection = (indicatorId: number) => {
+    setSelectedIndicatorForData(indicatorId)
+    setShowDataCollectionForm(true)
   }
 
   const loadProjectPlans = () => {
@@ -279,11 +335,51 @@ export default function MEDashboardPage() {
         const statusConfig = {
           'on-track': { color: 'green', text: 'តាមគម្រោង' },
           'delayed': { color: 'orange', text: 'យឺត' },
-          'at-risk': { color: 'red', text: 'មានហានិភ័យ' }
+          'at-risk': { color: 'red', text: 'មានហានិភ័យ' },
+          'achieved': { color: 'blue', text: 'សម្រេច' }
         }
-        const config = statusConfig[record.status as keyof typeof statusConfig]
+        const config = statusConfig[record.status as keyof typeof statusConfig] || { color: 'default', text: record.status }
         return <Tag color={config.color}>{config.text}</Tag>
       }
+    },
+    {
+      title: 'សកម្មភាព',
+      key: 'actions',
+      width: 150,
+      render: (record: any) => (
+        <Space size="small">
+          <Button
+            size="small"
+            icon={<SaveOutlined />}
+            onClick={() => handleAddDataCollection(record.key)}
+          >
+            បញ្ចូល
+          </Button>
+          {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) && (
+            <>
+              <Button
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => handleEditIndicator(record)}
+              />
+              {user?.role === UserRole.SUPER_ADMIN && (
+                <Popconfirm
+                  title="តើអ្នកចង់លុបសូចនាករនេះមែនទេ?"
+                  onConfirm={() => handleDeleteIndicator(record.key)}
+                  okText="បាទ/ចាស"
+                  cancelText="ទេ"
+                >
+                  <Button
+                    size="small"
+                    danger
+                    icon={<DeleteOutlined />}
+                  />
+                </Popconfirm>
+              )}
+            </>
+          )}
+        </Space>
+      )
     }
   ]
 
@@ -360,6 +456,38 @@ export default function MEDashboardPage() {
             size="small"
             strokeColor="#52c41a"
           />
+        </Space>
+      )
+    },
+    {
+      title: 'សកម្មភាព',
+      key: 'actions',
+      width: 120,
+      render: (record: any) => (
+        <Space size="small">
+          {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.MANAGER) && (
+            <>
+              <Button
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => handleEditActivity(record)}
+              />
+              {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) && (
+                <Popconfirm
+                  title="តើអ្នកចង់លុបសកម្មភាពនេះមែនទេ?"
+                  onConfirm={() => handleDeleteActivity(record.key)}
+                  okText="បាទ/ចាស"
+                  cancelText="ទេ"
+                >
+                  <Button
+                    size="small"
+                    danger
+                    icon={<DeleteOutlined />}
+                  />
+                </Popconfirm>
+              )}
+            </>
+          )}
         </Space>
       )
     }
@@ -723,12 +851,28 @@ export default function MEDashboardPage() {
                 </span>
               ),
               children: (
-                <Table
-                  columns={indicatorColumns}
-                  dataSource={indicatorsData}
-                  pagination={{ pageSize: 10 }}
-                  loading={loadingIndicators}
-                />
+                <div>
+                  {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) && (
+                    <div className="mb-4">
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => {
+                          setEditingIndicator(null)
+                          setShowIndicatorForm(true)
+                        }}
+                      >
+                        បង្កើតសូចនាករថ្មី
+                      </Button>
+                    </div>
+                  )}
+                  <Table
+                    columns={indicatorColumns}
+                    dataSource={indicatorsData}
+                    pagination={{ pageSize: 10 }}
+                    loading={loadingIndicators}
+                  />
+                </div>
               )
             },
             {
@@ -740,12 +884,28 @@ export default function MEDashboardPage() {
                 </span>
               ),
               children: (
-                <Table
-                  columns={activityColumns}
-                  dataSource={activitiesData}
-                  pagination={{ pageSize: 10 }}
-                  loading={loadingActivities}
-                />
+                <div>
+                  {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.MANAGER) && (
+                    <div className="mb-4">
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => {
+                          setEditingActivity(null)
+                          setShowActivityForm(true)
+                        }}
+                      >
+                        បង្កើតសកម្មភាពថ្មី
+                      </Button>
+                    </div>
+                  )}
+                  <Table
+                    columns={activityColumns}
+                    dataSource={activitiesData}
+                    pagination={{ pageSize: 10 }}
+                    loading={loadingActivities}
+                  />
+                </div>
               )
             },
             {
@@ -784,6 +944,49 @@ export default function MEDashboardPage() {
           ]}
         />
       </Card>
+
+      {/* Forms */}
+      <IndicatorForm
+        visible={showIndicatorForm}
+        onClose={() => {
+          setShowIndicatorForm(false)
+          setEditingIndicator(null)
+        }}
+        onSuccess={() => {
+          fetchIndicators()
+          setShowIndicatorForm(false)
+          setEditingIndicator(null)
+        }}
+        indicator={editingIndicator}
+      />
+
+      <ActivityForm
+        visible={showActivityForm}
+        onClose={() => {
+          setShowActivityForm(false)
+          setEditingActivity(null)
+        }}
+        onSuccess={() => {
+          fetchActivities()
+          setShowActivityForm(false)
+          setEditingActivity(null)
+        }}
+        activity={editingActivity}
+      />
+
+      <DataCollectionForm
+        visible={showDataCollectionForm}
+        onClose={() => {
+          setShowDataCollectionForm(false)
+          setSelectedIndicatorForData(undefined)
+        }}
+        onSuccess={() => {
+          fetchIndicators()
+          setShowDataCollectionForm(false)
+          setSelectedIndicatorForData(undefined)
+        }}
+        indicatorId={selectedIndicatorForData}
+      />
     </div>
   )
 }
