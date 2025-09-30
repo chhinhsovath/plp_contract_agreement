@@ -78,33 +78,57 @@ export default function ContractSignPage() {
     }
   }
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current) return
-    setIsDrawing(true)
+  const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!canvasRef.current) return { x: 0, y: 0 }
     const canvas = canvasRef.current
     const rect = canvas.getBoundingClientRect()
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.beginPath()
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top)
+
+    if ('touches' in e) {
+      // Touch event
+      const touch = e.touches[0] || e.changedTouches[0]
+      return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      }
+    } else {
+      // Mouse event
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      }
     }
   }
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault()
+    if (!canvasRef.current) return
+    setIsDrawing(true)
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    const coords = getCoordinates(e)
+    if (ctx) {
+      ctx.beginPath()
+      ctx.moveTo(coords.x, coords.y)
+    }
+  }
+
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault()
     if (!isDrawing || !canvasRef.current) return
     const canvas = canvasRef.current
-    const rect = canvas.getBoundingClientRect()
     const ctx = canvas.getContext('2d')
+    const coords = getCoordinates(e)
     if (ctx) {
       ctx.lineWidth = 2
       ctx.lineCap = 'round'
       ctx.strokeStyle = '#000'
-      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top)
+      ctx.lineTo(coords.x, coords.y)
       ctx.stroke()
     }
   }
 
-  const stopDrawing = () => {
+  const stopDrawing = (e?: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (e) e.preventDefault()
     setIsDrawing(false)
   }
 
@@ -415,10 +439,14 @@ export default function ContractSignPage() {
             width={450}
             height={200}
             className="border border-gray-300 rounded w-full cursor-crosshair"
+            style={{ touchAction: 'none' }}
             onMouseDown={startDrawing}
             onMouseMove={draw}
             onMouseUp={stopDrawing}
             onMouseLeave={stopDrawing}
+            onTouchStart={startDrawing}
+            onTouchMove={draw}
+            onTouchEnd={stopDrawing}
           />
         </Modal>
       </div>
