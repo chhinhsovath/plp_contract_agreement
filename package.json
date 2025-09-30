@@ -12,6 +12,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "prisma:seed": "npx ts-node --compiler-options '{\"module\":\"commonjs\"}' prisma/seed.ts",
+    "seed:demo-users": "npx ts-node --compiler-options '{\"module\":\"commonjs\"}' prisma/seed-demo-users.ts",
     "postinstall": "prisma generate"
   },
   "keywords": [],
