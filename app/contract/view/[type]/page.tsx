@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import { Card, Button, Typography, Divider, Spin, Alert, Tag, Space, Descriptions } from 'antd'
+import { Card, Button, Typography, Divider, Spin, Alert, Tag, Space } from 'antd'
 import { FileTextOutlined, DownloadOutlined, PrinterOutlined, CheckCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { contractTemplates } from '@/lib/contractTemplates'
@@ -83,13 +83,13 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <Card className="mb-4 shadow-md">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
               <Title level={2} className="font-hanuman text-blue-800 mb-2">
                 <FileTextOutlined className="mr-2" />
                 កិច្ចព្រមព្រៀងរបស់ខ្ញុំ
               </Title>
-              <Space>
+              <Space wrap>
                 <Tag color="green" icon={<CheckCircleOutlined />}>
                   បានចុះហត្ថលេខា
                 </Tag>
@@ -100,16 +100,18 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
                 )}
               </Space>
             </div>
-            <Space>
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 icon={<ArrowLeftOutlined />}
                 onClick={() => router.push('/me-dashboard')}
+                className="w-full sm:w-auto"
               >
                 ត្រឡប់ក្រោយ
               </Button>
               <Button
                 icon={<PrinterOutlined />}
                 onClick={handlePrint}
+                className="w-full sm:w-auto"
               >
                 បោះពុម្ព
               </Button>
@@ -117,43 +119,55 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
                 type="primary"
                 icon={<DownloadOutlined />}
                 onClick={handleDownload}
+                className="w-full sm:w-auto"
               >
                 ទាញយក PDF
               </Button>
-            </Space>
+            </div>
           </div>
         </Card>
 
-        {/* Contract Information */}
+        {/* Contract Information - Mobile Friendly */}
         <Card className="mb-4 shadow-md">
-          <Descriptions
-            title="ព័ត៌មានកិច្ចសន្យា"
-            bordered
-            column={2}
-            className="font-hanuman"
-          >
-            <Descriptions.Item label="ប្រភេទកិច្ចសន្យា">
-              {contract.title}
-            </Descriptions.Item>
-            <Descriptions.Item label="លេខកិច្ចសន្យា">
-              PLP-{String(contract.id).padStart(3, '0')}-2025
-            </Descriptions.Item>
-            <Descriptions.Item label="ភាគី ក">
-              {contract.partyA}
-            </Descriptions.Item>
-            <Descriptions.Item label="ភាគី ខ">
-              {contract.partyB}
-            </Descriptions.Item>
-            <Descriptions.Item label="អ្នកចុះហត្ថលេខា">
-              {user?.full_name}
-            </Descriptions.Item>
-            <Descriptions.Item label="តួនាទី">
-              {user?.position || user?.role}
-            </Descriptions.Item>
-            <Descriptions.Item label="ស្ថានភាព" span={2}>
+          <Title level={4} className="font-hanuman mb-4">ព័ត៌មានកិច្ចសន្យា</Title>
+
+          <div className="space-y-4">
+            {/* Each info item as a card-like section */}
+            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
+              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">ប្រភេទកិច្ចសន្យា:</Text>
+              <Text className="font-hanuman font-medium">{contract.title}</Text>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
+              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">លេខកិច្ចសន្យា:</Text>
+              <Text className="font-hanuman font-medium">PLP-{String(contract.id).padStart(3, '0')}-2025</Text>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
+              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">ភាគី ក:</Text>
+              <Text className="font-hanuman font-medium text-right sm:text-right">{contract.partyA}</Text>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
+              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">ភាគី ខ:</Text>
+              <Text className="font-hanuman font-medium text-right sm:text-right">{contract.partyB}</Text>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
+              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">អ្នកចុះហត្ថលេខា:</Text>
+              <Text className="font-hanuman font-medium">{user?.full_name}</Text>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
+              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">តួនាទី:</Text>
+              <Text className="font-hanuman font-medium">{user?.position || user?.role}</Text>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:justify-between">
+              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">ស្ថានភាព:</Text>
               <Tag color="success">សកម្ម</Tag>
-            </Descriptions.Item>
-          </Descriptions>
+            </div>
+          </div>
         </Card>
 
         {/* Contract Content */}
@@ -196,12 +210,12 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
 
             <Divider />
 
-            {/* Signature Section */}
+            {/* Signature Section - Mobile Friendly */}
             <div className="mt-8">
               <h4 className="font-bold">ហត្ថលេខា និងការបញ្ជាក់:</h4>
-              <div className="grid grid-cols-2 gap-8 mt-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mt-8">
                 {/* Party A Signature */}
-                <div className="text-center">
+                <div className="text-center border border-gray-200 rounded-lg p-4 bg-gray-50">
                   <p className="font-bold mb-2">ភាគី ក</p>
                   {contract.partyASignatory && (
                     <>
@@ -210,36 +224,36 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
                     </>
                   )}
                   {contract.partyASignature ? (
-                    <div className="mb-2">
+                    <div className="mb-2 bg-white p-3 rounded">
                       <img
                         src={contract.partyASignature}
                         alt="Party A Signature"
-                        className="mx-auto border p-2"
-                        style={{ maxWidth: '200px', height: '80px', objectFit: 'contain' }}
+                        className="mx-auto"
+                        style={{ maxWidth: '100%', height: '80px', objectFit: 'contain' }}
                       />
                     </div>
                   ) : (
-                    <div className="h-20 border-b-2 border-gray-400 mb-2"></div>
+                    <div className="h-20 border-b-2 border-gray-400 mb-2 bg-white"></div>
                   )}
                   <Text className="text-sm text-gray-500">ហត្ថលេខា និងត្រា</Text>
                 </div>
 
                 {/* Party B Signature */}
-                <div className="text-center">
+                <div className="text-center border border-gray-200 rounded-lg p-4 bg-gray-50">
                   <p className="font-bold mb-2">ភាគី ខ</p>
                   <p className="text-sm">{user?.full_name}</p>
                   <p className="text-sm text-gray-600 mb-4">{user?.position || contract.partyB}</p>
                   {user?.signature_data ? (
-                    <div className="mb-2">
+                    <div className="mb-2 bg-white p-3 rounded">
                       <img
                         src={user.signature_data}
                         alt="Party B Signature"
-                        className="mx-auto border p-2"
-                        style={{ maxWidth: '200px', height: '80px', objectFit: 'contain' }}
+                        className="mx-auto"
+                        style={{ maxWidth: '100%', height: '80px', objectFit: 'contain' }}
                       />
                     </div>
                   ) : (
-                    <div className="h-20 border-b-2 border-gray-400 mb-2"></div>
+                    <div className="h-20 border-b-2 border-gray-400 mb-2 bg-white"></div>
                   )}
                   <Text className="text-sm text-gray-500">ហត្ថលេខា និងត្រា</Text>
                   {user?.contract_signed_date && (
