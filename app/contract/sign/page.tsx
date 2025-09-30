@@ -235,10 +235,19 @@ export default function ContractSignPage() {
               <h3 className="text-center text-lg font-bold mb-4">{contract.title}</h3>
 
               <div className="mb-4">
-                <strong>ភាគី ក:</strong> {contract.partyA}
+                <strong>ភាគី ក:</strong>
+                <div className="ml-4">
+                  <p>{contract.partyA}</p>
+                  {contract.partyASignatory && (
+                    <>
+                      <p className="text-sm text-gray-600">តំណាងដោយ: {contract.partyASignatory}</p>
+                      <p className="text-sm text-gray-600">មុខតំណែង: {contract.partyAPosition}</p>
+                    </>
+                  )}
+                </div>
               </div>
               <div className="mb-4">
-                <strong>ភាគី ខ:</strong> {contract.partyB}
+                <strong>ភាគី ខ:</strong> {contract.partyB} ({user?.full_name})
               </div>
 
               <Divider />
@@ -282,6 +291,35 @@ export default function ContractSignPage() {
                 ភាគីទាំងពីរយល់ព្រមគោរពតាមច្បាប់ និងបទប្បញ្ញត្តិជាធរមានទាំងអស់។
                 ក្នុងករណីមានវិវាទកើតឡើង ភាគីទាំងពីរនឹងដោះស្រាយតាមការចរចា និងការសម្របសម្រួល។
               </p>
+
+              <Divider />
+
+              <h4 className="font-bold">មាត្រា ៨: ហត្ថលេខា និងការបញ្ជាក់</h4>
+              <p className="mb-8">
+                កិច្ចព្រមព្រៀងនេះធ្វើឡើងជាពីរច្បាប់ដូចគ្នា ដែលមានសុពលភាពស្មើគ្នា។
+                ភាគីនីមួយៗរក្សាទុកមួយច្បាប់។
+              </p>
+
+              <div className="grid grid-cols-2 gap-8 mt-12">
+                <div className="text-center">
+                  <p className="font-bold mb-2">ភាគី ក</p>
+                  {contract.partyASignatory && (
+                    <>
+                      <p className="text-sm">{contract.partyASignatory}</p>
+                      <p className="text-sm text-gray-600">{contract.partyAPosition}</p>
+                    </>
+                  )}
+                  <div className="mt-4 h-20 border-b-2 border-gray-400"></div>
+                  <p className="text-sm mt-2">ហត្ថលេខា និងត្រា</p>
+                </div>
+                <div className="text-center">
+                  <p className="font-bold mb-2">ភាគី ខ</p>
+                  <p className="text-sm">{user?.full_name}</p>
+                  <p className="text-sm text-gray-600">{user?.position || contract.partyB}</p>
+                  <div className="mt-4 h-20 border-b-2 border-gray-400"></div>
+                  <p className="text-sm mt-2">ហត្ថលេខា និងត្រា</p>
+                </div>
+              </div>
 
               <Divider />
 

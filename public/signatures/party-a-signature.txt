@@ -1,0 +1,6 @@
+# Party A Signature Storage
+This folder contains the default signature for Party A (Dr. Kan Puth).
+
+To add the actual signature:
+1. Save the signature image as party-a-signature.png in this folder
+2. The system will automatically use it for all contracts where Party A is the default signatory

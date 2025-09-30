@@ -1,9 +1,17 @@
+import { getDefaultPartyA } from './defaultPartyA'
+
+// Get default Party A information
+const defaultPartyAInfo = getDefaultPartyA()
+
 // Simple contract templates for signing flow
 export const contractTemplates = [
   {
     id: 1,
     title: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាង គបស និង គបក',
-    partyA: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ (គបស)',
+    partyA: defaultPartyAInfo.party_a_organization,
+    partyASignatory: defaultPartyAInfo.party_a_name,
+    partyAPosition: defaultPartyAInfo.party_a_position,
+    partyASignature: defaultPartyAInfo.party_a_signature,
     partyB: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (គបក)',
     responsibilities: [
       'ផ្តល់ការណែនាំគោលនយោបាយ និងយុទ្ធសាស្ត្រ',
@@ -25,7 +33,10 @@ export const contractTemplates = [
   {
     id: 2,
     title: 'កិច្ចព្រមព្រៀងរវាង គបក និងអ្នកគ្រប់គ្រងគម្រោង',
-    partyA: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (គបក)',
+    partyA: defaultPartyAInfo.party_a_organization,
+    partyASignatory: defaultPartyAInfo.party_a_name,
+    partyAPosition: defaultPartyAInfo.party_a_position,
+    partyASignature: defaultPartyAInfo.party_a_signature,
     partyB: 'អ្នកគ្រប់គ្រងគម្រោង',
     responsibilities: [
       'អនុវត្តផែនការការងារតាមការណែនាំ',
@@ -47,7 +58,10 @@ export const contractTemplates = [
   {
     id: 3,
     title: 'កិច្ចព្រមព្រៀងរវាងអ្នកគ្រប់គ្រងគម្រោង និងតំបន់',
-    partyA: 'អ្នកគ្រប់គ្រងគម្រោង',
+    partyA: defaultPartyAInfo.party_a_organization,
+    partyASignatory: defaultPartyAInfo.party_a_name,
+    partyAPosition: defaultPartyAInfo.party_a_position,
+    partyASignature: defaultPartyAInfo.party_a_signature,
     partyB: 'អ្នកសម្របសម្រួលតំបន់',
     responsibilities: [
       'សម្របសម្រួលការអនុវត្តកម្មវិធីនៅតំបន់',
@@ -69,7 +83,10 @@ export const contractTemplates = [
   {
     id: 4,
     title: 'កិច្ចព្រមព្រៀងរវាងមន្ទីរអប់រំ និងការិយាល័យអប់រំស្រុក',
-    partyA: 'មន្ទីរអប់រំ យុវជន និងកីឡាខេត្ត',
+    partyA: defaultPartyAInfo.party_a_organization,
+    partyASignatory: defaultPartyAInfo.party_a_name,
+    partyAPosition: defaultPartyAInfo.party_a_position,
+    partyASignature: defaultPartyAInfo.party_a_signature,
     partyB: 'ការិយាល័យអប់រំ យុវជន និងកីឡាស្រុក',
     responsibilities: [
       'អនុវត្តគោលនយោបាយអប់រំថ្នាក់ជាតិ',
@@ -91,7 +108,10 @@ export const contractTemplates = [
   {
     id: 5,
     title: 'កិច្ចព្រមព្រៀងរវាងមន្ទីរអប់រំ និងសាលារៀន',
-    partyA: 'មន្ទីរអប់រំ យុវជន និងកីឡាខេត្ត',
+    partyA: defaultPartyAInfo.party_a_organization,
+    partyASignatory: defaultPartyAInfo.party_a_name,
+    partyAPosition: defaultPartyAInfo.party_a_position,
+    partyASignature: defaultPartyAInfo.party_a_signature,
     partyB: 'សាលាបឋមសិក្សា',
     responsibilities: [
       'ធានាគុណភាពអប់រំ',
