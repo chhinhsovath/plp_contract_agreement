@@ -368,9 +368,9 @@ export default function MEDashboardPage() {
     }
   ]
 
-  // Timeline component for project plan
-  const renderProjectTimeline = () => {
-    if (projectPlans.length === 0) {
+  // Timeline component for a single project plan
+  const renderSingleProjectTimeline = (plan: any) => {
+    if (!plan) {
       return (
         <Empty
           description={
@@ -382,28 +382,23 @@ export default function MEDashboardPage() {
 
     return (
       <div>
-        {projectPlans.map((plan: any, planIndex: number) => (
-          <div key={planIndex} className="mb-8">
-            <div className="mb-4">
-              <Title level={4} className="font-hanuman text-blue-800">
-                {plan.contractName}
-              </Title>
-              <Space className="font-hanuman text-gray-600">
-                <FieldTimeOutlined />
-                <Text>រយៈពេល: {plan.projectDuration}</Text>
-                {plan.totalBudget && (
-                  <>
-                    <Text>|</Text>
-                    <Text>ថវិកា: ${plan.totalBudget.toLocaleString()}</Text>
-                  </>
-                )}
+        <div className="mb-4">
+          <Space className="font-hanuman text-gray-600">
+            <FieldTimeOutlined />
+            <Text>រយៈពេល: {plan.projectDuration}</Text>
+            {plan.totalBudget && (
+              <>
                 <Text>|</Text>
-                <Text>វឌ្ឍនភាព: {calculateProjectProgress(plan.deliverables)}%</Text>
-              </Space>
-            </div>
+                <Text>ថវិកា: ${plan.totalBudget.toLocaleString()}</Text>
+              </>
+            )}
+            <Text>|</Text>
+            <Text>វឌ្ឍនភាព: {calculateProjectProgress(plan.deliverables)}%</Text>
+          </Space>
+        </div>
 
-            <Timeline mode="left">
-              {plan.deliverables.map((deliverable: any) => {
+        <Timeline mode="left">
+          {plan.deliverables.map((deliverable: any) => {
                 const statusIcons: any = {
                   'completed': <CheckCircleOutlined className="text-green-500" />,
                   'in-progress': <SyncOutlined className="text-blue-500" spin />,
@@ -503,9 +498,57 @@ export default function MEDashboardPage() {
                 )
               })}
             </Timeline>
-          </div>
-        ))}
       </div>
+    )
+  }
+
+  // Create sub-tabs for project timelines
+  const renderProjectTimelineTabs = () => {
+    // For PARTNER users, show only their contract type
+    if (user?.role === UserRole.PARTNER && user?.contract_type) {
+      const plan = projectPlans.find((p: any) => p.contractType === user.contract_type)
+      return renderSingleProjectTimeline(plan)
+    }
+
+    // For ADMIN/SUPER_ADMIN, show tabs for all available contracts
+    if (projectPlans.length === 0) {
+      return (
+        <Empty
+          description={
+            <span className="font-hanuman">សូមជ្រើសរើសប្រភេទកិច្ចព្រមព្រៀង</span>
+          }
+        />
+      )
+    }
+
+    // Create sub-tabs for each contract type
+    const timelineTabItems = projectPlans.map((plan: any) => {
+      const contractTypeNames: any = {
+        1: 'PMU-PCU',
+        2: 'PCU-PM',
+        3: 'PM-Regional',
+        4: 'DoE-District',
+        5: 'DoE-School'
+      }
+
+      return {
+        key: `contract-${plan.contractType}`,
+        label: (
+          <span className="font-hanuman text-sm">
+            {contractTypeNames[plan.contractType]}
+          </span>
+        ),
+        children: renderSingleProjectTimeline(plan)
+      }
+    })
+
+    return (
+      <Tabs
+        defaultActiveKey={`contract-${projectPlans[0]?.contractType}`}
+        size="small"
+        type="card"
+        items={timelineTabItems}
+      />
     )
   }
 
@@ -631,7 +674,7 @@ export default function MEDashboardPage() {
                   ផែនការគម្រោង
                 </span>
               ),
-              children: renderProjectTimeline()
+              children: renderProjectTimelineTabs()
             },
             {
               key: 'indicators',
