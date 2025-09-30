@@ -8,21 +8,32 @@ datasource db {
 }
 
 model users {
-  id              Int       @id @default(autoincrement())
-  full_name       String
-  phone_number    String    @unique
-  passcode        String    // Last 4 digits of phone
-  role            String    @default("PARTNER") // SUPER_ADMIN, ADMIN, MANAGER, COORDINATOR, OFFICER, VIEWER, PARTNER
-  contract_type   Int?      // User's primary contract type (1-5)
-  organization    String?
-  position        String?
-  email           String?
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  last_login      DateTime?
-  is_active       Boolean   @default(true)
+  id                    Int       @id @default(autoincrement())
+  full_name             String
+  phone_number          String    @unique
+  passcode              String    // Last 4 digits of phone
+  role                  String    @default("PARTNER") // SUPER_ADMIN, ADMIN, MANAGER, COORDINATOR, OFFICER, VIEWER, PARTNER
+  contract_type         Int?      // User's primary contract type (1-5)
+  organization          String?
+  position              String?
+  email                 String?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+  last_login            DateTime?
+  is_active             Boolean   @default(true)
+
+  // Contract signing fields
+  contract_signed       Boolean   @default(false)
+  contract_signed_date  DateTime?
+  signature_data        String?   @db.Text // Store signature image as base64
+  contract_read_time    Int?      // Time spent reading in seconds
+  ip_address_signed     String?   // IP address when signed
 
   contracts_created contracts[] @relation("UserContracts")
+
+  @@index([phone_number])
+  @@index([role])
+  @@index([contract_signed])
 }
 
 model contract_types {

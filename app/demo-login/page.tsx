@@ -123,8 +123,10 @@ export default function DemoLoginPage() {
         const data = await response.json()
         message.success(`ចូលប្រព័ន្ធជោគជ័យ! សូមស្វាគមន៍ ${user.name}`)
 
-        // Redirect based on role
-        if (user.roleEn === 'SUPER_ADMIN' || user.roleEn === 'ADMIN') {
+        // Check if user needs to sign contract (PARTNER role and not signed)
+        if (data.requiresContractSigning) {
+          router.push('/contract/sign')
+        } else if (user.roleEn === 'SUPER_ADMIN' || user.roleEn === 'ADMIN') {
           router.push('/admin/users')
         } else {
           router.push('/me-dashboard')

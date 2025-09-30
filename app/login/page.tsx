@@ -33,7 +33,13 @@ export default function LoginPage() {
         message.success('ចូលប្រើប្រាស់បានជោគជ័យ!')
         // Store user info in localStorage or context
         localStorage.setItem('user', JSON.stringify(data.user))
-        router.push('/')
+
+        // Check if user needs to sign contract (PARTNER role and not signed)
+        if (data.requiresContractSigning) {
+          router.push('/contract/sign')
+        } else {
+          router.push('/me-dashboard')
+        }
       } else {
         message.error(data.error || 'លេខទូរស័ព្ទ ឬលេខសម្ងាត់មិនត្រឹមត្រូវ')
       }

@@ -20,6 +20,9 @@ export async function POST(request: Request) {
         position: true,
         email: true,
         is_active: true,
+        contract_type: true,
+        contract_signed: true,
+        contract_signed_date: true,
       },
     })
 
@@ -71,7 +74,11 @@ export async function POST(request: Request) {
         organization: user.organization,
         position: user.position,
         email: user.email,
+        contract_type: user.contract_type,
+        contract_signed: user.contract_signed,
+        contract_signed_date: user.contract_signed_date,
       },
+      requiresContractSigning: user.role === 'PARTNER' && !user.contract_signed,
     })
 
     // Set the auth cookie

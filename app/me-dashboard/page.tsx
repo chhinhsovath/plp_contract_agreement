@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message } from 'antd'
-import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
+import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
@@ -59,10 +59,19 @@ export default function MEDashboardPage() {
       const response = await fetch('/api/auth/session')
       if (response.ok) {
         const data = await response.json()
-        setUser(data.user)
+        const userData = data.user
+
+        // Check if PARTNER user has signed contract
+        if (userData.role === UserRole.PARTNER && !userData.contract_signed) {
+          message.warning('សូមចុះហត្ថលេខាលើកិច្ចសន្យាមុនសិន')
+          router.push('/contract/sign')
+          return
+        }
+
+        setUser(userData)
         // Set initial contract filter for PARTNER users
-        if (data.user.role === UserRole.PARTNER && data.user.contract_type) {
-          setSelectedContract(data.user.contract_type)
+        if (userData.role === UserRole.PARTNER && userData.contract_type) {
+          setSelectedContract(userData.contract_type)
         }
       } else {
         router.push('/login')
@@ -761,6 +770,14 @@ export default function MEDashboardPage() {
           <Button type="primary" icon={<BarChartOutlined />}>
             បង្កើតរបាយការណ៍
           </Button>
+          {user?.role === UserRole.PARTNER && user?.contract_signed && (
+            <Button
+              icon={<FileDoneOutlined />}
+              onClick={() => router.push(`/contract/view/${user.contract_type}`)}
+            >
+              មើលកិច្ចសន្យារបស់ខ្ញុំ
+            </Button>
+          )}
         </Space>
       </Card>
 

@@ -26,6 +26,8 @@ export async function GET() {
         position: true,
         email: true,
         is_active: true,
+        contract_signed: true,
+        contract_signed_date: true,
       },
     })
 
