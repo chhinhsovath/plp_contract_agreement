@@ -5,6 +5,8 @@ import { Form, Input, Button, DatePicker, Select, Row, Col, Divider, Steps, mess
 import { CONTRACT_TYPES, Contract } from '@/types/contract'
 import SignaturePad from './SignaturePad'
 import ContractPreview from './ContractPreview'
+import LocationSelector from './LocationSelector'
+import { getLocationFullName } from '@/lib/geoApi'
 import dayjs from 'dayjs'
 
 interface ContractFormProps {
@@ -23,6 +25,7 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
   const [partyBSignature, setPartyBSignature] = useState<string>('')
   const [showPreview, setShowPreview] = useState(false)
   const [contractData, setContractData] = useState<Contract | null>(null)
+  const [selectedLocation, setSelectedLocation] = useState<any>(null)
 
   const contractType = CONTRACT_TYPES.find(t => t.id === contractTypeId)
 
@@ -197,13 +200,26 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
                   <DatePicker className="w-full" format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={24}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 font-hanuman">
+                    ទីតាំង <span className="text-red-500">*</span>
+                  </label>
+                  <LocationSelector
+                    onLocationChange={(location) => {
+                      setSelectedLocation(location)
+                      const locationString = getLocationFullName(location, 'kh')
+                      form.setFieldsValue({ location: locationString })
+                    }}
+                    required={{ province: true, district: true, commune: false, village: false }}
+                  />
+                </div>
                 <Form.Item
                   name="location"
-                  label="ទីកន្លែង"
-                  rules={[{ required: true, message: 'សូមបំពេញទីកន្លែង' }]}
+                  hidden
+                  rules={[{ required: true, message: 'សូមជ្រើសរើសទីតាំង' }]}
                 >
-                  <Input placeholder="ទីកន្លែងចុះកិច្ចព្រមព្រៀង" />
+                  <Input />
                 </Form.Item>
               </Col>
             </Row>

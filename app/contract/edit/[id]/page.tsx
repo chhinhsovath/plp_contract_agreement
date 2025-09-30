@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { Form, Input, InputNumber, DatePicker, Button, Card, Row, Col, Divider, Space, Typography, message, Spin } from 'antd'
 import { SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { getContractTemplate } from '@/lib/contract-templates'
+import LocationSelector from '@/components/LocationSelector'
+import { getLocationFullName } from '@/lib/geoApi'
 import dayjs from 'dayjs'
 
 const { Title, Text } = Typography
@@ -19,6 +21,7 @@ export default function EditContractPage() {
   const [saving, setSaving] = useState(false)
   const [contractData, setContractData] = useState<any>(null)
   const [template, setTemplate] = useState<any>(null)
+  const [selectedLocation, setSelectedLocation] = useState<any>(null)
 
   useEffect(() => {
     fetchContract()
@@ -311,11 +314,24 @@ export default function EditContractPage() {
                   <DatePicker className="w-full" format="DD/MM/YYYY" />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={24}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 font-hanuman">
+                    ទីតាំង <span className="text-red-500">*</span>
+                  </label>
+                  <LocationSelector
+                    onLocationChange={(location) => {
+                      setSelectedLocation(location)
+                      const locationString = getLocationFullName(location, 'kh')
+                      form.setFieldsValue({ location: locationString })
+                    }}
+                    required={{ province: true, district: true, commune: false, village: false }}
+                  />
+                </div>
                 <Form.Item
                   name="location"
-                  label="ទីកន្លែង"
-                  rules={[{ required: true, message: 'សូមបំពេញទីកន្លែង' }]}
+                  hidden
+                  rules={[{ required: true, message: 'សូមជ្រើសរើសទីតាំង' }]}
                 >
                   <Input />
                 </Form.Item>
