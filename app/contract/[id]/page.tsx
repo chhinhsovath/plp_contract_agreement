@@ -264,6 +264,12 @@ export default function ContractPage() {
             form={form}
             layout="vertical"
             onFinish={handleFormSubmit}
+            onFinishFailed={(errorInfo) => {
+              console.error('Form validation failed:', errorInfo)
+              const errorFields = errorInfo.errorFields || []
+              const fieldNames = errorFields.map((f: any) => f.name[0]).join(', ')
+              message.error(`សូមបំពេញវាលទាំងនេះ: ${fieldNames}`)
+            }}
             size="large"
             className="font-hanuman"
           >

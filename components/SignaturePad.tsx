@@ -38,8 +38,33 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSave, label = 'ហត្�
 
   const save = () => {
     if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
-      const signature = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png')
-      onSave(signature)
+      try {
+        // Try to get trimmed canvas first
+        const trimmedCanvas = sigCanvas.current.getTrimmedCanvas()
+        if (trimmedCanvas && typeof trimmedCanvas.toDataURL === 'function') {
+          const signature = trimmedCanvas.toDataURL('image/png')
+          onSave(signature)
+        } else {
+          // Fallback to regular canvas if getTrimmedCanvas doesn't work
+          const canvas = sigCanvas.current.getCanvas()
+          if (canvas && typeof canvas.toDataURL === 'function') {
+            const signature = canvas.toDataURL('image/png')
+            onSave(signature)
+          }
+        }
+      } catch (error) {
+        console.error('Error saving signature:', error)
+        // Last resort: try to get canvas directly
+        try {
+          const canvas = sigCanvas.current.getCanvas()
+          if (canvas && typeof canvas.toDataURL === 'function') {
+            const signature = canvas.toDataURL('image/png')
+            onSave(signature)
+          }
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError)
+        }
+      }
     }
   }
 
