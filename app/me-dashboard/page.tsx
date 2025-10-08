@@ -1141,6 +1141,18 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
               </Button>
             )}
 
+            {/* Create New Contract Button for PARTNER users */}
+            {user?.role === UserRole.PARTNER && (
+              <Button
+                type="primary"
+                icon={<FileDoneOutlined />}
+                onClick={() => router.push('/contracts/new')}
+                className="w-full sm:w-auto"
+              >
+                បង្កើតកិច្ចសន្យាថ្មី
+              </Button>
+            )}
+
             {/* Force Reset Button for Demo Users */}
             {user?.phone && ['077806680', '077806681', '077806682', '077806683', '077806684', '077806685'].includes(user.phone) && (
               <Button
