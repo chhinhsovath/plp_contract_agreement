@@ -6,6 +6,7 @@ import { CONTRACT_TYPES, Contract } from '@/types/contract'
 import SignaturePad from './SignaturePad'
 import ContractPreview from './ContractPreview'
 import LocationSelector from './LocationSelector'
+import DeliverableSelector from './DeliverableSelector'
 import { getLocationFullName } from '@/lib/geoApi'
 import dayjs from 'dayjs'
 
@@ -26,8 +27,10 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
   const [showPreview, setShowPreview] = useState(false)
   const [contractData, setContractData] = useState<Contract | null>(null)
   const [selectedLocation, setSelectedLocation] = useState<any>(null)
+  const [deliverableSelections, setDeliverableSelections] = useState<{ deliverableId: number; selectedOptionId: number }[]>([])
 
   const contractType = CONTRACT_TYPES.find(t => t.id === contractTypeId)
+  const hasDeliverables = contractTypeId === 4 || contractTypeId === 5
 
   // Set default values if available
   React.useEffect(() => {
@@ -41,18 +44,35 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
     }
   }, [contractType, form])
 
-  const steps = [
-    { title: 'ព័ត៌មានទូទៅ', description: 'បំពេញព័ត៌មានកិច្ចព្រមព្រៀង' },
-    { title: 'ព័ត៌មានលម្អិត', description: 'បំពេញព័ត៌មានបន្ថែម' },
-    { title: 'ហត្ថលេខា', description: 'ចុះហត្ថលេខាភាគីទាំងពីរ' },
-    { title: 'ពិនិត្យនិងរក្សាទុក', description: 'ពិនិត្យមើលនិងបញ្ចប់' }
-  ]
+  const steps = hasDeliverables
+    ? [
+        { title: 'ព័ត៌មានទូទៅ', description: 'បំពេញព័ត៌មានកិច្ចព្រមព្រៀង' },
+        { title: 'ព័ត៌មានលម្អិត', description: 'បំពេញព័ត៌មានបន្ថែម' },
+        { title: 'សមិទ្ធកម្ម', description: 'ជ្រើសរើសសូចនាករសមិទ្ធកម្ម' },
+        { title: 'ហត្ថលេខា', description: 'ចុះហត្ថលេខាភាគីទាំងពីរ' },
+        { title: 'ពិនិត្យនិងរក្សាទុក', description: 'ពិនិត្យមើលនិងបញ្ចប់' }
+      ]
+    : [
+        { title: 'ព័ត៌មានទូទៅ', description: 'បំពេញព័ត៌មានកិច្ចព្រមព្រៀង' },
+        { title: 'ព័ត៌មានលម្អិត', description: 'បំពេញព័ត៌មានបន្ថែម' },
+        { title: 'ហត្ថលេខា', description: 'ចុះហត្ថលេខាភាគីទាំងពីរ' },
+        { title: 'ពិនិត្យនិងរក្សាទុក', description: 'ពិនិត្យមើលនិងបញ្ចប់' }
+      ]
 
   const handleNext = async () => {
     try {
       if (currentStep === 0 || currentStep === 1) {
         await form.validateFields()
       }
+
+      // Validate deliverables selection for types 4 and 5
+      if (hasDeliverables && currentStep === 2) {
+        if (deliverableSelections.length !== 5) {
+          message.error('សូមជ្រើសរើសសូចនាករសម្រាប់សមិទ្ធកម្មទាំង ៥')
+          return
+        }
+      }
+
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1)
       }
@@ -96,20 +116,43 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
 
   const handleSaveContract = async () => {
     try {
+      // Save contract first
       const response = await fetch('/api/contracts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contractData),
       })
 
-      if (response.ok) {
-        message.success('កិច្ចព្រមព្រៀងត្រូវបានរក្សាទុកដោយជោគជ័យ')
-        onSuccess()
-      } else {
+      if (!response.ok) {
         throw new Error('Failed to save contract')
       }
-    } catch (error) {
-      message.error('កំហុសក្នុងការរក្សាទុក')
+
+      const { data } = await response.json()
+      const contractId = data.contract.id
+
+      // Save deliverable selections if applicable
+      if (hasDeliverables && deliverableSelections.length > 0) {
+        const selectionsResponse = await fetch('/api/contracts/deliverables', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contractId,
+            selections: deliverableSelections,
+            selectedBy: contractData?.party_a_name || 'Unknown'
+          }),
+        })
+
+        if (!selectionsResponse.ok) {
+          const errorData = await selectionsResponse.json()
+          throw new Error(errorData.error?.message || 'Failed to save deliverable selections')
+        }
+      }
+
+      message.success('កិច្ចព្រមព្រៀងត្រូវបានរក្សាទុកដោយជោគជ័យ')
+      onSuccess()
+    } catch (error: any) {
+      console.error('Error saving contract:', error)
+      message.error(error.message || 'កំហុសក្នុងការរក្សាទុក')
     }
   }
 
@@ -252,6 +295,21 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
         )
 
       case 2:
+        // For types 4 and 5: show deliverables selection
+        // For other types: show signatures
+        if (hasDeliverables) {
+          return (
+            <div>
+              <Divider>ជ្រើសរើសសូចនាករសមិទ្ធកម្ម</Divider>
+              <DeliverableSelector
+                contractType={contractTypeId}
+                value={deliverableSelections}
+                onChange={(selections) => setDeliverableSelections(selections)}
+              />
+            </div>
+          )
+        }
+        // Fallthrough to signatures for non-deliverable types
         return (
           <Row gutter={32}>
             <Col span={12}>
@@ -286,6 +344,74 @@ const ContractForm: React.FC<ContractFormProps> = ({ contractTypeId, onSuccess, 
         )
 
       case 3:
+        // For types 4 and 5: show signatures (step 3)
+        // For other types: show summary (step 3)
+        if (hasDeliverables) {
+          return (
+            <Row gutter={32}>
+              <Col span={12}>
+                <SignaturePad
+                  label="ហត្ថលេខាភាគី ក"
+                  onSave={(sig) => {
+                    setPartyASignature(sig)
+                    message.success('ហត្ថលេខាភាគី ក ត្រូវបានរក្សាទុក')
+                  }}
+                />
+                {partyASignature && (
+                  <div className="mt-2">
+                    <img src={partyASignature} alt="ហត្ថលេខាភាគី ក" className="h-20 border p-1" />
+                  </div>
+                )}
+              </Col>
+              <Col span={12}>
+                <SignaturePad
+                  label="ហត្ថលេខាភាគី ខ"
+                  onSave={(sig) => {
+                    setPartyBSignature(sig)
+                    message.success('ហត្ថលេខាភាគី ខ ត្រូវបានរក្សាទុក')
+                  }}
+                />
+                {partyBSignature && (
+                  <div className="mt-2">
+                    <img src={partyBSignature} alt="ហត្ថលេខាភាគី ខ" className="h-20 border p-1" />
+                  </div>
+                )}
+              </Col>
+            </Row>
+          )
+        } else {
+          // Summary for non-deliverable types (step 3)
+          const formValues = form.getFieldsValue()
+          return (
+            <div className="bg-gray-50 p-4 rounded">
+              <h3 className="text-lg font-semibold mb-4">សង្ខេបកិច្ចព្រមព្រៀង</h3>
+              <div className="space-y-2">
+                <p><strong>ប្រភេទកិច្ចព្រមព្រៀង:</strong> {contractType?.type_name_khmer}</p>
+                <p><strong>ភាគី ក:</strong> {formValues.party_a_name} - {formValues.party_a_position}</p>
+                <p><strong>ភាគី ខ:</strong> {formValues.party_b_name} - {formValues.party_b_position}</p>
+                <p><strong>រយៈពេល:</strong> {formValues.start_date?.format('DD/MM/YYYY')} ដល់ {formValues.end_date?.format('DD/MM/YYYY')}</p>
+                <p><strong>ទីកន្លែង:</strong> {formValues.location}</p>
+              </div>
+              <div className="mt-4 flex space-x-4">
+                {partyASignature && (
+                  <div>
+                    <p className="text-sm text-gray-600">ហត្ថលេខាភាគី ក</p>
+                    <img src={partyASignature} alt="ហត្ថលេខាភាគី ក" className="h-20 border p-1" />
+                  </div>
+                )}
+                {partyBSignature && (
+                  <div>
+                    <p className="text-sm text-gray-600">ហត្ថលេខាភាគី ខ</p>
+                    <img src={partyBSignature} alt="ហត្ថលេខាភាគី ខ" className="h-20 border p-1" />
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        }
+
+      case 4:
+        // Summary for types 4 and 5 (step 4)
         const formValues = form.getFieldsValue()
         return (
           <div className="bg-gray-50 p-4 rounded">

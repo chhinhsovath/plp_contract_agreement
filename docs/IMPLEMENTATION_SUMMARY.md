@@ -6,6 +6,29 @@
 **Purpose:** Digital contract management and monitoring & evaluation platform for Primary Learning Program (PLP) in Cambodia
 **Tech Stack:** Next.js 15.5.4, TypeScript, Prisma, PostgreSQL, Ant Design, Tailwind CSS
 
+## 📁 Final PDR Documents
+
+**Location:** `/pdr/Final/`
+
+The system is built based on 5 final Performance Agreement documents dated October 2024:
+
+1. **`1_កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាង_គបស_និង_គបក_3_october.docx`**
+   - PMU-PCU Performance Agreement
+
+2. **`2_កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងប្រធានគ_ប_ក_និងប្រធានគម្រោង.docx`**
+   - PCU Chief - Project Manager Agreement
+
+3. **`3_កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងប្រធានគម្រោង_និងមន្រ្តីគម្រោង.docx`**
+   - Project Manager - Regional Officers Agreement
+
+4. **`4_កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋម_និងការិយាល័យអប់រំក្រុង.docx`**
+   - Primary Department - District Education Office Agreement
+
+5. **`5_កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋម_និងសាលាបឋមសិក្សា.docx`**
+   - Primary Department - Primary School Agreement
+
+**📖 Complete Documentation:** See `/docs/CONTRACTS_OVERVIEW.md` for detailed information about each agreement type, including objectives, indicators, parties involved, and budget ranges.
+
 ---
 
 ## 🚀 Major Features Implemented

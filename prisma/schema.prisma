@@ -91,6 +91,7 @@ model contracts {
 
   contract_fields         contract_fields[]
   attachments            attachments[]
+  deliverable_selections  contract_deliverable_selections[]
 }
 
 model contract_fields {
@@ -267,4 +268,72 @@ model me_reports {
   approved_date         DateTime?
   created_at            DateTime                @default(now())
   updated_at            DateTime                @updatedAt
+}
+
+// ============================================
+// Contract Deliverables & Options Models
+// For Agreement Types 4 & 5
+// ============================================
+
+model contract_deliverables {
+  id                          Int                             @id @default(autoincrement())
+  contract_type               Int                             // 4 or 5
+  deliverable_number          Int                             // 1-5
+  deliverable_title_khmer     String                          @db.Text
+  deliverable_title_english   String?                         @db.Text
+  timeline                    String                          // ខែតុលា-ខែវិច្ឆិកា ឆ្នាំ២០២៥
+  activities_text             String?                         @db.Text // For Agreement 5 only: សកម្មភាពនាយកសាលាអនុវត្ត
+  order_index                 Int                             @default(0)
+  is_active                   Boolean                         @default(true)
+  created_at                  DateTime                        @default(now())
+  updated_at                  DateTime                        @updatedAt
+
+  options                     deliverable_options[]
+  selections                  contract_deliverable_selections[]
+
+  @@unique([contract_type, deliverable_number])
+  @@index([contract_type])
+  @@index([is_active])
+}
+
+model deliverable_options {
+  id                          Int                             @id @default(autoincrement())
+  deliverable_id              Int
+  deliverable                 contract_deliverables           @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
+  option_number               Int                             // 1, 2, or 3
+  option_text_khmer           String                          @db.Text
+  option_text_english         String?                         @db.Text
+  condition_type              String                          // "less_than", "equal", "greater_or_equal"
+  baseline_percentage         Float?                          // For conditional logic
+  target_percentage           Float?                          // Target value
+  order_index                 Int                             @default(0)
+  is_active                   Boolean                         @default(true)
+  created_at                  DateTime                        @default(now())
+  updated_at                  DateTime                        @updatedAt
+
+  selections                  contract_deliverable_selections[]
+
+  @@unique([deliverable_id, option_number])
+  @@index([deliverable_id])
+  @@index([is_active])
+}
+
+model contract_deliverable_selections {
+  id                          Int                             @id @default(autoincrement())
+  contract_id                 Int
+  contract                    contracts                       @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  deliverable_id              Int
+  deliverable                 contract_deliverables           @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
+  selected_option_id          Int
+  selected_option             deliverable_options             @relation(fields: [selected_option_id], references: [id], onDelete: Cascade)
+  selected_at                 DateTime                        @default(now())
+  selected_by                 String?                         // User who made the selection
+  notes                       String?                         @db.Text
+  created_at                  DateTime                        @default(now())
+  updated_at                  DateTime                        @updatedAt
+
+  @@unique([contract_id, deliverable_id])
+  @@index([contract_id])
+  @@index([deliverable_id])
+  @@index([selected_option_id])
 }

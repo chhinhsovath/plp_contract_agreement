@@ -1,16 +1,44 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Contract } from '@/types/contract'
-import { Divider, Button } from 'antd'
-import { PrinterOutlined, DownloadOutlined } from '@ant-design/icons'
+import { Divider, Button, Table, Spin } from 'antd'
+import { PrinterOutlined, DownloadOutlined, LoadingOutlined } from '@ant-design/icons'
 
 interface ContractPreviewProps {
   contract: Contract
   contractType: any
+  contractId?: number // Optional: to fetch deliverable selections
 }
 
-const ContractPreview: React.FC<ContractPreviewProps> = ({ contract, contractType }) => {
+const ContractPreview: React.FC<ContractPreviewProps> = ({ contract, contractType, contractId }) => {
+  const [deliverableSelections, setDeliverableSelections] = useState<any[]>([])
+  const [loadingDeliverables, setLoadingDeliverables] = useState(false)
+
+  const hasDeliverables = contract.contract_type_id === 4 || contract.contract_type_id === 5
+
+  useEffect(() => {
+    if (hasDeliverables && contractId) {
+      fetchDeliverableSelections()
+    }
+  }, [hasDeliverables, contractId])
+
+  const fetchDeliverableSelections = async () => {
+    try {
+      setLoadingDeliverables(true)
+      const response = await fetch(`/api/contracts/deliverables?contractId=${contractId}`)
+      const data = await response.json()
+
+      if (data.success) {
+        setDeliverableSelections(data.data.selections)
+      }
+    } catch (error) {
+      console.error('Error fetching deliverable selections:', error)
+    } finally {
+      setLoadingDeliverables(false)
+    }
+  }
+
   const handlePrint = () => {
     window.print()
   }
@@ -116,6 +144,66 @@ const ContractPreview: React.FC<ContractPreviewProps> = ({ contract, contractTyp
           <p className="flex"><span className="mr-2 font-bold">៦.២</span> កិច្ចព្រមព្រៀងអាចបញ្ចប់មុនកាលកំណត់ប្រសិនបើមានការព្រមព្រៀងរវាងភាគីទាំងពីរ។</p>
         </div>
       </div>
+
+      {/* Deliverables Table for Agreement Types 4 and 5 */}
+      {hasDeliverables && (
+        <div className="mb-8">
+          <h3 className="font-bold mb-4 text-lg font-hanuman">តារាងសមិទ្ធកម្ម និងសូចនាករ</h3>
+          {loadingDeliverables ? (
+            <div className="text-center py-8">
+              <Spin indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />} />
+            </div>
+          ) : deliverableSelections.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-300 font-hanuman">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border border-gray-300 p-3 text-left w-12">ល.រ</th>
+                    <th className="border border-gray-300 p-3 text-left">សមិទ្ធកម្ម</th>
+                    <th className="border border-gray-300 p-3 text-left">សូចនាករ</th>
+                    <th className="border border-gray-300 p-3 text-left w-48">ពេលវេលាអនុវត្ត</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deliverableSelections.map((selection: any) => (
+                    <tr key={selection.id}>
+                      <td className="border border-gray-300 p-3 text-center">
+                        {selection.deliverable.deliverable_number}
+                      </td>
+                      <td className="border border-gray-300 p-3">
+                        {selection.deliverable.deliverable_title_khmer}
+                      </td>
+                      <td className="border border-gray-300 p-3">
+                        <div className="flex items-start">
+                          <span className="mr-2 font-bold text-blue-600">
+                            ជម្រើសទី {selection.selected_option.option_number}:
+                          </span>
+                          <span>{selection.selected_option.option_text_khmer}</span>
+                        </div>
+                        {selection.selected_option.baseline_percentage !== null && selection.selected_option.target_percentage !== null && (
+                          <div className="mt-2 text-xs text-gray-600 flex gap-2">
+                            <span className="inline-block px-2 py-1 bg-gray-100 rounded">
+                              មូលដ្ឋាន: {selection.selected_option.baseline_percentage}%
+                            </span>
+                            <span className="inline-block px-2 py-1 bg-green-100 text-green-700 rounded">
+                              គោលដៅ: {selection.selected_option.target_percentage}%
+                            </span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="border border-gray-300 p-3">
+                        {selection.deliverable.timeline}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-gray-500 italic text-center py-4">មិនមានទិន្នន័យសមិទ្ធកម្ម</p>
+          )}
+        </div>
+      )}
 
       <Divider />
 
