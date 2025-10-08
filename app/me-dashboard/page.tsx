@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message, Dropdown, Avatar, Modal, Form, Input, Spin } from 'antd'
-import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined } from '@ant-design/icons'
+import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
@@ -203,6 +203,9 @@ export default function MEDashboardPage() {
   const [passwordForm] = Form.useForm()
   const [changingPassword, setChangingPassword] = useState(false)
   const [resettingDemo, setResettingDemo] = useState(false)
+  const [deliverables, setDeliverables] = useState<any[]>([])
+  const [loadingDeliverables, setLoadingDeliverables] = useState(false)
+  const [hasDeliverables, setHasDeliverables] = useState(false)
 
   useEffect(() => {
     checkSession()
@@ -214,6 +217,7 @@ export default function MEDashboardPage() {
       loadProjectPlans()
       fetchIndicators()
       fetchActivities()
+      fetchDeliverables()
     }
   }, [user, selectedContract])
 
@@ -278,6 +282,28 @@ export default function MEDashboardPage() {
       console.error('Failed to fetch activities:', error)
     } finally {
       setLoadingActivities(false)
+    }
+  }
+
+  const fetchDeliverables = async () => {
+    setLoadingDeliverables(true)
+    try {
+      const response = await fetch('/api/me/deliverables')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.data.hasDeliverables) {
+          setHasDeliverables(true)
+          setDeliverables(data.data.selections || [])
+        } else {
+          setHasDeliverables(false)
+          setDeliverables([])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch deliverables:', error)
+      setHasDeliverables(false)
+    } finally {
+      setLoadingDeliverables(false)
     }
   }
 
@@ -1407,6 +1433,114 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </div>
               )
             },
+            // Only show deliverables tab for Type 4 & 5 users
+            ...(hasDeliverables ? [{
+              key: 'deliverables',
+              label: (
+                <span className="font-hanuman">
+                  <TrophyOutlined className="mr-2" />
+                  សមិទ្ធកម្ម
+                </span>
+              ),
+              children: (
+                <div>
+                  {loadingDeliverables ? (
+                    <div className="text-center py-8">
+                      <Spin />
+                    </div>
+                  ) : deliverables.length > 0 ? (
+                    <>
+                      {/* Desktop Table View */}
+                      <div className="hidden md:block overflow-x-auto">
+                        <Table
+                          columns={[
+                            {
+                              title: <span className="font-hanuman">ល.រ</span>,
+                              dataIndex: 'deliverable_number',
+                              key: 'number',
+                              width: 80,
+                              render: (_, record) => (
+                                <Text className="font-hanuman">{record.deliverable.deliverable_number}</Text>
+                              )
+                            },
+                            {
+                              title: <span className="font-hanuman">សមិទ្ធកម្ម</span>,
+                              key: 'deliverable',
+                              render: (_, record) => (
+                                <Text className="font-hanuman">{record.deliverable.deliverable_title_khmer}</Text>
+                              )
+                            },
+                            {
+                              title: <span className="font-hanuman">សូចនាករ</span>,
+                              key: 'indicator',
+                              render: (_, record) => (
+                                <div className="font-hanuman">
+                                  <div className="flex items-start gap-2">
+                                    <Tag color="blue">ជម្រើសទី {record.selected_option.option_number}</Tag>
+                                    <Text>{record.selected_option.option_text_khmer}</Text>
+                                  </div>
+                                  {record.selected_option.baseline_percentage && (
+                                    <div className="mt-2 text-sm text-gray-600">
+                                      មូលដ្ឋាន: {record.selected_option.baseline_percentage}% → គោលដៅ: {record.selected_option.target_percentage}%
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            },
+                            {
+                              title: <span className="font-hanuman">ពេលវេលាអនុវត្ត</span>,
+                              key: 'timeline',
+                              width: 200,
+                              render: (_, record) => (
+                                <Text className="font-hanuman">{record.deliverable.timeline}</Text>
+                              )
+                            }
+                          ]}
+                          dataSource={deliverables}
+                          pagination={false}
+                          rowKey="id"
+                        />
+                      </div>
+
+                      {/* Mobile Card View */}
+                      <div className="block md:hidden space-y-4">
+                        {deliverables.map((item: any) => (
+                          <Card key={item.id} size="small">
+                            <div className="font-hanuman">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Badge count={item.deliverable.deliverable_number} style={{ backgroundColor: '#1890ff' }} />
+                                <Text strong>{item.deliverable.deliverable_title_khmer}</Text>
+                              </div>
+                              <div className="mt-3 p-3 bg-blue-50 rounded">
+                                <Tag color="blue" className="mb-2">ជម្រើសទី {item.selected_option.option_number}</Tag>
+                                <div className="text-sm">{item.selected_option.option_text_khmer}</div>
+                                {item.selected_option.baseline_percentage && (
+                                  <div className="mt-2 text-xs text-gray-600">
+                                    មូលដ្ឋាន: {item.selected_option.baseline_percentage}% → គោលដៅ: {item.selected_option.target_percentage}%
+                                  </div>
+                                )}
+                              </div>
+                              <div className="mt-3 text-sm text-gray-600">
+                                <ClockCircleOutlined className="mr-1" />
+                                {item.deliverable.timeline}
+                              </div>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <Empty
+                      description={
+                        <Text className="font-hanuman text-gray-500">
+                          គ្មានសមិទ្ធកម្ម
+                        </Text>
+                      }
+                    />
+                  )}
+                </div>
+              )
+            }] : []),
             {
               key: 'reports',
               label: (
