@@ -175,13 +175,25 @@ export class DocumentGenerator {
 
         indicators: contract.contract_indicators.map((ci, index) => {
           const indicator = ci.indicator
-          const increase = ci.target_percentage - ci.baseline_percentage
 
+          // Get calculation rule text based on selected_rule
           let calculationRule = ''
-          if (indicator.is_reduction_target) {
-            calculationRule = `បន្ថយពី ${ci.baseline_percentage}% មក ${ci.target_percentage}% (-${Math.abs(increase).toFixed(1)}%)`
-          } else {
-            calculationRule = `បង្កើនពី ${ci.baseline_percentage}% ដល់ ${ci.target_percentage}% (+${increase.toFixed(1)}%)`
+          if (ci.selected_rule && indicator.calculation_rules) {
+            const rules = indicator.calculation_rules as any[]
+            const ruleIndex = ci.selected_rule - 1 // selected_rule is 1-based, array is 0-based
+            if (rules[ruleIndex]) {
+              calculationRule = rules[ruleIndex].description_km || ''
+            }
+          }
+
+          // Fallback if no selected_rule or rules not found
+          if (!calculationRule) {
+            const increase = ci.target_percentage - ci.baseline_percentage
+            if (indicator.is_reduction_target) {
+              calculationRule = `បន្ថយពី ${ci.baseline_percentage}% មក ${ci.target_percentage}% (-${Math.abs(increase).toFixed(1)}%)`
+            } else {
+              calculationRule = `បង្កើនពី ${ci.baseline_percentage}% ដល់ ${ci.target_percentage}% (+${increase.toFixed(1)}%)`
+            }
           }
 
           return {
@@ -194,6 +206,10 @@ export class DocumentGenerator {
           }
         }),
 
+        // Get budget and bank info from additional_data
+        total_budget: (contract.additional_data as any)?.total_budget || 0,
+        bank_account_name: (contract.additional_data as any)?.bank_account_name || '',
+        bank_account_number: (contract.additional_data as any)?.bank_account_number || '',
         disbursement_count: 4,
         signature_date: new Date().toLocaleDateString('km-KH')
       }

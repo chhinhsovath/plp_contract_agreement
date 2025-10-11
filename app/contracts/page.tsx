@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Table, Button, Tag, Space, Typography, Input, message, Modal, Result } from 'antd'
-import { SearchOutlined, EyeOutlined, EditOutlined, DeleteOutlined, HomeOutlined, LockOutlined } from '@ant-design/icons'
+import { SearchOutlined, EyeOutlined, EditOutlined, DeleteOutlined, HomeOutlined, LockOutlined, DownloadOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import ContractPreview from '@/components/ContractPreview'
@@ -98,6 +98,33 @@ export default function ContractsPage() {
     })
   }
 
+  const handleDownload = async (record: any) => {
+    try {
+      message.loading('កំពុងបង្កើតឯកសារ...', 0)
+      const response = await fetch(`/api/contracts/${record.id}/generate-document`)
+
+      if (response.ok) {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `Contract_${record.contract_number}.docx`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+        message.destroy()
+        message.success('ទាញយកឯកសារបានជោគជ័យ')
+      } else {
+        message.destroy()
+        message.error('មានបញ្ហាក្នុងការបង្កើតឯកសារ')
+      }
+    } catch (error) {
+      message.destroy()
+      message.error('កំហុសក្នុងការទាញយក')
+    }
+  }
+
   const getStatusColor = (status: string) => {
     const colors: any = {
       draft: 'default',
@@ -172,11 +199,20 @@ export default function ContractsPage() {
             type="text"
             icon={<EyeOutlined />}
             onClick={() => handlePreview(record)}
+            title="មើល"
+          />
+          <Button
+            type="text"
+            icon={<DownloadOutlined />}
+            onClick={() => handleDownload(record)}
+            title="ទាញយក DOCX"
+            disabled={!record.status || record.status === 'draft'}
           />
           <Link href={`/contract/edit/${record.id}`}>
             <Button
               type="text"
               icon={<EditOutlined />}
+              title="កែប្រែ"
             />
           </Link>
           <Button
@@ -184,6 +220,7 @@ export default function ContractsPage() {
             danger
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.id)}
+            title="លុប"
           />
         </Space>
       ),

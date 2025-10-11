@@ -87,7 +87,12 @@ export default function SimplifiedPartnerAgreementForm() {
           location: formData.location,
           start_date: '2025-10-01',
           end_date: '2026-06-30',
-          status: 'draft'
+          status: 'draft',
+          additional_data: {
+            total_budget: formData.total_budget,
+            bank_account_name: formData.bank_account_name,
+            bank_account_number: formData.bank_account_number
+          }
         })
       })
 
