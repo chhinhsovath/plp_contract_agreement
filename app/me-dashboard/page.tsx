@@ -1288,10 +1288,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
       {/* Data Tabs */}
       <Card className="shadow-sm">
         <Tabs
-          defaultActiveKey="timeline"
+          defaultActiveKey={hasDeliverables ? "deliverables" : "timeline"}
           size="large"
           items={[
-            {
+            // Hide fake "ផែនការគម្រោង" tab for Contract 4 & 5 (they have real data in deliverables tab)
+            ...(!hasDeliverables ? [{
               key: 'timeline',
               label: (
                 <span className="font-hanuman">
@@ -1300,7 +1301,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </span>
               ),
               children: renderProjectTimelineTabs()
-            },
+            }] : []),
             {
               key: 'indicators',
               label: (
@@ -1421,7 +1422,8 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </div>
               )
             },
-            {
+            // Hide fake "ចំណុចសំខាន់" tab for Contract 4 & 5 (they have real milestone tracking in deliverables tab)
+            ...(!hasDeliverables ? [{
               key: 'milestones',
               label: (
                 <span className="font-hanuman">
@@ -1461,7 +1463,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                   </div>
                 </div>
               )
-            },
+            }] : []),
             // Only show deliverables tab for Type 4 & 5 users
             ...(hasDeliverables ? [{
               key: 'deliverables',
