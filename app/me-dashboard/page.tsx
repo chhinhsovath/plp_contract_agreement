@@ -396,6 +396,12 @@ export default function MEDashboardPage() {
   }
 
   const loadProjectPlans = () => {
+    // Contract 4 & 5 use REAL data from database, NOT fake PROJECT_PLANS
+    if (user.role === UserRole.PARTNER && (user.contract_type === 4 || user.contract_type === 5)) {
+      setProjectPlans([])
+      return
+    }
+
     // Filter project plans based on user role
     let filteredPlans = []
 
@@ -413,8 +419,34 @@ export default function MEDashboardPage() {
     setProjectPlans(filteredPlans)
   }
 
-  // Calculate dashboard statistics from project plans
+  // Calculate dashboard statistics from project plans OR real data for Contract 4 & 5
   const calculateDashboardStats = () => {
+    // For Contract 4 & 5: Use REAL indicators and activities data
+    if (user?.role === UserRole.PARTNER && (user?.contract_type === 4 || user?.contract_type === 5)) {
+      const totalIndicators = indicators.length
+      const achievedIndicators = indicators.filter((ind: any) => ind.status === 'achieved').length
+      const onTrackIndicators = indicators.filter((ind: any) => ind.status === 'on-track').length
+      const atRiskIndicators = indicators.filter((ind: any) => ind.status === 'at-risk' || ind.status === 'delayed').length
+
+      const totalActivities = activities.length
+      const completedActivities = activities.filter((act: any) => act.status === 'completed').length
+      const ongoingActivities = activities.filter((act: any) => act.status === 'ongoing').length
+
+      const totalProgress = indicators.reduce((sum: number, ind: any) => sum + (ind.progress || 0), 0)
+      const overallProgress = totalIndicators > 0 ? Math.round(totalProgress / totalIndicators) : 0
+
+      return {
+        totalDeliverables: totalIndicators,
+        completedDeliverables: achievedIndicators,
+        inProgressDeliverables: onTrackIndicators,
+        overallProgress,
+        upcomingMilestones: 0,
+        delayedDeliverables: atRiskIndicators,
+        totalBudget: 0
+      }
+    }
+
+    // For other contracts: Use fake PROJECT_PLANS (Contract 1, 2, 3)
     let totalDeliverables = 0
     let completedDeliverables = 0
     let inProgressDeliverables = 0
@@ -1223,12 +1255,16 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
         </div>
       </Card>
 
-      {/* Statistics Cards */}
+      {/* Statistics Cards - Dynamic labels for Contract 4 & 5 */}
       <Row gutter={[16, 16]} className="mb-6">
         <Col xs={24} sm={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title={<span className="font-hanuman">សកម្មភាពសរុប</span>}
+              title={
+                <span className="font-hanuman">
+                  {hasDeliverables ? 'សូចនាករសរុប' : 'សកម្មភាពសរុប'}
+                </span>
+              }
               value={dashboardData.totalDeliverables}
               prefix={<ProjectOutlined className="text-blue-500" />}
               valueStyle={{ color: '#1890ff' }}
@@ -1238,7 +1274,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
         <Col xs={24} sm={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title={<span className="font-hanuman">បានបញ្ចប់</span>}
+              title={
+                <span className="font-hanuman">
+                  {hasDeliverables ? 'សម្រេច' : 'បានបញ្ចប់'}
+                </span>
+              }
               value={dashboardData.completedDeliverables}
               prefix={<CheckCircleOutlined className="text-green-500" />}
               valueStyle={{ color: '#52c41a' }}
@@ -1248,7 +1288,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
         <Col xs={24} sm={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title={<span className="font-hanuman">កំពុងដំណើរការ</span>}
+              title={
+                <span className="font-hanuman">
+                  {hasDeliverables ? 'តាមគម្រោង' : 'កំពុងដំណើរការ'}
+                </span>
+              }
               value={dashboardData.inProgressDeliverables}
               prefix={<SyncOutlined className="text-orange-500" />}
               valueStyle={{ color: '#fa8c16' }}
