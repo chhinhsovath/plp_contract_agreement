@@ -387,6 +387,7 @@ model contract_indicators {
   target_percentage       Float
   target_date             DateTime
   calculation_method      String                    @default("based_on_baseline") // "based_on_baseline", "custom"
+  selected_rule           Int?                      // Which of the 3 calculation rules partner selected (1, 2, or 3)
   custom_target_justification String?               @db.Text
 
   // Selection metadata

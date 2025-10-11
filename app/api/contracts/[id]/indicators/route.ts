@@ -56,7 +56,8 @@ export async function GET(
  *   custom_target_justification?: string,
  *   justification_km?: string,
  *   justification_en?: string,
- *   selected_by?: string
+ *   selected_by?: string,
+ *   selected_rule?: number (1, 2, or 3 - which calculation rule partner selected)
  * }
  */
 export async function POST(
@@ -80,7 +81,8 @@ export async function POST(
       custom_target_justification,
       justification_km,
       justification_en,
-      selected_by
+      selected_by,
+      selected_rule
     } = body
 
     // Validation
@@ -158,6 +160,7 @@ export async function POST(
         target_percentage: final_target,
         target_date: new Date(target_date),
         calculation_method,
+        selected_rule,
         custom_target_justification: use_custom_target ? custom_target_justification : null,
         justification_km,
         justification_en,
