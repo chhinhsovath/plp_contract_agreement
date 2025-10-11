@@ -13,8 +13,8 @@ export const defaultPartyA = {
 
   // Default signatory
   signatory: {
-    name_khmer: 'លោកបណ្ឌិត កាន ពុទ្ធ',
-    name_english: 'Dr. Kan Puth',
+    name_khmer: 'កាន ពុទ្ធ',
+    name_english: 'Kan Puth',
     position_khmer: 'ប្រធានមាយកដាំនបបវ្បស្សនា',
     position_english: 'President of People Led Platform',
     title: 'លោកបណ្ឌិត / Dr.'
