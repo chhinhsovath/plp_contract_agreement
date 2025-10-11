@@ -94,7 +94,16 @@ export default function HomePage() {
       const response = await fetch('/api/auth/session')
       if (response.ok) {
         const data = await response.json()
-        setUser(data.user)
+        const userData = data.user
+
+        // Auto-redirect PARTNER users (Contract 4 & 5) to ME Dashboard
+        if (userData.role === UserRole.PARTNER && (userData.contract_type === 4 || userData.contract_type === 5)) {
+          // Contract 4 & 5 partners should use ME Dashboard, not contract management
+          router.push('/me-dashboard')
+          return
+        }
+
+        setUser(userData)
       }
     } catch (error) {
       console.error('Session check failed:', error)
