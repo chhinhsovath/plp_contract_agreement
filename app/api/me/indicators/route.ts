@@ -34,40 +34,59 @@ export async function GET(request: Request) {
       whereClause.contract_type = parseInt(contractType)
     }
 
-    // Fetch indicators with latest data collection
-    const indicators = await prisma.me_indicators.findMany({
-      where: whereClause,
+    // Fetch REAL 5 indicators from indicators table (NOT me_indicators!)
+    // These are the 5 fixed performance indicators from PRD
+    const indicators = await prisma.indicators.findMany({
+      where: {
+        is_active: true
+      },
+      orderBy: { indicator_number: 'asc' }
+    })
+
+    // Get user's contract to see their baseline/target values
+    const userContract = await prisma.contracts.findFirst({
+      where: {
+        contract_type_id: user.contract_type || 4,
+        OR: [
+          { created_by: user.id.toString() },
+          { party_b_name: { contains: user.full_name } }
+        ]
+      },
       include: {
-        data_collections: {
-          orderBy: { collection_date: 'desc' },
-          take: 1
-        },
-        activities: {
-          select: {
-            id: true,
-            activity_code: true,
-            activity_name_khmer: true,
-            status: true
+        contract_indicators: {
+          include: {
+            indicator: true
           }
         }
       },
-      orderBy: { indicator_code: 'asc' }
+      orderBy: { created_at: 'desc' }
     })
 
-    // Calculate progress for each indicator
+    // Map indicators with user's contract data
     const indicatorsWithProgress = indicators.map(indicator => {
-      const latestData = indicator.data_collections[0]
-      const current = latestData?.value_numeric || indicator.baseline_value || 0
+      // Find if user has this indicator in their contract
+      const contractIndicator = userContract?.contract_indicators.find(
+        ci => ci.indicator_id === indicator.id
+      )
 
+      const baseline = contractIndicator?.baseline_percentage || indicator.baseline_percentage
+      const target = contractIndicator?.target_percentage || indicator.target_percentage
+      const current = baseline // For now, use baseline (later connect to actual progress)
+
+      // Calculate progress
       let progress = 0
-      if (indicator.baseline_value === 0 || indicator.baseline_value === null) {
-        progress = Math.round((current / indicator.target_value) * 100)
-      } else {
-        progress = Math.round(
-          ((current - indicator.baseline_value) /
-           (indicator.target_value - indicator.baseline_value)) * 100
-        )
+      if (baseline && target) {
+        if (indicator.is_reduction_target) {
+          // For reduction targets (lower is better)
+          progress = Math.round(((baseline - current) / (baseline - target)) * 100)
+        } else {
+          // For increase targets (higher is better)
+          progress = Math.round(((current - baseline) / (target - baseline)) * 100)
+        }
       }
+
+      // Clamp progress between 0-100
+      progress = Math.max(0, Math.min(100, progress))
 
       // Determine status based on progress
       let status = 'on-track'
@@ -80,10 +99,19 @@ export async function GET(request: Request) {
       }
 
       return {
-        ...indicator,
-        current,
+        id: indicator.id,
+        indicator_code: indicator.indicator_code,
+        indicator_name_khmer: indicator.indicator_name_km,
+        indicator_name_english: indicator.indicator_name_en,
+        indicator_type: indicator.is_reduction_target ? 'REDUCTION' : 'OUTPUT',
+        indicator_number: indicator.indicator_number,
+        measurement_unit: 'percentage',
+        baseline_value: baseline,
+        target_value: target,
+        current_value: current,
         progress,
-        status
+        status,
+        selected_rule: contractIndicator?.selected_rule || null
       }
     })
 
@@ -100,46 +128,4 @@ export async function GET(request: Request) {
   }
 }
 
-// POST endpoint to add new indicator
-export async function POST(request: Request) {
-  try {
-    const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-    }
-
-    // Check if user has permission (ADMIN or SUPER_ADMIN)
-    const user = await prisma.users.findUnique({
-      where: { id: Number(session.userId) }
-    })
-
-    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
-    }
-
-    const body = await request.json()
-
-    const indicator = await prisma.me_indicators.create({
-      data: {
-        indicator_code: body.indicator_code,
-        indicator_name_khmer: body.indicator_name_khmer,
-        indicator_name_english: body.indicator_name_english,
-        indicator_type: body.indicator_type,
-        measurement_unit: body.measurement_unit,
-        baseline_value: body.baseline_value || 0,
-        target_value: body.target_value,
-        frequency: body.frequency,
-        contract_type: body.contract_type,
-        description: body.description
-      }
-    })
-
-    return NextResponse.json({ indicator }, { status: 201 })
-  } catch (error) {
-    console.error('Error creating indicator:', error)
-    return NextResponse.json(
-      { error: 'Failed to create indicator' },
-      { status: 500 }
-    )
-  }
-}
+// POST endpoint removed - indicators are FIXED from PRD, not user-creatable
