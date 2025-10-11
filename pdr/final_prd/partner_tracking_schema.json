@@ -1,0 +1,473 @@
+{
+  "schema_version": "1.0",
+  "education_partner_tracking_system": {
+    
+    "indicators_master_data": [
+      {
+        "indicator_id": "IND-001",
+        "indicator_number": 1,
+        "indicator_name_km": "ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ",
+        "indicator_name_en": "Percentage of children enrolled in Grade 1 at correct age",
+        "target_percentage": 95,
+        "baseline_percentage": 93.7,
+        "implementation_period": {
+          "start": "2025-10",
+          "end": "2025-11"
+        },
+        "calculation_rules": [
+          {
+            "condition": "baseline < 93.7",
+            "target_increase": 1.3,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានទាបជាង 93.7% ត្រូវបង្កើន 1.3%"
+          },
+          {
+            "condition": "baseline == 93.7",
+            "target_increase": "up_to_95",
+            "description_km": "បើទិន្ន័យមូលដ្ឋានស្មើ 93.7% ត្រូវបង្កើនដល់ 95%"
+          },
+          {
+            "condition": "baseline >= 95",
+            "target_increase": 0,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានស្មើ 95% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល"
+          }
+        ]
+      },
+      {
+        "indicator_id": "IND-002",
+        "indicator_number": 2,
+        "indicator_name_km": "ភាគរយសាលាបឋមសិក្សាមានបណ្ណព័ត៌មានសាលារៀន",
+        "indicator_name_en": "Percentage of primary schools with school information boards",
+        "target_percentage": 46,
+        "baseline_percentage": 36,
+        "implementation_period": {
+          "start": "2025-10",
+          "end": "2026-02"
+        },
+        "calculation_rules": [
+          {
+            "condition": "baseline < 36",
+            "target_increase": 10,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានទាបជាង 36% ត្រូវបង្កើន 10%"
+          },
+          {
+            "condition": "baseline == 36",
+            "target_increase": "up_to_46",
+            "description_km": "បើទិន្ន័យមូលដ្ឋានស្មើ 36% ត្រូវបង្កើនដល់ 46%"
+          },
+          {
+            "condition": "baseline >= 46",
+            "target_increase": 0,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានស្មើ 46% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល"
+          }
+        ]
+      },
+      {
+        "indicator_id": "IND-003",
+        "indicator_number": 3,
+        "indicator_name_km": "ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន",
+        "indicator_name_en": "Percentage of schools establishing school management committees",
+        "target_percentage": 50,
+        "baseline_percentage": 30,
+        "implementation_period": {
+          "start": "2025-10",
+          "end": "2026-03"
+        },
+        "calculation_rules": [
+          {
+            "condition": "baseline < 30",
+            "target_increase": 20,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានទាបជាង 30% ត្រូវបង្កើន 20%"
+          },
+          {
+            "condition": "baseline == 30",
+            "target_increase": "up_to_50",
+            "description_km": "បើទិន្ន័យមូលដ្ឋានស្មើ 30% ត្រូវបង្កើនដល់ 50%"
+          },
+          {
+            "condition": "baseline >= 50",
+            "target_increase": 0,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានស្មើ 50% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល"
+          }
+        ]
+      },
+      {
+        "indicator_id": "IND-004",
+        "indicator_number": 4,
+        "indicator_name_km": "ភាគរយសិស្សដែលនៅក្រោមមូលដ្ឋានលើមុខវិជ្ជាភាសាខ្មែរ និងគណិតវិទ្យាថ្នាក់ទី៣ថយចុះ",
+        "indicator_name_en": "Percentage decrease of Grade 3 students below baseline in Khmer and Math",
+        "target_percentage": 46,
+        "baseline_percentage": 51,
+        "is_reduction_target": true,
+        "implementation_period": {
+          "start": "2025-10",
+          "end": "2026-03"
+        },
+        "calculation_rules": [
+          {
+            "condition": "baseline > 51",
+            "target_decrease": 10,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានលើស 51% ត្រូវបន្ថយ 10%"
+          },
+          {
+            "condition": "baseline == 51",
+            "target_decrease": "down_to_46",
+            "description_km": "បើទិន្ន័យមូលដ្ឋានស្មើ 51% ត្រូវបន្ថយមកដល់ 46%"
+          },
+          {
+            "condition": "baseline <= 46",
+            "target_decrease": 0,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានស្មើ 46% ឬតិចជាងនេះ ត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល"
+          }
+        ]
+      },
+      {
+        "indicator_id": "IND-005",
+        "indicator_number": 5,
+        "indicator_name_km": "ភាគរយសិស្សបឋមសិក្សាទទួលបាននិទ្ទេស A,B,C លើមុខវិជ្ជាភាសាខ្មែរ និង គណិតវិទ្យាថ្នាក់ទី៣",
+        "indicator_name_en": "Percentage of Grade 3 students achieving grades A, B, C in Khmer and Math",
+        "target_percentage": 32,
+        "baseline_percentage": 28,
+        "implementation_period": {
+          "start": "2025-10",
+          "end": "2026-03"
+        },
+        "calculation_rules": [
+          {
+            "condition": "baseline < 28",
+            "target_increase": 4,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានទាបជាង 28% ត្រូវបង្កើន 4%"
+          },
+          {
+            "condition": "baseline == 28",
+            "target_increase": "up_to_32",
+            "description_km": "បើទិន្ន័យមូលដ្ឋានស្មើ 28% ត្រូវបង្កើនដល់ 32%"
+          },
+          {
+            "condition": "baseline >= 32",
+            "target_increase": 0,
+            "description_km": "បើទិន្នន័យមូលដ្ឋានស្មើ 32% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល"
+          }
+        ]
+      }
+    ],
+
+    "contract_agreement_form": {
+      "contract_id": "CTR-2025-001",
+      "contract_number": "001/2025",
+      "contract_type": "education_partnership",
+      "academic_year": "2025-2026",
+      
+      "partner_information": {
+        "partner_id": "PARTNER-001",
+        "partner_name_km": "",
+        "partner_name_en": "",
+        "partner_type": "education_office",
+        "location": {
+          "province_km": "",
+          "province_en": "",
+          "district_city_km": "",
+          "district_city_en": "",
+          "commune_khan": ""
+        },
+        "contact_person": {
+          "name_km": "",
+          "name_en": "",
+          "position_km": "",
+          "position_en": "",
+          "phone": "",
+          "email": ""
+        },
+        "organization_details": {
+          "total_schools": 0,
+          "total_students": 0,
+          "total_teachers": 0,
+          "baseline_year": "2024-2025"
+        }
+      },
+
+      "selected_indicators": [
+        {
+          "milestone_id": "MS-001",
+          "indicator_id": "IND-001",
+          "indicator_number": 1,
+          "indicator_name_km": "",
+          "indicator_name_en": "",
+          "selected_date": "2025-10-11",
+          "justification_km": "",
+          "justification_en": "",
+          "baseline_data": {
+            "baseline_percentage": 93.7,
+            "baseline_source": "",
+            "baseline_date": "2024-09-30",
+            "baseline_notes": ""
+          },
+          "target_commitment": {
+            "target_percentage": 95,
+            "target_date": "2025-11-30",
+            "calculation_method": "based_on_baseline",
+            "custom_target": null
+          }
+        }
+      ],
+
+      "contract_terms": {
+        "contract_start_date": "2025-10-01",
+        "contract_end_date": "2026-06-30",
+        "total_milestones": 1,
+        "reporting_frequency": "quarterly",
+        "monitoring_visits": 3,
+        "penalties": {
+          "enabled": false,
+          "penalty_structure": []
+        },
+        "incentives": {
+          "enabled": true,
+          "incentive_structure": [
+            {
+              "achievement_level": "100%_target",
+              "incentive_type": "recognition",
+              "description": ""
+            }
+          ]
+        }
+      },
+
+      "signatures": {
+        "partner_representative": {
+          "name": "",
+          "position": "",
+          "signature_date": "",
+          "signature_image": ""
+        },
+        "ministry_representative": {
+          "name": "",
+          "position": "",
+          "signature_date": "",
+          "signature_image": ""
+        },
+        "witnesses": []
+      },
+
+      "contract_status": "draft",
+      "created_date": "2025-10-11",
+      "last_modified": "2025-10-11",
+      "approved_date": null
+    },
+
+    "milestone_tracking": {
+      "milestones": [
+        {
+          "milestone_id": "MS-001",
+          "contract_id": "CTR-2025-001",
+          "partner_id": "PARTNER-001",
+          "indicator_id": "IND-001",
+          
+          "milestone_details": {
+            "milestone_name_km": "",
+            "milestone_name_en": "",
+            "milestone_description_km": "",
+            "milestone_description_en": "",
+            "milestone_type": "quantitative",
+            "milestone_category": "enrollment"
+          },
+
+          "timeline": {
+            "planned_start_date": "2025-10-01",
+            "planned_end_date": "2025-11-30",
+            "actual_start_date": null,
+            "actual_end_date": null,
+            "milestone_duration_days": 60
+          },
+
+          "targets_and_baseline": {
+            "baseline_value": 93.7,
+            "target_value": 95,
+            "measurement_unit": "percentage",
+            "target_increase": 1.3,
+            "is_reduction_target": false
+          },
+
+          "progress_tracking": {
+            "current_value": null,
+            "achievement_percentage": 0,
+            "last_updated": null,
+            "data_source": "",
+            "verification_method": "",
+            "progress_reports": [
+              {
+                "report_id": "RPT-001",
+                "reporting_date": "2025-10-31",
+                "reporting_period": "Month 1",
+                "reported_value": null,
+                "cumulative_progress": 0,
+                "narrative_report_km": "",
+                "narrative_report_en": "",
+                "challenges_km": "",
+                "challenges_en": "",
+                "next_steps_km": "",
+                "next_steps_en": "",
+                "supporting_documents": [],
+                "verified": false,
+                "verified_by": "",
+                "verified_date": null
+              }
+            ]
+          },
+
+          "deliverables": [
+            {
+              "deliverable_id": "DEL-001",
+              "deliverable_name_km": "",
+              "deliverable_name_en": "",
+              "deliverable_type": "report",
+              "due_date": "2025-11-30",
+              "status": "pending",
+              "submission_date": null,
+              "file_attachments": [],
+              "review_status": "not_reviewed",
+              "reviewer_comments": ""
+            }
+          ],
+
+          "activities": [
+            {
+              "activity_id": "ACT-001",
+              "activity_name_km": "",
+              "activity_name_en": "",
+              "activity_description": "",
+              "responsible_person": "",
+              "start_date": "",
+              "end_date": "",
+              "status": "not_started",
+              "completion_percentage": 0,
+              "budget_allocated": 0,
+              "budget_spent": 0,
+              "notes": ""
+            }
+          ],
+
+          "milestone_status": {
+            "overall_status": "not_started",
+            "health_indicator": "on_track",
+            "risk_level": "low",
+            "is_delayed": false,
+            "days_delayed": 0,
+            "completion_date": null
+          },
+
+          "quality_verification": {
+            "data_quality_score": null,
+            "verification_visits": [],
+            "field_monitoring": [],
+            "independent_assessment": null
+          }
+        }
+      ]
+    },
+
+    "dashboard_structure": {
+      "overview_metrics": {
+        "total_contracts": 0,
+        "active_contracts": 0,
+        "total_partners": 0,
+        "total_milestones": 0,
+        "completed_milestones": 0,
+        "on_track_milestones": 0,
+        "at_risk_milestones": 0,
+        "delayed_milestones": 0,
+        "overall_achievement_rate": 0
+      },
+
+      "indicator_performance": [
+        {
+          "indicator_id": "IND-001",
+          "indicator_name": "",
+          "total_milestones": 0,
+          "partners_working_on": 0,
+          "average_achievement": 0,
+          "baseline_average": 0,
+          "target_average": 0,
+          "on_track_count": 0,
+          "completed_count": 0
+        }
+      ],
+
+      "partner_performance": [
+        {
+          "partner_id": "PARTNER-001",
+          "partner_name": "",
+          "location": "",
+          "total_milestones": 0,
+          "completed_milestones": 0,
+          "achievement_rate": 0,
+          "overall_health": "green",
+          "last_report_date": "",
+          "next_milestone_due": ""
+        }
+      ],
+
+      "geographical_analysis": {
+        "by_province": [],
+        "by_district": [],
+        "performance_map": []
+      },
+
+      "timeline_view": {
+        "current_period": "Q1-2025-2026",
+        "milestones_due_this_month": [],
+        "upcoming_milestones": [],
+        "overdue_milestones": []
+      },
+
+      "filters": {
+        "academic_year": ["2025-2026"],
+        "partner_type": ["education_office", "district", "province"],
+        "indicator": ["IND-001", "IND-002", "IND-003", "IND-004", "IND-005"],
+        "status": ["not_started", "in_progress", "completed", "delayed"],
+        "location": []
+      }
+    },
+
+    "reporting_templates": {
+      "quarterly_report": {
+        "report_period": "",
+        "partner_info": {},
+        "milestone_progress": [],
+        "challenges_and_issues": [],
+        "success_stories": [],
+        "lessons_learned": [],
+        "next_quarter_plans": [],
+        "support_needed": [],
+        "attachments": []
+      },
+      
+      "monitoring_visit_report": {
+        "visit_date": "",
+        "visit_location": "",
+        "visit_team": [],
+        "schools_visited": [],
+        "observations": [],
+        "data_verification": {},
+        "recommendations": [],
+        "follow_up_actions": []
+      }
+    },
+
+    "alerts_and_notifications": {
+      "milestone_due_alerts": [
+        {
+          "alert_id": "ALT-001",
+          "alert_type": "milestone_due_soon",
+          "milestone_id": "",
+          "partner_id": "",
+          "due_date": "",
+          "days_until_due": 0,
+          "notification_sent": false,
+          "alert_priority": "medium"
+        }
+      ],
+      "report_overdue_alerts": [],
+      "achievement_alerts": []
+    }
+  }
+}

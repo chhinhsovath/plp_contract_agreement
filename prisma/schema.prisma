@@ -92,6 +92,8 @@ model contracts {
   contract_fields         contract_fields[]
   attachments            attachments[]
   deliverable_selections  contract_deliverable_selections[]
+  contract_indicators     contract_indicators[]
+  milestones             milestones[]
 }
 
 model contract_fields {
@@ -336,4 +338,241 @@ model contract_deliverable_selections {
   @@index([contract_id])
   @@index([deliverable_id])
   @@index([selected_option_id])
+}
+
+// ============================================
+// Education Partner Performance Tracking System
+// Based on PRD: 5 Performance Indicators System
+// ============================================
+
+model indicators {
+  id                      Int                       @id @default(autoincrement())
+  indicator_code          String                    @unique // IND-001 to IND-005
+  indicator_number        Int                       @unique // 1 to 5
+  indicator_name_km       String                    @db.Text
+  indicator_name_en       String?                   @db.Text
+  target_percentage       Float
+  baseline_percentage     Float
+  is_reduction_target     Boolean                   @default(false) // true for indicator 4
+  implementation_start    String                    // "2025-10"
+  implementation_end      String                    // "2025-11"
+  calculation_rules       Json                      // Stores calculation logic array
+  description_km          String?                   @db.Text
+  description_en          String?                   @db.Text
+  is_active               Boolean                   @default(true)
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+
+  contract_indicators     contract_indicators[]
+  milestones              milestones[]
+
+  @@index([indicator_code])
+  @@index([is_active])
+}
+
+model contract_indicators {
+  id                      Int                       @id @default(autoincrement())
+  contract_id             Int
+  contract                contracts                 @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  indicator_id            Int
+  indicator               indicators                @relation(fields: [indicator_id], references: [id], onDelete: Cascade)
+
+  // Partner's baseline data
+  baseline_percentage     Float
+  baseline_source         String?
+  baseline_date           DateTime
+  baseline_notes          String?                   @db.Text
+
+  // Target commitment
+  target_percentage       Float
+  target_date             DateTime
+  calculation_method      String                    @default("based_on_baseline") // "based_on_baseline", "custom"
+  custom_target_justification String?               @db.Text
+
+  // Selection metadata
+  justification_km        String?                   @db.Text
+  justification_en        String?                   @db.Text
+  selected_at             DateTime                  @default(now())
+  selected_by             String?
+
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+
+  milestones              milestones[]
+
+  // IMPORTANT: Each indicator can only be selected ONCE per contract
+  @@unique([contract_id, indicator_id])
+  @@index([contract_id])
+  @@index([indicator_id])
+}
+
+model milestones {
+  id                      Int                       @id @default(autoincrement())
+  milestone_code          String                    @unique // MS-001, MS-002, etc.
+  contract_id             Int
+  contract                contracts                 @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  indicator_id            Int
+  indicator               indicators                @relation(fields: [indicator_id], references: [id])
+  contract_indicator_id   Int
+  contract_indicator      contract_indicators       @relation(fields: [contract_indicator_id], references: [id], onDelete: Cascade)
+
+  // Milestone details
+  milestone_name_km       String
+  milestone_name_en       String?
+  milestone_description_km String?                  @db.Text
+  milestone_description_en String?                  @db.Text
+  milestone_type          String                    @default("quantitative") // quantitative, qualitative
+  milestone_category      String?                   // enrollment, infrastructure, quality, etc.
+
+  // Timeline
+  planned_start_date      DateTime
+  planned_end_date        DateTime
+  actual_start_date       DateTime?
+  actual_end_date         DateTime?
+  milestone_duration_days Int?
+
+  // Targets and progress
+  baseline_value          Float
+  target_value            Float
+  current_value           Float?
+  measurement_unit        String                    @default("percentage")
+  target_increase         Float?                    // For increase indicators
+  is_reduction_target     Boolean                   @default(false)
+
+  // Progress tracking
+  achievement_percentage  Float                     @default(0)
+  last_updated            DateTime?
+  data_source             String?
+  verification_method     String?
+
+  // Status
+  overall_status          String                    @default("not_started") // not_started, in_progress, completed, delayed
+  health_indicator        String                    @default("on_track") // on_track, at_risk, critical
+  risk_level              String                    @default("low") // low, medium, high
+  is_delayed              Boolean                   @default(false)
+  days_delayed            Int                       @default(0)
+  completion_date         DateTime?
+
+  // Quality verification
+  data_quality_score      Float?
+
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+
+  activities              milestone_activities[]
+  deliverables            milestone_deliverables[]
+  progress_reports        progress_reports[]
+  monitoring_visits       monitoring_visits[]
+
+  @@index([contract_id])
+  @@index([indicator_id])
+  @@index([overall_status])
+  @@index([health_indicator])
+}
+
+model milestone_activities {
+  id                      Int                       @id @default(autoincrement())
+  activity_code           String                    @unique // ACT-001, ACT-002, etc.
+  milestone_id            Int
+  milestone               milestones                @relation(fields: [milestone_id], references: [id], onDelete: Cascade)
+
+  activity_name_km        String
+  activity_name_en        String?
+  activity_description    String?                   @db.Text
+  responsible_person      String
+  start_date              DateTime
+  end_date                DateTime
+  status                  String                    @default("not_started") // not_started, ongoing, completed, delayed, cancelled
+  completion_percentage   Int                       @default(0)
+  budget_allocated        Float?
+  budget_spent            Float?
+  location                String?
+  notes                   String?                   @db.Text
+
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+
+  @@index([milestone_id])
+  @@index([status])
+}
+
+model milestone_deliverables {
+  id                      Int                       @id @default(autoincrement())
+  deliverable_code        String                    @unique // DEL-001, DEL-002, etc.
+  milestone_id            Int
+  milestone               milestones                @relation(fields: [milestone_id], references: [id], onDelete: Cascade)
+
+  deliverable_name_km     String
+  deliverable_name_en     String?
+  deliverable_type        String                    // report, data, document, photo_evidence
+  due_date                DateTime
+  status                  String                    @default("pending") // pending, submitted, approved, rejected
+  submission_date         DateTime?
+  file_attachments        Json?                     // Array of file paths
+  review_status           String                    @default("not_reviewed") // not_reviewed, under_review, approved, rejected
+  reviewer_comments       String?                   @db.Text
+  description             String?                   @db.Text
+
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+
+  @@index([milestone_id])
+  @@index([status])
+  @@index([due_date])
+}
+
+model progress_reports {
+  id                      Int                       @id @default(autoincrement())
+  report_code             String                    @unique // RPT-001, RPT-002, etc.
+  milestone_id            Int
+  milestone               milestones                @relation(fields: [milestone_id], references: [id], onDelete: Cascade)
+
+  reporting_date          DateTime
+  reporting_period        String                    // "Month 1", "Q1", etc.
+  reported_value          Float?
+  cumulative_progress     Float                     @default(0)
+
+  narrative_report_km     String?                   @db.Text
+  narrative_report_en     String?                   @db.Text
+  challenges_km           String?                   @db.Text
+  challenges_en           String?                   @db.Text
+  next_steps_km           String?                   @db.Text
+  next_steps_en           String?                   @db.Text
+
+  supporting_documents    Json?                     // Array of file paths
+
+  verified                Boolean                   @default(false)
+  verified_by             String?
+  verified_date           DateTime?
+  verification_notes      String?                   @db.Text
+
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+
+  @@index([milestone_id])
+  @@index([reporting_date])
+  @@index([verified])
+}
+
+model monitoring_visits {
+  id                      Int                       @id @default(autoincrement())
+  visit_code              String                    @unique // VIS-001, VIS-002, etc.
+  milestone_id            Int
+  milestone               milestones                @relation(fields: [milestone_id], references: [id], onDelete: Cascade)
+
+  visit_date              DateTime
+  visit_location          String
+  visit_team              Json?                     // Array of team members
+  schools_visited         Json?                     // Array of school names
+  observations            String?                   @db.Text
+  data_verification       Json?                     // Verification results
+  recommendations         String?                   @db.Text
+  follow_up_actions       String?                   @db.Text
+  attachments             Json?                     // Array of file paths
+
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+
+  @@index([milestone_id])
+  @@index([visit_date])
 }

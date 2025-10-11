@@ -94,21 +94,44 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Fetch deliverable selections for this contract
+    // Fetch all deliverables for this contract type with ALL options
+    const deliverables = await prisma.contract_deliverables.findMany({
+      where: {
+        contract_type: contract.contract_type_id,
+        is_active: true
+      },
+      include: {
+        options: {
+          where: { is_active: true },
+          orderBy: { option_number: 'asc' }
+        }
+      },
+      orderBy: {
+        deliverable_number: 'asc'
+      }
+    })
+
+    // Fetch user's selections
     const selections = await prisma.contract_deliverable_selections.findMany({
       where: {
         contract_id: contract.id
       },
-      include: {
-        deliverable: true,
-        selected_option: true
-      },
-      orderBy: {
-        deliverable: {
-          deliverable_number: 'asc'
-        }
+      select: {
+        deliverable_id: true,
+        selected_option_id: true
       }
     })
+
+    // Map selections for quick lookup
+    const selectionMap = new Map(
+      selections.map(s => [s.deliverable_id, s.selected_option_id])
+    )
+
+    // Add selection info to deliverables
+    const deliverablesWithSelections = deliverables.map(d => ({
+      ...d,
+      selected_option_id: selectionMap.get(d.id) || null
+    }))
 
     return NextResponse.json(
       {
@@ -117,8 +140,8 @@ export async function GET(request: NextRequest) {
           hasDeliverables: true,
           contractId: contract.id,
           contractType: contract.contract_type_id,
-          selections,
-          total: selections.length
+          deliverables: deliverablesWithSelections,
+          total: deliverables.length
         }
       },
       { status: 200 }

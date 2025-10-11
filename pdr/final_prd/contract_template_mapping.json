@@ -1,0 +1,381 @@
+{
+  "contract_templates": {
+    "template_4": {
+      "template_id": "TEMPLATE-004",
+      "template_name_km": "កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ",
+      "template_name_en": "Performance Agreement between Department of Primary Education and District/City/Khan Education Offices",
+      "template_type": "education_office",
+      "file_path": "/mnt/user-data/uploads/1760151818823_4_*.docx",
+      
+      "parties": {
+        "party_a": {
+          "name_km": "នាយកដ្ឋានបឋមសិក្សា",
+          "name_en": "Department of Primary Education",
+          "representative_name": "លោកបណ្ឌិត កាន់ ពុទ្ធី",
+          "representative_position_km": "ប្រធាននាយកដ្ឋានបឋមសិក្សា",
+          "representative_position_en": "Director of Primary Education Department"
+        },
+        "party_b": {
+          "name_km": "ការិយាល័យអប់រំ",
+          "name_en": "Education Office",
+          "representative_position_km": "ប្រធានការិយាល័យអប់រំ",
+          "representative_position_en": "Director of Education Office",
+          "level_options": ["district", "city", "khan"]
+        }
+      },
+
+      "applicable_indicators": ["IND-001", "IND-002", "IND-003", "IND-004", "IND-005"],
+      
+      "indicator_details": [
+        {
+          "indicator_id": "IND-001",
+          "indicator_number": 1,
+          "description_km": "ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ (៩៥%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៩៣.៧%",
+          "implementation_period_km": "ខែតុលា-ខែវិច្ឆិកា ឆ្នាំ២០២៥",
+          "activities_for_education_office": []
+        },
+        {
+          "indicator_id": "IND-002",
+          "indicator_number": 2,
+          "description_km": "ភាគរយសាលាបឋមសិក្សាមានបណ្ណព័ត៌មានសាលារៀន (៤៦%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣៦%",
+          "implementation_period_km": "ខែតុលា ឆ្នាំ២០២៥- ខែកុម្ភៈ ឆ្នាំ២០២៦",
+          "activities_for_education_office": []
+        },
+        {
+          "indicator_id": "IND-003",
+          "indicator_number": 3,
+          "description_km": "ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន (៥០%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣០%",
+          "implementation_period_km": "ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦",
+          "activities_for_education_office": []
+        },
+        {
+          "indicator_id": "IND-004",
+          "indicator_number": 4,
+          "description_km": "ភាគរយសិស្សដែលនៅក្រោមមូលដ្ឋានលើមុខវិជ្ជាភាសាខ្មែរ និងគណិតវិទ្យាថ្នាក់ទី៣ថយចុះ ៥% មកនៅ (៤៦%) នៅត្រីមាសទី១ ឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន (៥១ %) នៃតេស្តស្តង់ដាថ្នាក់ទី៣ ឆ្នាំ២០១៩",
+          "implementation_period_km": "ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦",
+          "activities_for_education_office": []
+        },
+        {
+          "indicator_id": "IND-005",
+          "indicator_number": 5,
+          "description_km": "ភាគរយសិស្សបឋមសិក្សា ទទួលបាននិទ្ទេស A,B,C លើមុខវិជ្ជាភាសាខ្មែរ និង គណិតវិទ្យាថ្នាក់ទី៣ឡើងដល់ (៣២%) នៅត្រីមាសទី១ ឆ្នាំសិក្សា២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន (២៨%) នៃតេស្តស្តង់ដាថ្នាក់ទី៣ ឆ្នាំ២០១៩",
+          "implementation_period_km": "ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦",
+          "activities_for_education_office": []
+        }
+      ],
+
+      "incentive_structure": {
+        "budget_field_km": "ថវិកាដែលទទួលបានសរុប",
+        "budget_field_en": "Total Budget Received",
+        "disbursement_frequency": {
+          "count": 4,
+          "description_km": "ចំនួនដងនៃការបើកផ្តល់៖ ៤ ដង",
+          "description_en": "Number of disbursements: 4 times"
+        },
+        "conditions": [
+          {
+            "condition_km": "ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង",
+            "condition_en": "Submission of project performance reports",
+            "required": true
+          },
+          {
+            "condition_km": "លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។",
+            "condition_en": "Results of performance evaluation",
+            "required": true
+          }
+        ],
+        "bank_account_requirement": {
+          "field_km": "ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ",
+          "field_en": "Name and Account Number of Education Office Director",
+          "required_fields": ["account_name", "account_number"]
+        }
+      }
+    },
+
+    "template_5": {
+      "template_id": "TEMPLATE-005",
+      "template_name_km": "កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សា និងសាលាបឋមសិក្សា",
+      "template_name_en": "Performance Agreement between Department of Primary Education and Primary Schools",
+      "template_type": "school",
+      "file_path": "/mnt/user-data/uploads/1760151818824_5_*.docx",
+      
+      "parties": {
+        "party_a": {
+          "name_km": "នាយកដ្ឋានបឋមសិក្សា",
+          "name_en": "Department of Primary Education",
+          "representative_name": "លោកបណ្ឌិត កាន់ ពុទ្ធី",
+          "representative_position_km": "ប្រធាននាយកដ្ឋានបឋមសិក្សា",
+          "representative_position_en": "Director of Primary Education Department"
+        },
+        "party_b": {
+          "name_km": "សាលាបឋមសិក្សា",
+          "name_en": "Primary School",
+          "representative_position_options_km": ["នាយកសាលា", "នាយករង", "នាយកស្តីទី"],
+          "representative_position_options_en": ["School Principal", "Deputy Principal", "Acting Principal"]
+        }
+      },
+
+      "applicable_indicators": ["IND-001", "IND-002", "IND-003", "IND-004", "IND-005"],
+      
+      "indicator_details": [
+        {
+          "indicator_id": "IND-001",
+          "indicator_number": 1,
+          "description_km": "ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ (៩៥%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៩៣.៧%",
+          "implementation_period_km": "ខែតុលា-ខែវិច្ឆិកា ឆ្នាំ២០២៥",
+          "school_activities": [
+            {
+              "activity_km": "រៀបចំផែនទីខ្នងផ្ទះតាមសាលារៀន",
+              "activity_en": "Prepare household maps by school"
+            },
+            {
+              "activity_km": "ធ្វើយុទ្ធនាការប្រមូលកុមារចូលរៀន ជាពិសេសកុមារដល់វ័យសិក្សា",
+              "activity_en": "Conduct enrollment campaigns, especially for school-age children"
+            },
+            {
+              "activity_km": "ប្រជុំជាមួយអាជ្ញាធរមូលដ្ឋានតាមសាលារៀន ដើម្បីជួយសម្របសម្រួលក្នុងការប្រមូលកុមារចូលរៀន",
+              "activity_en": "Meet with local authorities by school to facilitate child enrollment"
+            }
+          ]
+        },
+        {
+          "indicator_id": "IND-002",
+          "indicator_number": 2,
+          "description_km": "ភាគរយសាលាបឋមសិក្សាមានបណ្ណព័ត៌មានសាលារៀន (៤៦%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣៦%",
+          "implementation_period_km": "ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦",
+          "school_activities": [
+            {
+              "activity_km": "រៀបចំបង្កើតបណ្ណព័ត៌មានសាលារៀន",
+              "activity_en": "Prepare and create school information boards"
+            }
+          ]
+        },
+        {
+          "indicator_id": "IND-003",
+          "indicator_number": 3,
+          "description_km": "ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន (៥០%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣០%",
+          "implementation_period_km": "ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦",
+          "school_activities": [
+            {
+              "activity_km": "បង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន តាមសេចក្តីណែនាំលេខ ៥៩ អយក.សណន ចុះថ្ងៃទី ១០.កញ្ញា.២០២១",
+              "activity_en": "Establish school management committee according to Directive No. 59 dated September 10, 2021"
+            },
+            {
+              "activity_km": "ជំរុញលើកទឹកចិត្ត​ មូលដ្ឋានភូមិឃុំ ចូលរួមក្នុងគណៈកម្មាការដឹកនាំសាលា",
+              "activity_en": "Encourage and motivate village/commune base to participate in school leadership committee"
+            }
+          ]
+        },
+        {
+          "indicator_id": "IND-004",
+          "indicator_number": 4,
+          "description_km": "ភាគរយសិស្សដែលនៅក្រោមមូលដ្ឋានលើមុខវិជ្ជាភាសាខ្មែរ និងគណិតវិទ្យាថ្នាក់ទី៣ថយចុះ ៥% មកនៅ (៤៦%) នៅត្រីមាសទី១ ឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន (៥១ %) នៃតេស្តស្តង់ដាថ្នាក់ទី៣ ឆ្នាំ២០១៩",
+          "implementation_period_km": "ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦",
+          "school_activities": [
+            {
+              "activity_km": "ជំរុញលោកគ្រូអ្នកគ្រូ ក្នុង​ការប្រើប្រាស់ថ្នាលបឋម ដើម្បីលើកកម្ពស់លទ្ធផលសិក្សារបស់សិស្ស",
+              "activity_en": "Encourage teachers to use early grade materials to improve student learning outcomes"
+            },
+            {
+              "activity_km": "ជំរុញលោកគ្រូអ្នកគ្រូ អនុវត្តការធ្វើតេស្តតាមម������រៀន ប្រចាំខែ ឆមាស ដំណាច់ឆ្នាំនិង អនុវត្តកម្មវិធីបង្រៀនសម្របតាមសមត្ថភាពសិស្សរៀនយឺតតាមរយៈថ្នាលបឋម",
+              "activity_en": "Encourage teachers to conduct lesson-based testing monthly, semi-annually, annually, and implement teaching programs adapted to slow learners through early grade materials"
+            },
+            {
+              "activity_km": "ជំរុញការអនុវត្តកញ្ចប់សម្ភារៈអំណាន និងគណិតវិទ្យាថ្នាក់ដំបូង",
+              "activity_en": "Promote implementation of early grade reading and math material packages"
+            },
+            {
+              "activity_km": "អនុវត្តការគាំទ្រគរុកោសល្យ ដើម្បីជួយ និងជំរុញការបង្រៀន និងរៀន",
+              "activity_en": "Implement coaching support to assist and promote teaching and learning"
+            }
+          ]
+        },
+        {
+          "indicator_id": "IND-005",
+          "indicator_number": 5,
+          "description_km": "ភាគរយសិស្សបឋមសិក្សា ទទួលបាននិទ្ទេស A,B,C លើមុខវិជ្ជាភាសាខ្មែរ និង គណិតវិទ្យាថ្នាក់ទី៣ឡើងដល់ (៣២%) នៅត្រីមាសទី១ ឆ្នាំសិក្សា២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន (២៨%) នៃតេស្តស្តង់ដាថ្នាក់ទី៣ ឆ្នាំ២០១៩",
+          "implementation_period_km": "ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦",
+          "school_activities": [
+            {
+              "activity_km": "ជំរុញលោកគ្រូអ្នកគ្រូ ក្នុង​ការប្រើប្រាស់ថ្នាលបឋម ដើម្បីលើកកម្ពស់លទ្ធផលសិក្សារបស់សិស្ស",
+              "activity_en": "Encourage teachers to use early grade materials to improve student learning outcomes"
+            },
+            {
+              "activity_km": "ជំរុញលោកគ្រូអ្នកគ្រូ អនុវត្តការធ្វើតេស្តតាមមេរៀន ប្រចាំខែ ឆមាស ដំណាច់ឆ្នាំនិង អនុវត្តកម្មវិធីបង្រៀនសម្របតាមសមត្ថភាពសិស្សរៀនយឺតតាមរយៈថ្នាលបឋម",
+              "activity_en": "Encourage teachers to conduct lesson-based testing monthly, semi-annually, annually, and implement teaching programs adapted to slow learners through early grade materials"
+            },
+            {
+              "activity_km": "ជំរុញការអនុវត្តកញ្ចប់សម្ភារៈអំណាន និងគណិតវិទ្យាថ្នាក់ដំបូង",
+              "activity_en": "Promote implementation of early grade reading and math material packages"
+            },
+            {
+              "activity_km": "អនុវត្តការគាំទ្រគរុកោសល្យ ដើម្បីជួយ និងជំរុញការបង្រៀន និងរៀន",
+              "activity_en": "Implement coaching support to assist and promote teaching and learning"
+            }
+          ]
+        }
+      ],
+
+      "incentive_structure": {
+        "budget_field_km": "ថវិកាដែលទទួលបានសរុប",
+        "budget_field_en": "Total Budget Received",
+        "disbursement_frequency": {
+          "count": 4,
+          "description_km": "ចំនួនដងនៃការបើកផ្តល់៖​៤ ដង",
+          "description_en": "Number of disbursements: 4 times"
+        },
+        "conditions": [
+          {
+            "condition_km": "ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង",
+            "condition_en": "Submission of project performance reports",
+            "required": true
+          },
+          {
+            "condition_km": "លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។",
+            "condition_en": "Results of performance evaluation",
+            "required": true
+          }
+        ],
+        "bank_account_requirement": {
+          "field_km": "ព័ត៍មាននៃការបើកប្រាក់",
+          "field_en": "Bank account information",
+          "required_fields": ["account_name_km", "account_number"]
+        }
+      }
+    }
+  },
+
+  "unified_contract_structure": {
+    "description": "Unified structure that works for both education offices and schools",
+    
+    "contract_header": {
+      "country_km": "ព្រះរាជាណាចក្រកម្ពុជា",
+      "motto_km": "ជាតិ សាសនា ព្រះមហាក្សត្រ",
+      "ministry_km": "ក្រសួងអប់រំ យុវជន និងកីឡា",
+      "department_km": "នាយកដ្ឋានបឋមសិក្សា"
+    },
+
+    "contract_body": {
+      "title_field": "template_name_km or template_name_en",
+      "parties_section": {
+        "party_a": "Department representative details",
+        "party_b": "Partner representative details (education office or school)"
+      },
+      
+      "management_commitment_section": {
+        "section_title_km": "គណៈគ្រប់គ្រង និងបុគ្គលិកអប់រំនៃការិយាល័យអប់រំ/នាយកសាលា ព្រមព្រៀងក្នុងការគាំទ្រ ជំរុញ និងពិនិត្យតាមដានការអនុវត្ត",
+        "content": "Management and education staff agree to support, promote and monitor implementation"
+      },
+
+      "indicators_table": {
+        "columns": ["ល.រ", "សមិទ្ធកម្ម", "សូចនាករ", "ពេលវេលាអនុវត្ត"],
+        "rows": "One row per selected indicator with calculation rules"
+      },
+
+      "incentive_section": {
+        "title_km": "ការលើកទឹកចិត្តសមិទ្ធកម្ម",
+        "fields": [
+          "total_budget",
+          "disbursement_count",
+          "conditions",
+          "bank_account_info"
+        ]
+      },
+
+      "signature_section": {
+        "left_signature": {
+          "title_km": "ប្រធាននាយកដ្ឋាន",
+          "subtitle_km": "ជ.ប្រធានគម្រោង",
+          "label_km": "ហត្ថលេខានិងឈ្មោះ"
+        },
+        "right_signature": {
+          "title_km": "ថ្ងៃទី...........ខែ................ឆ្នាំ............",
+          "label_for_office": "ហត្ថលេខានិងឈ្មោះ (ប្រធានការិយាល័យអប់រំ)",
+          "label_for_school": "ហត្ថលេខានិងឈ្មោះ (នាយកសាលា)"
+        }
+      }
+    }
+  },
+
+  "form_to_template_mapping": {
+    "description": "How the form data maps to the contract template fields",
+    
+    "partner_information": {
+      "form_field": "partner_information",
+      "maps_to_template": {
+        "template_4": "ការិយាល័យអប់រំ section",
+        "template_5": "សាលាបឋមសិក្សា section"
+      }
+    },
+
+    "selected_indicators": {
+      "form_field": "selected_indicators[]",
+      "maps_to_template": "Indicators table rows",
+      "note": "Each selected indicator creates a row in the table with appropriate calculation rules"
+    },
+
+    "activities": {
+      "form_field": "activities[]",
+      "maps_to_template": {
+        "template_4": "Not explicitly shown in template (tracked separately)",
+        "template_5": "Listed under each សមិទ្ធកម្ម section"
+      }
+    },
+
+    "budget_and_incentives": {
+      "form_field": "contract_terms.incentives",
+      "maps_to_template": "ការលើកទឹកចិត្តសមិទ្ធកម្ម section"
+    },
+
+    "signatures": {
+      "form_field": "signatures",
+      "maps_to_template": "Bottom signature section"
+    }
+  },
+
+  "document_generation_logic": {
+    "description": "Logic for generating filled contract documents from form data",
+    
+    "step_1_select_template": {
+      "if": "partner_type == 'provincial' OR 'district' OR 'khan'",
+      "then": "use TEMPLATE-004",
+      "else_if": "partner_type == 'school'",
+      "then": "use TEMPLATE-005"
+    },
+
+    "step_2_fill_header": {
+      "action": "Fill in partner name, representative details, position"
+    },
+
+    "step_3_build_indicators_table": {
+      "for_each": "selected_indicator in contract.selected_indicators",
+      "action": "Create table row with indicator details and calculation rules based on baseline"
+    },
+
+    "step_4_add_activities": {
+      "if": "template == TEMPLATE-005",
+      "action": "List activities under each indicator section",
+      "note": "Template 4 doesn't show activities in the contract itself"
+    },
+
+    "step_5_fill_incentives": {
+      "fields_to_fill": [
+        "total_budget",
+        "disbursement_count (always 4)",
+        "conditions (always same 2 conditions)",
+        "bank_account_name",
+        "bank_account_number"
+      ]
+    },
+
+    "step_6_add_signatures": {
+      "left_side": "Department representative (លោកបណ្ឌិត កាន់ ពុទ្ធី)",
+      "right_side": "Partner representative with date"
+    },
+
+    "step_7_export": {
+      "format": "DOCX",
+      "filename_pattern": "Contract_{contract_id}_{partner_name}_{date}.docx"
+    }
+  }
+}

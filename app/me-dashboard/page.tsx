@@ -293,7 +293,7 @@ export default function MEDashboardPage() {
         const data = await response.json()
         if (data.success && data.data.hasDeliverables) {
           setHasDeliverables(true)
-          setDeliverables(data.data.selections || [])
+          setDeliverables(data.data.deliverables || [])
         } else {
           setHasDeliverables(false)
           setDeliverables([])
@@ -1460,30 +1460,40 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                               key: 'number',
                               width: 80,
                               render: (_, record) => (
-                                <Text className="font-hanuman">{record.deliverable.deliverable_number}</Text>
+                                <Text className="font-hanuman">{record.deliverable_number}</Text>
                               )
                             },
                             {
                               title: <span className="font-hanuman">សមិទ្ធកម្ម</span>,
                               key: 'deliverable',
                               render: (_, record) => (
-                                <Text className="font-hanuman">{record.deliverable.deliverable_title_khmer}</Text>
+                                <Text className="font-hanuman">{record.deliverable_title_khmer}</Text>
                               )
                             },
                             {
                               title: <span className="font-hanuman">សូចនាករ</span>,
                               key: 'indicator',
                               render: (_, record) => (
-                                <div className="font-hanuman">
-                                  <div className="flex items-start gap-2">
-                                    <Tag color="blue">ជម្រើសទី {record.selected_option.option_number}</Tag>
-                                    <Text>{record.selected_option.option_text_khmer}</Text>
-                                  </div>
-                                  {record.selected_option.baseline_percentage && (
-                                    <div className="mt-2 text-sm text-gray-600">
-                                      មូលដ្ឋាន: {record.selected_option.baseline_percentage}% → គោលដៅ: {record.selected_option.target_percentage}%
-                                    </div>
-                                  )}
+                                <div className="font-hanuman space-y-3">
+                                  {record.options.map((option: any) => {
+                                    const isSelected = record.selected_option_id === option.id
+                                    return (
+                                      <div
+                                        key={option.id}
+                                        className={`p-2 rounded ${isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}
+                                      >
+                                        <div className="flex items-start gap-2">
+                                          <Text strong className={isSelected ? 'text-blue-600' : ''}>
+                                            {option.option_number}/
+                                          </Text>
+                                          <Text className={isSelected ? 'text-blue-700 font-medium' : ''}>
+                                            {option.option_text_khmer}
+                                          </Text>
+                                          {isSelected && <Tag color="blue">បានជ្រើសរើស</Tag>}
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
                                 </div>
                               )
                             },
@@ -1492,7 +1502,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                               key: 'timeline',
                               width: 200,
                               render: (_, record) => (
-                                <Text className="font-hanuman">{record.deliverable.timeline}</Text>
+                                <Text className="font-hanuman">{record.timeline}</Text>
                               )
                             }
                           ]}
@@ -1507,22 +1517,38 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                         {deliverables.map((item: any) => (
                           <Card key={item.id} size="small">
                             <div className="font-hanuman">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Badge count={item.deliverable.deliverable_number} style={{ backgroundColor: '#1890ff' }} />
-                                <Text strong>{item.deliverable.deliverable_title_khmer}</Text>
+                              <div className="flex items-center gap-2 mb-3">
+                                <Badge count={item.deliverable_number} style={{ backgroundColor: '#1890ff' }} />
+                                <Text strong>{item.deliverable_title_khmer}</Text>
                               </div>
-                              <div className="mt-3 p-3 bg-blue-50 rounded">
-                                <Tag color="blue" className="mb-2">ជម្រើសទី {item.selected_option.option_number}</Tag>
-                                <div className="text-sm">{item.selected_option.option_text_khmer}</div>
-                                {item.selected_option.baseline_percentage && (
-                                  <div className="mt-2 text-xs text-gray-600">
-                                    មូលដ្ឋាន: {item.selected_option.baseline_percentage}% → គោលដៅ: {item.selected_option.target_percentage}%
-                                  </div>
-                                )}
+
+                              <div className="space-y-2 mb-3">
+                                {item.options.map((option: any) => {
+                                  const isSelected = item.selected_option_id === option.id
+                                  return (
+                                    <div
+                                      key={option.id}
+                                      className={`p-2 rounded text-sm ${isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : 'bg-gray-50'}`}
+                                    >
+                                      <div className="flex items-start gap-1">
+                                        <Text strong className={isSelected ? 'text-blue-600' : 'text-gray-700'}>
+                                          {option.option_number}/
+                                        </Text>
+                                        <Text className={isSelected ? 'text-blue-700 font-medium' : 'text-gray-700'}>
+                                          {option.option_text_khmer}
+                                        </Text>
+                                      </div>
+                                      {isSelected && (
+                                        <Tag color="blue" className="mt-1 text-xs">បានជ្រើសរើស</Tag>
+                                      )}
+                                    </div>
+                                  )
+                                })}
                               </div>
-                              <div className="mt-3 text-sm text-gray-600">
+
+                              <div className="text-sm text-gray-600">
                                 <ClockCircleOutlined className="mr-1" />
-                                {item.deliverable.timeline}
+                                {item.timeline}
                               </div>
                             </div>
                           </Card>

@@ -1,0 +1,423 @@
+{
+  "implementation_guide": {
+    "system_overview": {
+      "name": "Education Partner Milestone Tracking System",
+      "purpose": "Track performance agreements between the Department of Primary Education and education partners (offices and schools)",
+      "academic_year": "2025-2026",
+      "total_indicators": 5,
+      "contract_types": 2
+    },
+
+    "system_components": {
+      "1_contract_agreement_form": {
+        "description": "Multi-step web form for partners to create agreements",
+        "file_reference": "form_configuration.json",
+        "steps": 6,
+        "key_features": [
+          "Partner can select 1-5 indicators (max 1 per indicator type)",
+          "Auto-calculation of targets based on baseline",
+          "Activities and deliverables planning",
+          "Digital signature support",
+          "Draft saving capability"
+        ]
+      },
+
+      "2_contract_templates": {
+        "description": "Official contract document templates in Khmer",
+        "file_reference": "contract_template_mapping.json",
+        "templates": {
+          "template_4": "For education offices (district/city/khan)",
+          "template_5": "For primary schools"
+        },
+        "output_format": "DOCX"
+      },
+
+      "3_tracking_database": {
+        "description": "Database schema for storing all tracking data",
+        "file_reference": "partner_tracking_schema.json",
+        "main_entities": [
+          "contracts",
+          "milestones",
+          "progress_reports",
+          "deliverables",
+          "activities"
+        ]
+      },
+
+      "4_dashboard": {
+        "description": "Real-time monitoring dashboard",
+        "file_reference": "api_endpoints.json > dashboard section",
+        "views": [
+          "Overview metrics",
+          "Performance by indicator",
+          "Performance by partner",
+          "Geographical analysis",
+          "Timeline view"
+        ]
+      },
+
+      "5_api_backend": {
+        "description": "RESTful API for all operations",
+        "file_reference": "api_endpoints.json",
+        "total_endpoints": 30,
+        "authentication": "JWT tokens"
+      }
+    },
+
+    "user_workflows": {
+      "workflow_1_partner_creates_agreement": {
+        "steps": [
+          {
+            "step": 1,
+            "action": "Partner logs in",
+            "api": "POST /auth/login"
+          },
+          {
+            "step": 2,
+            "action": "Partner fills out agreement form",
+            "screen": "Multi-step form",
+            "data": "form_configuration.json"
+          },
+          {
+            "step": 3,
+            "action": "Partner selects indicators (1-5, unique)",
+            "validation": "Each indicator can only be selected once"
+          },
+          {
+            "step": 4,
+            "action": "System auto-calculates targets based on baseline",
+            "logic": "indicator_master_data > calculation_rules"
+          },
+          {
+            "step": 5,
+            "action": "Partner adds activities and deliverables"
+          },
+          {
+            "step": 6,
+            "action": "Partner reviews and submits",
+            "api": "POST /contracts/submit"
+          },
+          {
+            "step": 7,
+            "action": "System generates contract document",
+            "output": "DOCX file based on template 4 or 5"
+          },
+          {
+            "step": 8,
+            "action": "Ministry reviews and approves",
+            "api": "POST /contracts/:id/approve"
+          }
+        ]
+      },
+
+      "workflow_2_partner_reports_progress": {
+        "steps": [
+          {
+            "step": 1,
+            "action": "Partner navigates to their milestones",
+            "api": "GET /milestones?partner_id=xxx"
+          },
+          {
+            "step": 2,
+            "action": "Partner selects milestone to update",
+            "api": "GET /milestones/:milestone_id"
+          },
+          {
+            "step": 3,
+            "action": "Partner fills out progress report",
+            "fields": [
+              "reported_value",
+              "narrative_report_km",
+              "narrative_report_en",
+              "challenges",
+              "next_steps",
+              "supporting_documents"
+            ]
+          },
+          {
+            "step": 4,
+            "action": "Partner submits report",
+            "api": "POST /milestones/:milestone_id/reports"
+          },
+          {
+            "step": 5,
+            "action": "Ministry verifies report",
+            "api": "POST /reports/:report_id/verify"
+          }
+        ]
+      },
+
+      "workflow_3_ministry_monitors_performance": {
+        "steps": [
+          {
+            "step": 1,
+            "action": "Ministry user logs in",
+            "api": "POST /auth/login"
+          },
+          {
+            "step": 2,
+            "action": "View dashboard overview",
+            "api": "GET /dashboard/overview"
+          },
+          {
+            "step": 3,
+            "action": "Filter by indicator",
+            "api": "GET /dashboard/indicators"
+          },
+          {
+            "step": 4,
+            "action": "Drill down to specific partner",
+            "api": "GET /dashboard/partners?partner_id=xxx"
+          },
+          {
+            "step": 5,
+            "action": "View milestone details",
+            "api": "GET /milestones/:milestone_id"
+          },
+          {
+            "step": 6,
+            "action": "Review and verify reports",
+            "api": "POST /reports/:report_id/verify"
+          }
+        ]
+      }
+    },
+
+    "database_queries": {
+      "query_1_get_all_active_contracts": {
+        "description": "Get all active contracts for current academic year",
+        "sql": "SELECT * FROM contracts WHERE status = 'active' AND academic_year = '2025-2026'",
+        "api_equivalent": "GET /contracts?status=active&academic_year=2025-2026"
+      },
+
+      "query_2_get_milestone_achievement_rate": {
+        "description": "Calculate achievement rate for a milestone",
+        "formula": "((current_value - baseline_value) / (target_value - baseline_value)) * 100",
+        "example": {
+          "baseline": 92.5,
+          "target": 93.8,
+          "current": 92.8,
+          "achievement": "((92.8 - 92.5) / (93.8 - 92.5)) * 100 = 23.08%"
+        }
+      },
+
+      "query_3_get_indicators_by_performance": {
+        "description": "Rank indicators by average achievement",
+        "sql": "SELECT i.indicator_name, AVG(m.achievement_percentage) as avg_achievement FROM indicators i JOIN milestones m ON i.indicator_id = m.indicator_id WHERE m.milestone_status = 'in_progress' GROUP BY i.indicator_id ORDER BY avg_achievement DESC"
+      },
+
+      "query_4_get_at_risk_milestones": {
+        "description": "Find milestones that are at risk or delayed",
+        "sql": "SELECT * FROM milestones WHERE (health_indicator = 'at_risk' OR is_delayed = true) AND milestone_status != 'completed'"
+      },
+
+      "query_5_get_partner_performance_ranking": {
+        "description": "Rank partners by overall achievement rate",
+        "sql": "SELECT p.partner_name, AVG(m.achievement_percentage) as overall_achievement FROM partners p JOIN contracts c ON p.partner_id = c.partner_id JOIN milestones m ON c.contract_id = m.contract_id WHERE c.status = 'active' GROUP BY p.partner_id ORDER BY overall_achievement DESC"
+      }
+    },
+
+    "dashboard_calculations": {
+      "overall_achievement_rate": {
+        "formula": "(SUM(completed_milestones) / SUM(total_milestones)) * 100",
+        "description": "Percentage of all milestones that have been completed"
+      },
+
+      "indicator_performance": {
+        "formula": "AVG(achievement_percentage) for all milestones under each indicator",
+        "description": "Average achievement across all partners for each indicator"
+      },
+
+      "milestone_health_status": {
+        "green": "achievement_percentage >= 75 AND NOT delayed",
+        "yellow": "achievement_percentage >= 50 AND achievement_percentage < 75 OR days_delayed < 15",
+        "red": "achievement_percentage < 50 OR days_delayed >= 15"
+      },
+
+      "budget_utilization": {
+        "formula": "(budget_spent / budget_allocated) * 100",
+        "applies_to": "activities"
+      }
+    },
+
+    "reporting_schedule": {
+      "monthly_reports": {
+        "due_date": "5th of each month",
+        "content": "Progress update for previous month",
+        "required_fields": [
+          "current_value",
+          "narrative_report",
+          "challenges",
+          "next_steps"
+        ]
+      },
+
+      "quarterly_reports": {
+        "due_date": "15th of month following quarter end",
+        "content": "Comprehensive quarterly review",
+        "required_fields": [
+          "quarterly_achievement",
+          "cumulative_progress",
+          "detailed_analysis",
+          "lessons_learned",
+          "next_quarter_plans"
+        ]
+      },
+
+      "monitoring_visits": {
+        "frequency": "4 times per academic year",
+        "schedule": ["Nov 2025", "Jan 2026", "Mar 2026", "May 2026"],
+        "deliverable": "Monitoring visit report"
+      }
+    }
+  },
+
+  "technical_implementation": {
+    "frontend": {
+      "technology": "React + TypeScript",
+      "ui_framework": "Material-UI or Ant Design",
+      "state_management": "Redux or Context API",
+      "form_library": "React Hook Form + Yup validation",
+      
+      "key_pages": [
+        {
+          "page": "/contracts/new",
+          "description": "Multi-step contract creation form",
+          "config": "form_configuration.json"
+        },
+        {
+          "page": "/dashboard",
+          "description": "Main monitoring dashboard",
+          "components": ["OverviewCards", "IndicatorChart", "PartnerTable", "TimelineView"]
+        },
+        {
+          "page": "/milestones/:id",
+          "description": "Milestone detail page",
+          "components": ["ProgressChart", "ActivityList", "ReportForm", "DeliverableList"]
+        },
+        {
+          "page": "/reports/submit",
+          "description": "Progress report submission",
+          "components": ["ReportForm", "FileUpload", "NarrativeEditor"]
+        }
+      ]
+    },
+
+    "backend": {
+      "technology": "Node.js + Express OR Python + FastAPI",
+      "database": "PostgreSQL (relational data) + MongoDB (documents/files)",
+      "authentication": "JWT tokens",
+      "file_storage": "AWS S3 or local file system",
+      
+      "key_modules": [
+        {
+          "module": "contract_service",
+          "responsibility": "Contract CRUD operations, validation, approval workflow"
+        },
+        {
+          "module": "milestone_service",
+          "responsibility": "Milestone tracking, progress calculation, status updates"
+        },
+        {
+          "module": "reporting_service",
+          "responsibility": "Report submission, verification, data extraction"
+        },
+        {
+          "module": "dashboard_service",
+          "responsibility": "Aggregate queries, analytics, performance calculations"
+        },
+        {
+          "module": "document_generation_service",
+          "responsibility": "Generate DOCX contracts from templates"
+        },
+        {
+          "module": "notification_service",
+          "responsibility": "Email/SMS alerts for deadlines, approvals, issues"
+        }
+      ]
+    },
+
+    "document_generation": {
+      "library": "python-docx (Python) OR docxtemplater (JavaScript)",
+      "process": [
+        "Load template DOCX file",
+        "Replace placeholders with actual data",
+        "Generate indicator table rows dynamically",
+        "Add signature sections",
+        "Export as new DOCX file"
+      ],
+      "templates": [
+        "template_4.docx (for education offices)",
+        "template_5.docx (for schools)"
+      ]
+    },
+
+    "data_validation": {
+      "contract_level": [
+        "Unique indicator selection (each indicator max once)",
+        "Baseline value must be numeric 0-100",
+        "Target calculation follows indicator rules",
+        "At least 1 milestone required",
+        "Maximum 5 milestones allowed"
+      ],
+      "milestone_level": [
+        "Start date before end date",
+        "Progress value between 0-100",
+        "Achievement percentage auto-calculated",
+        "Status transitions follow workflow"
+      ],
+      "report_level": [
+        "Reported value must be within valid range",
+        "Supporting documents required",
+        "Narrative reports required in both languages"
+      ]
+    }
+  },
+
+  "deployment_checklist": {
+    "phase_1_setup": [
+      "Set up database (PostgreSQL + MongoDB)",
+      "Import indicator master data",
+      "Upload contract templates",
+      "Configure authentication system",
+      "Set up file storage"
+    ],
+    
+    "phase_2_development": [
+      "Develop contract creation form",
+      "Implement indicator selection and validation",
+      "Build target auto-calculation logic",
+      "Create document generation service",
+      "Develop milestone tracking module",
+      "Build reporting functionality",
+      "Create dashboard with analytics"
+    ],
+
+    "phase_3_testing": [
+      "Test contract creation workflow",
+      "Test indicator uniqueness validation",
+      "Test target calculation accuracy",
+      "Test document generation",
+      "Test progress reporting",
+      "Test dashboard queries performance",
+      "User acceptance testing with partners"
+    ],
+
+    "phase_4_training": [
+      "Create user manual (Khmer + English)",
+      "Record video tutorials",
+      "Conduct training for education offices",
+      "Conduct training for schools",
+      "Provide help desk support"
+    ],
+
+    "phase_5_launch": [
+      "Deploy to production",
+      "Import existing partner data",
+      "Enable partner registration",
+      "Monitor system performance",
+      "Collect feedback",
+      "Iterate based on feedback"
+    ]
+  }
+}

@@ -1,0 +1,358 @@
+{
+  "example_contract_complete": {
+    "contract_id": "CTR-2025-001",
+    "contract_number": "001/2025-MOE",
+    "contract_type": "education_partnership",
+    "academic_year": "2025-2026",
+    
+    "partner_information": {
+      "partner_id": "PARTNER-PP-001",
+      "partner_name_km": "ការិយាល័យអប់រំក្រុងភ្នំពេញ",
+      "partner_name_en": "Phnom Penh City Education Office",
+      "partner_type": "district",
+      "location": {
+        "province_km": "រាជធានីភ្នំពេញ",
+        "province_en": "Phnom Penh Capital",
+        "district_city_km": "ក្រុងភ្នំពេញ",
+        "district_city_en": "Phnom Penh City",
+        "commune_khan": "ទាំងអស់"
+      },
+      "contact_person": {
+        "name_km": "លោក ស៊ីន សុខា",
+        "name_en": "Mr. Sin Sokha",
+        "position_km": "ប្រធានការិយាល័យ",
+        "position_en": "Office Director",
+        "phone": "012345678",
+        "email": "sokha.sin@moeys.gov.kh"
+      },
+      "organization_details": {
+        "total_schools": 45,
+        "total_students": 15000,
+        "total_teachers": 520,
+        "baseline_year": "2024-2025"
+      }
+    },
+
+    "selected_indicators": [
+      {
+        "milestone_id": "MS-PP-001",
+        "indicator_id": "IND-001",
+        "indicator_number": 1,
+        "indicator_name_km": "ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ",
+        "indicator_name_en": "Percentage of children enrolled in Grade 1 at correct age",
+        "selected_date": "2025-10-11",
+        "justification_km": "នៅក្រុងភ្នំពេញ យើងមានបញ្ហាកុមារចូលរៀនថ្នាក់ទី១មិនត្រឹមត្រូវតាមអាយុដោយសារតែការផ្លាស់ទីលំនៅច្រើន។ យើងចង់កែលម្អការចុះឈ្មោះដើម្បីធានាថាកុមារទាំងអស់ចូលរៀនត្រឹមត្រូវតាមអាយុ។",
+        "justification_en": "In Phnom Penh, we have issues with children entering Grade 1 at incorrect ages due to high migration. We want to improve enrollment to ensure all children enter school at the correct age.",
+        "baseline_data": {
+          "baseline_percentage": 92.5,
+          "baseline_source": "របាយការណ៍ស្ថិតិការចុះឈ្មោះឆ្នាំសិក្សា ២០២៤-២០២៥",
+          "baseline_date": "2024-09-30",
+          "baseline_notes": "ទិន្នន័យពីសាលា ៤៥ សាលាទាំងអស់នៅក្រុងភ្នំពេញ"
+        },
+        "target_commitment": {
+          "target_percentage": 93.8,
+          "target_date": "2025-11-30",
+          "calculation_method": "baseline_plus_1.3",
+          "calculation_notes": "92.5% + 1.3% = 93.8% (since baseline < 93.7%)",
+          "custom_target": null
+        }
+      },
+      {
+        "milestone_id": "MS-PP-002",
+        "indicator_id": "IND-003",
+        "indicator_number": 3,
+        "indicator_name_km": "ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន",
+        "indicator_name_en": "Percentage of schools establishing school management committees",
+        "selected_date": "2025-10-11",
+        "justification_km": "សាលារៀនច្រើននៅក្រុងភ្នំពេញមិនទាន់មានគណៈកម្មការគ្រប់គ្រងសាលារៀនដែលមានប្រសិទ្ធភាព។ យើងចង់បង្កើតគណៈកម្មការទាំងនេះដើម្បីបង្កើនការចូលរួមរបស់សហគមន៍និងភាពតម្លាភាព។",
+        "justification_en": "Many schools in Phnom Penh do not yet have effective school management committees. We want to establish these committees to increase community participation and transparency.",
+        "baseline_data": {
+          "baseline_percentage": 28.0,
+          "baseline_source": "ការស្ទង់មតិគណៈកម្មការសាលារៀនឆ្នាំ ២០២៥",
+          "baseline_date": "2025-01-15",
+          "baseline_notes": "មានតែ ១៣ សាលាក្នុងចំណោម ៤៥ សាលាមានគណៈកម្មការដែលមានប្រសិទ្ធភាព"
+        },
+        "target_commitment": {
+          "target_percentage": 48.0,
+          "target_date": "2026-03-31",
+          "calculation_method": "baseline_plus_20",
+          "calculation_notes": "28% + 20% = 48% (since baseline < 30%)",
+          "custom_target": null
+        }
+      }
+    ],
+
+    "milestones_detail": [
+      {
+        "milestone_id": "MS-PP-001",
+        "milestone_name_km": "បង្កើនការចុះឈ្មោះសិស្សថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ",
+        "milestone_name_en": "Increase correct-age Grade 1 enrollment",
+        "milestone_description_km": "ពង្រឹងយុទ្ធនាការចុះឈ្មោះសិស្ស និងធ្វើសកម្មភាពទំនាក់ទំនងសហគមន៍ដើម្បីធានាថាកុមារទាំងអស់ចុះឈ្មោះចូលរៀនថ្នាក់ទី១នៅអាយុត្រឹមត្រូវ (៦ឆ្នាំ)",
+        "milestone_description_en": "Strengthen enrollment campaigns and community outreach to ensure all children enroll in Grade 1 at correct age (6 years old)",
+        
+        "timeline": {
+          "planned_start_date": "2025-10-01",
+          "planned_end_date": "2025-11-30",
+          "actual_start_date": "2025-10-05",
+          "actual_end_date": null,
+          "milestone_duration_days": 60
+        },
+
+        "targets_and_baseline": {
+          "baseline_value": 92.5,
+          "target_value": 93.8,
+          "current_value": 92.8,
+          "measurement_unit": "percentage",
+          "target_increase": 1.3,
+          "is_reduction_target": false
+        },
+
+        "progress_tracking": {
+          "achievement_percentage": 23.08,
+          "last_updated": "2025-10-25",
+          "data_source": "ប្រព័ន្ធ EMIS",
+          "verification_method": "ការពិនិត្យមូលដ្ឋានទិន្នន័យ និងសម្ភាសន៍សាលា",
+          
+          "progress_reports": [
+            {
+              "report_id": "RPT-PP-001-OCT",
+              "reporting_date": "2025-10-25",
+              "reporting_period": "October 2025",
+              "reported_value": 92.8,
+              "cumulative_progress": 23.08,
+              "narrative_report_km": "ក្នុងខែតុលា យើងបានបើកយុទ្ធនាការចុះឈ្មោះនៅសាលា ២០ កន្លែង។ យើងបានរកឃើញកុមារ ១៨៥ នាក់ដែលមានអាយុត្រឹមត្រូវប៉ុន្តែមិនទាន់ចុះឈ្មោះ។ យើងកំពុងធ្វើការជាមួយគ្រួសារទាំងនោះដើម្បីលើកទឹកចិត្តឱ្យពួកគេចុះឈ្មោះកូនរបស់ពួកគេ។",
+              "narrative_report_en": "In October, we launched enrollment campaigns in 20 schools. We identified 185 children of correct age who were not yet enrolled. We are working with those families to encourage them to enroll their children.",
+              "challenges_km": "ខ្លះគ្រួសារលំបាកក្រីក្រមិនមានលទ្ធភាពចំណាយលើសម្ភារៈសិក្សា។ ខ្លះគ្រួសារទើបតែផ្លាស់មកភ្នំពេញថ្មីៗ និងមិនទាន់ដឹងពីដំណើរការចុះឈ្មោះ។",
+              "challenges_en": "Some families are in poverty and cannot afford school supplies. Some families recently migrated to Phnom Penh and are not yet aware of enrollment procedures.",
+              "next_steps_km": "១. ចងចាំសម្រេចមូលនិធិសម្រាប់គ្រួសារក្រីក្រ ២. រៀបចំវគ្គបណ្តុះបណ្តាលអំពីដំណើរការចុះឈ្មោះសម្រាប់គ្រួសារអន្ថេខាណេត ៣. ធ្វើការជាមួយមេធាវីសហគមន៍ដើម្បីទៅដល់គ្រួសារកុមារដែលមិនទាន់ចុះឈ្មោះ",
+              "next_steps_en": "1. Secure funding for poor families 2. Organize training on enrollment procedures for migrant families 3. Work with community leaders to reach unenrolled children's families",
+              "supporting_documents": [
+                {
+                  "document_name": "របាយការណ៍យុទ្ធនាការខែតុលា",
+                  "document_url": "/uploads/reports/oct-campaign-report.pdf",
+                  "upload_date": "2025-10-25"
+                },
+                {
+                  "document_name": "បញ្ជីកុមារដែលមិនទាន់ចុះឈ្មោះ",
+                  "document_url": "/uploads/data/unenrolled-list.xlsx",
+                  "upload_date": "2025-10-25"
+                }
+              ],
+              "verified": true,
+              "verified_by": "Ministry Monitoring Team",
+              "verified_date": "2025-10-28"
+            }
+          ]
+        },
+
+        "deliverables": [
+          {
+            "deliverable_id": "DEL-PP-001-01",
+            "deliverable_name_km": "បញ្ជីកុមារចុះឈ្មោះថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ",
+            "deliverable_name_en": "List of correctly-aged Grade 1 enrolled children",
+            "deliverable_type": "data",
+            "due_date": "2025-11-30",
+            "status": "in_progress",
+            "submission_date": null,
+            "file_attachments": [],
+            "review_status": "not_reviewed",
+            "reviewer_comments": ""
+          },
+          {
+            "deliverable_id": "DEL-PP-001-02",
+            "deliverable_name_km": "របាយការណ៍សង្ខេបយុទ្ធនាការចុះឈ្មោះ",
+            "deliverable_name_en": "Enrollment campaign summary report",
+            "deliverable_type": "report",
+            "due_date": "2025-12-15",
+            "status": "pending",
+            "submission_date": null,
+            "file_attachments": [],
+            "review_status": "not_reviewed",
+            "reviewer_comments": ""
+          }
+        ],
+
+        "activities": [
+          {
+            "activity_id": "ACT-PP-001-01",
+            "activity_name_km": "យុទ្ធនាការទំនាក់ទំនងសហគមន៍",
+            "activity_name_en": "Community outreach campaign",
+            "activity_description": "ធ្វើយុទ្ធនាការទំនាក់ទំនងនៅសហគមន៍ទាំង ១៥ កន្លែងដើម្បីលើកទឹកចិត្តការចុះឈ្មោះត្រឹមត្រូវតាមអាយុ",
+            "responsible_person": "Ms. Dara - Community Liaison Officer",
+            "start_date": "2025-10-01",
+            "end_date": "2025-10-31",
+            "status": "completed",
+            "completion_percentage": 100,
+            "budget_allocated": 2000,
+            "budget_spent": 1850,
+            "notes": "បានបញ្ចប់ដោយជោគជ័យ ទៅដល់គ្រួសារ ៥០០ គ្រួសារ"
+          },
+          {
+            "activity_id": "ACT-PP-001-02",
+            "activity_name_km": "វគ្គបណ្តុះបណ្តាលគ្រូសម្រាប់ការកំណត់អាយុត្រឹមត្រូវ",
+            "activity_name_en": "Teacher training on correct age verification",
+            "activity_description": "រៀបចំវគ្គបណ្តុះបណ្តាលគ្រូពីសាលា ៤៥ អំពីរបៀបកំណត់អាយុត្រឹមត្រូវនិងការណែនាំគ្រួសារ",
+            "responsible_person": "Mr. Sokha - Training Coordinator",
+            "start_date": "2025-10-15",
+            "end_date": "2025-11-15",
+            "status": "in_progress",
+            "completion_percentage": 60,
+            "budget_allocated": 1500,
+            "budget_spent": 800,
+            "notes": "បានបណ្តុះបណ្តាលសាលា ២៧ កន្លែងហើយ"
+          },
+          {
+            "activity_id": "ACT-PP-001-03",
+            "activity_name_km": "ការស្ទង់មតិគ្រួសារដែលមានកូនមិនទាន់ចុះឈ្មោះ",
+            "activity_name_en": "Survey of families with unenrolled children",
+            "activity_description": "ធ្វើការស្ទង់មតិដើម្បីយល់ពីឧបសគ្គដែលគ្រួសារជួបប្រទះក្នុងការចុះឈ្មោះកូន",
+            "responsible_person": "Research Team",
+            "start_date": "2025-11-01",
+            "end_date": "2025-11-30",
+            "status": "in_progress",
+            "completion_percentage": 30,
+            "budget_allocated": 1000,
+            "budget_spent": 200,
+            "notes": "កំពុងបង្កើតសំណួរស្ទង់មតិ"
+          }
+        ],
+
+        "milestone_status": {
+          "overall_status": "in_progress",
+          "health_indicator": "on_track",
+          "risk_level": "low",
+          "is_delayed": false,
+          "days_delayed": 0,
+          "completion_date": null,
+          "last_status_update": "2025-10-28"
+        }
+      },
+
+      {
+        "milestone_id": "MS-PP-002",
+        "milestone_name_km": "បង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន",
+        "milestone_name_en": "Establish School Management Committees",
+        "milestone_description_km": "បង្កើតនិងពង្រឹងគណៈកម្មការគ្រប់គ្រងសាលារៀននៅសាលាដែលមិនទាន់មាន និងពង្រឹងគណៈកម្មការដែលមានស្រាប់",
+        "milestone_description_en": "Establish and strengthen school management committees in schools without them and reinforce existing committees",
+        
+        "timeline": {
+          "planned_start_date": "2025-10-01",
+          "planned_end_date": "2026-03-31",
+          "actual_start_date": null,
+          "actual_end_date": null,
+          "milestone_duration_days": 182
+        },
+
+        "targets_and_baseline": {
+          "baseline_value": 28.0,
+          "target_value": 48.0,
+          "current_value": 28.0,
+          "measurement_unit": "percentage",
+          "target_increase": 20.0,
+          "is_reduction_target": false
+        },
+
+        "progress_tracking": {
+          "achievement_percentage": 0,
+          "last_updated": "2025-10-11",
+          "data_source": "School Survey",
+          "verification_method": "Site visits and document review",
+          "progress_reports": []
+        },
+
+        "deliverables": [
+          {
+            "deliverable_id": "DEL-PP-002-01",
+            "deliverable_name_km": "គោលការណ៍ណែនាំសម្រាប់គណៈកម្មការសាលារៀន",
+            "deliverable_name_en": "Guidelines for school management committees",
+            "deliverable_type": "document",
+            "due_date": "2025-12-31",
+            "status": "pending",
+            "submission_date": null
+          },
+          {
+            "deliverable_id": "DEL-PP-002-02",
+            "deliverable_name_km": "បញ្ជីសាលាដែលបានបង្កើតគណៈកម្មការ",
+            "deliverable_name_en": "List of schools with established committees",
+            "deliverable_type": "data",
+            "due_date": "2026-03-31",
+            "status": "pending",
+            "submission_date": null
+          }
+        ],
+
+        "activities": [
+          {
+            "activity_id": "ACT-PP-002-01",
+            "activity_name_km": "កំណត់អត្តសញ្ញាណសាលាគោលដៅ",
+            "activity_name_en": "Identify target schools",
+            "activity_description": "កំណត់អត្តសញ្ញាណសាលាដែលមិនទាន់មានគណៈកម្មការ",
+            "responsible_person": "Planning Team",
+            "start_date": "2025-10-01",
+            "end_date": "2025-10-31",
+            "status": "not_started",
+            "completion_percentage": 0,
+            "budget_allocated": 500,
+            "budget_spent": 0
+          }
+        ],
+
+        "milestone_status": {
+          "overall_status": "not_started",
+          "health_indicator": "on_track",
+          "risk_level": "low",
+          "is_delayed": false,
+          "days_delayed": 0,
+          "completion_date": null
+        }
+      }
+    ],
+
+    "contract_terms": {
+      "contract_start_date": "2025-10-01",
+      "contract_end_date": "2026-06-30",
+      "total_milestones": 2,
+      "reporting_frequency": "monthly",
+      "monitoring_visits": 4,
+      "penalties": {
+        "enabled": false,
+        "penalty_structure": []
+      },
+      "incentives": {
+        "enabled": true,
+        "incentive_structure": [
+          {
+            "achievement_level": "100%",
+            "incentive_type": "certificate",
+            "description": "វិញ្ញាបនបត្រកិត្តិយសពីក្រសួង"
+          },
+          {
+            "achievement_level": "80-99%",
+            "incentive_type": "recognition",
+            "description": "លិខិតកោតសរសើរ"
+          }
+        ]
+      }
+    },
+
+    "signatures": {
+      "partner_representative": {
+        "name": "Sin Sokha",
+        "position": "Director, Phnom Penh City Education Office",
+        "signature_date": "2025-10-11",
+        "signature_image": "/signatures/partner-pp-001.png"
+      },
+      "ministry_representative": {
+        "name": "Dr. Hang Chuon Naron",
+        "position": "Minister of Education, Youth and Sport",
+        "signature_date": "2025-10-12",
+        "signature_image": "/signatures/ministry-rep.png"
+      }
+    },
+
+    "contract_status": "active",
+    "created_date": "2025-10-11",
+    "last_modified": "2025-10-28",
+    "approved_date": "2025-10-12"
+  }
+}

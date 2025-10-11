@@ -1,0 +1,522 @@
+{
+  "contract_agreement_form_config": {
+    "form_title_km": "ទម្រង់កិច្ចព្រមព្រៀងភាគីដៃគូអប់រំ",
+    "form_title_en": "Education Partner Agreement Form",
+    "form_version": "1.0",
+    
+    "steps": [
+      {
+        "step_number": 1,
+        "step_id": "partner_info",
+        "step_title_km": "ព័ត៌មានភាគីដៃគូ",
+        "step_title_en": "Partner Information",
+        "step_description": "Basic information about the partner organization",
+        "fields": [
+          {
+            "field_id": "partner_name_km",
+            "field_label_km": "ឈ្មោះការិយាល័យអប់រំ (ខ្មែរ)",
+            "field_label_en": "Education Office Name (Khmer)",
+            "field_type": "text",
+            "required": true,
+            "validation": "required",
+            "placeholder": "ឧទាហរណ៍: ការិយាល័យអប់រំក្រុង...",
+            "max_length": 200
+          },
+          {
+            "field_id": "partner_name_en",
+            "field_label_km": "ឈ្មោះការិយាល័យអប់រំ (អង់គ្លេស)",
+            "field_label_en": "Education Office Name (English)",
+            "field_type": "text",
+            "required": true,
+            "validation": "required",
+            "max_length": 200
+          },
+          {
+            "field_id": "partner_type",
+            "field_label_km": "ប្រភេទការិយាល័យ",
+            "field_label_en": "Office Type",
+            "field_type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "provincial",
+                "label_km": "ការិយាល័យអប់រំខេត្ត",
+                "label_en": "Provincial Education Office"
+              },
+              {
+                "value": "district",
+                "label_km": "ការិយាល័យអប់រំស្រុក/ក្រុង",
+                "label_en": "District/City Education Office"
+              },
+              {
+                "value": "khan",
+                "label_km": "ការិយាល័យអប់រំខណ្ឌ",
+                "label_en": "Khan Education Office"
+              }
+            ]
+          },
+          {
+            "field_id": "province",
+            "field_label_km": "ខេត្ត/រាជធានី",
+            "field_label_en": "Province/Capital",
+            "field_type": "select",
+            "required": true,
+            "options": "load_from_api",
+            "api_endpoint": "/api/locations/provinces"
+          },
+          {
+            "field_id": "district_city",
+            "field_label_km": "ស្រុក/ក្រុង/ខណ្ឌ",
+            "field_label_en": "District/City/Khan",
+            "field_type": "select",
+            "required": true,
+            "depends_on": "province",
+            "options": "load_from_api",
+            "api_endpoint": "/api/locations/districts"
+          },
+          {
+            "field_id": "contact_name",
+            "field_label_km": "អ្នកទំនាក់ទំនង",
+            "field_label_en": "Contact Person",
+            "field_type": "text",
+            "required": true,
+            "validation": "required"
+          },
+          {
+            "field_id": "contact_position",
+            "field_label_km": "តួនាទី",
+            "field_label_en": "Position",
+            "field_type": "text",
+            "required": true
+          },
+          {
+            "field_id": "contact_phone",
+            "field_label_km": "លេខទូរស័ព្ទ",
+            "field_label_en": "Phone Number",
+            "field_type": "tel",
+            "required": true,
+            "validation": "phone",
+            "pattern": "^[0-9]{9,10}$"
+          },
+          {
+            "field_id": "contact_email",
+            "field_label_km": "អ៊ីមែល",
+            "field_label_en": "Email",
+            "field_type": "email",
+            "required": false,
+            "validation": "email"
+          },
+          {
+            "field_id": "total_schools",
+            "field_label_km": "ចំនួនសាលារួម",
+            "field_label_en": "Total Schools",
+            "field_type": "number",
+            "required": true,
+            "min": 1
+          },
+          {
+            "field_id": "total_students",
+            "field_label_km": "ចំនួនសិស្សរួម",
+            "field_label_en": "Total Students",
+            "field_type": "number",
+            "required": true,
+            "min": 1
+          },
+          {
+            "field_id": "total_teachers",
+            "field_label_km": "ចំនួនគ្រូរួម",
+            "field_label_en": "Total Teachers",
+            "field_type": "number",
+            "required": true,
+            "min": 1
+          }
+        ]
+      },
+
+      {
+        "step_number": 2,
+        "step_id": "indicator_selection",
+        "step_title_km": "ជ្រើសរើសសូចនាករសមិទ្ធកម្ម",
+        "step_title_en": "Select Performance Indicators",
+        "step_description": "Choose ONE indicator for each milestone you want to commit to",
+        "important_note_km": "សំខាន់: គោលបំណងមួយភ្ជាប់ជាមួយសូចនាករមួយប៉ុណ្ណោះ",
+        "important_note_en": "IMPORTANT: One milestone connects to ONE indicator only",
+        
+        "fields": [
+          {
+            "field_id": "number_of_milestones",
+            "field_label_km": "តើអ្នកចង់បង្កើតគោលបំណងចំនួនប៉ុនមាន?",
+            "field_label_en": "How many milestones do you want to create?",
+            "field_type": "number",
+            "required": true,
+            "min": 1,
+            "max": 5,
+            "default": 1,
+            "help_text": "You can select 1-5 milestones (maximum 1 per indicator)"
+          }
+        ],
+
+        "milestone_repeater": {
+          "repeater_type": "dynamic",
+          "max_repetitions": 5,
+          "min_repetitions": 1,
+          "add_button_text_km": "បន្ថែមគោលបំណង",
+          "add_button_text_en": "Add Milestone",
+          
+          "fields": [
+            {
+              "field_id": "milestone_name",
+              "field_label_km": "ឈ្មោះគោលបំណង",
+              "field_label_en": "Milestone Name",
+              "field_type": "text",
+              "required": true,
+              "placeholder": "ឧទាហរណ៍: បង្កើនការចុះឈ្មោះសិស្សថ្នាក់ទី១"
+            },
+            {
+              "field_id": "indicator_selection",
+              "field_label_km": "ជ្រើសរើសសូចនាករ",
+              "field_label_en": "Select Indicator",
+              "field_type": "select",
+              "required": true,
+              "validation": "unique_per_form",
+              "validation_message": "Each indicator can only be selected once",
+              "options": [
+                {
+                  "value": "IND-001",
+                  "label_km": "សូចនាករទី១: ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ (95%)",
+                  "label_en": "Indicator 1: Percentage of children enrolled in Grade 1 at correct age (95%)",
+                  "baseline": 93.7,
+                  "target": 95,
+                  "period": "Oct-Nov 2025"
+                },
+                {
+                  "value": "IND-002",
+                  "label_km": "សូចនាករទី២: ភាគរយសាលាបឋមសិក្សាមានបណ្ណព័ត៌មានសាលារៀន (46%)",
+                  "label_en": "Indicator 2: Percentage of primary schools with school information boards (46%)",
+                  "baseline": 36,
+                  "target": 46,
+                  "period": "Oct 2025 - Feb 2026"
+                },
+                {
+                  "value": "IND-003",
+                  "label_km": "សូចនាករទី៣: ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន (50%)",
+                  "label_en": "Indicator 3: Percentage of schools establishing school management committees (50%)",
+                  "baseline": 30,
+                  "target": 50,
+                  "period": "Oct 2025 - Mar 2026"
+                },
+                {
+                  "value": "IND-004",
+                  "label_km": "សូចនាករទី៤: ភាគរយសិស្សដែលនៅក្រោមមូលដ្ឋានលើមុខវិជ្ជាភាសាខ្មែរ និងគណិតវិទ្យាថ្នាក់ទី៣ថយចុះ (46%)",
+                  "label_en": "Indicator 4: Percentage decrease of Grade 3 students below baseline in Khmer and Math (46%)",
+                  "baseline": 51,
+                  "target": 46,
+                  "period": "Oct 2025 - Mar 2026",
+                  "is_reduction": true
+                },
+                {
+                  "value": "IND-005",
+                  "label_km": "សូចនាករទី៥: ភាគរយសិស្សបឋមសិក្សាទទួលបាននិទ្ទេស A,B,C លើមុខវិជ្ជាភាសាខ្មែរ និង គណិតវិទ្យាថ្នាក់ទី៣ (32%)",
+                  "label_en": "Indicator 5: Percentage of Grade 3 students achieving grades A, B, C in Khmer and Math (32%)",
+                  "baseline": 28,
+                  "target": 32,
+                  "period": "Oct 2025 - Mar 2026"
+                }
+              ]
+            },
+            {
+              "field_id": "justification",
+              "field_label_km": "មូលហេតុនៃការជ្រើសរើស",
+              "field_label_en": "Justification for Selection",
+              "field_type": "textarea",
+              "required": true,
+              "rows": 4,
+              "placeholder": "ពន្យល់មូលហេតុដែលអ្នកជ្រើសរើសសូចនាករនេះ..."
+            },
+            {
+              "field_id": "baseline_percentage",
+              "field_label_km": "ទិន្នន័យមូលដ្ឋានរបស់អ្នក (%)",
+              "field_label_en": "Your Baseline Percentage (%)",
+              "field_type": "number",
+              "required": true,
+              "min": 0,
+              "max": 100,
+              "step": 0.1,
+              "help_text": "Enter your office's current baseline data"
+            },
+            {
+              "field_id": "baseline_source",
+              "field_label_km": "ប្រភពទិន្នន័យមូលដ្ឋាន",
+              "field_label_en": "Baseline Data Source",
+              "field_type": "text",
+              "required": true,
+              "placeholder": "ឧទាហរណ៍: របាយការណ៍ឆ្នាំ 2024-2025"
+            },
+            {
+              "field_id": "baseline_date",
+              "field_label_km": "កាលបរិច្ឆេទទិន្នន័យមូលដ្ឋាន",
+              "field_label_en": "Baseline Date",
+              "field_type": "date",
+              "required": true
+            },
+            {
+              "field_id": "target_percentage",
+              "field_label_km": "គោលដៅរបស់អ្នក (%)",
+              "field_label_en": "Your Target Percentage (%)",
+              "field_type": "number",
+              "required": true,
+              "min": 0,
+              "max": 100,
+              "step": 0.1,
+              "calculated": true,
+              "calculation_logic": "auto_calculate_based_on_baseline_and_indicator_rules",
+              "help_text": "Target will be auto-calculated based on your baseline and indicator rules"
+            },
+            {
+              "field_id": "use_custom_target",
+              "field_label_km": "ប្រើគោលដៅផ្ទាល់ខ្លួន",
+              "field_label_en": "Use Custom Target",
+              "field_type": "checkbox",
+              "default": false,
+              "help_text": "Check if you want to set a custom target different from calculated target"
+            },
+            {
+              "field_id": "custom_target_justification",
+              "field_label_km": "មូលហេតុនៃគោលដៅផ្ទាល់ខ្លួន",
+              "field_label_en": "Custom Target Justification",
+              "field_type": "textarea",
+              "required": false,
+              "conditional": "use_custom_target == true",
+              "rows": 3
+            }
+          ]
+        }
+      },
+
+      {
+        "step_number": 3,
+        "step_id": "activities_planning",
+        "step_title_km": "រៀបចំផែនការសកម្មភាព",
+        "step_title_en": "Activities Planning",
+        "step_description": "Define activities for each milestone",
+        
+        "dynamic_sections": "based_on_milestones",
+        
+        "activity_fields": [
+          {
+            "field_id": "activity_name",
+            "field_label_km": "ឈ្មោះសកម្មភាព",
+            "field_label_en": "Activity Name",
+            "field_type": "text",
+            "required": true
+          },
+          {
+            "field_id": "activity_description",
+            "field_label_km": "ការពិពណ៌នាសកម្មភាព",
+            "field_label_en": "Activity Description",
+            "field_type": "textarea",
+            "required": true,
+            "rows": 3
+          },
+          {
+            "field_id": "responsible_person",
+            "field_label_km": "អ្នកទទួលខុសត្រូវ",
+            "field_label_en": "Responsible Person",
+            "field_type": "text",
+            "required": true
+          },
+          {
+            "field_id": "start_date",
+            "field_label_km": "កាលបរិច្ឆេទចាប់ផ្តើម",
+            "field_label_en": "Start Date",
+            "field_type": "date",
+            "required": true
+          },
+          {
+            "field_id": "end_date",
+            "field_label_km": "កាលបរិច្ឆេទបញ្ចប់",
+            "field_label_en": "End Date",
+            "field_type": "date",
+            "required": true,
+            "validation": "must_be_after_start_date"
+          },
+          {
+            "field_id": "budget",
+            "field_label_km": "ថវិកា (USD)",
+            "field_label_en": "Budget (USD)",
+            "field_type": "number",
+            "required": false,
+            "min": 0,
+            "step": 100
+          }
+        ]
+      },
+
+      {
+        "step_number": 4,
+        "step_id": "deliverables",
+        "step_title_km": "កំណត់លទ្ធផលដែលត្រូវប្រគល់",
+        "step_title_en": "Define Deliverables",
+        "step_description": "Specify what deliverables need to be submitted",
+        
+        "deliverable_fields": [
+          {
+            "field_id": "deliverable_name",
+            "field_label_km": "ឈ្មោះលទ្ធផល",
+            "field_label_en": "Deliverable Name",
+            "field_type": "text",
+            "required": true
+          },
+          {
+            "field_id": "deliverable_type",
+            "field_label_km": "ប្រភេទលទ្ធផល",
+            "field_label_en": "Deliverable Type",
+            "field_type": "select",
+            "required": true,
+            "options": [
+              {"value": "report", "label_km": "របាយការណ៍", "label_en": "Report"},
+              {"value": "data", "label_km": "ទិន្នន័យ", "label_en": "Data"},
+              {"value": "document", "label_km": "ឯកសារ", "label_en": "Document"},
+              {"value": "photo_evidence", "label_km": "ភស្តុតាងរូបថត", "label_en": "Photo Evidence"}
+            ]
+          },
+          {
+            "field_id": "due_date",
+            "field_label_km": "កាលបរិច្ឆេទដែលត្រូវប្រគល់",
+            "field_label_en": "Due Date",
+            "field_type": "date",
+            "required": true
+          },
+          {
+            "field_id": "description",
+            "field_label_km": "ការពិពណ៌នា",
+            "field_label_en": "Description",
+            "field_type": "textarea",
+            "required": true,
+            "rows": 3
+          }
+        ]
+      },
+
+      {
+        "step_number": 5,
+        "step_id": "terms_and_conditions",
+        "step_title_km": "លក្ខខណ្ឌកិច្ចព្រមព្រៀង",
+        "step_title_en": "Terms and Conditions",
+        
+        "fields": [
+          {
+            "field_id": "contract_duration",
+            "field_label_km": "រយៈពេលកិច្ចព្រមព្រៀង",
+            "field_label_en": "Contract Duration",
+            "field_type": "date_range",
+            "required": true,
+            "start_field": "contract_start_date",
+            "end_field": "contract_end_date"
+          },
+          {
+            "field_id": "reporting_frequency",
+            "field_label_km": "ប្រេកង់នៃការរាយការណ៍",
+            "field_label_en": "Reporting Frequency",
+            "field_type": "select",
+            "required": true,
+            "options": [
+              {"value": "monthly", "label_km": "ប្រចាំខែ", "label_en": "Monthly"},
+              {"value": "quarterly", "label_km": "ប្រចាំត្រីមាស", "label_en": "Quarterly"},
+              {"value": "biannual", "label_km": "ប្រចាំឆមាស", "label_en": "Bi-annually"}
+            ]
+          },
+          {
+            "field_id": "monitoring_visits",
+            "field_label_km": "ចំនួនដងពិនិត្យតាមដាន",
+            "field_label_en": "Number of Monitoring Visits",
+            "field_type": "number",
+            "required": true,
+            "min": 1,
+            "default": 3
+          },
+          {
+            "field_id": "agree_to_terms",
+            "field_label_km": "យល់ព្រមលើលក្ខខណ្ឌទាំងអស់",
+            "field_label_en": "Agree to all terms and conditions",
+            "field_type": "checkbox",
+            "required": true,
+            "validation": "must_be_checked"
+          }
+        ]
+      },
+
+      {
+        "step_number": 6,
+        "step_id": "signature",
+        "step_title_km": "ហត្ថលេខា",
+        "step_title_en": "Signatures",
+        
+        "fields": [
+          {
+            "field_id": "partner_representative_name",
+            "field_label_km": "ឈ្មោះអ្នកតំណាងភាគីដៃគូ",
+            "field_label_en": "Partner Representative Name",
+            "field_type": "text",
+            "required": true
+          },
+          {
+            "field_id": "partner_representative_position",
+            "field_label_km": "តួនាទី",
+            "field_label_en": "Position",
+            "field_type": "text",
+            "required": true
+          },
+          {
+            "field_id": "signature_date",
+            "field_label_km": "កាលបរិច្ឆេទហត្ថលេខា",
+            "field_label_en": "Signature Date",
+            "field_type": "date",
+            "required": true,
+            "default": "today"
+          },
+          {
+            "field_id": "partner_signature",
+            "field_label_km": "ហត្ថលេខាភាគីដៃគូ",
+            "field_label_en": "Partner Signature",
+            "field_type": "signature_pad",
+            "required": true
+          }
+        ]
+      }
+    ],
+
+    "form_actions": {
+      "save_draft": {
+        "enabled": true,
+        "button_text_km": "រក្សាទុកជាសេចក្តីព្រាង",
+        "button_text_en": "Save as Draft",
+        "api_endpoint": "/api/contracts/save-draft"
+      },
+      "preview": {
+        "enabled": true,
+        "button_text_km": "មើលមុន",
+        "button_text_en": "Preview",
+        "action": "show_preview_modal"
+      },
+      "submit": {
+        "enabled": true,
+        "button_text_km": "ដាក់ស្នើ",
+        "button_text_en": "Submit",
+        "api_endpoint": "/api/contracts/submit",
+        "confirmation_required": true,
+        "confirmation_message_km": "តើអ្នកប្រាកដថាចង់ដាក់ស្នើកិច្ចព្រមព្រៀងនេះមែនទេ?",
+        "confirmation_message_en": "Are you sure you want to submit this agreement?"
+      }
+    },
+
+    "validation_rules": {
+      "unique_indicator_per_contract": true,
+      "minimum_milestones": 1,
+      "maximum_milestones": 5,
+      "require_baseline_data": true,
+      "require_justification": true,
+      "date_logic_validation": true
+    }
+  }
+}
