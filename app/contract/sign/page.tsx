@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Card, Button, Typography, Checkbox, Progress, message, Spin, Alert, Divider, Space, Modal } from 'antd'
-import { CheckCircleOutlined, FileTextOutlined, EditOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { Card, Button, Typography, Checkbox, Progress, message, Spin, Alert, Divider, Space, Modal, Tabs, Upload } from 'antd'
+import { CheckCircleOutlined, FileTextOutlined, EditOutlined, ClockCircleOutlined, UploadOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { contractTemplates } from '@/lib/contractTemplates'
+import type { UploadFile } from 'antd'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -20,6 +21,8 @@ export default function ContractSignPage() {
   const [signature, setSignature] = useState('')
   const [readStartTime] = useState(Date.now())
   const [showSignatureModal, setShowSignatureModal] = useState(false)
+  const [signatureMethod, setSignatureMethod] = useState<'draw' | 'upload'>('draw')
+  const [uploadedImage, setUploadedImage] = useState<string>('')
 
   const contractRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -143,12 +146,47 @@ export default function ContractSignPage() {
   }
 
   const saveSignature = () => {
-    if (!canvasRef.current) return
-    const canvas = canvasRef.current
-    const dataUrl = canvas.toDataURL()
-    setSignature(dataUrl)
+    if (signatureMethod === 'draw') {
+      if (!canvasRef.current) return
+      const canvas = canvasRef.current
+      const dataUrl = canvas.toDataURL()
+      setSignature(dataUrl)
+    } else {
+      if (!uploadedImage) {
+        message.warning('សូមជ្រើសរើសរូបភាពហត្ថលេខា')
+        return
+      }
+      setSignature(uploadedImage)
+    }
     setShowSignatureModal(false)
     message.success('ហត្ថលេខាបានរក្សាទុក')
+  }
+
+  const handleImageUpload = (file: File) => {
+    // Validate file type
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg']
+    if (!validTypes.includes(file.type)) {
+      message.error('សូមជ្រើសរើសរូបភាពប្រភេទ PNG ឬ JPG')
+      return false
+    }
+
+    // Validate file size (max 2MB)
+    const maxSize = 2 * 1024 * 1024
+    if (file.size > maxSize) {
+      message.error('ទំហំរូបភាពធំពេក (អតិបរមា 2MB)')
+      return false
+    }
+
+    // Read file and convert to base64
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string
+      setUploadedImage(dataUrl)
+      message.success('បានផ្ទុករូបភាពហត្ថលេខា')
+    }
+    reader.readAsDataURL(file)
+
+    return false // Prevent auto upload
   }
 
   const handleSign = async () => {
@@ -416,14 +454,30 @@ export default function ContractSignPage() {
 
         {/* Signature Modal */}
         <Modal
-          title="ចុះហត្ថលេខារបស់អ្នក"
+          title={<span className="font-hanuman">ចុះហត្ថលេខារបស់អ្នក</span>}
           open={showSignatureModal}
-          onCancel={() => setShowSignatureModal(false)}
+          onCancel={() => {
+            setShowSignatureModal(false)
+            setUploadedImage('')
+          }}
+          width={600}
           footer={[
-            <Button key="clear" onClick={clearSignature}>
-              សម្អាត
+            <Button
+              key="clear"
+              onClick={() => {
+                if (signatureMethod === 'draw') {
+                  clearSignature()
+                } else {
+                  setUploadedImage('')
+                }
+              }}
+            >
+              {signatureMethod === 'draw' ? 'សម្អាត' : 'លុបរូបភាព'}
             </Button>,
-            <Button key="cancel" onClick={() => setShowSignatureModal(false)}>
+            <Button key="cancel" onClick={() => {
+              setShowSignatureModal(false)
+              setUploadedImage('')
+            }}>
               បោះបង់
             </Button>,
             <Button key="save" type="primary" onClick={saveSignature}>
@@ -431,22 +485,81 @@ export default function ContractSignPage() {
             </Button>
           ]}
         >
-          <div className="text-center mb-4">
-            <Text className="font-hanuman">សូមគូរហត្ថលេខារបស់អ្នកខាងក្រោម:</Text>
-          </div>
-          <canvas
-            ref={canvasRef}
-            width={450}
-            height={200}
-            className="border border-gray-300 rounded w-full cursor-crosshair"
-            style={{ touchAction: 'none' }}
-            onMouseDown={startDrawing}
-            onMouseMove={draw}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
-            onTouchStart={startDrawing}
-            onTouchMove={draw}
-            onTouchEnd={stopDrawing}
+          <Tabs
+            activeKey={signatureMethod}
+            onChange={(key) => setSignatureMethod(key as 'draw' | 'upload')}
+            items={[
+              {
+                key: 'draw',
+                label: <span className="font-hanuman"><EditOutlined /> គូរហត្ថលេខា</span>,
+                children: (
+                  <div>
+                    <div className="text-center mb-4">
+                      <Text className="font-hanuman">សូមគូរហត្ថលេខារបស់អ្នកខាងក្រោម:</Text>
+                    </div>
+                    <canvas
+                      ref={canvasRef}
+                      width={500}
+                      height={200}
+                      className="border border-gray-300 rounded w-full cursor-crosshair bg-white"
+                      style={{ touchAction: 'none' }}
+                      onMouseDown={startDrawing}
+                      onMouseMove={draw}
+                      onMouseUp={stopDrawing}
+                      onMouseLeave={stopDrawing}
+                      onTouchStart={startDrawing}
+                      onTouchMove={draw}
+                      onTouchEnd={stopDrawing}
+                    />
+                  </div>
+                )
+              },
+              {
+                key: 'upload',
+                label: <span className="font-hanuman"><UploadOutlined /> ផ្ទុកហត្ថលេខា</span>,
+                children: (
+                  <div>
+                    <div className="text-center mb-4">
+                      <Text className="font-hanuman">សូមជ្រើសរើសរូបភាពហត្ថលេខារបស់អ្នក:</Text>
+                      <div className="text-sm text-gray-500 mt-2 font-hanuman">
+                        (ប្រភេទ: PNG, JPG | ទំហំអតិបរមា: 2MB)
+                      </div>
+                    </div>
+                    <Upload.Dragger
+                      accept="image/png,image/jpeg,image/jpg"
+                      beforeUpload={handleImageUpload}
+                      showUploadList={false}
+                      maxCount={1}
+                    >
+                      {uploadedImage ? (
+                        <div className="p-4">
+                          <img
+                            src={uploadedImage}
+                            alt="Signature"
+                            className="max-h-40 mx-auto border border-gray-200 rounded"
+                          />
+                          <p className="mt-2 text-sm text-green-600 font-hanuman">
+                            ✓ បានផ្ទុករូបភាព (ចុចដើម្បីប្តូរ)
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="p-8">
+                          <p className="ant-upload-drag-icon">
+                            <UploadOutlined style={{ fontSize: 48, color: '#1890ff' }} />
+                          </p>
+                          <p className="ant-upload-text font-hanuman">
+                            ចុច ឬអូសរូបភាពមកទីនេះ
+                          </p>
+                          <p className="ant-upload-hint font-hanuman text-gray-500">
+                            ជ្រើសរើសរូបភាពហត្ថលេខារបស់អ្នក (PNG ឬ JPG)
+                          </p>
+                        </div>
+                      )}
+                    </Upload.Dragger>
+                  </div>
+                )
+              }
+            ]}
           />
         </Modal>
       </div>
