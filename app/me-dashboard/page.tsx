@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
 import { UserRole } from '@/lib/roles'
-import IndicatorForm from './components/IndicatorForm'
 import ActivityForm from './components/ActivityForm'
 import DataCollectionForm from './components/DataCollectionForm'
 
@@ -1164,18 +1163,6 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 className="w-full sm:w-auto"
               >
                 មើលកិច្ចសន្យារបស់ខ្ញុំ
-              </Button>
-            )}
-
-            {/* Create New Contract Button for PARTNER users */}
-            {user?.role === UserRole.PARTNER && (
-              <Button
-                type="primary"
-                icon={<FileDoneOutlined />}
-                onClick={() => router.push('/contracts/new')}
-                className="w-full sm:w-auto"
-              >
-                បង្កើតកិច្ចសន្យាថ្មី
               </Button>
             )}
 
