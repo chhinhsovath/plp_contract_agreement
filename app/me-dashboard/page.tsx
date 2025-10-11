@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message, Dropdown, Avatar, Modal, Form, Input, Spin } from 'antd'
-import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined } from '@ant-design/icons'
+import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
@@ -205,6 +205,9 @@ export default function MEDashboardPage() {
   const [deliverables, setDeliverables] = useState<any[]>([])
   const [loadingDeliverables, setLoadingDeliverables] = useState(false)
   const [hasDeliverables, setHasDeliverables] = useState(false)
+  const [contractMilestones, setContractMilestones] = useState<any[]>([])
+  const [loadingContractMilestones, setLoadingContractMilestones] = useState(false)
+  const [userContractId, setUserContractId] = useState<number | null>(null)
 
   useEffect(() => {
     checkSession()
@@ -217,6 +220,7 @@ export default function MEDashboardPage() {
       fetchIndicators()
       fetchActivities()
       fetchDeliverables()
+      fetchContractMilestones()
     }
   }, [user, selectedContract])
 
@@ -293,6 +297,7 @@ export default function MEDashboardPage() {
         if (data.success && data.data.hasDeliverables) {
           setHasDeliverables(true)
           setDeliverables(data.data.deliverables || [])
+          setUserContractId(data.data.contractId) // Store contract ID for milestones fetch
         } else {
           setHasDeliverables(false)
           setDeliverables([])
@@ -305,6 +310,42 @@ export default function MEDashboardPage() {
       setLoadingDeliverables(false)
     }
   }
+
+  const fetchContractMilestones = async () => {
+    // Only fetch milestones for Contract Type 4 & 5
+    if (!user || (user.contract_type !== 4 && user.contract_type !== 5)) {
+      setContractMilestones([])
+      return
+    }
+
+    // Wait for userContractId to be available if needed
+    if (!userContractId) {
+      // Contract ID will be fetched via deliverables API
+      return
+    }
+
+    setLoadingContractMilestones(true)
+    try {
+      const response = await fetch(`/api/milestones?contract_id=${userContractId}`)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setContractMilestones(data.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch contract milestones:', error)
+    } finally {
+      setLoadingContractMilestones(false)
+    }
+  }
+
+  // Fetch milestones when userContractId becomes available
+  useEffect(() => {
+    if (userContractId && user) {
+      fetchContractMilestones()
+    }
+  }, [userContractId])
 
   const handleEditIndicator = (indicator: any) => {
     setEditingIndicator(indicator)
@@ -1540,6 +1581,209 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                             </div>
                           </Card>
                         ))}
+                      </div>
+
+                      {/* Contract Milestones Tracking Section */}
+                      <div className="mt-8">
+                        <div className="mb-4 pb-2 border-b">
+                          <Title level={4} className="font-hanuman mb-2">តារាងតាមដានសមិទ្ធកម្ម (Milestone Tracking)</Title>
+                          <Text className="text-gray-600 font-hanuman">តាមដានវឌ្ឍនភាពនៃការអនុវត្តសមិទ្ធកម្មនីមួយៗ</Text>
+                        </div>
+
+                        {loadingContractMilestones ? (
+                          <div className="text-center py-8">
+                            <Spin />
+                          </div>
+                        ) : contractMilestones.length > 0 ? (
+                          <>
+                            {/* Desktop Milestone Table */}
+                            <div className="hidden md:block overflow-x-auto">
+                              <Table
+                                columns={[
+                                  {
+                                    title: <span className="font-hanuman">កូដ</span>,
+                                    dataIndex: 'milestone_code',
+                                    key: 'code',
+                                    width: 100
+                                  },
+                                  {
+                                    title: <span className="font-hanuman">ឈ្មោះសមិទ្ធកម្ម</span>,
+                                    dataIndex: 'milestone_name_km',
+                                    key: 'name'
+                                  },
+                                  {
+                                    title: <span className="font-hanuman">រយៈពេល</span>,
+                                    key: 'timeline',
+                                    width: 200,
+                                    render: (record: any) => (
+                                      <div className="font-hanuman text-sm">
+                                        <div>{dayjs(record.planned_start_date).format('DD/MM/YYYY')}</div>
+                                        <div>ដល់ {dayjs(record.planned_end_date).format('DD/MM/YYYY')}</div>
+                                      </div>
+                                    )
+                                  },
+                                  {
+                                    title: <span className="font-hanuman">វឌ្ឍនភាព</span>,
+                                    key: 'progress',
+                                    width: 150,
+                                    render: (record: any) => (
+                                      <div>
+                                        <Progress
+                                          percent={Math.round(record.achievement_percentage)}
+                                          size="small"
+                                          status={
+                                            record.health_indicator === 'critical' ? 'exception' :
+                                            record.health_indicator === 'at_risk' ? 'active' :
+                                            'success'
+                                          }
+                                        />
+                                        <div className="text-xs text-gray-500 mt-1">
+                                          {record.current_value || record.baseline_value} / {record.target_value} {record.measurement_unit}
+                                        </div>
+                                      </div>
+                                    )
+                                  },
+                                  {
+                                    title: <span className="font-hanuman">ស្ថានភាព</span>,
+                                    key: 'status',
+                                    width: 120,
+                                    render: (record: any) => {
+                                      const statusConfig: any = {
+                                        not_started: { color: 'default', text: 'មិនទាន់ចាប់ផ្តើម' },
+                                        in_progress: { color: 'processing', text: 'កំពុងដំណើរការ' },
+                                        completed: { color: 'success', text: 'បានបញ្ចប់' },
+                                        delayed: { color: 'error', text: 'យឺតយ៉ាវ' }
+                                      }
+                                      const config = statusConfig[record.overall_status] || { color: 'default', text: record.overall_status }
+                                      return <Tag color={config.color}>{config.text}</Tag>
+                                    }
+                                  },
+                                  {
+                                    title: <span className="font-hanuman">សុខភាព</span>,
+                                    key: 'health',
+                                    width: 120,
+                                    render: (record: any) => {
+                                      const healthConfig: any = {
+                                        on_track: { color: 'green', text: 'តាមគម្រោង', icon: <CheckCircleOutlined /> },
+                                        at_risk: { color: 'orange', text: 'មានហានិភ័យ', icon: <AlertOutlined /> },
+                                        critical: { color: 'red', text: 'គ្រិះថ្នាក់', icon: <CloseCircleOutlined /> }
+                                      }
+                                      const config = healthConfig[record.health_indicator] || { color: 'default', text: record.health_indicator }
+                                      return <Tag color={config.color} icon={config.icon}>{config.text}</Tag>
+                                    }
+                                  }
+                                ]}
+                                dataSource={contractMilestones}
+                                pagination={false}
+                                rowKey="id"
+                                expandable={{
+                                  expandedRowRender: (record: any) => (
+                                    <div className="p-4 bg-gray-50 font-hanuman">
+                                      {record.milestone_description_km && (
+                                        <div className="mb-3">
+                                          <Text strong>ការពិពណ៌នា: </Text>
+                                          <Text>{record.milestone_description_km}</Text>
+                                        </div>
+                                      )}
+
+                                      {record.activities && record.activities.length > 0 && (
+                                        <div className="mb-3">
+                                          <Text strong>សកម្មភាព ({record.activities.length}):</Text>
+                                          <div className="mt-2 space-y-1">
+                                            {record.activities.map((activity: any) => (
+                                              <div key={activity.id} className="flex items-center gap-2">
+                                                <Tag color={activity.status === 'completed' ? 'success' : 'processing'}>
+                                                  {activity.activity_name_km}
+                                                </Tag>
+                                                <Progress
+                                                  percent={activity.completion_percentage}
+                                                  size="small"
+                                                  style={{ width: '150px' }}
+                                                />
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {record.deliverables && record.deliverables.length > 0 && (
+                                        <div>
+                                          <Text strong>ផលិតផល ({record.deliverables.length}):</Text>
+                                          <div className="mt-2 space-y-1">
+                                            {record.deliverables.map((deliverable: any) => (
+                                              <div key={deliverable.id} className="flex items-center gap-2">
+                                                <Tag color={deliverable.status === 'approved' ? 'success' : 'warning'}>
+                                                  {deliverable.deliverable_name_km}
+                                                </Tag>
+                                                <Text type="secondary" className="text-xs">
+                                                  កាលបរិច្ឆេទ: {dayjs(deliverable.due_date).format('DD/MM/YYYY')}
+                                                </Text>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )
+                                }}
+                              />
+                            </div>
+
+                            {/* Mobile Milestone Cards */}
+                            <div className="block md:hidden space-y-4">
+                              {contractMilestones.map((milestone: any) => (
+                                <Card key={milestone.id} size="small">
+                                  <div className="font-hanuman space-y-3">
+                                    <div>
+                                      <Badge count={milestone.milestone_code} style={{ backgroundColor: '#1890ff' }} />
+                                      <Text strong className="ml-2 block mt-2">{milestone.milestone_name_km}</Text>
+                                    </div>
+
+                                    <div className="text-sm space-y-2">
+                                      <div className="flex justify-between">
+                                        <Text className="text-gray-600">រយៈពេល:</Text>
+                                        <Text>{dayjs(milestone.planned_start_date).format('DD/MM/YYYY')} - {dayjs(milestone.planned_end_date).format('DD/MM/YYYY')}</Text>
+                                      </div>
+
+                                      <div>
+                                        <div className="flex justify-between mb-1">
+                                          <Text className="text-gray-600">វឌ្ឍនភាព:</Text>
+                                          <Text>{Math.round(milestone.achievement_percentage)}%</Text>
+                                        </div>
+                                        <Progress
+                                          percent={Math.round(milestone.achievement_percentage)}
+                                          size="small"
+                                          status={
+                                            milestone.health_indicator === 'critical' ? 'exception' :
+                                            milestone.health_indicator === 'at_risk' ? 'active' :
+                                            'success'
+                                          }
+                                        />
+                                      </div>
+
+                                      <div className="flex justify-between gap-2">
+                                        <Tag color={milestone.overall_status === 'completed' ? 'success' : 'processing'}>
+                                          {milestone.overall_status === 'completed' ? 'បានបញ្ចប់' : 'កំពុងដំណើរការ'}
+                                        </Tag>
+                                        <Tag color={milestone.health_indicator === 'on_track' ? 'green' : 'orange'}>
+                                          {milestone.health_indicator === 'on_track' ? 'តាមគម្រោង' : 'មានហានិភ័យ'}
+                                        </Tag>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </Card>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <Empty
+                            description={
+                              <Text className="font-hanuman text-gray-500">
+                                មិនទាន់មានទិន្នន័យតាមដានសមិទ្ធកម្ម
+                              </Text>
+                            }
+                          />
+                        )}
                       </div>
                     </>
                   ) : (
