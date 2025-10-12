@@ -56,19 +56,19 @@ export default function PerformanceDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 font-khmer">
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold text-gray-900 font-khmer">
             ផ្ទាំងតាមដានសមិទ្ធកម្ម
           </h1>
-          <p className="text-gray-600 mt-2">Performance Monitoring Dashboard - Academic Year 2025-2026</p>
+          <p className="text-gray-600 mt-3 text-lg">Performance Monitoring Dashboard - Academic Year 2025-2026</p>
         </div>
 
-        {/* Overview Cards */}
+        {/* Overview Cards - Optimized for Tablet/Desktop */}
         {overview && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -125,11 +125,11 @@ export default function PerformanceDashboard() {
           </div>
         )}
 
-        {/* Milestones Status */}
+        {/* Milestones Status - Optimized for Tablet/Desktop */}
         {overview && (
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 className="text-xl font-bold font-khmer mb-4">ស្ថានភាពគោលបំណង</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white rounded-lg shadow-md p-8 mb-10">
+            <h2 className="text-2xl font-bold font-khmer mb-6">ស្ថានភាពគោលបំណង</h2>
+            <div className="grid md:grid-cols-4 gap-6">
               <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <p className="text-2xl font-bold text-blue-600">{overview.milestones.in_progress}</p>
                 <p className="text-sm text-gray-600 mt-1">In Progress</p>
@@ -150,9 +150,9 @@ export default function PerformanceDashboard() {
           </div>
         )}
 
-        {/* Indicator Performance */}
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-bold font-khmer mb-4">សមិទ្ធផលតាមសូចនាករ</h2>
+        {/* Indicator Performance - Optimized for Tablet/Desktop */}
+        <div className="bg-white rounded-lg shadow-md p-8 mb-10">
+          <h2 className="text-2xl font-bold font-khmer mb-6">សមិទ្ធផលតាមសូចនាករ</h2>
           <div className="space-y-4">
             {indicators.map((indicator) => (
               <div key={indicator.indicator_id} className="border rounded-lg p-4">
@@ -200,9 +200,9 @@ export default function PerformanceDashboard() {
           </div>
         </div>
 
-        {/* Partner Performance Ranking */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold font-khmer mb-4">ចំណាត់ថ្នាក់សមិទ្ធផលភាគីដៃគូ</h2>
+        {/* Partner Performance Ranking - Optimized for Tablet/Desktop */}
+        <div className="bg-white rounded-lg shadow-md p-8">
+          <h2 className="text-2xl font-bold font-khmer mb-6">ចំណាត់ថ្នាក់សមិទ្ធផលភាគីដៃគូ</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -267,17 +267,17 @@ export default function PerformanceDashboard() {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-8 flex gap-4">
+        {/* Action Buttons - Optimized for Tablet/Desktop */}
+        <div className="mt-10 flex gap-6">
           <Link
             href="/partner-agreement/new"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-lg shadow-md hover:shadow-lg transition-all"
           >
             + បង្កើតកិច្ចព្រមព្រៀងថ្មី / New Agreement
           </Link>
           <button
             onClick={() => fetchDashboardData()}
-            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+            className="px-8 py-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-lg shadow-md hover:shadow-lg transition-all"
           >
             🔄 Refresh Data
           </button>

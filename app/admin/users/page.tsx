@@ -234,35 +234,35 @@ export default function UsersManagementPage() {
   }))
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6 flex justify-between items-center">
+        <div className="mb-8 flex justify-between items-center">
           <Title level={2} className="font-hanuman">
             <TeamOutlined className="mr-2" />
             គ្រប់គ្រងអ្នកប្រើប្រាស់
           </Title>
           <Link href="/">
-            <Button icon={<HomeOutlined />} className="font-hanuman">
+            <Button icon={<HomeOutlined />} size="large" className="font-hanuman">
               ត្រឡប់ទៅទំព័រដើម
             </Button>
           </Link>
         </div>
 
-        {/* Role Statistics */}
-        <Row gutter={16} className="mb-6">
+        {/* Role Statistics - Optimized for Tablet/Desktop */}
+        <Row gutter={[24, 24]} className="mb-8">
           {roleStats.map(({ role, count }) => (
-            <Col span={4} key={role}>
-              <Card size="small">
+            <Col md={8} lg={6} xl={4} key={role}>
+              <Card className="shadow-sm hover:shadow-md transition-shadow">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{count}</div>
-                  <div className="text-sm font-hanuman">{getRoleLabel(role)}</div>
+                  <div className="text-3xl font-bold text-blue-600">{count}</div>
+                  <div className="text-base font-hanuman mt-2">{getRoleLabel(role)}</div>
                 </div>
               </Card>
             </Col>
           ))}
         </Row>
 
-        <div className="mb-4">
+        <div className="mb-6">
           <Search
             placeholder="ស្វែងរកតាមឈ្មោះ លេខទូរស័ព្ទ ឬស្ថាប័ន"
             allowClear
@@ -270,22 +270,27 @@ export default function UsersManagementPage() {
             size="large"
             onSearch={setSearchText}
             onChange={(e) => setSearchText(e.target.value)}
-            style={{ maxWidth: 400 }}
+            style={{ minWidth: 400 }}
             className="font-hanuman"
           />
         </div>
 
-        <Table
-          columns={columns}
-          dataSource={filteredUsers}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            pageSize: 15,
-            showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} អ្នកប្រើប្រាស់`,
-          }}
-          className="font-hanuman"
-        />
+        <div className="overflow-x-auto">
+          <Table
+            columns={columns}
+            dataSource={filteredUsers}
+            loading={loading}
+            rowKey="id"
+            pagination={{
+              pageSize: 15,
+              showSizeChanger: true,
+              showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} អ្នកប្រើប្រាស់`,
+            }}
+            className="font-hanuman"
+            scroll={{ x: 1200 }}
+            size="middle"
+          />
+        </div>
       </div>
 
       {/* Edit User Modal */}

@@ -280,23 +280,23 @@ export default function ContractSignPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <Card className="mb-4 shadow-md">
-          <div className="text-center">
-            <Title level={2} className="font-hanuman text-blue-800 mb-2">
-              <FileTextOutlined className="mr-2" />
+        <Card className="mb-8 shadow-md">
+          <div className="text-center p-4">
+            <Title level={2} className="font-hanuman text-blue-800 mb-3">
+              <FileTextOutlined className="mr-3" />
               កិច្ចព្រមព្រៀង {contract.title}
             </Title>
-            <Text className="font-hanuman text-gray-600">
+            <Text className="font-hanuman text-gray-600 text-base">
               សូមអានកិច្ចសន្យាដោយប្រុងប្រយ័ត្ន មុនពេលចុះហត្ថលេខា
             </Text>
           </div>
         </Card>
 
         {/* Progress Bar */}
-        <Card className="mb-4">
+        <Card className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <Text className="font-hanuman">វឌ្ឍនភាពនៃការអាន:</Text>
             <Text className="font-hanuman">{scrollProgress}%</Text>
@@ -305,24 +305,25 @@ export default function ContractSignPage() {
             percent={scrollProgress}
             status={hasScrolledToBottom ? 'success' : 'active'}
             showInfo={false}
+            strokeWidth={10}
           />
           {!hasScrolledToBottom && (
-            <Text type="secondary" className="text-xs mt-2 font-hanuman">
-              <ClockCircleOutlined className="mr-1" />
+            <Text type="secondary" className="text-sm mt-3 font-hanuman">
+              <ClockCircleOutlined className="mr-2" />
               សូមរមូរចុះក្រោមដើម្បីអានកិច្ចសន្យាទាំងស្រុង
             </Text>
           )}
         </Card>
 
         {/* Contract Content */}
-        <Card className="mb-4 shadow-md">
+        <Card className="mb-8 shadow-md">
           <div
             ref={contractRef}
             onScroll={handleScroll}
-            className="overflow-y-auto p-4 bg-white border rounded"
-            style={{ height: '500px', maxHeight: '500px', overflowY: 'scroll' }}
+            className="overflow-y-auto p-6 lg:p-8 bg-white border rounded"
+            style={{ height: '600px', maxHeight: '600px', overflowY: 'scroll' }}
           >
-            <div className="prose prose-sm max-w-none font-hanuman" style={{ minHeight: '800px' }}>
+            <div className="prose max-w-none font-hanuman" style={{ minHeight: '800px' }}>
               <h3 className="text-center text-lg font-bold mb-4">{contract.title}</h3>
 
               <div className="mb-4">
@@ -422,22 +423,23 @@ export default function ContractSignPage() {
           </div>
         </Card>
 
-        {/* Agreement Section */}
+        {/* Agreement Section - Optimized for Tablet/Desktop */}
         {hasScrolledToBottom && (
-          <Card className="mb-4 shadow-md">
-            <Space direction="vertical" className="w-full">
+          <Card className="mb-8 shadow-md">
+            <Space direction="vertical" size="large" className="w-full">
               <Alert
-                message="អ្នកបានអានកិច្ចសន្យារួចរាល់"
-                description="ឥឡូវនេះអ្នកអាចយល់ព្រម និងចុះហត្ថលេខាបាន"
+                message={<span className="font-hanuman text-base">អ្នកបានអានកិច្ចសន្យារួចរាល់</span>}
+                description={<span className="font-hanuman">ឥឡូវនេះអ្នកអាចយល់ព្រម និងចុះហត្ថលេខាបាន</span>}
                 type="success"
                 showIcon
                 icon={<CheckCircleOutlined />}
+                className="p-4"
               />
 
               <Checkbox
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}
-                className="font-hanuman"
+                className="font-hanuman text-base"
               >
                 ខ្ញុំបានអាន យល់ និងយល់ព្រមតាមលក្ខខណ្ឌទាំងអស់នៃកិច្ចព្រមព្រៀងនេះ
               </Checkbox>
@@ -446,11 +448,11 @@ export default function ContractSignPage() {
                 <div>
                   {signature ? (
                     <div>
-                      <Text className="font-hanuman">ហត្ថលេខា: ✓ បានរក្សាទុក</Text>
+                      <Text className="font-hanuman text-base">ហត្ថលេខា: ✓ បានរក្សាទុក</Text>
                       <Button
-                        size="small"
+                        size="large"
                         onClick={() => setShowSignatureModal(true)}
-                        className="ml-2"
+                        className="ml-3 font-hanuman"
                       >
                         កែប្រែ
                       </Button>
@@ -460,6 +462,8 @@ export default function ContractSignPage() {
                       icon={<EditOutlined />}
                       onClick={() => setShowSignatureModal(true)}
                       disabled={!agreed}
+                      size="large"
+                      className="font-hanuman"
                     >
                       ចុះហត្ថលេខា
                     </Button>
@@ -472,7 +476,7 @@ export default function ContractSignPage() {
                   loading={signing}
                   onClick={handleSign}
                   disabled={!agreed || !signature}
-                  className="font-hanuman"
+                  className="font-hanuman px-8 py-6 h-auto text-base"
                 >
                   បញ្ជាក់ និងចុះហត្ថលេខា
                 </Button>

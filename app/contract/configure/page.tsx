@@ -167,23 +167,23 @@ export default function ContractConfigurePage() {
   const currentSelection = selections[currentStep]
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <Card className="mb-6 shadow-sm">
-          <Space direction="vertical" size="small" className="w-full">
-            <Title level={3} className="font-hanuman mb-0">
-              <FileTextOutlined className="mr-2" />
+        <Card className="mb-8 shadow-md">
+          <Space direction="vertical" size="middle" className="w-full">
+            <Title level={2} className="font-hanuman mb-0">
+              <FileTextOutlined className="mr-3" />
               កំណត់រចនាសម្ព័ន្ធកិច្ចសន្យា
             </Title>
-            <Text className="text-gray-600 font-hanuman">
+            <Text className="text-gray-600 font-hanuman text-base">
               សូមជ្រើសរើសជម្រើសមួយសម្រាប់សមិទ្ធកម្មនីមួយៗ ដោយផ្អែកលើទិន្នន័យមូលដ្ឋានរបស់អ្នក
             </Text>
           </Space>
         </Card>
 
         {/* Progress Steps */}
-        <Card className="mb-6 shadow-sm">
+        <Card className="mb-8 shadow-md">
           <Steps
             current={currentStep}
             items={deliverables.map((d, index) => ({
@@ -198,25 +198,25 @@ export default function ContractConfigurePage() {
               icon: selections[index]?.selected_option_id !== 0 ? <CheckCircleOutlined /> : undefined
             }))}
             responsive={false}
-            size="small"
+            size="default"
           />
         </Card>
 
         {/* Alert */}
         <Alert
           message={
-            <span className="font-hanuman">
+            <span className="font-hanuman text-base">
               សូមអានជម្រើសទាំង ៣ យ៉ាងត្រឹមត្រូវ ហើយជ្រើសរើសជម្រើសដែលត្រូវនឹងស្ថានភាពសាលារៀនរបស់អ្នក
             </span>
           }
           type="info"
           showIcon
-          className="mb-6 font-hanuman"
+          className="mb-8 font-hanuman p-4"
         />
 
         {/* Current Deliverable */}
         {currentDeliverable && (
-          <Card className="shadow-sm mb-6">
+          <Card className="shadow-md mb-8">
             <Space direction="vertical" size="large" className="w-full">
               {/* Deliverable Title */}
               <div>
@@ -282,19 +282,20 @@ export default function ContractConfigurePage() {
           </Card>
         )}
 
-        {/* Navigation Buttons */}
-        <Card className="shadow-sm">
-          <div className="flex justify-between items-center">
+        {/* Navigation Buttons - Optimized for Tablet/Desktop */}
+        <Card className="shadow-md">
+          <div className="flex justify-between items-center p-4">
             <Button
               icon={<LeftOutlined />}
               onClick={handlePrevious}
               disabled={currentStep === 0}
               size="large"
+              className="px-8 py-6 h-auto text-base"
             >
               <span className="font-hanuman">ថយក្រោយ</span>
             </Button>
 
-            <Text className="font-hanuman text-gray-500">
+            <Text className="font-hanuman text-gray-500 text-lg font-medium">
               {currentStep + 1} / {deliverables.length}
             </Text>
 
@@ -305,6 +306,7 @@ export default function ContractConfigurePage() {
                 iconPosition="end"
                 onClick={handleNext}
                 size="large"
+                className="px-8 py-6 h-auto text-base"
               >
                 <span className="font-hanuman">បន្ទាប់</span>
               </Button>
@@ -315,6 +317,7 @@ export default function ContractConfigurePage() {
                 onClick={handleSubmit}
                 loading={submitting}
                 size="large"
+                className="px-8 py-6 h-auto text-base"
               >
                 <span className="font-hanuman">ពិនិត្យ និងចុះហត្ថលេខា</span>
               </Button>

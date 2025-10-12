@@ -266,18 +266,18 @@ export default function ContractsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <Title level={2} className="mb-0">បញ្ជីកិច្ចព្រមព្រៀង</Title>
+        <div className="mb-8 flex flex-row justify-between items-center gap-4">
+          <Title level={2} className="mb-0 font-hanuman">បញ្ជីកិច្ចព្រមព្រៀង</Title>
           <Link href="/">
-            <Button icon={<HomeOutlined />} className="w-full sm:w-auto">
+            <Button icon={<HomeOutlined />} size="large" className="font-hanuman">
               ត្រឡប់ទៅទំព័រដើម
             </Button>
           </Link>
         </div>
 
-        <div className="mb-4">
+        <div className="mb-6">
           <Search
             placeholder="ស្វែងរកតាមលេខកិច្ចព្រមព្រៀង ឬឈ្មោះភាគី"
             allowClear
@@ -285,7 +285,7 @@ export default function ContractsPage() {
             size="large"
             onSearch={setSearchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="w-full sm:max-w-md"
+            className="min-w-[400px] font-hanuman"
           />
         </div>
 
@@ -297,9 +297,12 @@ export default function ContractsPage() {
             rowKey="id"
             pagination={{
               pageSize: 10,
+              showSizeChanger: true,
               showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
             }}
-            scroll={{ x: 1000 }}
+            scroll={{ x: 1200 }}
+            size="middle"
+            className="font-hanuman"
           />
         </div>
       </div>

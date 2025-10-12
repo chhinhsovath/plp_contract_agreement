@@ -313,9 +313,9 @@ export default function HomePage() {
         </Paragraph>
       </div>
 
-      <Row gutter={[24, 24]}>
+      <Row gutter={[32, 32]}>
         {contractsToShow.map((detail) => (
-          <Col xs={24} md={12} lg={8} key={detail.id}>
+          <Col md={12} lg={8} key={detail.id}>
             <Card
               hoverable
               className="h-full shadow-lg hover:shadow-xl transition-all duration-300 khmer-border"
@@ -384,30 +384,30 @@ export default function HomePage() {
           <Title level={3} className="text-white font-hanuman mb-4">
             អំពីប្រព័ន្ធកិច្ចព្រមព្រៀង PLP
           </Title>
-          <Row gutter={[32, 32]}>
-            <Col xs={24} md={8}>
+          <Row gutter={[40, 40]}>
+            <Col md={8}>
               <div className="text-center">
-                <FileDoneOutlined className="text-5xl mb-3" style={{ color: '#FFD700' }} />
-                <Title level={4} className="text-white font-hanuman">ងាយស្រួលប្រើប្រាស់</Title>
-                <Text className="text-gray-200">
+                <FileDoneOutlined className="text-6xl mb-4" style={{ color: '#FFD700' }} />
+                <Title level={4} className="text-white font-hanuman text-lg">ងាយស្រួលប្រើប្រាស់</Title>
+                <Text className="text-gray-200 text-base">
                   ទម្រង់សាមញ្ញ និងច្បាស់លាស់សម្រាប់បង្កើតកិច្ចព្រមព្រៀង
                 </Text>
               </div>
             </Col>
-            <Col xs={24} md={8}>
+            <Col md={8}>
               <div className="text-center">
-                <CheckCircleOutlined className="text-5xl mb-3" style={{ color: '#FFD700' }} />
-                <Title level={4} className="text-white font-hanuman">តាមដានងាយស្រួល</Title>
-                <Text className="text-gray-200">
+                <CheckCircleOutlined className="text-6xl mb-4" style={{ color: '#FFD700' }} />
+                <Title level={4} className="text-white font-hanuman text-lg">តាមដានងាយស្រួល</Title>
+                <Text className="text-gray-200 text-base">
                   តាមដានស្ថានភាពកិច្ចព្រមព្រៀងនិងការចុះហត្ថលេខា
                 </Text>
               </div>
             </Col>
-            <Col xs={24} md={8}>
+            <Col md={8}>
               <div className="text-center">
-                <TeamOutlined className="text-5xl mb-3" style={{ color: '#FFD700' }} />
-                <Title level={4} className="text-white font-hanuman">គ្រប់គ្រងតួនាទី</Title>
-                <Text className="text-gray-200">
+                <TeamOutlined className="text-6xl mb-4" style={{ color: '#FFD700' }} />
+                <Title level={4} className="text-white font-hanuman text-lg">គ្រប់គ្រងតួនាទី</Title>
+                <Text className="text-gray-200 text-base">
                   ប្រព័ន្ធអនុញ្ញាតតាមតួនាទីសម្រាប់សុវត្ថិភាព
                 </Text>
               </div>
@@ -433,45 +433,45 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Statistics Cards */}
-      <Row gutter={[16, 16]} className="mb-8">
-        <Col xs={24} sm={12} md={6}>
-          <Card className="text-center">
+      {/* Statistics Cards - Optimized for Tablet/Desktop */}
+      <Row gutter={[24, 24]} className="mb-8">
+        <Col md={12} lg={6}>
+          <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title="កិច្ចព្រមព្រៀងសរុប"
+              title={<span className="font-hanuman text-base">កិច្ចព្រមព្រៀងសរុប</span>}
               value={stats.total}
               prefix={<FileTextOutlined />}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: '#1890ff', fontSize: '32px' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card className="text-center">
+        <Col md={12} lg={6}>
+          <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title="បានចុះហត្ថលេខា"
+              title={<span className="font-hanuman text-base">បានចុះហត្ថលេខា</span>}
               value={stats.signed}
               prefix={<CheckCircleOutlined />}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: '#52c41a', fontSize: '32px' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card className="text-center">
+        <Col md={12} lg={6}>
+          <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title="រង់ចាំចុះហត្ថលេខា"
+              title={<span className="font-hanuman text-base">រង់ចាំចុះហត្ថលេខា</span>}
               value={stats.pending}
               prefix={<ClockCircleOutlined />}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: '#faad14', fontSize: '32px' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card className="text-center">
+        <Col md={12} lg={6}>
+          <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title="ពង្រាង"
+              title={<span className="font-hanuman text-base">ពង្រាង</span>}
               value={stats.draft}
               prefix={<EditOutlined />}
-              valueStyle={{ color: '#8c8c8c' }}
+              valueStyle={{ color: '#8c8c8c', fontSize: '32px' }}
             />
           </Card>
         </Col>
@@ -494,11 +494,13 @@ export default function HomePage() {
               rowKey="id"
               pagination={{
                 pageSize: 10,
+                showSizeChanger: true,
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
               }}
               className="font-hanuman"
-              scroll={{ x: 800 }}
+              scroll={{ x: 1000 }}
+              size="middle"
             />
           </div>
         ) : (
@@ -556,22 +558,22 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header with user info */}
       <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
-          <Title level={3} className="mb-0 text-blue-800 font-hanuman text-base md:text-xl">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex justify-between items-center">
+          <Title level={3} className="mb-0 text-blue-800 font-hanuman text-xl lg:text-2xl">
             PLP Contract System
           </Title>
           {user && (
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
-              <Button type="text" className="flex items-center space-x-2">
-                <Avatar icon={<UserOutlined />} className="bg-blue-500" />
-                <span className="font-hanuman hidden sm:inline">{user.full_name}</span>
+              <Button type="text" size="large" className="flex items-center space-x-2">
+                <Avatar icon={<UserOutlined />} className="bg-blue-500" size="large" />
+                <span className="font-hanuman">{user.full_name}</span>
               </Button>
             </Dropdown>
           )}
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-4 md:p-8">
+      <div className="max-w-7xl mx-auto p-6 lg:p-10">
         {/* Main content with tabs */}
         {user ? (
           <Tabs
