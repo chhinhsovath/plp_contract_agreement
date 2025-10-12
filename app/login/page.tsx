@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Form, Input, Button, Typography, message, Divider } from 'antd'
-import { PhoneOutlined, LockOutlined, LoginOutlined, UserAddOutlined, SafetyOutlined, CheckCircleOutlined } from '@ant-design/icons'
+import { Form, Input, Button, Typography, message, Row, Col, Card, Space, Divider } from 'antd'
+import { PhoneOutlined, LockOutlined, LoginOutlined, UserAddOutlined, SafetyOutlined, CheckCircleOutlined, RocketOutlined, TeamOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-const { Title, Text } = Typography
+const { Title, Text, Paragraph } = Typography
 
 export default function LoginPage() {
   const [form] = Form.useForm()
@@ -51,209 +51,231 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Branding & Information */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 p-12 flex-col justify-between relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
-        </div>
-
-        <div className="relative z-10">
-          {/* Logo/Brand */}
-          <div className="flex items-center space-x-4 mb-16">
-            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-              <SafetyOutlined className="text-4xl text-white" />
-            </div>
-            <div>
-              <Title level={3} className="text-white mb-0 font-hanuman">
-                ប្រព័ន្ធ PLP
-              </Title>
-              <Text className="text-blue-200">Contract Management System</Text>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="space-y-8">
-            <div>
-              <Title level={1} className="text-white mb-4 font-hanuman" style={{ fontSize: '3rem', lineHeight: '1.2' }}>
-                ស្វាគមន៍
-              </Title>
-              <Text className="text-blue-100 text-xl block leading-relaxed">
-                ប្រព័ន្ធគ្រប់គ្រងកិច្ចព្រមព្រៀងសមិទ្ធកម្ម សម្រាប់គម្រោង PLP
-              </Text>
-            </div>
-
-            <Divider className="bg-white/20" />
-
-            {/* Features */}
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 bg-blue-500/30 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
-                  <CheckCircleOutlined className="text-white text-xl" />
-                </div>
-                <div>
-                  <Text className="text-white font-semibold block mb-1 font-hanuman text-lg">
-                    គ្រប់គ្រងកិច្ចព្រមព្រៀង
-                  </Text>
-                  <Text className="text-blue-200">
-                    ងាយស្រួលក្នុងការបង្កើត និងតាមដានកិច្ចព្រមព្រៀង
-                  </Text>
-                </div>
+    <div style={{ minHeight: '100vh', background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <Row style={{ maxWidth: 1200, width: '100%' }} gutter={[48, 48]}>
+        {/* Left Side - Branding */}
+        <Col xs={24} lg={12} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            {/* Logo & Brand */}
+            <Space size="middle" align="center">
+              <div style={{
+                width: 80,
+                height: 80,
+                background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
+                borderRadius: 20,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)'
+              }}>
+                <SafetyOutlined style={{ fontSize: 48, color: '#fff' }} />
               </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 bg-blue-500/30 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
-                  <CheckCircleOutlined className="text-white text-xl" />
-                </div>
-                <div>
-                  <Text className="text-white font-semibold block mb-1 font-hanuman text-lg">
-                    តាមដានសមិទ្ធកម្ម
-                  </Text>
-                  <Text className="text-blue-200">
-                    ពិនិត្យមើលវឌ្ឍនភាព និងសមិទ្ធផលជាទៀងទាត់
-                  </Text>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 bg-blue-500/30 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
-                  <CheckCircleOutlined className="text-white text-xl" />
-                </div>
-                <div>
-                  <Text className="text-white font-semibold block mb-1 font-hanuman text-lg">
-                    សុវត្ថិភាព និងសម្ងាត់
-                  </Text>
-                  <Text className="text-blue-200">
-                    ការពារទិន្នន័យរបស់អ្នកដោយប្រព័ន្ធសុវត្ថិភាព
-                  </Text>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="relative z-10">
-          <Text className="text-blue-300 text-sm">
-            © 2025 PLP Contract System. All rights reserved.
-          </Text>
-        </div>
-      </div>
-
-      {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 bg-gray-50">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center mb-8">
-            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center">
-              <SafetyOutlined className="text-3xl text-white" />
-            </div>
-          </div>
-
-          {/* Form Header */}
-          <div className="mb-10">
-            <Title level={2} className="text-gray-900 mb-2 font-hanuman">
-              ចូលប្រើប្រាស់
-            </Title>
-            <Text className="text-gray-600 text-lg">
-              សូមចូលប្រើគណនីរបស់អ្នក ដើម្បីបន្តទៅកាន់ប្រព័ន្ធ
-            </Text>
-          </div>
-
-          {/* Login Form */}
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-            size="large"
-            className="space-y-2"
-          >
-            <Form.Item
-              name="phone_number"
-              label={<span className="text-gray-700 font-medium font-hanuman text-base">លេខទូរស័ព្ទ</span>}
-              rules={[
-                { required: true, message: 'សូមបំពេញលេខទូរស័ព្ទ' },
-                { pattern: /^[0-9]{9,12}$/, message: 'លេខទូរស័ព្ទមិនត្រឹមត្រូវ' }
-              ]}
-            >
-              <Input
-                prefix={<PhoneOutlined className="text-gray-400" />}
-                placeholder="0123456789"
-                maxLength={12}
-                className="h-12 font-hanuman"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="passcode"
-              label={<span className="text-gray-700 font-medium font-hanuman text-base">លេខសម្ងាត់ (4 ខ្ទង់)</span>}
-              rules={[
-                { required: true, message: 'សូមបំពេញលេខសម្ងាត់' },
-                { pattern: /^[0-9]{4}$/, message: 'លេខសម្ងាត់ត្រូវតែមាន 4 ខ្ទង់' }
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined className="text-gray-400" />}
-                placeholder="លេខ 4 ខ្ទង់ចុងក្រោយនៃលេខទូរស័ព្ទ"
-                maxLength={4}
-                className="h-12 font-hanuman"
-              />
-            </Form.Item>
-
-            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
-              <Text className="text-blue-700 font-hanuman text-sm">
-                <strong>ជំនួយ:</strong> លេខសម្ងាត់គឺជាលេខ 4 ខ្ទង់ចុងក្រោយនៃលេខទូរស័ព្ទរបស់អ្នក
-              </Text>
-            </div>
-
-            <Form.Item className="mb-0">
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                block
-                icon={<LoginOutlined />}
-                className="h-12 text-base font-semibold font-hanuman shadow-lg hover:shadow-xl transition-all"
-              >
-                ចូលប្រើប្រាស់
-              </Button>
-            </Form.Item>
-          </Form>
-
-          {/* Register Link */}
-          <div className="mt-8 text-center">
-            <Divider className="my-6">
-              <Text className="text-gray-500 font-hanuman">ឬ</Text>
-            </Divider>
-            <div className="space-y-4">
               <div>
-                <Text className="text-gray-600 font-hanuman">
-                  មិនទាន់មានគណនី?
+                <Title level={2} style={{ margin: 0, color: '#1890ff' }}>
+                  ប្រព័ន្ធ PLP
+                </Title>
+                <Text type="secondary" style={{ fontSize: 16 }}>
+                  Contract Management System
                 </Text>
               </div>
-              <Link href="/register">
-                <Button
-                  size="large"
-                  block
-                  icon={<UserAddOutlined />}
-                  className="h-12 font-hanuman border-2 hover:border-blue-500 hover:text-blue-500 font-semibold"
-                >
-                  ចុះឈ្មោះគណនីថ្មី
-                </Button>
-              </Link>
-            </div>
-          </div>
+            </Space>
 
-          {/* Back to Home */}
-          <div className="mt-8 text-center">
-            <Link href="/" className="text-blue-600 hover:text-blue-800 font-hanuman font-medium">
-              ← ត្រឡប់ទៅទំព័រដើម
-            </Link>
-          </div>
-        </div>
-      </div>
+            {/* Welcome Message */}
+            <div>
+              <Title level={1} style={{ marginBottom: 16, fontSize: 42, color: '#262626' }}>
+                ស្វាគមន៍
+              </Title>
+              <Paragraph style={{ fontSize: 18, color: '#595959', marginBottom: 32 }}>
+                ប្រព័ន្ធគ្រប់គ្រងកិច្ចព្រមព្រៀងសមិទ្ធកម្ម សម្រាប់គម្រោង PLP
+              </Paragraph>
+            </div>
+
+            {/* Features */}
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+              <Card bordered={false} style={{ background: '#e6f7ff', border: 'none' }}>
+                <Space align="start" size="middle">
+                  <div style={{
+                    width: 48,
+                    height: 48,
+                    background: '#1890ff',
+                    borderRadius: 12,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <CheckCircleOutlined style={{ fontSize: 24, color: '#fff' }} />
+                  </div>
+                  <div>
+                    <Title level={5} style={{ margin: 0, marginBottom: 4 }}>
+                      គ្រប់គ្រងកិច្ចព្រមព្រៀង
+                    </Title>
+                    <Text type="secondary">
+                      ងាយស្រួលក្នុងការបង្កើត និងតាមដានកិច្ចព្រមព្រៀង
+                    </Text>
+                  </div>
+                </Space>
+              </Card>
+
+              <Card bordered={false} style={{ background: '#f6ffed', border: 'none' }}>
+                <Space align="start" size="middle">
+                  <div style={{
+                    width: 48,
+                    height: 48,
+                    background: '#52c41a',
+                    borderRadius: 12,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <RocketOutlined style={{ fontSize: 24, color: '#fff' }} />
+                  </div>
+                  <div>
+                    <Title level={5} style={{ margin: 0, marginBottom: 4 }}>
+                      តាមដានសមិទ្ធកម្ម
+                    </Title>
+                    <Text type="secondary">
+                      ពិនិត្យមើលវឌ្ឍនភាព និងសមិទ្ធផលជាទៀងទាត់
+                    </Text>
+                  </div>
+                </Space>
+              </Card>
+
+              <Card bordered={false} style={{ background: '#fff2f0', border: 'none' }}>
+                <Space align="start" size="middle">
+                  <div style={{
+                    width: 48,
+                    height: 48,
+                    background: '#ff4d4f',
+                    borderRadius: 12,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <TeamOutlined style={{ fontSize: 24, color: '#fff' }} />
+                  </div>
+                  <div>
+                    <Title level={5} style={{ margin: 0, marginBottom: 4 }}>
+                      សហការជាមួយក្រុម
+                    </Title>
+                    <Text type="secondary">
+                      ការងារជាក្រុមប្រកបដោយប្រសិទ្ធភាព
+                    </Text>
+                  </div>
+                </Space>
+              </Card>
+            </Space>
+          </Space>
+        </Col>
+
+        {/* Right Side - Login Form */}
+        <Col xs={24} lg={12} style={{ display: 'flex', alignItems: 'center' }}>
+          <Card
+            style={{
+              width: '100%',
+              maxWidth: 480,
+              margin: '0 auto',
+              boxShadow: '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)'
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <Title level={3} style={{ margin: 0, marginBottom: 8 }}>
+                ចូលប្រើប្រាស់
+              </Title>
+              <Text type="secondary" style={{ fontSize: 15 }}>
+                សូមចូលប្រើគណនីរបស់អ្នក ដើម្បីបន្តទៅកាន់ប្រព័ន្ធ
+              </Text>
+            </div>
+
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              size="large"
+            >
+              <Form.Item
+                name="phone_number"
+                label="លេខទូរស័ព្ទ"
+                rules={[
+                  { required: true, message: 'សូមបំពេញលេខទូរស័ព្ទ' },
+                  { pattern: /^[0-9]{9,12}$/, message: 'លេខទូរស័ព្ទមិនត្រឹមត្រូវ' }
+                ]}
+              >
+                <Input
+                  prefix={<PhoneOutlined />}
+                  placeholder="0123456789"
+                  maxLength={12}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="passcode"
+                label="លេខសម្ងាត់ (4 ខ្ទង់)"
+                rules={[
+                  { required: true, message: 'សូមបំពេញលេខសម្ងាត់' },
+                  { pattern: /^[0-9]{4}$/, message: 'លេខសម្ងាត់ត្រូវតែមាន 4 ខ្ទង់' }
+                ]}
+              >
+                <Input.Password
+                  prefix={<LockOutlined />}
+                  placeholder="លេខ 4 ខ្ទង់ចុងក្រោយនៃលេខទូរស័ព្ទ"
+                  maxLength={4}
+                />
+              </Form.Item>
+
+              <Card
+                size="small"
+                style={{ background: '#e6f7ff', border: '1px solid #91d5ff', marginBottom: 24 }}
+              >
+                <Text style={{ fontSize: 14 }}>
+                  <strong>ជំនួយ:</strong> លេខសម្ងាត់គឺជាលេខ 4 ខ្ទង់ចុងក្រោយនៃលេខទូរស័ព្ទរបស់អ្នក
+                </Text>
+              </Card>
+
+              <Form.Item style={{ marginBottom: 16 }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  block
+                  icon={<LoginOutlined />}
+                  style={{ height: 48 }}
+                >
+                  ចូលប្រើប្រាស់
+                </Button>
+              </Form.Item>
+
+              <Divider plain>ឬ</Divider>
+
+              <Space direction="vertical" size="middle" style={{ width: '100%', textAlign: 'center' }}>
+                <Text type="secondary">
+                  មិនទាន់មានគណនី?
+                </Text>
+                <Link href="/register" style={{ width: '100%', display: 'block' }}>
+                  <Button
+                    size="large"
+                    block
+                    icon={<UserAddOutlined />}
+                    style={{ height: 48 }}
+                  >
+                    ចុះឈ្មោះគណនីថ្មី
+                  </Button>
+                </Link>
+              </Space>
+
+              <div style={{ textAlign: 'center', marginTop: 24 }}>
+                <Link href="/">
+                  <Text type="secondary">
+                    ← ត្រឡប់ទៅទំព័រដើម
+                  </Text>
+                </Link>
+              </div>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
     </div>
   )
 }
