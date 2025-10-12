@@ -1174,14 +1174,17 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
               >
                 បង្កើតរបាយការណ៍
               </Button>
-              {user?.role === UserRole.PARTNER && user?.contract_signed && (
+              {user?.role === UserRole.PARTNER && user?.contract_signed && userContractId && (
                 <Button
                   size="large"
-                  icon={<FileDoneOutlined />}
-                  onClick={() => router.push(`/contract/view/${user.contract_type}`)}
+                  icon={<DownloadOutlined />}
+                  onClick={() => {
+                    // Open print page in new tab
+                    window.open(`/contract/print/${userContractId}`, '_blank')
+                  }}
                   style={{ fontFamily: 'Hanuman' }}
                 >
-                  មើលកិច្ចសន្យារបស់ខ្ញុំ
+                  ទាញយកកិច្ចសន្យា PDF
                 </Button>
               )}
 
