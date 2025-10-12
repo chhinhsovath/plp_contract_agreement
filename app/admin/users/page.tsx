@@ -150,8 +150,8 @@ export default function UsersManagementPage() {
       key: 'full_name',
       render: (name: string, record: any) => (
         <div>
-          <div className="font-semibold">{name}</div>
-          <div className="text-sm text-gray-500">{record.phone_number}</div>
+          <div style={{ fontWeight: 600 }}>{name}</div>
+          <div style={{ fontSize: 14, color: '#8c8c8c' }}>{record.phone_number}</div>
         </div>
       ),
     },
@@ -160,7 +160,7 @@ export default function UsersManagementPage() {
       dataIndex: 'role',
       key: 'role',
       render: (role: UserRole) => (
-        <Tag color={getRoleColor(role)} className="font-hanuman">
+        <Tag color={getRoleColor(role)}>
           {getRoleLabel(role)}
         </Tag>
       ),
@@ -182,7 +182,7 @@ export default function UsersManagementPage() {
       dataIndex: 'is_active',
       key: 'is_active',
       render: (isActive: boolean) => (
-        <Tag color={isActive ? 'success' : 'error'} className="font-hanuman">
+        <Tag color={isActive ? 'success' : 'error'}>
           {isActive ? 'សកម្ម' : 'ផ្អាក'}
         </Tag>
       ),
@@ -234,35 +234,35 @@ export default function UsersManagementPage() {
   }))
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8 flex justify-between items-center">
-          <Title level={2} className="font-hanuman">
-            <TeamOutlined className="mr-2" />
+    <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '40px' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+        <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Title level={2} style={{ margin: 0 }}>
+            <TeamOutlined style={{ marginRight: 8 }} />
             គ្រប់គ្រងអ្នកប្រើប្រាស់
           </Title>
           <Link href="/">
-            <Button icon={<HomeOutlined />} size="large" className="font-hanuman">
+            <Button icon={<HomeOutlined />} size="large">
               ត្រឡប់ទៅទំព័រដើម
             </Button>
           </Link>
         </div>
 
         {/* Role Statistics - Optimized for Tablet/Desktop */}
-        <Row gutter={[24, 24]} className="mb-8">
+        <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
           {roleStats.map(({ role, count }) => (
-            <Col md={8} lg={6} xl={4} key={role}>
-              <Card className="shadow-sm hover:shadow-md transition-shadow">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">{count}</div>
-                  <div className="text-base font-hanuman mt-2">{getRoleLabel(role)}</div>
+            <Col xs={24} md={8} lg={6} xl={4} key={role}>
+              <Card style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', transition: 'all 0.3s' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 32, fontWeight: 'bold', color: '#1890ff' }}>{count}</div>
+                  <div style={{ fontSize: 15, marginTop: 8 }}>{getRoleLabel(role)}</div>
                 </div>
               </Card>
             </Col>
           ))}
         </Row>
 
-        <div className="mb-6">
+        <div style={{ marginBottom: 24 }}>
           <Search
             placeholder="ស្វែងរកតាមឈ្មោះ លេខទូរស័ព្ទ ឬស្ថាប័ន"
             allowClear
@@ -271,11 +271,10 @@ export default function UsersManagementPage() {
             onSearch={setSearchText}
             onChange={(e) => setSearchText(e.target.value)}
             style={{ minWidth: 400 }}
-            className="font-hanuman"
           />
         </div>
 
-        <div className="overflow-x-auto">
+        <div style={{ overflowX: 'auto' }}>
           <Table
             columns={columns}
             dataSource={filteredUsers}
@@ -286,7 +285,6 @@ export default function UsersManagementPage() {
               showSizeChanger: true,
               showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} អ្នកប្រើប្រាស់`,
             }}
-            className="font-hanuman"
             scroll={{ x: 1200 }}
             size="middle"
           />
@@ -299,32 +297,30 @@ export default function UsersManagementPage() {
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         footer={null}
-        className="font-hanuman"
       >
         {selectedUser && (
           <div>
-            <div className="mb-4">
+            <div style={{ marginBottom: 16 }}>
               <Text strong>ឈ្មោះ: </Text>
               <Text>{selectedUser.full_name}</Text>
             </div>
-            <div className="mb-4">
+            <div style={{ marginBottom: 16 }}>
               <Text strong>លេខទូរស័ព្ទ: </Text>
               <Text>{selectedUser.phone_number}</Text>
             </div>
-            <div className="mb-4">
+            <div style={{ marginBottom: 16 }}>
               <Text strong>តួនាទីបច្ចុប្បន្ន: </Text>
               <Tag color={getRoleColor(selectedUser.role)}>
                 {getRoleLabel(selectedUser.role)}
               </Tag>
             </div>
-            <div className="mb-4">
+            <div style={{ marginBottom: 16 }}>
               <Text strong>តួនាទីថ្មី: </Text>
               <Select
                 style={{ width: '100%', marginTop: 8 }}
                 placeholder="ជ្រើសរើសតួនាទីថ្មី"
                 options={getAvailableRoles(selectedUser.role)}
                 onChange={(newRole) => handleUpdateRole(selectedUser.id, newRole as UserRole)}
-                className="font-hanuman"
               />
             </div>
           </div>
