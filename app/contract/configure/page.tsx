@@ -157,7 +157,7 @@ export default function ContractConfigurePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f2f5' }}>
         <Spin size="large" />
       </div>
     )
@@ -167,28 +167,28 @@ export default function ContractConfigurePage() {
   const currentSelection = selections[currentStep]
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
-      <div className="max-w-5xl mx-auto">
+    <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '40px 24px' }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         {/* Header */}
-        <Card className="mb-8 shadow-md">
-          <Space direction="vertical" size="middle" className="w-full">
-            <Title level={2} className="font-hanuman mb-0">
-              <FileTextOutlined className="mr-3" />
+        <Card style={{ marginBottom: 32, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+            <Title level={2} style={{ marginBottom: 0 }}>
+              <FileTextOutlined style={{ marginRight: 12 }} />
               កំណត់រចនាសម្ព័ន្ធកិច្ចសន្យា
             </Title>
-            <Text className="text-gray-600 font-hanuman text-base">
+            <Text type="secondary" style={{ fontSize: 15 }}>
               សូមជ្រើសរើសជម្រើសមួយសម្រាប់សមិទ្ធកម្មនីមួយៗ ដោយផ្អែកលើទិន្នន័យមូលដ្ឋានរបស់អ្នក
             </Text>
           </Space>
         </Card>
 
         {/* Progress Steps */}
-        <Card className="mb-8 shadow-md">
+        <Card style={{ marginBottom: 32, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
           <Steps
             current={currentStep}
             items={deliverables.map((d, index) => ({
               title: (
-                <span className="font-hanuman text-sm">
+                <span style={{ fontSize: 14 }}>
                   សមិទ្ធកម្មទី {d.deliverable_number}
                 </span>
               ),
@@ -205,69 +205,77 @@ export default function ContractConfigurePage() {
         {/* Alert */}
         <Alert
           message={
-            <span className="font-hanuman text-base">
+            <span style={{ fontSize: 15 }}>
               សូមអានជម្រើសទាំង ៣ យ៉ាងត្រឹមត្រូវ ហើយជ្រើសរើសជម្រើសដែលត្រូវនឹងស្ថានភាពសាលារៀនរបស់អ្នក
             </span>
           }
           type="info"
           showIcon
-          className="mb-8 font-hanuman p-4"
+          style={{ marginBottom: 32, padding: 16 }}
         />
 
         {/* Current Deliverable */}
         {currentDeliverable && (
-          <Card className="shadow-md mb-8">
-            <Space direction="vertical" size="large" className="w-full">
+          <Card style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', marginBottom: 32 }}>
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
               {/* Deliverable Title */}
               <div>
-                <Title level={4} className="font-hanuman text-blue-700 mb-2">
+                <Title level={4} style={{ color: '#0047AB', marginBottom: 8 }}>
                   សមិទ្ធកម្មទី {currentDeliverable.deliverable_number}
                 </Title>
-                <Paragraph className="font-hanuman text-lg mb-2">
+                <Paragraph style={{ fontSize: 16, marginBottom: 8 }}>
                   {currentDeliverable.deliverable_title_khmer}
                 </Paragraph>
                 {currentDeliverable.activities_text && (
-                  <Paragraph className="font-hanuman text-gray-600 text-sm bg-gray-50 p-3 rounded">
+                  <Paragraph style={{ color: '#595959', fontSize: 14, background: '#fafafa', padding: 12, borderRadius: 8 }}>
                     <strong>សកម្មភាព:</strong> {currentDeliverable.activities_text}
                   </Paragraph>
                 )}
-                <Text className="font-hanuman text-gray-500 text-sm">
+                <Text type="secondary" style={{ fontSize: 14 }}>
                   <strong>ពេលវេលាអនុវត្ត:</strong> {currentDeliverable.timeline}
                 </Text>
               </div>
 
               {/* Options */}
               <div>
-                <Title level={5} className="font-hanuman mb-3">
+                <Title level={5} style={{ marginBottom: 12 }}>
                   សូមជ្រើសរើសជម្រើសមួយ:
                 </Title>
                 <Radio.Group
                   value={currentSelection?.selected_option_id || 0}
                   onChange={(e) => handleOptionSelect(currentDeliverable.id, e.target.value)}
-                  className="w-full"
+                  style={{ width: '100%' }}
                 >
-                  <Space direction="vertical" size="middle" className="w-full">
+                  <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                     {currentDeliverable.options.map((option) => (
                       <Card
                         key={option.id}
                         hoverable
-                        className={`cursor-pointer transition-all ${
-                          currentSelection?.selected_option_id === option.id
-                            ? 'border-blue-500 border-2 shadow-md bg-blue-50'
-                            : 'border-gray-200'
-                        }`}
+                        style={{
+                          cursor: 'pointer',
+                          transition: 'all 0.3s',
+                          border: currentSelection?.selected_option_id === option.id
+                            ? '2px solid #1890ff'
+                            : '1px solid #d9d9d9',
+                          background: currentSelection?.selected_option_id === option.id
+                            ? '#e6f7ff'
+                            : '#fff',
+                          boxShadow: currentSelection?.selected_option_id === option.id
+                            ? '0 2px 8px rgba(24, 144, 255, 0.2)'
+                            : 'none'
+                        }}
                         onClick={() => handleOptionSelect(currentDeliverable.id, option.id)}
                       >
-                        <Radio value={option.id} className="w-full">
-                          <Space direction="vertical" size="small" className="w-full ml-2">
-                            <Text strong className="font-hanuman text-base">
+                        <Radio value={option.id} style={{ width: '100%' }}>
+                          <Space direction="vertical" size="small" style={{ width: '100%', marginLeft: 8 }}>
+                            <Text strong style={{ fontSize: 15 }}>
                               ជម្រើសទី {option.option_number}
                             </Text>
-                            <Paragraph className="font-hanuman mb-0 text-gray-700">
+                            <Paragraph style={{ marginBottom: 0, color: '#262626' }}>
                               {option.option_text_khmer}
                             </Paragraph>
                             {option.baseline_percentage !== null && option.target_percentage !== null && (
-                              <Text className="text-sm text-gray-500 font-hanuman">
+                              <Text style={{ fontSize: 14, color: '#8c8c8c' }}>
                                 គោលដៅ: {option.baseline_percentage}% → {option.target_percentage}%
                               </Text>
                             )}
@@ -283,19 +291,19 @@ export default function ContractConfigurePage() {
         )}
 
         {/* Navigation Buttons - Optimized for Tablet/Desktop */}
-        <Card className="shadow-md">
-          <div className="flex justify-between items-center p-4">
+        <Card style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
             <Button
               icon={<LeftOutlined />}
               onClick={handlePrevious}
               disabled={currentStep === 0}
               size="large"
-              className="px-8 py-6 h-auto text-base"
+              style={{ padding: '0 32px', height: 48, fontSize: 15 }}
             >
-              <span className="font-hanuman">ថយក្រោយ</span>
+              <span>ថយក្រោយ</span>
             </Button>
 
-            <Text className="font-hanuman text-gray-500 text-lg font-medium">
+            <Text style={{ color: '#8c8c8c', fontSize: 16, fontWeight: 500 }}>
               {currentStep + 1} / {deliverables.length}
             </Text>
 
@@ -306,9 +314,9 @@ export default function ContractConfigurePage() {
                 iconPosition="end"
                 onClick={handleNext}
                 size="large"
-                className="px-8 py-6 h-auto text-base"
+                style={{ padding: '0 32px', height: 48, fontSize: 15 }}
               >
-                <span className="font-hanuman">បន្ទាប់</span>
+                <span>បន្ទាប់</span>
               </Button>
             ) : (
               <Button
@@ -317,9 +325,9 @@ export default function ContractConfigurePage() {
                 onClick={handleSubmit}
                 loading={submitting}
                 size="large"
-                className="px-8 py-6 h-auto text-base"
+                style={{ padding: '0 32px', height: 48, fontSize: 15 }}
               >
-                <span className="font-hanuman">ពិនិត្យ និងចុះហត្ថលេខា</span>
+                <span>ពិនិត្យ និងចុះហត្ថលេខា</span>
               </Button>
             )}
           </div>
