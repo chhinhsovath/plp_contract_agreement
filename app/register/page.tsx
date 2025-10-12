@@ -118,7 +118,7 @@ export default function RegisterPage() {
                   ប្រព័ន្ធ PLP
                 </Title>
                 <Text type="secondary" style={{ fontSize: 16 }}>
-                  Contract Management System
+                  ប្រព័ន្ធគ្រប់គ្រងកិច្ចព្រមព្រៀង
                 </Text>
               </div>
             </Space>

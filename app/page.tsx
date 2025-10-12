@@ -559,7 +559,7 @@ export default function HomePage() {
       <div style={{ background: '#fff', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)', borderBottom: '1px solid #f0f0f0' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Title level={3} style={{ margin: 0, color: '#0047AB', fontSize: 24 }}>
-            PLP Contract System
+            ប្រព័ន្ធគ្រប់គ្រងកិច្ចព្រមព្រៀង PLP
           </Title>
           {user && (
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
