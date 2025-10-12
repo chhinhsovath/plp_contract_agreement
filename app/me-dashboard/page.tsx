@@ -1335,8 +1335,8 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
           defaultActiveKey="indicators"
           size="large"
           items={[
-            // Hide fake "ផែនការគម្រោង" tab for Contract 4 & 5 (they have real data in deliverables tab)
-            ...(!hasDeliverables ? [{
+            // Hide fake "ផែនការគម្រោង" tab for Contract 4 PARTNER users (they only see indicators)
+            ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
               key: 'timeline',
               label: (
                 <span className="font-hanuman">
