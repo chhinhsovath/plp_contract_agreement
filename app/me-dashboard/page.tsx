@@ -984,75 +984,104 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
-      {/* Modern Header with Gradient */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-xl">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center mb-3">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mr-4">
-                  <DashboardOutlined className="text-3xl text-white" />
-                </div>
+    <div style={{ minHeight: '100vh', background: '#f0f2f5' }}>
+      {/* Modern Header with Ant Design styling */}
+      <div style={{
+        background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        marginBottom: 24
+      }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 48px' }}>
+          <Row justify="space-between" align="middle">
+            <Col>
+              <Space size="large">
+                <Avatar
+                  size={64}
+                  icon={<DashboardOutlined />}
+                  style={{
+                    background: 'rgba(255,255,255,0.25)',
+                    border: '2px solid rgba(255,255,255,0.3)'
+                  }}
+                />
                 <div>
-                  <Title level={2} className="font-hanuman text-white mb-0" style={{ fontSize: '2rem' }}>
+                  <Title level={2} style={{ color: '#fff', marginBottom: 4, fontFamily: 'Hanuman' }}>
                     ផ្ទាំងគ្រប់គ្រង M&E
                   </Title>
-                  <Text className="text-blue-100 font-hanuman text-base">
+                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Hanuman' }}>
                     តាមដានវឌ្ឍនភាព វាយតម្លៃលទ្ធផល និងផែនការគម្រោង
                   </Text>
                 </div>
-              </div>
-            </div>
+              </Space>
+            </Col>
 
             {/* User Profile Dropdown */}
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: 'profile',
-                    icon: <UserOutlined />,
-                    label: <span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>,
-                  },
-                  {
-                    key: 'change-password',
-                    icon: <KeyOutlined />,
-                    label: <span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>,
-                    onClick: () => setShowChangePasswordModal(true)
-                  },
-                  { type: 'divider' },
-                  {
-                    key: 'logout',
-                    icon: <LogoutOutlined />,
-                    label: <span className="font-hanuman">ចាកចេញ</span>,
-                    onClick: handleLogout
-                  }
-                ]
-              }}
-              placement="bottomRight"
-            >
-              <div className="flex items-center cursor-pointer hover:bg-white/10 p-3 rounded-xl transition-all backdrop-blur-sm bg-white/5">
-                <Avatar icon={<UserOutlined />} size={48} className="mr-3 bg-white/20" />
-                <div className="text-right">
-                  <div className="font-hanuman text-base font-semibold text-white">{user?.full_name}</div>
-                  <div className="font-hanuman text-sm text-blue-100">{user?.role}</div>
-                </div>
-              </div>
-            </Dropdown>
-          </div>
+            <Col>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'profile',
+                      icon: <UserOutlined />,
+                      label: <span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>,
+                    },
+                    {
+                      key: 'change-password',
+                      icon: <KeyOutlined />,
+                      label: <span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>,
+                      onClick: () => setShowChangePasswordModal(true)
+                    },
+                    { type: 'divider' },
+                    {
+                      key: 'logout',
+                      icon: <LogoutOutlined />,
+                      label: <span className="font-hanuman">ចាកចេញ</span>,
+                      onClick: handleLogout,
+                      danger: true
+                    }
+                  ]
+                }}
+                placement="bottomRight"
+              >
+                <Card
+                  hoverable
+                  size="small"
+                  style={{
+                    background: 'rgba(255,255,255,0.15)',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  bodyStyle={{ padding: '12px 16px' }}
+                >
+                  <Space>
+                    <Avatar icon={<UserOutlined />} size={48} style={{ background: '#fff', color: '#1890ff' }} />
+                    <div style={{ textAlign: 'left' }}>
+                      <div style={{ color: '#fff', fontWeight: 600, fontSize: 15, fontFamily: 'Hanuman' }}>
+                        {user?.full_name}
+                      </div>
+                      <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, fontFamily: 'Hanuman' }}>
+                        {user?.role}
+                      </div>
+                    </div>
+                  </Space>
+                </Card>
+              </Dropdown>
+            </Col>
+          </Row>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8 -mt-4">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 48px 48px' }}>
 
-      {/* Filters - Modern Design */}
-      <Card className="mb-8 shadow-lg border-0 rounded-2xl bg-white">
-        <div className="flex flex-row flex-wrap gap-6 items-end">
-          <div className="flex-1 min-w-[240px]">
-            <Text className="font-hanuman block mb-3 text-base font-semibold text-gray-700">ប្រភេទកិច្ចព្រមព្រៀង:</Text>
+      {/* Filters - Ant Design Style */}
+      <Card style={{ marginBottom: 24, borderRadius: 8 }} bodyStyle={{ padding: 24 }}>
+        <Row gutter={[24, 16]} align="bottom">
+          <Col flex="1" style={{ minWidth: 240 }}>
+            <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 15, fontFamily: 'Hanuman' }}>
+              ប្រភេទកិច្ចព្រមព្រៀង:
+            </Text>
             <Select
-              className="w-full rounded-lg"
+              style={{ width: '100%' }}
               placeholder="ជ្រើសរើសប្រភេទ"
               size="large"
               value={selectedContract}
@@ -1066,138 +1095,217 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </Select.Option>
               ))}
             </Select>
-          </div>
-          <div className="flex-1 min-w-[320px]">
-            <Text className="font-hanuman block mb-3 text-base font-semibold text-gray-700">រយៈពេល:</Text>
+          </Col>
+          <Col flex="1" style={{ minWidth: 320 }}>
+            <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 15, fontFamily: 'Hanuman' }}>
+              រយៈពេល:
+            </Text>
             <RangePicker
-              className="w-full rounded-lg"
+              style={{ width: '100%' }}
               size="large"
               value={dateRange as any}
               onChange={(dates) => setDateRange(dates as any)}
               format="DD/MM/YYYY"
             />
-          </div>
-          <div className="flex flex-row gap-3">
-            <Button
-              type="primary"
-              size="large"
-              icon={<BarChartOutlined />}
-              onClick={handleGenerateReport}
-              loading={loading}
-              className="font-hanuman h-12 px-6 rounded-lg shadow-md hover:shadow-lg transition-all"
-            >
-              បង្កើតរបាយការណ៍
-            </Button>
-            {user?.role === UserRole.PARTNER && user?.contract_signed && (
+          </Col>
+          <Col>
+            <Space size="middle">
               <Button
+                type="primary"
                 size="large"
-                icon={<FileDoneOutlined />}
-                onClick={() => router.push(`/contract/view/${user.contract_type}`)}
-                className="font-hanuman h-12 px-6 rounded-lg border-2 hover:border-blue-500 hover:text-blue-500 transition-all"
+                icon={<BarChartOutlined />}
+                onClick={handleGenerateReport}
+                loading={loading}
+                style={{ fontFamily: 'Hanuman' }}
               >
-                មើលកិច្ចសន្យារបស់ខ្ញុំ
+                បង្កើតរបាយការណ៍
               </Button>
-            )}
+              {user?.role === UserRole.PARTNER && user?.contract_signed && (
+                <Button
+                  size="large"
+                  icon={<FileDoneOutlined />}
+                  onClick={() => router.push(`/contract/view/${user.contract_type}`)}
+                  style={{ fontFamily: 'Hanuman' }}
+                >
+                  មើលកិច្ចសន្យារបស់ខ្ញុំ
+                </Button>
+              )}
 
-            {/* Force Reset Button for Demo Users */}
-            {user?.phone && ['077806680', '077806681', '077806682', '077806683', '077806684', '077806685'].includes(user.phone) && (
-              <Button
-                size="large"
-                icon={<ReloadOutlined />}
-                onClick={handleForceReset}
-                loading={resettingDemo}
-                className="font-hanuman h-12 px-6 rounded-lg"
-              >
-                កំណត់ឡើងវិញ
-              </Button>
-            )}
-          </div>
-        </div>
+              {/* Force Reset Button for Demo Users */}
+              {user?.phone && ['077806680', '077806681', '077806682', '077806683', '077806684', '077806685'].includes(user.phone) && (
+                <Button
+                  size="large"
+                  icon={<ReloadOutlined />}
+                  onClick={handleForceReset}
+                  loading={resettingDemo}
+                  style={{ fontFamily: 'Hanuman' }}
+                >
+                  កំណត់ឡើងវិញ
+                </Button>
+              )}
+            </Space>
+          </Col>
+        </Row>
       </Card>
 
-      {/* Statistics Cards - Modern Design with Gradients */}
-      <Row gutter={[24, 24]} className="mb-10">
-        <Col md={12} lg={6}>
-          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 transform hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-hanuman text-blue-100 text-base mb-2">
-                  {hasDeliverables ? 'សូចនាករសរុប' : 'សកម្មភាពសរុប'}
-                </div>
-                <div className="text-white font-bold text-4xl">{dashboardData.totalDeliverables}</div>
-              </div>
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                <ProjectOutlined className="text-white text-3xl" />
-              </div>
-            </div>
-          </Card>
+      {/* Statistics Cards - Ant Design with Beautiful Colors */}
+      <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
+        <Col xs={24} md={12} lg={6}>
+          <Badge.Ribbon text={<span style={{ fontFamily: 'Hanuman' }}>សរុប</span>} color="blue">
+            <Card
+              hoverable
+              style={{
+                background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
+                border: 'none',
+                borderRadius: 12,
+                height: '100%'
+              }}
+              bodyStyle={{ padding: 24 }}
+            >
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
+                    {hasDeliverables ? 'សូចនាករសរុប' : 'សកម្មភាពសរុប'}
+                  </Text>
+                  <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
+                    {dashboardData.totalDeliverables}
+                  </Title>
+                </Col>
+                <Col>
+                  <Avatar
+                    size={64}
+                    icon={<ProjectOutlined />}
+                    style={{ background: 'rgba(255,255,255,0.25)', color: '#fff' }}
+                  />
+                </Col>
+              </Row>
+            </Card>
+          </Badge.Ribbon>
         </Col>
-        <Col md={12} lg={6}>
-          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 transform hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-hanuman text-green-100 text-base mb-2">
-                  {hasDeliverables ? 'សម្រេច' : 'បានបញ្ចប់'}
-                </div>
-                <div className="text-white font-bold text-4xl">{dashboardData.completedDeliverables}</div>
-              </div>
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                <CheckCircleOutlined className="text-white text-3xl" />
-              </div>
-            </div>
-          </Card>
+
+        <Col xs={24} md={12} lg={6}>
+          <Badge.Ribbon text={<span style={{ fontFamily: 'Hanuman' }}>បញ្ចប់</span>} color="green">
+            <Card
+              hoverable
+              style={{
+                background: 'linear-gradient(135deg, #52c41a 0%, #389e0d 100%)',
+                border: 'none',
+                borderRadius: 12,
+                height: '100%'
+              }}
+              bodyStyle={{ padding: 24 }}
+            >
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
+                    {hasDeliverables ? 'សម្រេច' : 'បានបញ្ចប់'}
+                  </Text>
+                  <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
+                    {dashboardData.completedDeliverables}
+                  </Title>
+                </Col>
+                <Col>
+                  <Avatar
+                    size={64}
+                    icon={<CheckCircleOutlined />}
+                    style={{ background: 'rgba(255,255,255,0.25)', color: '#fff' }}
+                  />
+                </Col>
+              </Row>
+            </Card>
+          </Badge.Ribbon>
         </Col>
-        <Col md={12} lg={6}>
-          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden bg-gradient-to-br from-orange-500 to-amber-600 transform hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-hanuman text-orange-100 text-base mb-2">
-                  {hasDeliverables ? 'តាមគម្រោង' : 'កំពុងដំណើរការ'}
-                </div>
-                <div className="text-white font-bold text-4xl">{dashboardData.inProgressDeliverables}</div>
-              </div>
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                <SyncOutlined className="text-white text-3xl" spin />
-              </div>
-            </div>
-          </Card>
+
+        <Col xs={24} md={12} lg={6}>
+          <Badge.Ribbon text={<span style={{ fontFamily: 'Hanuman' }}>កំពុងដំណើរការ</span>} color="orange">
+            <Card
+              hoverable
+              style={{
+                background: 'linear-gradient(135deg, #faad14 0%, #d48806 100%)',
+                border: 'none',
+                borderRadius: 12,
+                height: '100%'
+              }}
+              bodyStyle={{ padding: 24 }}
+            >
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
+                    {hasDeliverables ? 'តាមគម្រោង' : 'កំពុងដំណើរការ'}
+                  </Text>
+                  <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
+                    {dashboardData.inProgressDeliverables}
+                  </Title>
+                </Col>
+                <Col>
+                  <Avatar
+                    size={64}
+                    icon={<SyncOutlined spin />}
+                    style={{ background: 'rgba(255,255,255,0.25)', color: '#fff' }}
+                  />
+                </Col>
+              </Row>
+            </Card>
+          </Badge.Ribbon>
         </Col>
-        <Col md={12} lg={6}>
-          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600 transform hover:scale-105">
-            <div className="mb-3">
-              <div className="font-hanuman text-purple-100 text-base mb-2">វឌ្ឍនភាពរួម</div>
-              <div className="text-white font-bold text-4xl">{dashboardData.overallProgress}%</div>
-            </div>
-            <Progress
-              percent={dashboardData.overallProgress}
-              showInfo={false}
-              strokeColor="#ffffff"
-              trailColor="rgba(255, 255, 255, 0.2)"
-              strokeWidth={10}
-              className="progress-white"
-            />
-          </Card>
+
+        <Col xs={24} md={12} lg={6}>
+          <Badge.Ribbon text={<span style={{ fontFamily: 'Hanuman' }}>វឌ្ឍនភាព</span>} color="purple">
+            <Card
+              hoverable
+              style={{
+                background: 'linear-gradient(135deg, #722ed1 0%, #531dab 100%)',
+                border: 'none',
+                borderRadius: 12,
+                height: '100%'
+              }}
+              bodyStyle={{ padding: 24 }}
+            >
+              <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
+                វឌ្ឍនភាពរួម
+              </Text>
+              <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36, marginBottom: 12 }}>
+                {dashboardData.overallProgress}%
+              </Title>
+              <Progress
+                percent={dashboardData.overallProgress}
+                showInfo={false}
+                strokeColor="#fff"
+                trailColor="rgba(255, 255, 255, 0.25)"
+                strokeWidth={8}
+              />
+            </Card>
+          </Badge.Ribbon>
         </Col>
       </Row>
 
       {/* Show alert for delayed deliverables */}
       {dashboardData.delayedDeliverables > 0 && (
         <Alert
-          message={<span className="font-hanuman font-semibold">{`មានសកម្មភាពចំនួន ${dashboardData.delayedDeliverables} ហួសកាលកំណត់`}</span>}
-          description={<span className="font-hanuman">សូមពិនិត្យ និងធ្វើបច្ចុប្បន្នភាពស្ថានភាពសកម្មភាព</span>}
+          message={
+            <Text strong style={{ fontFamily: 'Hanuman' }}>
+              {`មានសកម្មភាពចំនួន ${dashboardData.delayedDeliverables} ហួសកាលកំណត់`}
+            </Text>
+          }
+          description={
+            <Text style={{ fontFamily: 'Hanuman' }}>
+              សូមពិនិត្យ និងធ្វើបច្ចុប្បន្នភាពស្ថានភាពសកម្មភាព
+            </Text>
+          }
           type="warning"
           showIcon
           icon={<AlertOutlined />}
-          className="mb-8 font-hanuman rounded-xl shadow-md border-l-4 border-orange-500"
+          style={{ marginBottom: 24, borderRadius: 8 }}
           closable
         />
       )}
 
-      {/* Data Tabs - Modern Design */}
-      <Card className="shadow-xl border-0 rounded-2xl bg-white">
+      {/* Data Tabs - Ant Design Style */}
+      <Card style={{ borderRadius: 8 }}>
         <Tabs
           defaultActiveKey="indicators"
           size="large"
+          tabBarStyle={{ marginBottom: 0, paddingLeft: 0, paddingRight: 0 }}
           items={[
             // Hide fake "ផែនការគម្រោង" tab for Contract 4 PARTNER users (they only see indicators)
             ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
