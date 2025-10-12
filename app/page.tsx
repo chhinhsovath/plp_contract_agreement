@@ -8,13 +8,12 @@ import { getAvailableContractIds, getContractTemplate } from '@/lib/contract-tem
 import { UserRole, getRoleLabel, hasPermission } from '@/lib/roles'
 
 const { Title, Text, Paragraph } = Typography
-const { TabPane } = Tabs
 
 // Contract type detailed descriptions
 const CONTRACT_DETAILS = [
   {
     id: 1,
-    icon: <BankOutlined className="text-4xl" />,
+    icon: <BankOutlined style={{ fontSize: 48 }} />,
     color: '#0047AB',
     title: 'កិច្ចព្រមព្រៀង PMU-PCU',
     subtitle: 'គបស និង គបក',
@@ -25,7 +24,7 @@ const CONTRACT_DETAILS = [
   },
   {
     id: 2,
-    icon: <SolutionOutlined className="text-4xl" />,
+    icon: <SolutionOutlined style={{ fontSize: 48 }} />,
     color: '#DC143C',
     title: 'កិច្ចព្រមព្រៀង PCU-Project Manager',
     subtitle: 'គបក និងប្រធានគម្រោង',
@@ -36,7 +35,7 @@ const CONTRACT_DETAILS = [
   },
   {
     id: 3,
-    icon: <TeamOutlined className="text-4xl" />,
+    icon: <TeamOutlined style={{ fontSize: 48 }} />,
     color: '#FFD700',
     title: 'កិច្ចព្រមព្រៀង Project Manager-Regional',
     subtitle: 'ប្រធានគម្រោង និងមន្រ្តីតំបន់',
@@ -47,7 +46,7 @@ const CONTRACT_DETAILS = [
   },
   {
     id: 4,
-    icon: <BookOutlined className="text-4xl" />,
+    icon: <BookOutlined style={{ fontSize: 48 }} />,
     color: '#52c41a',
     title: 'កិច្ចព្រមព្រៀង DoE-District Office',
     subtitle: 'នាយកដ្ឋានបឋម និងការិយាល័យស្រុក',
@@ -58,7 +57,7 @@ const CONTRACT_DETAILS = [
   },
   {
     id: 5,
-    icon: <HomeOutlined className="text-4xl" />,
+    icon: <HomeOutlined style={{ fontSize: 48 }} />,
     color: '#1890ff',
     title: 'កិច្ចព្រមព្រៀង DoE-School',
     subtitle: 'នាយកដ្ឋានបឋម និងសាលា',
@@ -172,12 +171,12 @@ export default function HomePage() {
     {
       key: 'profile',
       label: (
-        <div className="font-hanuman">
-          <div className="font-semibold">{user?.full_name}</div>
-          <div className="text-sm text-gray-500">{user?.phone_number}</div>
-          <div className="text-sm text-blue-600">{getRoleLabel(user?.role as UserRole)}</div>
+        <div>
+          <div style={{ fontWeight: 600 }}>{user?.full_name}</div>
+          <div style={{ fontSize: 14, color: '#8c8c8c' }}>{user?.phone_number}</div>
+          <div style={{ fontSize: 14, color: '#1890ff' }}>{getRoleLabel(user?.role as UserRole)}</div>
           {user?.organization && (
-            <div className="text-sm text-gray-500">{user.organization}</div>
+            <div style={{ fontSize: 14, color: '#8c8c8c' }}>{user.organization}</div>
           )}
         </div>
       ),
@@ -299,14 +298,14 @@ export default function HomePage() {
 
     return (
     <>
-      <div className="text-center mb-12">
-        <Title level={1} className="text-blue-800 font-hanuman mb-4">
+      <div style={{ textAlign: 'center', marginBottom: 64 }}>
+        <Title level={1} style={{ color: '#0047AB', marginBottom: 16 }}>
           ប្រព័ន្ធកិច្ចព្រមព្រៀងសមិទ្ធកម្ម PLP
         </Title>
-        <Paragraph className="text-xl text-gray-700 max-w-3xl mx-auto">
+        <Paragraph style={{ fontSize: 18, color: '#595959', maxWidth: 800, margin: '0 auto' }}>
           សូមស្វាគមន៍មកកាន់ប្រព័ន្ធគ្រប់គ្រងកិច្ចព្រមព្រៀងសម្រាប់គម្រោង PLP។
           {user?.role === UserRole.PARTNER && user?.contract_type && (
-            <div className="mt-2 text-amber-600">
+            <div style={{ marginTop: 8, color: '#faad14' }}>
               អ្នកអាចបង្កើតតែកិច្ចព្រមព្រៀង {CONTRACT_DETAILS.find(d => d.id === user.contract_type)?.title} ប៉ុណ្ណោះ
             </div>
           )}
@@ -315,60 +314,64 @@ export default function HomePage() {
 
       <Row gutter={[32, 32]}>
         {contractsToShow.map((detail) => (
-          <Col md={12} lg={8} key={detail.id}>
+          <Col xs={24} md={12} lg={8} key={detail.id}>
             <Card
               hoverable
-              className="h-full shadow-lg hover:shadow-xl transition-all duration-300 khmer-border"
-              style={{ borderTop: `4px solid ${detail.color}` }}
+              style={{
+                height: '100%',
+                borderTop: `4px solid ${detail.color}`,
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s'
+              }}
             >
-              <Space direction="vertical" className="w-full" size="large">
-                <div className="text-center" style={{ color: detail.color }}>
+              <Space direction="vertical" style={{ width: '100%' }} size="large">
+                <div style={{ textAlign: 'center', color: detail.color }}>
                   {detail.icon}
                 </div>
 
-                <div className="text-center">
+                <div style={{ textAlign: 'center' }}>
                   <Badge count={detail.id} style={{ backgroundColor: detail.color }}>
-                    <Title level={4} className="font-hanuman mb-2">
+                    <Title level={4} style={{ marginBottom: 8 }}>
                       {detail.title}
                     </Title>
                   </Badge>
-                  <Text className="text-gray-600 font-hanuman">
+                  <Text type="secondary">
                     {detail.subtitle}
                   </Text>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <Paragraph className="font-hanuman text-sm mb-3">
+                <div style={{ background: '#fafafa', padding: 16, borderRadius: 8 }}>
+                  <Paragraph style={{ fontSize: 14, marginBottom: 16 }}>
                     {detail.description}
                   </Paragraph>
 
-                  <div className="space-y-2">
+                  <Space direction="vertical" size="small" style={{ width: '100%' }}>
                     <div>
-                      <Text strong className="font-hanuman">ភាគី:</Text>
-                      <ul className="mt-1 text-sm">
+                      <Text strong>ភាគី:</Text>
+                      <ul style={{ marginTop: 4, fontSize: 14, paddingLeft: 20 }}>
                         {detail.parties.map((party, idx) => (
-                          <li key={idx} className="lotus-decoration">{party}</li>
+                          <li key={idx}>{party}</li>
                         ))}
                       </ul>
                     </div>
 
                     <div>
-                      <Text strong className="font-hanuman">គោលបំណង:</Text>
-                      <Paragraph className="text-sm mt-1">{detail.purpose}</Paragraph>
+                      <Text strong>គោលបំណង:</Text>
+                      <Paragraph style={{ fontSize: 14, marginTop: 4, marginBottom: 0 }}>{detail.purpose}</Paragraph>
                     </div>
 
                     <div>
-                      <Text strong className="font-hanuman">រយៈពេល:</Text>
-                      <Text className="text-sm ml-2">{detail.duration}</Text>
+                      <Text strong>រយៈពេល:</Text>
+                      <Text style={{ fontSize: 14, marginLeft: 8 }}>{detail.duration}</Text>
                     </div>
-                  </div>
+                  </Space>
                 </div>
 
                 <Button
                   type="primary"
                   icon={<FileAddOutlined />}
                   size="large"
-                  className="w-full btn-khmer-primary"
+                  block
                   onClick={() => router.push(`/contract/${detail.id}`)}
                 >
                   បង្កើតកិច្ចព្រមព្រៀង
@@ -379,35 +382,35 @@ export default function HomePage() {
         ))}
       </Row>
 
-      <div className="mt-16">
-        <Card className="khmer-header text-white">
-          <Title level={3} className="text-white font-hanuman mb-4">
+      <div style={{ marginTop: 80 }}>
+        <Card style={{ background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)', border: 'none' }}>
+          <Title level={3} style={{ color: '#fff', marginBottom: 24 }}>
             អំពីប្រព័ន្ធកិច្ចព្រមព្រៀង PLP
           </Title>
-          <Row gutter={[40, 40]}>
-            <Col md={8}>
-              <div className="text-center">
-                <FileDoneOutlined className="text-6xl mb-4" style={{ color: '#FFD700' }} />
-                <Title level={4} className="text-white font-hanuman text-lg">ងាយស្រួលប្រើប្រាស់</Title>
-                <Text className="text-gray-200 text-base">
+          <Row gutter={[48, 48]}>
+            <Col xs={24} md={8}>
+              <div style={{ textAlign: 'center' }}>
+                <FileDoneOutlined style={{ fontSize: 72, color: '#FFD700', marginBottom: 16 }} />
+                <Title level={4} style={{ color: '#fff', fontSize: 18 }}>ងាយស្រួលប្រើប្រាស់</Title>
+                <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 15 }}>
                   ទម្រង់សាមញ្ញ និងច្បាស់លាស់សម្រាប់បង្កើតកិច្ចព្រមព្រៀង
                 </Text>
               </div>
             </Col>
-            <Col md={8}>
-              <div className="text-center">
-                <CheckCircleOutlined className="text-6xl mb-4" style={{ color: '#FFD700' }} />
-                <Title level={4} className="text-white font-hanuman text-lg">តាមដានងាយស្រួល</Title>
-                <Text className="text-gray-200 text-base">
+            <Col xs={24} md={8}>
+              <div style={{ textAlign: 'center' }}>
+                <CheckCircleOutlined style={{ fontSize: 72, color: '#FFD700', marginBottom: 16 }} />
+                <Title level={4} style={{ color: '#fff', fontSize: 18 }}>តាមដានងាយស្រួល</Title>
+                <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 15 }}>
                   តាមដានស្ថានភាពកិច្ចព្រមព្រៀងនិងការចុះហត្ថលេខា
                 </Text>
               </div>
             </Col>
-            <Col md={8}>
-              <div className="text-center">
-                <TeamOutlined className="text-6xl mb-4" style={{ color: '#FFD700' }} />
-                <Title level={4} className="text-white font-hanuman text-lg">គ្រប់គ្រងតួនាទី</Title>
-                <Text className="text-gray-200 text-base">
+            <Col xs={24} md={8}>
+              <div style={{ textAlign: 'center' }}>
+                <TeamOutlined style={{ fontSize: 72, color: '#FFD700', marginBottom: 16 }} />
+                <Title level={4} style={{ color: '#fff', fontSize: 18 }}>គ្រប់គ្រងតួនាទី</Title>
+                <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 15 }}>
                   ប្រព័ន្ធអនុញ្ញាតតាមតួនាទីសម្រាប់សុវត្ថិភាព
                 </Text>
               </div>
@@ -422,56 +425,56 @@ export default function HomePage() {
   // Dashboard Component
   const Dashboard = () => (
     <>
-      <div className="mb-8">
-        <Title level={2} className="font-hanuman">
+      <div style={{ marginBottom: 32 }}>
+        <Title level={2}>
           <DashboardOutlined /> ផ្ទាំងគ្រប់គ្រងកិច្ចព្រមព្រៀង
         </Title>
         {user?.role === UserRole.PARTNER && (
-          <Text className="text-gray-600 font-hanuman">
+          <Text type="secondary">
             អ្នកអាចមើលតែកិច្ចព្រមព្រៀងដែលបានចុះហត្ថលេខារបស់អ្នកប៉ុណ្ណោះ
           </Text>
         )}
       </div>
 
       {/* Statistics Cards - Optimized for Tablet/Desktop */}
-      <Row gutter={[24, 24]} className="mb-8">
-        <Col md={12} lg={6}>
-          <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
+      <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
+        <Col xs={24} md={12} lg={6}>
+          <Card style={{ textAlign: 'center', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', transition: 'all 0.3s' }}>
             <Statistic
-              title={<span className="font-hanuman text-base">កិច្ចព្រមព្រៀងសរុប</span>}
+              title={<span style={{ fontSize: 15 }}>កិច្ចព្រមព្រៀងសរុប</span>}
               value={stats.total}
               prefix={<FileTextOutlined />}
-              valueStyle={{ color: '#1890ff', fontSize: '32px' }}
+              valueStyle={{ color: '#1890ff', fontSize: 32 }}
             />
           </Card>
         </Col>
-        <Col md={12} lg={6}>
-          <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
+        <Col xs={24} md={12} lg={6}>
+          <Card style={{ textAlign: 'center', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', transition: 'all 0.3s' }}>
             <Statistic
-              title={<span className="font-hanuman text-base">បានចុះហត្ថលេខា</span>}
+              title={<span style={{ fontSize: 15 }}>បានចុះហត្ថលេខា</span>}
               value={stats.signed}
               prefix={<CheckCircleOutlined />}
-              valueStyle={{ color: '#52c41a', fontSize: '32px' }}
+              valueStyle={{ color: '#52c41a', fontSize: 32 }}
             />
           </Card>
         </Col>
-        <Col md={12} lg={6}>
-          <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
+        <Col xs={24} md={12} lg={6}>
+          <Card style={{ textAlign: 'center', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', transition: 'all 0.3s' }}>
             <Statistic
-              title={<span className="font-hanuman text-base">រង់ចាំចុះហត្ថលេខា</span>}
+              title={<span style={{ fontSize: 15 }}>រង់ចាំចុះហត្ថលេខា</span>}
               value={stats.pending}
               prefix={<ClockCircleOutlined />}
-              valueStyle={{ color: '#faad14', fontSize: '32px' }}
+              valueStyle={{ color: '#faad14', fontSize: 32 }}
             />
           </Card>
         </Col>
-        <Col md={12} lg={6}>
-          <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
+        <Col xs={24} md={12} lg={6}>
+          <Card style={{ textAlign: 'center', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', transition: 'all 0.3s' }}>
             <Statistic
-              title={<span className="font-hanuman text-base">ពង្រាង</span>}
+              title={<span style={{ fontSize: 15 }}>ពង្រាង</span>}
               value={stats.draft}
               prefix={<EditOutlined />}
-              valueStyle={{ color: '#8c8c8c', fontSize: '32px' }}
+              valueStyle={{ color: '#8c8c8c', fontSize: 32 }}
             />
           </Card>
         </Col>
@@ -479,15 +482,15 @@ export default function HomePage() {
 
       {/* Contracts Table */}
       <Card>
-        <Title level={4} className="font-hanuman mb-4">
+        <Title level={4} style={{ marginBottom: 16 }}>
           បញ្ជីកិច្ចព្រមព្រៀងរបស់អ្នក
         </Title>
         {loading ? (
-          <div className="text-center py-8">
+          <div style={{ textAlign: 'center', padding: '32px 0' }}>
             <Spin size="large" tip="កំពុងដំណើរការ..." />
           </div>
         ) : contracts.length > 0 ? (
-          <div className="overflow-x-auto">
+          <div style={{ overflowX: 'auto' }}>
             <Table
               columns={columns}
               dataSource={contracts}
@@ -498,7 +501,6 @@ export default function HomePage() {
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
               }}
-              className="font-hanuman"
               scroll={{ x: 1000 }}
               size="middle"
             />
@@ -506,7 +508,7 @@ export default function HomePage() {
         ) : (
           <Empty
             description={
-              <span className="font-hanuman">
+              <span>
                 មិនមានកិច្ចព្រមព្រៀង
               </span>
             }
@@ -514,7 +516,6 @@ export default function HomePage() {
             <Button
               type="primary"
               onClick={() => setActiveTab('browse')}
-              className="font-hanuman"
             >
               បង្កើតកិច្ចព្រមព្រៀងថ្មី
             </Button>
@@ -524,8 +525,8 @@ export default function HomePage() {
 
       {/* Quick Actions for Admin */}
       {(user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN) && (
-        <Card className="mt-8 bg-blue-50">
-          <Title level={4} className="font-hanuman mb-4">
+        <Card style={{ marginTop: 32, background: '#e6f7ff' }}>
+          <Title level={4} style={{ marginBottom: 16 }}>
             សកម្មភាពរហ័ស
           </Title>
           <Space size="large" wrap>
@@ -534,7 +535,6 @@ export default function HomePage() {
               icon={<FolderOpenOutlined />}
               size="large"
               onClick={() => router.push('/contracts')}
-              className="font-hanuman"
             >
               មើលកិច្ចព្រមព្រៀងទាំងអស់
             </Button>
@@ -543,7 +543,6 @@ export default function HomePage() {
                 icon={<TeamOutlined />}
                 size="large"
                 onClick={() => router.push('/admin/users')}
-                className="font-hanuman"
               >
                 គ្រប់គ្រងអ្នកប្រើប្រាស់
               </Button>
@@ -555,35 +554,34 @@ export default function HomePage() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div style={{ minHeight: '100vh', background: '#f0f2f5' }}>
       {/* Header with user info */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex justify-between items-center">
-          <Title level={3} className="mb-0 text-blue-800 font-hanuman text-xl lg:text-2xl">
+      <div style={{ background: '#fff', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)', borderBottom: '1px solid #f0f0f0' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Title level={3} style={{ margin: 0, color: '#0047AB', fontSize: 24 }}>
             PLP Contract System
           </Title>
           {user && (
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
-              <Button type="text" size="large" className="flex items-center space-x-2">
-                <Avatar icon={<UserOutlined />} className="bg-blue-500" size="large" />
-                <span className="font-hanuman">{user.full_name}</span>
+              <Button type="text" size="large" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Avatar icon={<UserOutlined />} style={{ background: '#1890ff' }} size="large" />
+                <span>{user.full_name}</span>
               </Button>
             </Dropdown>
           )}
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6 lg:p-10">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '40px' }}>
         {/* Main content with tabs */}
         {user ? (
           <Tabs
             activeKey={activeTab}
             onChange={setActiveTab}
             size="large"
-            className="font-hanuman"
-            tabBarStyle={{ marginBottom: 32 }}
+            style={{ marginBottom: 32 }}
           >
-            <TabPane
+            <Tabs.TabPane
               tab={
                 <span>
                   <FormOutlined />
@@ -593,9 +591,9 @@ export default function HomePage() {
               key="browse"
             >
               <BrowseContracts />
-            </TabPane>
+            </Tabs.TabPane>
 
-            <TabPane
+            <Tabs.TabPane
               tab={
                 <span>
                   <DashboardOutlined />
@@ -606,7 +604,7 @@ export default function HomePage() {
               key="dashboard"
             >
               <Dashboard />
-            </TabPane>
+            </Tabs.TabPane>
           </Tabs>
         ) : (
           <BrowseContracts />
