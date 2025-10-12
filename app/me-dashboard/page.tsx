@@ -14,165 +14,6 @@ import DataCollectionForm from './components/DataCollectionForm'
 const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
 
-// Mobile Card Components
-const IndicatorMobileCard = ({ indicator, onEdit, onDelete, onAddData, userRole }: any) => (
-  <Card className="mb-3 shadow-sm" size="small">
-    <div className="space-y-2">
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
-          <Tag color={
-            indicator.type === 'output' ? 'blue' :
-            indicator.type === 'outcome' ? 'green' : 'purple'
-          } className="mb-2">
-            {indicator.type.toUpperCase()}
-          </Tag>
-          <Text strong className="block font-hanuman">{indicator.name}</Text>
-          <Text className="text-xs text-gray-500 block">{indicator.code}</Text>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 text-sm">
-        <div>
-          <Text className="text-gray-600 font-hanuman">គោលដៅ:</Text>
-          <Text className="ml-1 font-medium">{indicator.target}</Text>
-        </div>
-        <div>
-          <Text className="text-gray-600 font-hanuman">បច្ចុប្បន្ន:</Text>
-          <Text className="ml-1 font-medium">{indicator.current || 'គ្មាន'}</Text>
-        </div>
-      </div>
-
-      <div>
-        <div className="flex justify-between items-center mb-1">
-          <Text className="text-xs text-gray-600 font-hanuman">វឌ្ឍនភាព</Text>
-          <Text className="text-xs">{indicator.progress}%</Text>
-        </div>
-        <Progress
-          percent={indicator.progress}
-          size="small"
-          status={indicator.status === 'delayed' ? 'exception' : 'active'}
-        />
-      </div>
-
-      <div className="flex justify-between items-center pt-2 border-t">
-        <Tag color={
-          indicator.status === 'on-track' ? 'green' :
-          indicator.status === 'delayed' ? 'orange' :
-          indicator.status === 'at-risk' ? 'red' : 'blue'
-        }>
-          {indicator.status === 'on-track' ? 'តាមគម្រោង' :
-           indicator.status === 'delayed' ? 'យឺត' :
-           indicator.status === 'at-risk' ? 'មានហានិភ័យ' : 'សម្រេច'}
-        </Tag>
-        <Space size="small">
-          <Button size="small" icon={<SaveOutlined />} onClick={() => onAddData(indicator.key)}>
-            បញ្ចូល
-          </Button>
-          {(userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN) && (
-            <Button size="small" icon={<EditOutlined />} onClick={() => onEdit(indicator)} />
-          )}
-        </Space>
-      </div>
-    </div>
-  </Card>
-)
-
-const ActivityMobileCard = ({ activity, onEdit, userRole }: any) => (
-  <Card className="mb-3 shadow-sm" size="small">
-    <div className="space-y-2">
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
-          <Text strong className="block font-hanuman">{activity.name}</Text>
-          <Text className="text-xs text-gray-500 block">{activity.code}</Text>
-        </div>
-        <Tag color={
-          activity.status === 'planned' ? 'default' :
-          activity.status === 'ongoing' ? 'processing' :
-          activity.status === 'completed' ? 'success' :
-          activity.status === 'delayed' ? 'warning' : 'error'
-        }>
-          {activity.status === 'planned' ? 'គម្រោង' :
-           activity.status === 'ongoing' ? 'កំពុងដំណើរការ' :
-           activity.status === 'completed' ? 'បានបញ្ចប់' :
-           activity.status === 'delayed' ? 'យឺតយ៉ាវ' : 'បានលុបចោល'}
-        </Tag>
-      </div>
-
-      <div className="space-y-1 text-sm">
-        <div className="flex justify-between">
-          <Text className="text-gray-600 font-hanuman">ទទួលខុសត្រូវ:</Text>
-          <Text className="font-medium">{activity.responsible}</Text>
-        </div>
-        <div className="flex justify-between">
-          <Text className="text-gray-600 font-hanuman">រយៈពេល:</Text>
-          <Text className="text-xs">
-            {dayjs(activity.startDate).format('DD/MM/YYYY')} - {dayjs(activity.endDate).format('DD/MM/YYYY')}
-          </Text>
-        </div>
-      </div>
-
-      <div>
-        <div className="flex justify-between items-center mb-1">
-          <Text className="text-xs text-gray-600 font-hanuman">វឌ្ឍនភាព</Text>
-          <Text className="text-xs">{activity.progress}%</Text>
-        </div>
-        <Progress percent={activity.progress} size="small" />
-      </div>
-
-      <div>
-        <div className="flex justify-between items-center mb-1">
-          <Text className="text-xs text-gray-600 font-hanuman">ថវិកា</Text>
-          <Text className="text-xs">${activity.spent.toLocaleString()} / ${activity.budget.toLocaleString()}</Text>
-        </div>
-        <Progress
-          percent={Math.round((activity.spent / activity.budget) * 100)}
-          size="small"
-          strokeColor="#52c41a"
-        />
-      </div>
-
-      {(userRole === UserRole.ADMIN || userRole === UserRole.SUPER_ADMIN || userRole === UserRole.MANAGER) && (
-        <div className="pt-2 border-t text-right">
-          <Button size="small" icon={<EditOutlined />} onClick={() => onEdit(activity)}>
-            កែសម្រួល
-          </Button>
-        </div>
-      )}
-    </div>
-  </Card>
-)
-
-const MilestoneMobileCard = ({ milestone }: any) => (
-  <Card className="mb-3 shadow-sm" size="small">
-    <div className="space-y-2">
-      <div className="flex justify-between items-start">
-        <Text strong className="block font-hanuman flex-1">{milestone.name}</Text>
-        <Tag color={
-          milestone.status === 'pending' ? 'default' :
-          milestone.status === 'achieved' ? 'success' : 'error'
-        } icon={
-          milestone.status === 'pending' ? <ClockCircleOutlined /> :
-          milestone.status === 'achieved' ? <CheckCircleOutlined /> : <ClockCircleOutlined />
-        }>
-          {milestone.status === 'pending' ? 'រង់ចាំ' :
-           milestone.status === 'achieved' ? 'សម្រេច' : 'ហួសកាលកំណត់'}
-        </Tag>
-      </div>
-
-      <div className="space-y-1 text-sm">
-        <div className="flex justify-between">
-          <Text className="text-gray-600 font-hanuman">សកម្មភាព:</Text>
-          <Text className="font-medium text-right">{milestone.deliverableName || 'មិនបានកំណត់'}</Text>
-        </div>
-        <div className="flex justify-between">
-          <Text className="text-gray-600 font-hanuman">កាលបរិច្ឆេទ:</Text>
-          <Text className="font-medium">{dayjs(milestone.dueDate).format('DD/MM/YYYY')}</Text>
-        </div>
-      </div>
-    </div>
-  </Card>
-)
-
 // Contract type mapping
 const CONTRACT_TYPES = {
   1: 'PMU-PCU',
@@ -1143,8 +984,8 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
   }
 
   return (
-    <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
-      <div className="mb-6 flex justify-between items-start">
+    <div className="p-6 lg:p-8 bg-gray-50 min-h-screen">
+      <div className="mb-8 flex justify-between items-start">
         <div>
           <Title level={2} className="font-hanuman text-blue-800 mb-2">
             <DashboardOutlined className="mr-2" />
@@ -1191,14 +1032,15 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
         </Dropdown>
       </div>
 
-      {/* Filters */}
-      <Card className="mb-4 shadow-sm">
-        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
-          <div className="flex-1 min-w-[200px]">
-            <Text className="font-hanuman block mb-2">ប្រភេទកិច្ចព្រមព្រៀង:</Text>
+      {/* Filters - Optimized for Tablet/Desktop */}
+      <Card className="mb-6 shadow-sm">
+        <div className="flex flex-row flex-wrap gap-4 items-end">
+          <div className="flex-1 min-w-[240px]">
+            <Text className="font-hanuman block mb-2 text-base font-medium">ប្រភេទកិច្ចព្រមព្រៀង:</Text>
             <Select
               className="w-full"
               placeholder="ជ្រើសរើសប្រភេទ"
+              size="large"
               value={selectedContract}
               allowClear={user?.role !== UserRole.PARTNER}
               disabled={user?.role === UserRole.PARTNER}
@@ -1211,30 +1053,31 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
               ))}
             </Select>
           </div>
-          <div className="flex-1 min-w-[280px]">
-            <Text className="font-hanuman block mb-2">រយៈពេល:</Text>
+          <div className="flex-1 min-w-[320px]">
+            <Text className="font-hanuman block mb-2 text-base font-medium">រយៈពេល:</Text>
             <RangePicker
               className="w-full"
+              size="large"
               value={dateRange as any}
               onChange={(dates) => setDateRange(dates as any)}
               format="DD/MM/YYYY"
             />
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <div className="flex flex-row gap-3">
             <Button
               type="primary"
+              size="large"
               icon={<BarChartOutlined />}
               onClick={handleGenerateReport}
               loading={loading}
-              className="w-full sm:w-auto"
             >
               បង្កើតរបាយការណ៍
             </Button>
             {user?.role === UserRole.PARTNER && user?.contract_signed && (
               <Button
+                size="large"
                 icon={<FileDoneOutlined />}
                 onClick={() => router.push(`/contract/view/${user.contract_type}`)}
-                className="w-full sm:w-auto"
               >
                 មើលកិច្ចសន្យារបស់ខ្ញុំ
               </Button>
@@ -1243,10 +1086,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
             {/* Force Reset Button for Demo Users */}
             {user?.phone && ['077806680', '077806681', '077806682', '077806683', '077806684', '077806685'].includes(user.phone) && (
               <Button
+                size="large"
                 icon={<ReloadOutlined />}
                 onClick={handleForceReset}
                 loading={resettingDemo}
-                className="font-hanuman w-full sm:w-auto"
+                className="font-hanuman"
               >
                 កំណត់ឡើងវិញ
               </Button>
@@ -1255,62 +1099,63 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
         </div>
       </Card>
 
-      {/* Statistics Cards - Dynamic labels for Contract 4 & 5 */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} sm={12} lg={6}>
+      {/* Statistics Cards - Optimized for Tablet (2 cols) and Desktop (4 cols) */}
+      <Row gutter={[24, 24]} className="mb-8">
+        <Col md={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
               title={
-                <span className="font-hanuman">
+                <span className="font-hanuman text-base">
                   {hasDeliverables ? 'សូចនាករសរុប' : 'សកម្មភាពសរុប'}
                 </span>
               }
               value={dashboardData.totalDeliverables}
               prefix={<ProjectOutlined className="text-blue-500" />}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: '#1890ff', fontSize: '32px' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
+        <Col md={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
               title={
-                <span className="font-hanuman">
+                <span className="font-hanuman text-base">
                   {hasDeliverables ? 'សម្រេច' : 'បានបញ្ចប់'}
                 </span>
               }
               value={dashboardData.completedDeliverables}
               prefix={<CheckCircleOutlined className="text-green-500" />}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: '#52c41a', fontSize: '32px' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
+        <Col md={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
               title={
-                <span className="font-hanuman">
+                <span className="font-hanuman text-base">
                   {hasDeliverables ? 'តាមគម្រោង' : 'កំពុងដំណើរការ'}
                 </span>
               }
               value={dashboardData.inProgressDeliverables}
               prefix={<SyncOutlined className="text-orange-500" />}
-              valueStyle={{ color: '#fa8c16' }}
+              valueStyle={{ color: '#fa8c16', fontSize: '32px' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
+        <Col md={12} lg={6}>
           <Card className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
-              title={<span className="font-hanuman">វឌ្ឍនភាពរួម</span>}
+              title={<span className="font-hanuman text-base">វឌ្ឍនភាពរួម</span>}
               value={dashboardData.overallProgress}
               suffix="%"
-              valueStyle={{ color: dashboardData.overallProgress >= 70 ? '#52c41a' : '#faad14' }}
+              valueStyle={{ color: dashboardData.overallProgress >= 70 ? '#52c41a' : '#faad14', fontSize: '32px' }}
             />
             <Progress
               percent={dashboardData.overallProgress}
               showInfo={false}
               strokeColor={dashboardData.overallProgress >= 70 ? '#52c41a' : '#faad14'}
+              strokeWidth={8}
             />
           </Card>
         </Col>
@@ -1349,7 +1194,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
             {
               key: 'indicators',
               label: (
-                <span className="font-hanuman">
+                <span className="font-hanuman text-base">
                   <FundProjectionScreenOutlined className="mr-2" />
                   សូចនាករ
                 </span>
@@ -1357,34 +1202,34 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
               children: (
                 <div>
                   {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) && (
-                    <div className="mb-4">
+                    <div className="mb-6">
                       <Button
                         type="primary"
+                        size="large"
                         icon={<PlusOutlined />}
                         onClick={() => {
                           setEditingIndicator(null)
                           setShowIndicatorForm(true)
                         }}
-                        className="w-full sm:w-auto"
                       >
                         បង្កើតសូចនាករថ្មី
                       </Button>
                     </div>
                   )}
 
-                  {/* Unified Responsive View - Works on ALL devices */}
+                  {/* Unified Table View - Optimized for Tablet/Desktop */}
                   {loadingIndicators ? (
                     <div className="text-center py-8">
-                      <Spin />
+                      <Spin size="large" />
                     </div>
                   ) : indicatorsData.length > 0 ? (
                     <div className="overflow-x-auto">
                       <Table
                         columns={indicatorColumns}
                         dataSource={indicatorsData}
-                        pagination={{ pageSize: 10 }}
+                        pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
                         loading={loadingIndicators}
-                        scroll={{ x: 1200 }}
+                        scroll={{ x: 1400 }}
                         size="middle"
                       />
                     </div>
@@ -1399,7 +1244,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
             ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
               key: 'activities',
               label: (
-                <span className="font-hanuman">
+                <span className="font-hanuman text-base">
                   <RiseOutlined className="mr-2" />
                   សកម្មភាព
                 </span>
@@ -1407,51 +1252,40 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
               children: (
                 <div>
                   {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.MANAGER) && (
-                    <div className="mb-4">
+                    <div className="mb-6">
                       <Button
                         type="primary"
+                        size="large"
                         icon={<PlusOutlined />}
                         onClick={() => {
                           setEditingActivity(null)
                           setShowActivityForm(true)
                         }}
-                        className="w-full sm:w-auto"
                       >
                         បង្កើតសកម្មភាពថ្មី
                       </Button>
                     </div>
                   )}
 
-                  {/* Desktop Table View */}
-                  <div className="hidden md:block overflow-x-auto">
-                    <Table
-                      columns={activityColumns}
-                      dataSource={activitiesData}
-                      pagination={{ pageSize: 10 }}
-                      loading={loadingActivities}
-                      scroll={{ x: 1200 }}
-                    />
-                  </div>
-
-                  {/* Mobile Card View */}
-                  <div className="block md:hidden">
-                    {loadingActivities ? (
-                      <div className="text-center py-8">
-                        <Spin />
-                      </div>
-                    ) : activitiesData.length > 0 ? (
-                      activitiesData.map((activity: any) => (
-                        <ActivityMobileCard
-                          key={activity.key}
-                          activity={activity}
-                          onEdit={handleEditActivity}
-                          userRole={user?.role}
-                        />
-                      ))
-                    ) : (
-                      <Empty description="គ្មានសកម្មភាព" />
-                    )}
-                  </div>
+                  {/* Unified Table View - Optimized for Tablet/Desktop */}
+                  {loadingActivities ? (
+                    <div className="text-center py-8">
+                      <Spin size="large" />
+                    </div>
+                  ) : activitiesData.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <Table
+                        columns={activityColumns}
+                        dataSource={activitiesData}
+                        pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
+                        loading={loadingActivities}
+                        scroll={{ x: 1400 }}
+                        size="middle"
+                      />
+                    </div>
+                  ) : (
+                    <Empty description="គ្មានសកម្មភាព" />
+                  )}
                 </div>
               )
             }] : []),
@@ -1460,41 +1294,32 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
             ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
               key: 'milestones',
               label: (
-                <span className="font-hanuman">
+                <span className="font-hanuman text-base">
                   <CheckCircleOutlined className="mr-2" />
                   ចំណុចសំខាន់
                 </span>
               ),
               children: (
                 <div>
-                  {/* Desktop Table View */}
-                  <div className="hidden md:block overflow-x-auto">
-                    <Table
-                      columns={milestoneColumns}
-                      dataSource={milestonesData}
-                      pagination={{ pageSize: 10 }}
-                      loading={loading}
-                      scroll={{ x: 800 }}
-                    />
-                  </div>
-
-                  {/* Mobile Card View */}
-                  <div className="block md:hidden">
-                    {loading ? (
-                      <div className="text-center py-8">
-                        <Spin />
-                      </div>
-                    ) : milestonesData.length > 0 ? (
-                      milestonesData.map((milestone: any) => (
-                        <MilestoneMobileCard
-                          key={milestone.key}
-                          milestone={milestone}
-                        />
-                      ))
-                    ) : (
-                      <Empty description="គ្មានចំណុចសំខាន់" />
-                    )}
-                  </div>
+                  {/* Unified Table View - Optimized for Tablet/Desktop */}
+                  {loading ? (
+                    <div className="text-center py-8">
+                      <Spin size="large" />
+                    </div>
+                  ) : milestonesData.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <Table
+                        columns={milestoneColumns}
+                        dataSource={milestonesData}
+                        pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
+                        loading={loading}
+                        scroll={{ x: 900 }}
+                        size="middle"
+                      />
+                    </div>
+                  ) : (
+                    <Empty description="គ្មានចំណុចសំខាន់" />
+                  )}
                 </div>
               )
             }] : []),
@@ -1502,7 +1327,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
             ...(hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
               key: 'deliverables',
               label: (
-                <span className="font-hanuman">
+                <span className="font-hanuman text-base">
                   <TrophyOutlined className="mr-2" />
                   សមិទ្ធកម្ម
                 </span>
@@ -1511,12 +1336,12 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 <div>
                   {loadingDeliverables ? (
                     <div className="text-center py-8">
-                      <Spin />
+                      <Spin size="large" />
                     </div>
                   ) : deliverables.length > 0 ? (
                     <>
-                      {/* Desktop Table View */}
-                      <div className="hidden md:block overflow-x-auto">
+                      {/* Unified Table View - Optimized for Tablet/Desktop */}
+                      <div className="overflow-x-auto">
                         <Table
                           columns={[
                             {
@@ -1574,50 +1399,8 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                           dataSource={deliverables}
                           pagination={false}
                           rowKey="id"
+                          size="middle"
                         />
-                      </div>
-
-                      {/* Mobile Card View */}
-                      <div className="block md:hidden space-y-4">
-                        {deliverables.map((item: any) => (
-                          <Card key={item.id} size="small">
-                            <div className="font-hanuman">
-                              <div className="flex items-center gap-2 mb-3">
-                                <Badge count={item.deliverable_number} style={{ backgroundColor: '#1890ff' }} />
-                                <Text strong>{item.deliverable_title_khmer}</Text>
-                              </div>
-
-                              <div className="space-y-2 mb-3">
-                                {item.options.map((option: any) => {
-                                  const isSelected = item.selected_option_id === option.id
-                                  return (
-                                    <div
-                                      key={option.id}
-                                      className={`p-2 rounded text-sm ${isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : 'bg-gray-50'}`}
-                                    >
-                                      <div className="flex items-start gap-1">
-                                        <Text strong className={isSelected ? 'text-blue-600' : 'text-gray-700'}>
-                                          {option.option_number}/
-                                        </Text>
-                                        <Text className={isSelected ? 'text-blue-700 font-medium' : 'text-gray-700'}>
-                                          {option.option_text_khmer}
-                                        </Text>
-                                      </div>
-                                      {isSelected && (
-                                        <Tag color="blue" className="mt-1 text-xs">បានជ្រើសរើស</Tag>
-                                      )}
-                                    </div>
-                                  )
-                                })}
-                              </div>
-
-                              <div className="text-sm text-gray-600">
-                                <ClockCircleOutlined className="mr-1" />
-                                {item.timeline}
-                              </div>
-                            </div>
-                          </Card>
-                        ))}
                       </div>
 
                       {/* Contract Milestones Tracking Section */}
@@ -1629,13 +1412,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
 
                         {loadingContractMilestones ? (
                           <div className="text-center py-8">
-                            <Spin />
+                            <Spin size="large" />
                           </div>
                         ) : contractMilestones.length > 0 ? (
-                          <>
-                            {/* Desktop Milestone Table */}
-                            <div className="hidden md:block overflow-x-auto">
-                              <Table
+                          <div className="overflow-x-auto">
+                            <Table
                                 columns={[
                                   {
                                     title: <span className="font-hanuman">កូដ</span>,
@@ -1711,8 +1492,10 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                                   }
                                 ]}
                                 dataSource={contractMilestones}
-                                pagination={false}
+                                pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
                                 rowKey="id"
+                                scroll={{ x: 1200 }}
+                                size="middle"
                                 expandable={{
                                   expandedRowRender: (record: any) => (
                                     <div className="p-4 bg-gray-50 font-hanuman">
@@ -1765,53 +1548,6 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                                 }}
                               />
                             </div>
-
-                            {/* Mobile Milestone Cards */}
-                            <div className="block md:hidden space-y-4">
-                              {contractMilestones.map((milestone: any) => (
-                                <Card key={milestone.id} size="small">
-                                  <div className="font-hanuman space-y-3">
-                                    <div>
-                                      <Badge count={milestone.milestone_code} style={{ backgroundColor: '#1890ff' }} />
-                                      <Text strong className="ml-2 block mt-2">{milestone.milestone_name_km}</Text>
-                                    </div>
-
-                                    <div className="text-sm space-y-2">
-                                      <div className="flex justify-between">
-                                        <Text className="text-gray-600">រយៈពេល:</Text>
-                                        <Text>{dayjs(milestone.planned_start_date).format('DD/MM/YYYY')} - {dayjs(milestone.planned_end_date).format('DD/MM/YYYY')}</Text>
-                                      </div>
-
-                                      <div>
-                                        <div className="flex justify-between mb-1">
-                                          <Text className="text-gray-600">វឌ្ឍនភាព:</Text>
-                                          <Text>{Math.round(milestone.achievement_percentage)}%</Text>
-                                        </div>
-                                        <Progress
-                                          percent={Math.round(milestone.achievement_percentage)}
-                                          size="small"
-                                          status={
-                                            milestone.health_indicator === 'critical' ? 'exception' :
-                                            milestone.health_indicator === 'at_risk' ? 'active' :
-                                            'success'
-                                          }
-                                        />
-                                      </div>
-
-                                      <div className="flex justify-between gap-2">
-                                        <Tag color={milestone.overall_status === 'completed' ? 'success' : 'processing'}>
-                                          {milestone.overall_status === 'completed' ? 'បានបញ្ចប់' : 'កំពុងដំណើរការ'}
-                                        </Tag>
-                                        <Tag color={milestone.health_indicator === 'on_track' ? 'green' : 'orange'}>
-                                          {milestone.health_indicator === 'on_track' ? 'តាមគម្រោង' : 'មានហានិភ័យ'}
-                                        </Tag>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </Card>
-                              ))}
-                            </div>
-                          </>
                         ) : (
                           <Empty
                             description={
