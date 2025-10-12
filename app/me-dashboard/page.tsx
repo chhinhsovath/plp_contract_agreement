@@ -1373,7 +1373,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                   )}
 
                   {/* Desktop Table View */}
-                  <div className="hidden md:block overflow-x-auto">
+                  <div className="hidden lg:block overflow-x-auto">
                     <Table
                       columns={indicatorColumns}
                       dataSource={indicatorsData}
@@ -1384,7 +1384,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                   </div>
 
                   {/* Mobile Card View */}
-                  <div className="block md:hidden">
+                  <div className="block lg:hidden">
                     {loadingIndicators ? (
                       <div className="text-center py-8">
                         <Spin />
