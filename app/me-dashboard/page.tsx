@@ -1372,38 +1372,25 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                     </div>
                   )}
 
-                  {/* Desktop Table View */}
-                  <div className="hidden lg:block overflow-x-auto">
-                    <Table
-                      columns={indicatorColumns}
-                      dataSource={indicatorsData}
-                      pagination={{ pageSize: 10 }}
-                      loading={loadingIndicators}
-                      scroll={{ x: 1200 }}
-                    />
-                  </div>
-
-                  {/* Mobile Card View */}
-                  <div className="block lg:hidden">
-                    {loadingIndicators ? (
-                      <div className="text-center py-8">
-                        <Spin />
-                      </div>
-                    ) : indicatorsData.length > 0 ? (
-                      indicatorsData.map((indicator: any) => (
-                        <IndicatorMobileCard
-                          key={indicator.key}
-                          indicator={indicator}
-                          onEdit={handleEditIndicator}
-                          onDelete={handleDeleteIndicator}
-                          onAddData={handleAddDataCollection}
-                          userRole={user?.role}
-                        />
-                      ))
-                    ) : (
-                      <Empty description="គ្មានសូចនាករ" />
-                    )}
-                  </div>
+                  {/* Unified Responsive View - Works on ALL devices */}
+                  {loadingIndicators ? (
+                    <div className="text-center py-8">
+                      <Spin />
+                    </div>
+                  ) : indicatorsData.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <Table
+                        columns={indicatorColumns}
+                        dataSource={indicatorsData}
+                        pagination={{ pageSize: 10 }}
+                        loading={loadingIndicators}
+                        scroll={{ x: 1200 }}
+                        size="middle"
+                      />
+                    </div>
+                  ) : (
+                    <Empty description="គ្មានសូចនាករ" />
+                  )}
                 </div>
               )
             },
