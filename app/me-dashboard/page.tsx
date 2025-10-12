@@ -1332,7 +1332,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
       {/* Data Tabs */}
       <Card className="shadow-sm">
         <Tabs
-          defaultActiveKey={hasDeliverables ? "deliverables" : "timeline"}
+          defaultActiveKey="indicators"
           size="large"
           items={[
             // Hide fake "ផែនការគម្រោង" tab for Contract 4 & 5 (they have real data in deliverables tab)
@@ -1407,7 +1407,9 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </div>
               )
             },
-            {
+            // Hide fake "សកម្មភាព" tab for Contract 4 & 5 (they don't use activities concept)
+            // Also hide for Contract 4 PARTNER users (they only see indicators)
+            ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
               key: 'activities',
               label: (
                 <span className="font-hanuman">
@@ -1465,9 +1467,10 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                   </div>
                 </div>
               )
-            },
+            }] : []),
             // Hide fake "ចំណុចសំខាន់" tab for Contract 4 & 5 (they have real milestone tracking in deliverables tab)
-            ...(!hasDeliverables ? [{
+            // Also hide for Contract 4 PARTNER users (they only see indicators)
+            ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
               key: 'milestones',
               label: (
                 <span className="font-hanuman">
@@ -1508,8 +1511,8 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </div>
               )
             }] : []),
-            // Only show deliverables tab for Type 4 & 5 users
-            ...(hasDeliverables ? [{
+            // Only show deliverables tab for Type 4 & 5 users (but hide for Contract 4 PARTNER)
+            ...(hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
               key: 'deliverables',
               label: (
                 <span className="font-hanuman">
@@ -1845,7 +1848,8 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </div>
               )
             }] : []),
-            {
+            // Hide Reports tab for Contract 4 PARTNER users (they only see indicators)
+            ...(!(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
               key: 'reports',
               label: (
                 <span className="font-hanuman">
@@ -1860,7 +1864,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                   </Text>
                 </div>
               )
-            }
+            }] : [])
           ]}
         />
       </Card>
