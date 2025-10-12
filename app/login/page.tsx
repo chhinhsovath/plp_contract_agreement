@@ -36,7 +36,13 @@ export default function LoginPage() {
 
         // Check if user needs to sign contract (PARTNER role and not signed)
         if (data.requiresContractSigning) {
-          router.push('/contract/sign')
+          // Contract type 4 & 5 need to configure options first
+          if (data.user.contract_type === 4 || data.user.contract_type === 5) {
+            router.push('/contract/configure')
+          } else {
+            // Contract type 1, 2, 3 go directly to sign
+            router.push('/contract/sign')
+          }
         } else {
           router.push('/me-dashboard')
         }
