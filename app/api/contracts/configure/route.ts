@@ -1,0 +1,157 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+
+/**
+ * POST /api/contracts/configure
+ * Create contract with user's selected deliverable options
+ * For Contract Type 4 & 5 only
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { userId, contractType, selections, signature } = body
+
+    // Validate input
+    if (!userId || !contractType || !selections || !signature) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    // Only allow Contract 4 & 5
+    if (contractType !== 4 && contractType !== 5) {
+      return NextResponse.json(
+        { error: 'Only Contract Type 4 and 5 are supported' },
+        { status: 400 }
+      )
+    }
+
+    // Get user details
+    const user = await prisma.users.findUnique({
+      where: { id: parseInt(userId) }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      )
+    }
+
+    // Generate contract number
+    const timestamp = Date.now()
+    const contract_number = `PLP-${contractType}-${timestamp}`
+
+    // Get party A details based on contract type
+    const partyANames: any = {
+      4: 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី',
+      5: 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី'
+    }
+
+    // Create contract
+    const contract = await prisma.contracts.create({
+      data: {
+        contract_number,
+        contract_type_id: contractType,
+        party_a_name: partyANames[contractType],
+        party_a_signature: 'data:image/png;base64,PLACEHOLDER', // Admin will sign later
+        party_b_name: user.full_name,
+        party_b_signature: signature,
+        status: 'signed',
+        signed_date: new Date(),
+        created_by_id: parseInt(userId)
+      }
+    })
+
+    // Create deliverable selections
+    const selectionPromises = selections.map((selection: any) =>
+      prisma.contract_deliverable_selections.create({
+        data: {
+          contract_id: contract.id,
+          deliverable_id: selection.deliverable_id,
+          selected_option_id: selection.selected_option_id
+        }
+      })
+    )
+
+    await Promise.all(selectionPromises)
+
+    // Get selected options with their baseline/target values
+    const selectedOptions = await Promise.all(
+      selections.map(async (selection: any) => {
+        const option = await prisma.deliverable_options.findUnique({
+          where: { id: selection.selected_option_id },
+          include: {
+            deliverable: {
+              include: {
+                _count: {
+                  select: { deliverable_options: true }
+                }
+              }
+            }
+          }
+        })
+        return option
+      })
+    )
+
+    // Get all indicators for this contract type
+    const indicators = await prisma.indicators.findMany({
+      where: {
+        is_active: true
+      },
+      orderBy: {
+        indicator_number: 'asc'
+      },
+      take: 5 // Only 5 indicators for Contract 4 & 5
+    })
+
+    // Create contract_indicators linkages with baseline/target from selected options
+    const indicatorPromises = indicators.map((indicator, index) => {
+      const selectedOption = selectedOptions[index]
+      if (!selectedOption) return null
+
+      return prisma.contract_indicators.create({
+        data: {
+          contract_id: contract.id,
+          indicator_id: indicator.id,
+          baseline_percentage: selectedOption.baseline_percentage || indicator.baseline_percentage,
+          target_percentage: selectedOption.target_percentage || indicator.target_percentage,
+          selected_rule: selectedOption.option_number
+        }
+      })
+    })
+
+    await Promise.all(indicatorPromises.filter(p => p !== null))
+
+    // Update user's contract_signed flag
+    await prisma.users.update({
+      where: { id: parseInt(userId) },
+      data: {
+        contract_signed: true,
+        contract_type: contractType
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      contract: {
+        id: contract.id,
+        contract_number: contract.contract_number,
+        contract_type_id: contract.contract_type_id,
+        status: contract.status
+      },
+      message: 'Contract created successfully'
+    }, { status: 201 })
+  } catch (error: any) {
+    console.error('Error creating contract:', error)
+    return NextResponse.json(
+      {
+        error: 'Failed to create contract',
+        message: error.message
+      },
+      { status: 500 }
+    )
+  }
+}

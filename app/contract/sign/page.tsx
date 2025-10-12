@@ -199,17 +199,45 @@ export default function ContractSignPage() {
     const readTime = Math.round((Date.now() - readStartTime) / 1000)
 
     try {
-      const response = await fetch('/api/contracts/sign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          contractType: user.contract_type,
-          signature: signature,
-          readTime: readTime,
-          agreed: agreed
+      // Check if this is Contract 4 or 5 with configuration selections
+      const isConfigurableContract = user.contract_type === 4 || user.contract_type === 5
+      const selectionsJson = localStorage.getItem('contract_selections')
+
+      let response
+
+      if (isConfigurableContract && selectionsJson) {
+        // New flow: Contract 4 & 5 with configuration selections
+        const selections = JSON.parse(selectionsJson)
+
+        response = await fetch('/api/contracts/configure', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.id,
+            contractType: user.contract_type,
+            selections,
+            signature
+          })
         })
-      })
+
+        // Clear selections from localStorage after submission
+        if (response.ok) {
+          localStorage.removeItem('contract_selections')
+        }
+      } else {
+        // Old flow: Contract 1, 2, 3 with generic templates
+        response = await fetch('/api/contracts/sign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.id,
+            contractType: user.contract_type,
+            signature: signature,
+            readTime: readTime,
+            agreed: agreed
+          })
+        })
+      }
 
       if (response.ok) {
         message.success('អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យាដោយជោគជ័យ!')
@@ -219,7 +247,8 @@ export default function ContractSignPage() {
           router.push('/me-dashboard')
         }, 1500)
       } else {
-        message.error('មានបញ្ហាក្នុងការចុះហត្ថលេខា')
+        const data = await response.json()
+        message.error(data.error || 'មានបញ្ហាក្នុងការចុះហត្ថលេខា')
       }
     } catch (error) {
       console.error('Signing error:', error)

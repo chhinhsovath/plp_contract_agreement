@@ -96,9 +96,14 @@ export default function HomePage() {
         const data = await response.json()
         const userData = data.user
 
-        // Auto-redirect PARTNER users (Contract 4 & 5) to ME Dashboard
+        // Auto-redirect PARTNER users (Contract 4 & 5)
         if (userData.role === UserRole.PARTNER && (userData.contract_type === 4 || userData.contract_type === 5)) {
-          // Contract 4 & 5 partners should use ME Dashboard, not contract management
+          // If not signed, go to configuration
+          if (!userData.contract_signed) {
+            router.push('/contract/configure')
+            return
+          }
+          // If already signed, go to ME Dashboard
           router.push('/me-dashboard')
           return
         }
