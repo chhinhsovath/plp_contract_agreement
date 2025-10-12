@@ -984,61 +984,75 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
   }
 
   return (
-    <div className="p-6 lg:p-8 bg-gray-50 min-h-screen">
-      <div className="mb-8 flex justify-between items-start">
-        <div>
-          <Title level={2} className="font-hanuman text-blue-800 mb-2">
-            <DashboardOutlined className="mr-2" />
-            ផ្ទាំងគ្រប់គ្រង M&E និងផែនការគម្រោង
-          </Title>
-          <Text className="text-gray-600 font-hanuman">
-            តាមដានវឌ្ឍនភាព វាយតម្លៃលទ្ធផល និងផែនការគម្រោង
-          </Text>
-        </div>
-
-        {/* User Profile Dropdown */}
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: 'profile',
-                icon: <UserOutlined />,
-                label: <span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>,
-              },
-              {
-                key: 'change-password',
-                icon: <KeyOutlined />,
-                label: <span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>,
-                onClick: () => setShowChangePasswordModal(true)
-              },
-              { type: 'divider' },
-              {
-                key: 'logout',
-                icon: <LogoutOutlined />,
-                label: <span className="font-hanuman">ចាកចេញ</span>,
-                onClick: handleLogout
-              }
-            ]
-          }}
-          placement="bottomRight"
-        >
-          <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
-            <Avatar icon={<UserOutlined />} className="mr-2" />
-            <div className="text-right">
-              <div className="font-hanuman text-sm font-medium">{user?.full_name}</div>
-              <div className="font-hanuman text-xs text-gray-500">{user?.role}</div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
+      {/* Modern Header with Gradient */}
+      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-xl">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="flex items-center mb-3">
+                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mr-4">
+                  <DashboardOutlined className="text-3xl text-white" />
+                </div>
+                <div>
+                  <Title level={2} className="font-hanuman text-white mb-0" style={{ fontSize: '2rem' }}>
+                    ផ្ទាំងគ្រប់គ្រង M&E
+                  </Title>
+                  <Text className="text-blue-100 font-hanuman text-base">
+                    តាមដានវឌ្ឍនភាព វាយតម្លៃលទ្ធផល និងផែនការគម្រោង
+                  </Text>
+                </div>
+              </div>
             </div>
+
+            {/* User Profile Dropdown */}
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: 'profile',
+                    icon: <UserOutlined />,
+                    label: <span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>,
+                  },
+                  {
+                    key: 'change-password',
+                    icon: <KeyOutlined />,
+                    label: <span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>,
+                    onClick: () => setShowChangePasswordModal(true)
+                  },
+                  { type: 'divider' },
+                  {
+                    key: 'logout',
+                    icon: <LogoutOutlined />,
+                    label: <span className="font-hanuman">ចាកចេញ</span>,
+                    onClick: handleLogout
+                  }
+                ]
+              }}
+              placement="bottomRight"
+            >
+              <div className="flex items-center cursor-pointer hover:bg-white/10 p-3 rounded-xl transition-all backdrop-blur-sm bg-white/5">
+                <Avatar icon={<UserOutlined />} size={48} className="mr-3 bg-white/20" />
+                <div className="text-right">
+                  <div className="font-hanuman text-base font-semibold text-white">{user?.full_name}</div>
+                  <div className="font-hanuman text-sm text-blue-100">{user?.role}</div>
+                </div>
+              </div>
+            </Dropdown>
           </div>
-        </Dropdown>
+        </div>
       </div>
 
-      {/* Filters - Optimized for Tablet/Desktop */}
-      <Card className="mb-6 shadow-sm">
-        <div className="flex flex-row flex-wrap gap-4 items-end">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8 -mt-4">
+
+      {/* Filters - Modern Design */}
+      <Card className="mb-8 shadow-lg border-0 rounded-2xl bg-white">
+        <div className="flex flex-row flex-wrap gap-6 items-end">
           <div className="flex-1 min-w-[240px]">
-            <Text className="font-hanuman block mb-2 text-base font-medium">ប្រភេទកិច្ចព្រមព្រៀង:</Text>
+            <Text className="font-hanuman block mb-3 text-base font-semibold text-gray-700">ប្រភេទកិច្ចព្រមព្រៀង:</Text>
             <Select
-              className="w-full"
+              className="w-full rounded-lg"
               placeholder="ជ្រើសរើសប្រភេទ"
               size="large"
               value={selectedContract}
@@ -1054,9 +1068,9 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
             </Select>
           </div>
           <div className="flex-1 min-w-[320px]">
-            <Text className="font-hanuman block mb-2 text-base font-medium">រយៈពេល:</Text>
+            <Text className="font-hanuman block mb-3 text-base font-semibold text-gray-700">រយៈពេល:</Text>
             <RangePicker
-              className="w-full"
+              className="w-full rounded-lg"
               size="large"
               value={dateRange as any}
               onChange={(dates) => setDateRange(dates as any)}
@@ -1070,6 +1084,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
               icon={<BarChartOutlined />}
               onClick={handleGenerateReport}
               loading={loading}
+              className="font-hanuman h-12 px-6 rounded-lg shadow-md hover:shadow-lg transition-all"
             >
               បង្កើតរបាយការណ៍
             </Button>
@@ -1078,6 +1093,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 size="large"
                 icon={<FileDoneOutlined />}
                 onClick={() => router.push(`/contract/view/${user.contract_type}`)}
+                className="font-hanuman h-12 px-6 rounded-lg border-2 hover:border-blue-500 hover:text-blue-500 transition-all"
               >
                 មើលកិច្ចសន្យារបស់ខ្ញុំ
               </Button>
@@ -1090,7 +1106,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 icon={<ReloadOutlined />}
                 onClick={handleForceReset}
                 loading={resettingDemo}
-                className="font-hanuman"
+                className="font-hanuman h-12 px-6 rounded-lg"
               >
                 កំណត់ឡើងវិញ
               </Button>
@@ -1099,63 +1115,66 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
         </div>
       </Card>
 
-      {/* Statistics Cards - Optimized for Tablet (2 cols) and Desktop (4 cols) */}
-      <Row gutter={[24, 24]} className="mb-8">
+      {/* Statistics Cards - Modern Design with Gradients */}
+      <Row gutter={[24, 24]} className="mb-10">
         <Col md={12} lg={6}>
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title={
-                <span className="font-hanuman text-base">
+          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-hanuman text-blue-100 text-base mb-2">
                   {hasDeliverables ? 'សូចនាករសរុប' : 'សកម្មភាពសរុប'}
-                </span>
-              }
-              value={dashboardData.totalDeliverables}
-              prefix={<ProjectOutlined className="text-blue-500" />}
-              valueStyle={{ color: '#1890ff', fontSize: '32px' }}
-            />
+                </div>
+                <div className="text-white font-bold text-4xl">{dashboardData.totalDeliverables}</div>
+              </div>
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                <ProjectOutlined className="text-white text-3xl" />
+              </div>
+            </div>
           </Card>
         </Col>
         <Col md={12} lg={6}>
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title={
-                <span className="font-hanuman text-base">
+          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-hanuman text-green-100 text-base mb-2">
                   {hasDeliverables ? 'សម្រេច' : 'បានបញ្ចប់'}
-                </span>
-              }
-              value={dashboardData.completedDeliverables}
-              prefix={<CheckCircleOutlined className="text-green-500" />}
-              valueStyle={{ color: '#52c41a', fontSize: '32px' }}
-            />
+                </div>
+                <div className="text-white font-bold text-4xl">{dashboardData.completedDeliverables}</div>
+              </div>
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                <CheckCircleOutlined className="text-white text-3xl" />
+              </div>
+            </div>
           </Card>
         </Col>
         <Col md={12} lg={6}>
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title={
-                <span className="font-hanuman text-base">
+          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden bg-gradient-to-br from-orange-500 to-amber-600 transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-hanuman text-orange-100 text-base mb-2">
                   {hasDeliverables ? 'តាមគម្រោង' : 'កំពុងដំណើរការ'}
-                </span>
-              }
-              value={dashboardData.inProgressDeliverables}
-              prefix={<SyncOutlined className="text-orange-500" />}
-              valueStyle={{ color: '#fa8c16', fontSize: '32px' }}
-            />
+                </div>
+                <div className="text-white font-bold text-4xl">{dashboardData.inProgressDeliverables}</div>
+              </div>
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                <SyncOutlined className="text-white text-3xl" spin />
+              </div>
+            </div>
           </Card>
         </Col>
         <Col md={12} lg={6}>
-          <Card className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title={<span className="font-hanuman text-base">វឌ្ឍនភាពរួម</span>}
-              value={dashboardData.overallProgress}
-              suffix="%"
-              valueStyle={{ color: dashboardData.overallProgress >= 70 ? '#52c41a' : '#faad14', fontSize: '32px' }}
-            />
+          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600 transform hover:scale-105">
+            <div className="mb-3">
+              <div className="font-hanuman text-purple-100 text-base mb-2">វឌ្ឍនភាពរួម</div>
+              <div className="text-white font-bold text-4xl">{dashboardData.overallProgress}%</div>
+            </div>
             <Progress
               percent={dashboardData.overallProgress}
               showInfo={false}
-              strokeColor={dashboardData.overallProgress >= 70 ? '#52c41a' : '#faad14'}
-              strokeWidth={8}
+              strokeColor="#ffffff"
+              trailColor="rgba(255, 255, 255, 0.2)"
+              strokeWidth={10}
+              className="progress-white"
             />
           </Card>
         </Col>
@@ -1164,18 +1183,18 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
       {/* Show alert for delayed deliverables */}
       {dashboardData.delayedDeliverables > 0 && (
         <Alert
-          message={`មានសកម្មភាពចំនួន ${dashboardData.delayedDeliverables} ហួសកាលកំណត់`}
-          description="សូមពិនិត្យ និងធ្វើបច្ចុប្បន្នភាពស្ថានភាពសកម្មភាព"
+          message={<span className="font-hanuman font-semibold">{`មានសកម្មភាពចំនួន ${dashboardData.delayedDeliverables} ហួសកាលកំណត់`}</span>}
+          description={<span className="font-hanuman">សូមពិនិត្យ និងធ្វើបច្ចុប្បន្នភាពស្ថានភាពសកម្មភាព</span>}
           type="warning"
           showIcon
           icon={<AlertOutlined />}
-          className="mb-4 font-hanuman"
+          className="mb-8 font-hanuman rounded-xl shadow-md border-l-4 border-orange-500"
           closable
         />
       )}
 
-      {/* Data Tabs */}
-      <Card className="shadow-sm">
+      {/* Data Tabs - Modern Design */}
+      <Card className="shadow-xl border-0 rounded-2xl bg-white">
         <Tabs
           defaultActiveKey="indicators"
           size="large"
@@ -1711,6 +1730,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
           </Form.Item>
         </Form>
       </Modal>
+      </div>
     </div>
   )
 }
