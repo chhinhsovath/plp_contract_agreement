@@ -49,7 +49,11 @@ export async function POST(request: NextRequest) {
       5: 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី'
     }
 
-    // Create contract
+    // Create contract with 1-year duration
+    const today = new Date()
+    const nextYear = new Date(today)
+    nextYear.setFullYear(today.getFullYear() + 1)
+
     const contract = await prisma.contracts.create({
       data: {
         contract_number,
@@ -58,8 +62,10 @@ export async function POST(request: NextRequest) {
         party_a_signature: 'data:image/png;base64,PLACEHOLDER', // Admin will sign later
         party_b_name: user.full_name,
         party_b_signature: signature,
+        start_date: today,
+        end_date: nextYear,
         status: 'signed',
-        signed_date: new Date(),
+        party_b_signed_date: today,
         created_by_id: parseInt(userId)
       }
     })
@@ -86,7 +92,7 @@ export async function POST(request: NextRequest) {
             deliverable: {
               include: {
                 _count: {
-                  select: { deliverable_options: true }
+                  select: { options: true }
                 }
               }
             }
@@ -117,7 +123,9 @@ export async function POST(request: NextRequest) {
           contract_id: contract.id,
           indicator_id: indicator.id,
           baseline_percentage: selectedOption.baseline_percentage || indicator.baseline_percentage,
+          baseline_date: today,
           target_percentage: selectedOption.target_percentage || indicator.target_percentage,
+          target_date: nextYear,
           selected_rule: selectedOption.option_number
         }
       })

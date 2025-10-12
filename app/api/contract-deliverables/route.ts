@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
         is_active: true
       },
       include: {
-        deliverable_options: {
+        options: {
           where: {
             is_active: true
           },
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         deliverable_title_english: d.deliverable_title_english,
         timeline: d.timeline,
         activities_text: d.activities_text,
-        options: d.deliverable_options.map(opt => ({
+        options: d.options.map(opt => ({
           id: opt.id,
           option_number: opt.option_number,
           option_text_khmer: opt.option_text_khmer,
