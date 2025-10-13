@@ -208,8 +208,8 @@ export default function MEDashboardPage() {
   }
 
   const fetchContractMilestones = async () => {
-    // Only fetch milestones for Contract Type 4 & 5
-    if (!user || (user.contract_type !== 4 && user.contract_type !== 5)) {
+    // Fetch milestones for ALL contract types (no restrictions)
+    if (!user) {
       setContractMilestones([])
       return
     }
@@ -314,59 +314,25 @@ export default function MEDashboardPage() {
     setProjectPlans(filteredPlans)
   }
 
-  // Calculate dashboard statistics from project plans OR real data for Contract 4 & 5
+  // Calculate dashboard statistics using REAL data from database for ALL contract types
   const calculateDashboardStats = () => {
-    // For Contract 4 & 5: Use REAL indicators and activities data
-    if (user?.role === UserRole.PARTNER && (user?.contract_type === 4 || user?.contract_type === 5)) {
-      const totalIndicators = indicators.length
-      const achievedIndicators = indicators.filter((ind: any) => ind.status === 'achieved').length
-      const onTrackIndicators = indicators.filter((ind: any) => ind.status === 'on-track').length
-      const atRiskIndicators = indicators.filter((ind: any) => ind.status === 'at-risk' || ind.status === 'delayed').length
+    // Use REAL indicators data for ALL contract types (no more fake PROJECT_PLANS)
+    const totalIndicators = indicators.length
+    const achievedIndicators = indicators.filter((ind: any) => ind.status === 'achieved').length
+    const onTrackIndicators = indicators.filter((ind: any) => ind.status === 'on-track').length
+    const atRiskIndicators = indicators.filter((ind: any) => ind.status === 'at-risk' || ind.status === 'delayed').length
 
-      const totalActivities = activities.length
-      const completedActivities = activities.filter((act: any) => act.status === 'completed').length
-      const ongoingActivities = activities.filter((act: any) => act.status === 'ongoing').length
-
-      const totalProgress = indicators.reduce((sum: number, ind: any) => sum + (ind.progress || 0), 0)
-      const overallProgress = totalIndicators > 0 ? Math.round(totalProgress / totalIndicators) : 0
-
-      return {
-        totalDeliverables: totalIndicators,
-        completedDeliverables: achievedIndicators,
-        inProgressDeliverables: onTrackIndicators,
-        overallProgress,
-        upcomingMilestones: 0,
-        delayedDeliverables: atRiskIndicators,
-        totalBudget: 0
-      }
-    }
-
-    // For other contracts: Use fake PROJECT_PLANS (Contract 1, 2, 3)
-    let totalDeliverables = 0
-    let completedDeliverables = 0
-    let inProgressDeliverables = 0
-    let totalProgress = 0
-
-    projectPlans.forEach((plan: any) => {
-      plan.deliverables.forEach((d: any) => {
-        totalDeliverables++
-        if (d.status === 'completed') completedDeliverables++
-        if (d.status === 'in-progress') inProgressDeliverables++
-        totalProgress += d.progress
-      })
-    })
-
-    const upcomingMilestones = getUpcomingMilestones(projectPlans, 30)
-    const delayedDeliverables = getDelayedDeliverables(projectPlans)
+    const totalProgress = indicators.reduce((sum: number, ind: any) => sum + (ind.progress || 0), 0)
+    const overallProgress = totalIndicators > 0 ? Math.round(totalProgress / totalIndicators) : 0
 
     return {
-      totalDeliverables,
-      completedDeliverables,
-      inProgressDeliverables,
-      overallProgress: totalDeliverables > 0 ? Math.round(totalProgress / totalDeliverables) : 0,
-      upcomingMilestones: upcomingMilestones.length,
-      delayedDeliverables: delayedDeliverables.length,
-      totalBudget: projectPlans.reduce((sum, p) => sum + (p.totalBudget || 0), 0)
+      totalDeliverables: totalIndicators,
+      completedDeliverables: achievedIndicators,
+      inProgressDeliverables: onTrackIndicators,
+      overallProgress,
+      upcomingMilestones: 0,
+      delayedDeliverables: atRiskIndicators,
+      totalBudget: 0
     }
   }
 
@@ -1359,24 +1325,14 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
         />
       )}
 
-      {/* Data Tabs - Ant Design Style */}
+      {/* Data Tabs - Ant Design Style - Simplified to 3 Tabs for ALL Users */}
       <Card style={{ borderRadius: 8 }}>
         <Tabs
           defaultActiveKey="indicators"
           size="large"
           tabBarStyle={{ marginBottom: 0, paddingLeft: 0, paddingRight: 0 }}
           items={[
-            // Hide fake "ផែនការគម្រោង" tab for Contract 4 PARTNER users (they only see indicators)
-            ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
-              key: 'timeline',
-              label: (
-                <span className="font-hanuman">
-                  <CalendarOutlined className="mr-2" />
-                  ផែនការគម្រោង
-                </span>
-              ),
-              children: renderProjectTimelineTabs()
-            }] : []),
+            // Tab 1: Indicators (ALWAYS visible for ALL contract types)
             {
               key: 'indicators',
               label: (
@@ -1425,92 +1381,8 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 </div>
               )
             },
-            // Hide fake "សកម្មភាព" tab for Contract 4 & 5 (they don't use activities concept)
-            // Also hide for Contract 4 PARTNER users (they only see indicators)
-            ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
-              key: 'activities',
-              label: (
-                <span className="font-hanuman text-base">
-                  <RiseOutlined className="mr-2" />
-                  សកម្មភាព
-                </span>
-              ),
-              children: (
-                <div>
-                  {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.MANAGER) && (
-                    <div className="mb-6">
-                      <Button
-                        type="primary"
-                        size="large"
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                          setEditingActivity(null)
-                          setShowActivityForm(true)
-                        }}
-                      >
-                        បង្កើតសកម្មភាពថ្មី
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* Unified Table View - Optimized for Tablet/Desktop */}
-                  {loadingActivities ? (
-                    <div className="text-center py-8">
-                      <Spin size="large" />
-                    </div>
-                  ) : activitiesData.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <Table
-                        columns={activityColumns}
-                        dataSource={activitiesData}
-                        pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
-                        loading={loadingActivities}
-                        scroll={{ x: 1400 }}
-                        size="middle"
-                      />
-                    </div>
-                  ) : (
-                    <Empty description="គ្មានសកម្មភាព" />
-                  )}
-                </div>
-              )
-            }] : []),
-            // Hide fake "ចំណុចសំខាន់" tab for Contract 4 & 5 (they have real milestone tracking in deliverables tab)
-            // Also hide for Contract 4 PARTNER users (they only see indicators)
-            ...(!hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
-              key: 'milestones',
-              label: (
-                <span className="font-hanuman text-base">
-                  <CheckCircleOutlined className="mr-2" />
-                  ចំណុចសំខាន់
-                </span>
-              ),
-              children: (
-                <div>
-                  {/* Unified Table View - Optimized for Tablet/Desktop */}
-                  {loading ? (
-                    <div className="text-center py-8">
-                      <Spin size="large" />
-                    </div>
-                  ) : milestonesData.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <Table
-                        columns={milestoneColumns}
-                        dataSource={milestonesData}
-                        pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
-                        loading={loading}
-                        scroll={{ x: 900 }}
-                        size="middle"
-                      />
-                    </div>
-                  ) : (
-                    <Empty description="គ្មានចំណុចសំខាន់" />
-                  )}
-                </div>
-              )
-            }] : []),
-            // Only show deliverables tab for Type 4 & 5 users (but hide for Contract 4 PARTNER)
-            ...(hasDeliverables && !(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
+            // Tab 2: Deliverables (ALWAYS visible for ALL contract types)
+            {
               key: 'deliverables',
               label: (
                 <span className="font-hanuman text-base">
@@ -1525,226 +1397,67 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                       <Spin size="large" />
                     </div>
                   ) : deliverables.length > 0 ? (
-                    <>
-                      {/* Unified Table View - Optimized for Tablet/Desktop */}
-                      <div className="overflow-x-auto">
-                        <Table
-                          columns={[
-                            {
-                              title: <span className="font-hanuman">ល.រ</span>,
-                              dataIndex: 'deliverable_number',
-                              key: 'number',
-                              width: 80,
-                              render: (_, record) => (
-                                <Text className="font-hanuman">{record.deliverable_number}</Text>
-                              )
-                            },
-                            {
-                              title: <span className="font-hanuman">សមិទ្ធកម្ម</span>,
-                              key: 'deliverable',
-                              render: (_, record) => (
-                                <Text className="font-hanuman">{record.deliverable_title_khmer}</Text>
-                              )
-                            },
-                            {
-                              title: <span className="font-hanuman">សូចនាករ</span>,
-                              key: 'indicator',
-                              render: (_, record) => (
-                                <div className="font-hanuman space-y-3">
-                                  {record.options.map((option: any) => {
-                                    const isSelected = record.selected_option_id === option.id
-                                    return (
-                                      <div
-                                        key={option.id}
-                                        className={`p-2 rounded ${isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}
-                                      >
-                                        <div className="flex items-start gap-2">
-                                          <Text strong className={isSelected ? 'text-blue-600' : ''}>
-                                            {option.option_number}/
-                                          </Text>
-                                          <Text className={isSelected ? 'text-blue-700 font-medium' : ''}>
-                                            {option.option_text_khmer}
-                                          </Text>
-                                          {isSelected && <Tag color="blue">បានជ្រើសរើស</Tag>}
-                                        </div>
+                    <div className="overflow-x-auto">
+                      <Table
+                        columns={[
+                          {
+                            title: <span className="font-hanuman">ល.រ</span>,
+                            dataIndex: 'deliverable_number',
+                            key: 'number',
+                            width: 80,
+                            render: (_, record) => (
+                              <Text className="font-hanuman">{record.deliverable_number}</Text>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">សមិទ្ធកម្ម</span>,
+                            key: 'deliverable',
+                            render: (_, record) => (
+                              <Text className="font-hanuman">{record.deliverable_title_khmer}</Text>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">សូចនាករ</span>,
+                            key: 'indicator',
+                            render: (_, record) => (
+                              <div className="font-hanuman space-y-3">
+                                {record.options.map((option: any) => {
+                                  const isSelected = record.selected_option_id === option.id
+                                  return (
+                                    <div
+                                      key={option.id}
+                                      className={`p-2 rounded ${isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}
+                                    >
+                                      <div className="flex items-start gap-2">
+                                        <Text strong className={isSelected ? 'text-blue-600' : ''}>
+                                          {option.option_number}/
+                                        </Text>
+                                        <Text className={isSelected ? 'text-blue-700 font-medium' : ''}>
+                                          {option.option_text_khmer}
+                                        </Text>
+                                        {isSelected && <Tag color="blue">បានជ្រើសរើស</Tag>}
                                       </div>
-                                    )
-                                  })}
-                                </div>
-                              )
-                            },
-                            {
-                              title: <span className="font-hanuman">ពេលវេលាអនុវត្ត</span>,
-                              key: 'timeline',
-                              width: 200,
-                              render: (_, record) => (
-                                <Text className="font-hanuman">{record.timeline}</Text>
-                              )
-                            }
-                          ]}
-                          dataSource={deliverables}
-                          pagination={false}
-                          rowKey="id"
-                          size="middle"
-                        />
-                      </div>
-
-                      {/* Contract Milestones Tracking Section */}
-                      <div className="mt-8">
-                        <div className="mb-4 pb-2 border-b">
-                          <Title level={4} className="font-hanuman mb-2">តារាងតាមដានសមិទ្ធកម្ម (Milestone Tracking)</Title>
-                          <Text className="text-gray-600 font-hanuman">តាមដានវឌ្ឍនភាពនៃការអនុវត្តសមិទ្ធកម្មនីមួយៗ</Text>
-                        </div>
-
-                        {loadingContractMilestones ? (
-                          <div className="text-center py-8">
-                            <Spin size="large" />
-                          </div>
-                        ) : contractMilestones.length > 0 ? (
-                          <div className="overflow-x-auto">
-                            <Table
-                                columns={[
-                                  {
-                                    title: <span className="font-hanuman">កូដ</span>,
-                                    dataIndex: 'milestone_code',
-                                    key: 'code',
-                                    width: 100
-                                  },
-                                  {
-                                    title: <span className="font-hanuman">ឈ្មោះសមិទ្ធកម្ម</span>,
-                                    dataIndex: 'milestone_name_km',
-                                    key: 'name'
-                                  },
-                                  {
-                                    title: <span className="font-hanuman">រយៈពេល</span>,
-                                    key: 'timeline',
-                                    width: 200,
-                                    render: (record: any) => (
-                                      <div className="font-hanuman text-sm">
-                                        <div>{dayjs(record.planned_start_date).format('DD/MM/YYYY')}</div>
-                                        <div>ដល់ {dayjs(record.planned_end_date).format('DD/MM/YYYY')}</div>
-                                      </div>
-                                    )
-                                  },
-                                  {
-                                    title: <span className="font-hanuman">វឌ្ឍនភាព</span>,
-                                    key: 'progress',
-                                    width: 150,
-                                    render: (record: any) => (
-                                      <div>
-                                        <Progress
-                                          percent={Math.round(record.achievement_percentage)}
-                                          size="small"
-                                          status={
-                                            record.health_indicator === 'critical' ? 'exception' :
-                                            record.health_indicator === 'at_risk' ? 'active' :
-                                            'success'
-                                          }
-                                        />
-                                        <div className="text-xs text-gray-500 mt-1">
-                                          {record.current_value || record.baseline_value} / {record.target_value} {record.measurement_unit}
-                                        </div>
-                                      </div>
-                                    )
-                                  },
-                                  {
-                                    title: <span className="font-hanuman">ស្ថានភាព</span>,
-                                    key: 'status',
-                                    width: 120,
-                                    render: (record: any) => {
-                                      const statusConfig: any = {
-                                        not_started: { color: 'default', text: 'មិនទាន់ចាប់ផ្តើម' },
-                                        in_progress: { color: 'processing', text: 'កំពុងដំណើរការ' },
-                                        completed: { color: 'success', text: 'បានបញ្ចប់' },
-                                        delayed: { color: 'error', text: 'យឺតយ៉ាវ' }
-                                      }
-                                      const config = statusConfig[record.overall_status] || { color: 'default', text: record.overall_status }
-                                      return <Tag color={config.color}>{config.text}</Tag>
-                                    }
-                                  },
-                                  {
-                                    title: <span className="font-hanuman">សុខភាព</span>,
-                                    key: 'health',
-                                    width: 120,
-                                    render: (record: any) => {
-                                      const healthConfig: any = {
-                                        on_track: { color: 'green', text: 'តាមគម្រោង', icon: <CheckCircleOutlined /> },
-                                        at_risk: { color: 'orange', text: 'មានហានិភ័យ', icon: <AlertOutlined /> },
-                                        critical: { color: 'red', text: 'គ្រិះថ្នាក់', icon: <CloseCircleOutlined /> }
-                                      }
-                                      const config = healthConfig[record.health_indicator] || { color: 'default', text: record.health_indicator }
-                                      return <Tag color={config.color} icon={config.icon}>{config.text}</Tag>
-                                    }
-                                  }
-                                ]}
-                                dataSource={contractMilestones}
-                                pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
-                                rowKey="id"
-                                scroll={{ x: 1200 }}
-                                size="middle"
-                                expandable={{
-                                  expandedRowRender: (record: any) => (
-                                    <div className="p-4 bg-gray-50 font-hanuman">
-                                      {record.milestone_description_km && (
-                                        <div className="mb-3">
-                                          <Text strong>ការពិពណ៌នា: </Text>
-                                          <Text>{record.milestone_description_km}</Text>
-                                        </div>
-                                      )}
-
-                                      {record.activities && record.activities.length > 0 && (
-                                        <div className="mb-3">
-                                          <Text strong>សកម្មភាព ({record.activities.length}):</Text>
-                                          <div className="mt-2 space-y-1">
-                                            {record.activities.map((activity: any) => (
-                                              <div key={activity.id} className="flex items-center gap-2">
-                                                <Tag color={activity.status === 'completed' ? 'success' : 'processing'}>
-                                                  {activity.activity_name_km}
-                                                </Tag>
-                                                <Progress
-                                                  percent={activity.completion_percentage}
-                                                  size="small"
-                                                  style={{ width: '150px' }}
-                                                />
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      )}
-
-                                      {record.deliverables && record.deliverables.length > 0 && (
-                                        <div>
-                                          <Text strong>ផលិតផល ({record.deliverables.length}):</Text>
-                                          <div className="mt-2 space-y-1">
-                                            {record.deliverables.map((deliverable: any) => (
-                                              <div key={deliverable.id} className="flex items-center gap-2">
-                                                <Tag color={deliverable.status === 'approved' ? 'success' : 'warning'}>
-                                                  {deliverable.deliverable_name_km}
-                                                </Tag>
-                                                <Text type="secondary" className="text-xs">
-                                                  កាលបរិច្ឆេទ: {dayjs(deliverable.due_date).format('DD/MM/YYYY')}
-                                                </Text>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      )}
                                     </div>
                                   )
-                                }}
-                              />
-                            </div>
-                        ) : (
-                          <Empty
-                            description={
-                              <Text className="font-hanuman text-gray-500">
-                                មិនទាន់មានទិន្នន័យតាមដានសមិទ្ធកម្ម
-                              </Text>
-                            }
-                          />
-                        )}
-                      </div>
-                    </>
+                                })}
+                              </div>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">ពេលវេលាអនុវត្ត</span>,
+                            key: 'timeline',
+                            width: 200,
+                            render: (_, record) => (
+                              <Text className="font-hanuman">{record.timeline}</Text>
+                            )
+                          }
+                        ]}
+                        dataSource={deliverables}
+                        pagination={false}
+                        rowKey="id"
+                        size="middle"
+                      />
+                    </div>
                   ) : (
                     <Empty
                       description={
@@ -1756,24 +1469,173 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                   )}
                 </div>
               )
-            }] : []),
-            // Hide Reports tab for Contract 4 PARTNER users (they only see indicators)
-            ...(!(user?.role === UserRole.PARTNER && user?.contract_type === 4) ? [{
-              key: 'reports',
+            },
+            // Tab 3: Milestone Tracking (ALWAYS visible for ALL contract types)
+            {
+              key: 'milestones',
               label: (
-                <span className="font-hanuman">
-                  <FileTextOutlined className="mr-2" />
-                  របាយការណ៍
+                <span className="font-hanuman text-base">
+                  <CheckCircleOutlined className="mr-2" />
+                  ចំណុចសំខាន់
                 </span>
               ),
               children: (
-                <div className="text-center py-8">
-                  <Text className="font-hanuman text-gray-500">
-                    មុខងារនេះនឹងមានក្នុងពេលឆាប់ៗនេះ
-                  </Text>
+                <div>
+                  <div className="mb-4 pb-2 border-b">
+                    <Title level={4} className="font-hanuman mb-2">តារាងតាមដានសមិទ្ធកម្ម (Milestone Tracking)</Title>
+                    <Text className="text-gray-600 font-hanuman">តាមដានវឌ្ឍនភាពនៃការអនុវត្តសមិទ្ធកម្មនីមួយៗ</Text>
+                  </div>
+
+                  {loadingContractMilestones ? (
+                    <div className="text-center py-8">
+                      <Spin size="large" />
+                    </div>
+                  ) : contractMilestones.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <Table
+                        columns={[
+                          {
+                            title: <span className="font-hanuman">កូដ</span>,
+                            dataIndex: 'milestone_code',
+                            key: 'code',
+                            width: 100
+                          },
+                          {
+                            title: <span className="font-hanuman">ឈ្មោះសមិទ្ធកម្ម</span>,
+                            dataIndex: 'milestone_name_km',
+                            key: 'name'
+                          },
+                          {
+                            title: <span className="font-hanuman">រយៈពេល</span>,
+                            key: 'timeline',
+                            width: 200,
+                            render: (record: any) => (
+                              <div className="font-hanuman text-sm">
+                                <div>{dayjs(record.planned_start_date).format('DD/MM/YYYY')}</div>
+                                <div>ដល់ {dayjs(record.planned_end_date).format('DD/MM/YYYY')}</div>
+                              </div>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">វឌ្ឍនភាព</span>,
+                            key: 'progress',
+                            width: 150,
+                            render: (record: any) => (
+                              <div>
+                                <Progress
+                                  percent={Math.round(record.achievement_percentage)}
+                                  size="small"
+                                  status={
+                                    record.health_indicator === 'critical' ? 'exception' :
+                                    record.health_indicator === 'at_risk' ? 'active' :
+                                    'success'
+                                  }
+                                />
+                                <div className="text-xs text-gray-500 mt-1">
+                                  {record.current_value || record.baseline_value} / {record.target_value} {record.measurement_unit}
+                                </div>
+                              </div>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">ស្ថានភាព</span>,
+                            key: 'status',
+                            width: 120,
+                            render: (record: any) => {
+                              const statusConfig: any = {
+                                not_started: { color: 'default', text: 'មិនទាន់ចាប់ផ្តើម' },
+                                in_progress: { color: 'processing', text: 'កំពុងដំណើរការ' },
+                                completed: { color: 'success', text: 'បានបញ្ចប់' },
+                                delayed: { color: 'error', text: 'យឺតយ៉ាវ' }
+                              }
+                              const config = statusConfig[record.overall_status] || { color: 'default', text: record.overall_status }
+                              return <Tag color={config.color}>{config.text}</Tag>
+                            }
+                          },
+                          {
+                            title: <span className="font-hanuman">សុខភាព</span>,
+                            key: 'health',
+                            width: 120,
+                            render: (record: any) => {
+                              const healthConfig: any = {
+                                on_track: { color: 'green', text: 'តាមគម្រោង', icon: <CheckCircleOutlined /> },
+                                at_risk: { color: 'orange', text: 'មានហានិភ័យ', icon: <AlertOutlined /> },
+                                critical: { color: 'red', text: 'គ្រិះថ្នាក់', icon: <CloseCircleOutlined /> }
+                              }
+                              const config = healthConfig[record.health_indicator] || { color: 'default', text: record.health_indicator }
+                              return <Tag color={config.color} icon={config.icon}>{config.text}</Tag>
+                            }
+                          }
+                        ]}
+                        dataSource={contractMilestones}
+                        pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
+                        rowKey="id"
+                        scroll={{ x: 1200 }}
+                        size="middle"
+                        expandable={{
+                          expandedRowRender: (record: any) => (
+                            <div className="p-4 bg-gray-50 font-hanuman">
+                              {record.milestone_description_km && (
+                                <div className="mb-3">
+                                  <Text strong>ការពិពណ៌នា: </Text>
+                                  <Text>{record.milestone_description_km}</Text>
+                                </div>
+                              )}
+
+                              {record.activities && record.activities.length > 0 && (
+                                <div className="mb-3">
+                                  <Text strong>សកម្មភាព ({record.activities.length}):</Text>
+                                  <div className="mt-2 space-y-1">
+                                    {record.activities.map((activity: any) => (
+                                      <div key={activity.id} className="flex items-center gap-2">
+                                        <Tag color={activity.status === 'completed' ? 'success' : 'processing'}>
+                                          {activity.activity_name_km}
+                                        </Tag>
+                                        <Progress
+                                          percent={activity.completion_percentage}
+                                          size="small"
+                                          style={{ width: '150px' }}
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              {record.deliverables && record.deliverables.length > 0 && (
+                                <div>
+                                  <Text strong>ផលិតផល ({record.deliverables.length}):</Text>
+                                  <div className="mt-2 space-y-1">
+                                    {record.deliverables.map((deliverable: any) => (
+                                      <div key={deliverable.id} className="flex items-center gap-2">
+                                        <Tag color={deliverable.status === 'approved' ? 'success' : 'warning'}>
+                                          {deliverable.deliverable_name_km}
+                                        </Tag>
+                                        <Text type="secondary" className="text-xs">
+                                          កាលបរិច្ឆេទ: {dayjs(deliverable.due_date).format('DD/MM/YYYY')}
+                                        </Text>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <Empty
+                      description={
+                        <Text className="font-hanuman text-gray-500">
+                          មិនទាន់មានទិន្នន័យតាមដានសមិទ្ធកម្ម
+                        </Text>
+                      }
+                    />
+                  )}
                 </div>
               )
-            }] : [])
+            }
           ]}
         />
       </Card>
