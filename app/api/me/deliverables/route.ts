@@ -66,11 +66,8 @@ export async function GET(request: NextRequest) {
     const contract = await prisma.contracts.findFirst({
       where: {
         contract_type_id: user.contract_type,
-        OR: [
-          { created_by: user.id.toString() },
-          { party_a_name: { contains: user.id.toString() } },
-          { party_b_name: { contains: user.id.toString() } }
-        ]
+        created_by_id: user.id,
+        status: 'signed'
       },
       orderBy: {
         created_at: 'desc'
