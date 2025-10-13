@@ -26,11 +26,7 @@ export async function GET(
         contract_type: true,
         deliverable_selections: {
           include: {
-            deliverable: {
-              include: {
-                options: true
-              }
-            },
+            deliverable: true,
             selected_option: true
           },
           orderBy: {
