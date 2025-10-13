@@ -1215,11 +1215,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
                 border: 'none',
                 borderRadius: 12,
-                height: '100%'
+                minHeight: 160
               }}
-              bodyStyle={{ padding: 24 }}
+              bodyStyle={{ padding: 24, height: '100%' }}
             >
-              <Row justify="space-between" align="middle">
+              <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
                   <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
                     {hasDeliverables ? 'សូចនាករសរុប' : 'សកម្មភាពសរុប'}
@@ -1248,11 +1248,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 background: 'linear-gradient(135deg, #52c41a 0%, #389e0d 100%)',
                 border: 'none',
                 borderRadius: 12,
-                height: '100%'
+                minHeight: 160
               }}
-              bodyStyle={{ padding: 24 }}
+              bodyStyle={{ padding: 24, height: '100%' }}
             >
-              <Row justify="space-between" align="middle">
+              <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
                   <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
                     {hasDeliverables ? 'សម្រេច' : 'បានបញ្ចប់'}
@@ -1281,11 +1281,11 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 background: 'linear-gradient(135deg, #faad14 0%, #d48806 100%)',
                 border: 'none',
                 borderRadius: 12,
-                height: '100%'
+                minHeight: 160
               }}
-              bodyStyle={{ padding: 24 }}
+              bodyStyle={{ padding: 24, height: '100%' }}
             >
-              <Row justify="space-between" align="middle">
+              <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
                   <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
                     {hasDeliverables ? 'តាមគម្រោង' : 'កំពុងដំណើរការ'}
@@ -1314,16 +1314,18 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 background: 'linear-gradient(135deg, #722ed1 0%, #531dab 100%)',
                 border: 'none',
                 borderRadius: 12,
-                height: '100%'
+                minHeight: 160
               }}
-              bodyStyle={{ padding: 24 }}
+              bodyStyle={{ padding: 24, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
             >
-              <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                វឌ្ឍនភាពរួម
-              </Text>
-              <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36, marginBottom: 12 }}>
-                {dashboardData.overallProgress}%
-              </Title>
+              <div>
+                <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
+                  វឌ្ឍនភាពរួម
+                </Text>
+                <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36, marginBottom: 16 }}>
+                  {dashboardData.overallProgress}%
+                </Title>
+              </div>
               <Progress
                 percent={dashboardData.overallProgress}
                 showInfo={false}
