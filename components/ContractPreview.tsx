@@ -63,20 +63,25 @@ const ContractPreview: React.FC<ContractPreviewProps> = ({ contract, contractTyp
             font-size: 14pt;
           }
         }
+        .font-moul {
+          font-family: 'Moul', serif;
+        }
       `}</style>
 
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold mb-2">ព្រះរាជាណាចក្រកម្ពុជា</h1>
-        <h2 className="text-xl">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
-        <div className="mt-4">
-          <div className="inline-block border-b-2 border-black w-32"></div>
+      <div className="text-center mb-6">
+        <h1 className="text-xl font-moul mb-1">ព្រះរាជាណាចក្រកម្ពុជា</h1>
+        <h2 className="text-base font-moul mb-1">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+        <h3 className="text-sm font-hanuman mt-2 mb-1">ក្រសួង អប់រំ យុវជន និងកីឡា</h3>
+        <h4 className="text-sm font-hanuman">នាយកដ្ឋានបឋមសិក្សា និងមធ្យមសិក្សា</h4>
+        <div className="flex justify-center items-center my-3">
+          <div className="border-b-2 border-black w-24"></div>
         </div>
       </div>
 
       <div className="text-center mb-8">
-        <h2 className="text-xl font-bold">កិច្ចព្រមព្រៀងសមិទ្ធកម្ម</h2>
-        <h3 className="text-lg mt-2">{contractType.type_name_khmer}</h3>
-        <p className="text-sm text-gray-600 mt-2">លេខកិច្ចព្រមព្រៀង: {contract.contract_number}</p>
+        <h2 className="text-lg font-bold font-moul mb-2">កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សានិងមធ្យមសិក្សា និងការិយាល័យអប់រំយុវជននិងកីឡា</h2>
+        <h3 className="text-base font-hanuman mt-3">{contractType.type_name_khmer}</h3>
+        <p className="text-sm text-gray-700 mt-2 font-hanuman">លេខកិច្ចព្រមព្រៀង: {contract.contract_number}</p>
       </div>
 
       <div className="mb-6">
