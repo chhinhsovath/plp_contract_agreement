@@ -50,6 +50,8 @@ export default function MEDashboardPage() {
   const [contractMilestones, setContractMilestones] = useState<any[]>([])
   const [loadingContractMilestones, setLoadingContractMilestones] = useState(false)
   const [userContractId, setUserContractId] = useState<number | null>(null)
+  const [allContracts, setAllContracts] = useState<any[]>([])
+  const [loadingContracts, setLoadingContracts] = useState(false)
 
   useEffect(() => {
     checkSession()
@@ -63,6 +65,10 @@ export default function MEDashboardPage() {
       fetchActivities()
       fetchDeliverables()
       fetchContractMilestones()
+      // Fetch all contracts for SUPER_ADMIN/ADMIN
+      if (user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN) {
+        fetchAllContracts()
+      }
     }
   }, [user, selectedContract])
 
@@ -242,6 +248,22 @@ export default function MEDashboardPage() {
       fetchContractMilestones()
     }
   }, [userContractId])
+
+  // Fetch all contracts for SUPER_ADMIN/ADMIN
+  const fetchAllContracts = async () => {
+    setLoadingContracts(true)
+    try {
+      const response = await fetch('/api/contracts/all')
+      if (response.ok) {
+        const data = await response.json()
+        setAllContracts(data.contracts || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch contracts:', error)
+    } finally {
+      setLoadingContracts(false)
+    }
+  }
 
   const handleEditIndicator = (indicator: any) => {
     setEditingIndicator(indicator)
@@ -1635,7 +1657,115 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                   )}
                 </div>
               )
-            }
+            },
+            // Tab 4: Contracts List (ONLY visible for SUPER_ADMIN/ADMIN)
+            ...((user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN) ? [{
+              key: 'contracts',
+              label: (
+                <span className="font-hanuman text-base">
+                  <FileTextOutlined className="mr-2" />
+                  បញ្ជីកិច្ចសន្យា
+                </span>
+              ),
+              children: (
+                <div>
+                  {loadingContracts ? (
+                    <div className="text-center py-8">
+                      <Spin size="large" />
+                    </div>
+                  ) : allContracts.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <Table
+                        columns={[
+                          {
+                            title: <span className="font-hanuman">លេខកិច្ចសន្យា</span>,
+                            dataIndex: 'contract_number',
+                            key: 'contract_number',
+                            width: 150
+                          },
+                          {
+                            title: <span className="font-hanuman">ឈ្មោះអ្នកប្រើប្រាស់</span>,
+                            key: 'user_name',
+                            render: (record: any) => (
+                              <Text className="font-hanuman">{record.user?.full_name || '-'}</Text>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">លេខទូរស័ព្ទ</span>,
+                            key: 'phone',
+                            width: 120,
+                            render: (record: any) => (
+                              <Text className="font-hanuman">{record.user?.phone_number || '-'}</Text>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">ប្រភេទកិច្ចសន្យា</span>,
+                            dataIndex: 'contract_type_id',
+                            key: 'contract_type',
+                            width: 150,
+                            render: (type: number) => (
+                              <Tag color="blue">{CONTRACT_TYPES[type as keyof typeof CONTRACT_TYPES]}</Tag>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">កាលបរិច្ឆេទចុះហត្ថលេខា</span>,
+                            dataIndex: 'created_at',
+                            key: 'created_at',
+                            width: 150,
+                            render: (date: string) => dayjs(date).format('DD/MM/YYYY')
+                          },
+                          {
+                            title: <span className="font-hanuman">សកម្មភាព</span>,
+                            key: 'actions',
+                            width: 200,
+                            fixed: 'right' as const,
+                            render: (record: any) => (
+                              <Space size="small">
+                                <Button
+                                  type="primary"
+                                  size="small"
+                                  icon={<DownloadOutlined />}
+                                  onClick={() => {
+                                    window.open(`/contract/print/${record.id}`, '_blank')
+                                  }}
+                                >
+                                  ទាញយក PDF
+                                </Button>
+                                {user?.role === UserRole.SUPER_ADMIN && (
+                                  <Button
+                                    size="small"
+                                    icon={<EditOutlined />}
+                                    onClick={() => {
+                                      // TODO: Implement edit functionality
+                                      message.info('មុខងារកែសម្រួលនឹងមានឆាប់ៗនេះ')
+                                    }}
+                                  >
+                                    កែសម្រួល
+                                  </Button>
+                                )}
+                              </Space>
+                            )
+                          }
+                        ]}
+                        dataSource={allContracts}
+                        pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `សរុប ${total} កិច្ចសន្យា` }}
+                        rowKey="id"
+                        scroll={{ x: 1200 }}
+                        size="middle"
+                      />
+                    </div>
+                  ) : (
+                    <Empty
+                      description={
+                        <Text className="font-hanuman text-gray-500">
+                          គ្មានកិច្ចសន្យា
+                        </Text>
+                      }
+                    />
+                  )}
+                </div>
+              )
+            }] : [])
           ]}
         />
       </Card>
