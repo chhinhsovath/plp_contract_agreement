@@ -56,7 +56,9 @@ export default function ContractPrintPage() {
       <style dangerouslySetInnerHTML={{ __html: `
         @font-face {
           font-family: 'Tacteing';
-          src: url('/fonts/tacteing.ttf') format('truetype');
+          src: url('/fonts/tacteing.woff2') format('woff2'),
+               url('/fonts/tacteing.woff') format('woff'),
+               url('/fonts/tacteing.ttf') format('truetype');
           font-display: swap;
           font-weight: normal;
           font-style: normal;
