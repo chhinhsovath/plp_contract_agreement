@@ -232,6 +232,13 @@ export default function ContractPrintPage() {
           margin-bottom: 0.3cm;
           font-size: 11pt;
         }
+        
+        .signature-label-moul {
+          font-family: 'Moul', serif !important;
+          font-weight: 400;
+          margin-bottom: 0.3cm;
+          font-size: 11pt;
+        }
 
         .signature-line {
           margin-top: 1.5cm;
@@ -444,19 +451,13 @@ export default function ContractPrintPage() {
           {/* Signature Section */}
           <div className="signature-section">
             <div className="signature-box">
-              <div className="signature-label">ប្រធាននាយកដ្ឋាន</div>
-              <div className="signature-label">ជ.ប្រធានគម្រោង</div>
-              <div className="signature-label">ហត្ថលេខានិងឈ្មោះ</div>
-              <div className="signature-line">
-                ថ្ងៃទី............ ខែ...............ឆ្នាំ............
-              </div>
+              <div className="signature-label-moul">ប្រធាននាយកដ្ឋាន</div>
+              <div className="signature-label-moul">ជ.ប្រធានគម្រោង</div>
+              <div className="signature-label" style={{fontWeight: 400}}>ហត្ថលេខានិងឈ្មោះ</div>
             </div>
             <div className="signature-box">
-              <div className="signature-label">
+              <div className="signature-label" style={{fontWeight: 400}}>
                 ហត្ថលេខានិងឈ្មោះ ({isContractType4 ? 'ប្រធានការិយាល័យអប់រំ' : 'នាយកសាលា'})
-              </div>
-              <div className="signature-line">
-                ថ្ងៃទី............ ខែ...............ឆ្នាំ............
               </div>
             </div>
           </div>
