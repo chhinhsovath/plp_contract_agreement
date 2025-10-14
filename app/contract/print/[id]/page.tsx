@@ -140,7 +140,7 @@ export default function ContractPrintPage() {
         .implementer-table {
           width: 100%;
           border-collapse: collapse;
-          margin: 0.5cm 0;
+          margin: 0 0 0.1cm 0;
         }
 
         .implementer-table td {
@@ -156,7 +156,7 @@ export default function ContractPrintPage() {
         }
 
         .intro-text {
-          margin: 0.5cm 0;
+          margin: 0.1cm 0;
           text-align: justify;
           font-size: 11pt;
           line-height: 1.8;
@@ -165,7 +165,7 @@ export default function ContractPrintPage() {
         .deliverables-table {
           width: 100%;
           border-collapse: collapse;
-          margin: 0.5cm 0;
+          margin: 0.1cm 0 0.5cm 0;
         }
 
         .deliverables-table th,
