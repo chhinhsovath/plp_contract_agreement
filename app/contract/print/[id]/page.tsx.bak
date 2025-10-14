@@ -407,37 +407,59 @@ export default function ContractPrintPage() {
             </>
           )}
 
-          {/* Account Information Section - After Deliverables in Table Format */}
-          <table className="deliverables-table" style={{ marginTop: '0.5cm' }}>
-            <thead>
-              <tr>
-                <th className="no-col" style={{ width: '5%' }}></th>
-                <th className="deliverable-col" style={{ width: '25%' }}>ការលើកទឹកចិត្តសមិទ្ធកម្ម</th>
-                <th colSpan={2} className="indicator-col" style={{ width: '70%' }}>
-                  <div className="section-content" style={{ marginLeft: 0 }}>
-                    ១.ថវិកាដែលទទួលបានសរុប៖……………………………
-                  </div>
-                  <div className="section-content" style={{ marginLeft: 0 }}>
-                    ២.ចំនួនដងនៃការបើកផ្តលៗ៖ ៤ ដង
-                  </div>
-                  <div style={{ marginBottom: '0.5cm' }}>
-                    <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
-                      ៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖
-                    </div>
-                    <div className="section-content" style={{ marginLeft: '1cm' }}>
-                      - ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង
-                    </div>
-                    <div className="section-content" style={{ marginLeft: '1cm' }}>
-                      - លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។
-                    </div>
-                  </div>
-                  <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
-                    ៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ
-                  </div>
-                </th>
-              </tr>
-            </thead>
-          </table>        </div>
+          {/* Account Information Section - After Deliverables */}
+          <div className="section-title" style={{ marginTop: '0.5cm' }}>
+            ការលើកទឹកចិត្តសមិទ្ធកម្ម
+          </div>
+
+          {isContractType4 ? (
+            <>
+              <div className="section-content" style={{ marginLeft: 0 }}>
+                ១.ថវិកាដែលទទួលបានសរុប៖……………………………
+              </div>
+              <div className="section-content" style={{ marginLeft: 0 }}>
+                ២.ចំនួនដងនៃការបើកផ្តល់៖ ៤ ដង
+              </div>
+              <div style={{ marginBottom: '0.5cm' }}>
+                <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
+                  ៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖
+                </div>
+                <div className="section-content" style={{ marginLeft: '1cm' }}>
+                  - ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង
+                </div>
+                <div className="section-content" style={{ marginLeft: '1cm' }}>
+                  - លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។
+                </div>
+              </div>
+              <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
+                ៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="section-content" style={{ marginLeft: 0 }}>
+                ១.ថវិកាដែលទទួលបានសរុប៖……………………………
+              </div>
+              <div className="section-content" style={{ marginLeft: 0 }}>
+                ២.ចំនួនដងនៃការបើកផ្តល់៖ ៤ ដង
+              </div>
+              <div style={{ marginBottom: '0.5cm' }}>
+                <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
+                  ៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖
+                </div>
+                <div className="section-content" style={{ marginLeft: '1cm' }}>
+                  - ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង
+                </div>
+                <div className="section-content" style={{ marginLeft: '1cm' }}>
+                  - លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។
+                </div>
+              </div>
+              <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
+                ៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ
+              </div>
+            </>
+          )}
+        </div>
 
         {/* Page 2 - Signature Section */}
         <div className="page-break" style={{ marginTop: '1cm' }}>
