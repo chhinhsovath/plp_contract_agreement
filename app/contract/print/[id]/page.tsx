@@ -152,6 +152,7 @@ export default function ContractPrintPage() {
 
         .implementer-table .label-col {
           width: 33%;
+          font-weight: bold;
         }
 
         .intro-text {
