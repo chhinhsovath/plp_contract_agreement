@@ -286,7 +286,7 @@ export default function ContractPrintPage() {
         }
 
         .header-divider {
-          font-family: 'Tacteing', 'Arial Unicode MS', sans-serif;
+          font-family: 'Tacteing', 'Arial Unicode MS', sans-serif !important;
           font-size: 24pt;
           text-align: center;
           margin: 10px auto;
