@@ -404,85 +404,48 @@ export default function ContractPrintPage() {
           {isContractType4 ? (
             <>
               <div className="section-content" style={{ marginLeft: 0 }}>
-                ១.ថវិកាដែលទទួលបានសរុប៖.......................................
+                ១.ថវិកាដែលទទួលបានសរុប៖……………………………
               </div>
               <div className="section-content" style={{ marginLeft: 0 }}>
-                ២.ចំនួនដងនៃការផ្តល់៖ ៤ ដង
+                ២.ចំនួនដងនៃការបើកផ្តល់៖ ៤ ដង
               </div>
               <div style={{ marginBottom: '0.5cm' }}>
                 <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
                   ៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖
                 </div>
-                <div className="section-content">
+                <div className="section-content" style={{ marginLeft: '1cm' }}>
                   - ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង
                 </div>
-                <div className="section-content">
+                <div className="section-content" style={{ marginLeft: '1cm' }}>
                   - លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។
                 </div>
               </div>
-
-              <table className="bank-info-table">
-                <tbody>
-                  <tr>
-                    <td className="bank-info-label">ព័ត៌មានគណនីបង្កើតថ្មី</td>
-                    <td>
-                      <div>២.ចំនួនដងនៃការផ្តល់: ៤ ដង</div>
-                      <div>៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖</div>
-                      <div style={{ marginLeft: '0.5cm' }}>- ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង</div>
-                      <div style={{ marginLeft: '0.5cm' }}>- លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។</div>
-                      <div style={{ fontWeight: 700 }}>៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ</div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
+                ៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ
+              </div>
             </>
           ) : (
             <>
               <div className="section-content" style={{ marginLeft: 0 }}>
-                ១.ថវិកាដែលទទួលបានសរុប៖.......................................
+                ១.ថវិកាដែលទទួលបានសរុប៖……………………………
               </div>
               <div className="section-content" style={{ marginLeft: 0 }}>
-                ២.ចំនួនដងនៃការផ្តល់៖៤ ដង
+                ២.ចំនួនដងនៃការបើកផ្តល់៖ ៤ ដង
               </div>
               <div style={{ marginBottom: '0.5cm' }}>
                 <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
                   ៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖
                 </div>
-                <div className="section-content">
+                <div className="section-content" style={{ marginLeft: '1cm' }}>
                   - ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង
                 </div>
-                <div className="section-content">
+                <div className="section-content" style={{ marginLeft: '1cm' }}>
                   - លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។
                 </div>
               </div>
-
               <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
-                ៤.ព័ត៌មានការបើកប្រាក់៖
+                ៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ
               </div>
-              <div className="section-content">
-                ឈ្មោះគណនី៖
-              </div>
-              <div className="section-content">
-                លេខគណនី៖
-              </div>
-
-              <table className="bank-info-table">
-                <tbody>
-                  <tr>
-                    <td className="bank-info-label">ព័ត៌មានគណនីបង្កើតថ្មី</td>
-                    <td>
-                      <div>១.ថវិកាដែលទទួលបានសរុប៖..........................................</div>
-                      <div>២.ចំនួនដងនៃការផ្តល់: ៤ ដង</div>
-                      <div>៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖</div>
-                      <div style={{ marginLeft: '0.5cm' }}>- ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង</div>
-                      <div style={{ marginLeft: '0.5cm' }}>- លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។</div>
-                      <div style={{ fontWeight: 700 }}>៤.គិតមានគណនីត្រូវជ្រើស៖</div>
-                      <div style={{ marginLeft: '0.5cm' }}>ឈ្មោះគណនី៖</div>
-                      <div style={{ marginLeft: '0.5cm' }}>លេខគណនី៖</div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
             </>
           )}
         </div>
