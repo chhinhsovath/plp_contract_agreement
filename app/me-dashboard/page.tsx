@@ -1443,25 +1443,24 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                             key: 'indicator',
                             render: (_, record) => (
                               <div className="font-hanuman space-y-3">
-                                {record.options.map((option: any) => {
-                                  const isSelected = record.selected_option_id === option.id
-                                  return (
+                                {record.options
+                                  .filter((option: any) => record.selected_option_id === option.id)
+                                  .map((option: any) => (
                                     <div
                                       key={option.id}
-                                      className={`p-2 rounded ${isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}
+                                      className="p-2 rounded bg-blue-50 border-l-4 border-blue-500"
                                     >
                                       <div className="flex items-start gap-2">
-                                        <Text strong className={isSelected ? 'text-blue-600' : ''}>
+                                        <Text strong className="text-blue-600">
                                           {option.option_number}/
                                         </Text>
-                                        <Text className={isSelected ? 'text-blue-700 font-medium' : ''}>
+                                        <Text className="text-blue-700 font-medium">
                                           {option.option_text_khmer}
                                         </Text>
-                                        {isSelected && <Tag color="blue">បានជ្រើសរើស</Tag>}
+                                        <Tag color="blue">បានជ្រើសរើស</Tag>
                                       </div>
                                     </div>
-                                  )
-                                })}
+                                  ))}
                               </div>
                             )
                           },
