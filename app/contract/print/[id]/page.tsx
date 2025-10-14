@@ -421,24 +421,24 @@ export default function ContractPrintPage() {
                 <th className="no-col" style={{ width: '5%' }}></th>
                 <th className="deliverable-col" style={{ width: '25%' }}>ការលើកទឹកចិត្តសមិទ្ធកម្ម</th>
                 <th colSpan={2} className="indicator-col" style={{ width: '70%' }}>
-                  <div className="section-content" style={{ marginLeft: 0 }}>
+                  <div className="section-content" style={{ marginLeft: 0, fontWeight: 400 }}>
                     ១.ថវិកាដែលទទួលបានសរុប៖……………………………
                   </div>
-                  <div className="section-content" style={{ marginLeft: 0 }}>
+                  <div className="section-content" style={{ marginLeft: 0, fontWeight: 400 }}>
                     ២.ចំនួនដងនៃការបើកផ្តលៗ៖ ៤ ដង
                   </div>
                   <div style={{ marginBottom: '0.5cm' }}>
-                    <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
+                    <div className="section-content" style={{ fontWeight: 400, marginLeft: 0 }}>
                       ៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖
                     </div>
-                    <div className="section-content" style={{ marginLeft: '1cm' }}>
+                    <div className="section-content" style={{ marginLeft: '1cm', fontWeight: 400 }}>
                       - ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង
                     </div>
-                    <div className="section-content" style={{ marginLeft: '1cm' }}>
+                    <div className="section-content" style={{ marginLeft: '1cm', fontWeight: 400 }}>
                       - លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។
                     </div>
                   </div>
-                  <div className="section-content" style={{ fontWeight: 700, marginLeft: 0 }}>
+                  <div className="section-content" style={{ fontWeight: 400, marginLeft: 0 }}>
                     ៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ
                   </div>
                 </th>
