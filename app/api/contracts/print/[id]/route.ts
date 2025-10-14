@@ -62,13 +62,8 @@ export async function GET(
       const deliverable = selection.deliverable
       const selectedOption = selection.selected_option
 
-      // Build indicator text with baseline and target
-      let indicatorText = selectedOption.option_text_khmer
-
-      // Add baseline and target if available
-      if (selectedOption.baseline_percentage !== null && selectedOption.target_percentage !== null) {
-        indicatorText += ` ហើយមាន ${selectedOption.baseline_percentage}% លើទិន្នន័យមូលដ្ឋាន ត្រឹម ${selectedOption.target_percentage}%`
-      }
+      // Use only the selected option text as it appears in the milestone table
+      const indicatorText = selectedOption.option_text_khmer
 
       return {
         deliverable_number: deliverable.deliverable_number,
