@@ -54,6 +54,13 @@ export default function ContractPrintPage() {
       <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@100;300;400;700;900&family=Moul&display=swap" rel="stylesheet" />
 
       <style dangerouslySetInnerHTML={{ __html: `
+        @font-face {
+          font-family: 'Tacteing';
+          src: url('/fonts/tacteing.ttf') format('truetype');
+          font-weight: normal;
+          font-style: normal;
+        }
+
         @page {
           size: A4;
           margin: 1.5cm 2cm;
@@ -267,6 +274,15 @@ export default function ContractPrintPage() {
           font-size: 14pt;
           font-weight: 700;
         }
+
+        .header-divider {
+          font-family: 'Tacteing', serif;
+          font-size: 24pt;
+          text-align: center;
+          margin: 10px auto;
+          line-height: 1;
+          color: #000;
+        }
       ` }} />
 
       <button className="no-print print-button" onClick={() => window.print()}>
@@ -282,7 +298,7 @@ export default function ContractPrintPage() {
             <div className="header-line">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
             <div className="header-line">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
             <div className="header-line">នាយកដ្ឋានបឋមសិក្សា និងមធ្យមសិក្សា</div>
-            <div style={{ width: '80px', height: '2px', backgroundColor: '#000', margin: '10px auto' }}></div>
+            <div className="header-divider">3</div>
           </div>
 
           {/* Title */}
