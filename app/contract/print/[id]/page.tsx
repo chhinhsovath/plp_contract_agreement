@@ -456,6 +456,9 @@ export default function ContractPrintPage() {
               <div className="signature-label" style={{fontWeight: 400}}>ហត្ថលេខានិងឈ្មោះ</div>
             </div>
             <div className="signature-box">
+              <div className="signature-line">
+                ថ្ងៃទី............ ខែ...............ឆ្នាំ............
+              </div>
               <div className="signature-label" style={{fontWeight: 400}}>
                 ហត្ថលេខានិងឈ្មោះ ({isContractType4 ? 'ប្រធានការិយាល័យអប់រំ' : 'នាយកសាលា'})
               </div>
