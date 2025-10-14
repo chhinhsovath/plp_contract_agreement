@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     // Fetch all contracts with user information
     const contracts = await prisma.contracts.findMany({
       include: {
-        user: {
+        created_by_user: {
           select: {
             id: true,
             phone_number: true,

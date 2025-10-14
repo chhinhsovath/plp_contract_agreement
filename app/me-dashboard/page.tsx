@@ -1687,7 +1687,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                             title: <span className="font-hanuman">ឈ្មោះអ្នកប្រើប្រាស់</span>,
                             key: 'user_name',
                             render: (record: any) => (
-                              <Text className="font-hanuman">{record.user?.full_name || '-'}</Text>
+                              <Text className="font-hanuman">{record.created_by_user?.full_name || '-'}</Text>
                             )
                           },
                           {
@@ -1695,7 +1695,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                             key: 'phone',
                             width: 120,
                             render: (record: any) => (
-                              <Text className="font-hanuman">{record.user?.phone_number || '-'}</Text>
+                              <Text className="font-hanuman">{record.created_by_user?.phone_number || '-'}</Text>
                             )
                           },
                           {
