@@ -296,9 +296,9 @@ export default function ContractPrintPage() {
           <div className="header">
             <div className="header-line">ព្រះរាជាណាចក្រកម្ពុជា</div>
             <div className="header-line">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+            <div className="header-divider">3</div>
             <div className="header-line">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
             <div className="header-line">នាយកដ្ឋានបឋមសិក្សា និងមធ្យមសិក្សា</div>
-            <div className="header-divider">3</div>
           </div>
 
           {/* Title */}
