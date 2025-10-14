@@ -53,7 +53,7 @@ export default function ContractPrintPage() {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@100;300;400;700;900&family=Moul&display=swap" rel="stylesheet" />
 
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @page {
           size: A4;
           margin: 1.5cm 2cm;
@@ -101,7 +101,7 @@ export default function ContractPrintPage() {
         }
 
         .header-line {
-          font-family: 'Moul', serif;
+          font-family: 'Moul', serif !important;
           font-size: 13pt;
           font-weight: 400;
           line-height: 1.8;
@@ -112,7 +112,7 @@ export default function ContractPrintPage() {
         }
 
         .title {
-          font-family: 'Moul', serif;
+          font-family: 'Moul', serif !important;
           font-size: 16pt;
           font-weight: 400;
           margin: 0.5cm 0;
@@ -263,7 +263,7 @@ export default function ContractPrintPage() {
         }
 
         .large-khmer {
-          font-family: 'Moul', serif;
+          font-family: 'Moul', serif !important;
           font-size: 14pt;
           font-weight: 700;
         }
