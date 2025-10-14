@@ -111,6 +111,13 @@ export default function ContractPrintPage() {
           font-size: 16px;
           font-weight: 400;
           line-height: 1.8;
+        }
+        
+        .header-line.centered {
+          text-align: center;
+        }
+        
+        .header-line:not(.centered) {
           text-align: left;
         }
 
@@ -294,8 +301,8 @@ export default function ContractPrintPage() {
         <div>
           {/* Header */}
           <div className="header">
-            <div className="header-line">ព្រះរាជាណាចក្រកម្ពុជា</div>
-            <div className="header-line">ជាតិ  សាសនា  ព្រះមហាក្សត្រ</div>
+            <div className="header-line centered">ព្រះរាជាណាចក្រកម្ពុជា</div>
+            <div className="header-line centered">ជាតិ  សាសនា  ព្រះមហាក្សត្រ</div>
             <div className="header-divider">3</div>
             <div className="header-line">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
             <div className="header-line">នាយកដ្ឋានបឋមសិក្សា</div>
