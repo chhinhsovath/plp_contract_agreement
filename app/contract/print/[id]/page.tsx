@@ -120,7 +120,7 @@ export default function ContractPrintPage() {
 
         .title {
           font-family: 'Moul', serif !important;
-          font-size: 16pt;
+          font-size: 16px;
           font-weight: 400;
           margin: 0.5cm 0;
           text-align: center;
