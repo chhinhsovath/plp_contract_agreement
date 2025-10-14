@@ -101,6 +101,7 @@ export default function ContractPrintPage() {
         }
 
         .header-line {
+          font-family: 'Moul', serif;
           font-size: 13pt;
           font-weight: 400;
           line-height: 1.8;
@@ -298,7 +299,7 @@ export default function ContractPrintPage() {
               </tr>
               <tr>
                 <td>នាយកដ្ឋានបឋមសិក្សា</td>
-                <td>លោកឧត្តមសេនីយ៍ កាន់ ពុទ្ធី</td>
+                <td>លោកបណ្ឌិត កាន់ ពុទ្ធី</td>
                 <td>ប្រធាននាយកដ្ឋានបឋមសិក្សា</td>
               </tr>
               <tr>
@@ -378,20 +379,8 @@ export default function ContractPrintPage() {
             </>
           )}
 
-          {/* Page break for Contract Type 4 after deliverables on page 1 */}
-          {isContractType4 && (
-            <>
-              <div className="section-content">
-                ១.ថវិកាដែលទទួលបានសរុប៖.......................................
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Page 2 */}
-        <div className="page-break" style={{ marginTop: '1cm' }}>
-          {/* Incentive Section */}
-          <div className="section-title">
+          {/* Account Information Section - After Deliverables */}
+          <div className="section-title" style={{ marginTop: '0.5cm' }}>
             ការលើកទឹកចិត្តសមិទ្ធកម្ម
           </div>
 
@@ -479,7 +468,10 @@ export default function ContractPrintPage() {
               </table>
             </>
           )}
+        </div>
 
+        {/* Page 2 - Signature Section */}
+        <div className="page-break" style={{ marginTop: '1cm' }}>
           {/* Signature Section */}
           <div className="signature-section">
             <div className="signature-box">
