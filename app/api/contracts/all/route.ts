@@ -1,24 +1,49 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { handleApiError } from '@/lib/api-error-handler'
-import { verifySession } from '@/lib/session'
+import { getSession } from '@/lib/auth'
 import { UserRole } from '@/lib/roles'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    // Verify user session and check if user is SUPER_ADMIN or ADMIN
-    const session = await verifySession(request)
-    if (!session) {
+    // Get current user session
+    const session = await getSession()
+
+    if (!session?.userId) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        {
+          success: false,
+          error: 'Unauthorized'
+        },
         { status: 401 }
       )
     }
 
-    // Only allow SUPER_ADMIN and ADMIN to access this endpoint
-    if (session.role !== UserRole.SUPER_ADMIN && session.role !== UserRole.ADMIN) {
+    // Get user details to check role
+    const user = await prisma.users.findUnique({
+      where: { id: Number(session.userId) },
+      select: {
+        role: true
+      }
+    })
+
+    if (!user) {
       return NextResponse.json(
-        { error: 'Forbidden: Only administrators can access all contracts' },
+        {
+          success: false,
+          error: 'User not found'
+        },
+        { status: 404 }
+      )
+    }
+
+    // Only allow SUPER_ADMIN and ADMIN to access this endpoint
+    if (user.role !== UserRole.SUPER_ADMIN && user.role !== UserRole.ADMIN) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Forbidden: Only administrators can access all contracts'
+        },
         { status: 403 }
       )
     }
