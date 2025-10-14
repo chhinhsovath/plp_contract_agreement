@@ -46,7 +46,6 @@ export default function ContractPrintPage() {
   const isContractType4 = contractData.contract_type_id === 4
   const isContractType5 = contractData.contract_type_id === 5
   const partyBTitle = isContractType4 ? 'ប្រធានការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ' : 'នាយកសាលា/នាយករង/នាយកស្រ្តីទី'
-  const entityName = isContractType4 ? 'ការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ' : 'សាលាបឋមសិក្សា'
 
   return (
     <>
@@ -278,15 +277,16 @@ export default function ContractPrintPage() {
         <div>
           {/* Header */}
           <div className="header">
-            <div className="header-line">ព្រះរាជាណាចក្ររម្ពុជា</div>
-            <div className="header-line">ជាតិ សាសនា ព្រះម្ហាក្សត្រ</div>
-            <div className="header-line header-underline">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
-            <div className="header-line">នាយកដ្ឋានបឋមសិក្សា</div>
+            <div className="header-line">ព្រះរាជាណាចក្រកម្ពុជា</div>
+            <div className="header-line">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+            <div className="header-line">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
+            <div className="header-line">នាយកដ្ឋានបឋមសិក្សា និងមធ្យមសិក្សា</div>
+            <div style={{ width: '80px', height: '2px', backgroundColor: '#000', margin: '10px auto' }}></div>
           </div>
 
           {/* Title */}
           <div className="title">
-            កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សា និង{entityName}
+            កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សានិងមធ្យមសិក្សា និងការិយាល័យអប់រំយុវជននិងកីឡា
           </div>
 
           {/* Implementer Table */}
