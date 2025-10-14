@@ -57,6 +57,7 @@ export default function ContractPrintPage() {
         @font-face {
           font-family: 'Tacteing';
           src: url('/fonts/tacteing.ttf') format('truetype');
+          font-display: swap;
           font-weight: normal;
           font-style: normal;
         }
@@ -283,7 +284,7 @@ export default function ContractPrintPage() {
         }
 
         .header-divider {
-          font-family: 'Tacteing', serif;
+          font-family: 'Tacteing', 'Arial Unicode MS', sans-serif;
           font-size: 24pt;
           text-align: center;
           margin: 10px auto;
