@@ -103,15 +103,15 @@ export default function ContractPrintPage() {
         }
 
         .header {
-          text-align: center;
           margin-bottom: 1cm;
         }
 
         .header-line {
           font-family: 'Moul', serif !important;
-          font-size: 13pt;
+          font-size: 16px;
           font-weight: 400;
           line-height: 1.8;
+          text-align: left;
         }
 
         .header-underline {
