@@ -295,15 +295,15 @@ export default function ContractPrintPage() {
           {/* Header */}
           <div className="header">
             <div className="header-line">ព្រះរាជាណាចក្រកម្ពុជា</div>
-            <div className="header-line">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+            <div className="header-line">ជាតិ  សាសនា  ព្រះមហាក្សត្រ</div>
             <div className="header-divider">3</div>
             <div className="header-line">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
-            <div className="header-line">នាយកដ្ឋានបឋមសិក្សា និងមធ្យមសិក្សា</div>
+            <div className="header-line">នាយកដ្ឋានបឋមសិក្សា</div>
           </div>
 
           {/* Title */}
           <div className="title">
-            កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សានិងមធ្យមសិក្សា និងការិយាល័យអប់រំយុវជននិងកីឡា
+            កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ
           </div>
 
           {/* Implementer Table */}
