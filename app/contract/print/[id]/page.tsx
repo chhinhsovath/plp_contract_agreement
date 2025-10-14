@@ -49,10 +49,11 @@ export default function ContractPrintPage() {
 
   return (
     <>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Hanuman:wght@100;300;400;700;900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Moul&display=swap');
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@100;300;400;700;900&family=Moul&display=swap" rel="stylesheet" />
 
+      <style jsx global>{`
         @page {
           size: A4;
           margin: 1.5cm 2cm;
