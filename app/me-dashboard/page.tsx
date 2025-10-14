@@ -10,6 +10,7 @@ import { UserRole } from '@/lib/roles'
 import IndicatorForm from './components/IndicatorForm'
 import ActivityForm from './components/ActivityForm'
 import DataCollectionForm from './components/DataCollectionForm'
+import PersonalInfoForm from './personal-info-form'
 
 const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
@@ -52,6 +53,7 @@ export default function MEDashboardPage() {
   const [userContractId, setUserContractId] = useState<number | null>(null)
   const [allContracts, setAllContracts] = useState<any[]>([])
   const [loadingContracts, setLoadingContracts] = useState(false)
+  const [showPersonalInfoForm, setShowPersonalInfoForm] = useState(false)
 
   useEffect(() => {
     checkSession()
@@ -1810,6 +1812,20 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
           setSelectedIndicatorForData(undefined)
         }}
         indicatorId={selectedIndicatorForData}
+      />
+
+      {/* Personal Information Form */}
+      <PersonalInfoForm
+        visible={showPersonalInfoForm}
+        onClose={() => {
+          setShowPersonalInfoForm(false)
+        }}
+        onSuccess={() => {
+          // Refresh user data after successful update
+          checkSession()
+          setShowPersonalInfoForm(false)
+        }}
+        user={user}
       />
 
       {/* Change Password Modal */}
