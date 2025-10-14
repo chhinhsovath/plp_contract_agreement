@@ -267,7 +267,7 @@ export default function ContractPrintPage() {
           font-size: 14pt;
           font-weight: 700;
         }
-      `}</style>
+      ` }} />
 
       <button className="no-print print-button" onClick={() => window.print()}>
         ទាញយកជា PDF
