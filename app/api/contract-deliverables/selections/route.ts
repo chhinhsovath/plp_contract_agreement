@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the user's contract (latest one for their contract type - signed or draft)
-    const contract = await prisma.contracts.findFirst({
+    let contract = await prisma.contracts.findFirst({
       where: {
         contract_type_id: user.contract_type,
         created_by_id: user.id
@@ -92,6 +92,55 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // If no contract exists but user has signed, create a contract record
+    // This handles the case where user signed before configuring deliverables
+    if (!contract && user.contract_signed) {
+      // Generate contract number
+      const timestamp = Date.now()
+      const contract_number = `PLP-${user.contract_type}-${timestamp}`
+
+      // Get party A name based on contract type
+      const partyANames: any = {
+        4: 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី',
+        5: 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី'
+      }
+
+      // Get user's full details for contract creation
+      const fullUser = await prisma.users.findUnique({
+        where: { id: user.id },
+        select: {
+          full_name: true,
+          signature_data: true,
+          contract_signed_date: true
+        }
+      })
+
+      // Create contract with 1-year duration
+      const signedDate = fullUser?.contract_signed_date || new Date()
+      const endDate = new Date(signedDate)
+      endDate.setFullYear(endDate.getFullYear() + 1)
+
+      contract = await prisma.contracts.create({
+        data: {
+          contract_number,
+          contract_type_id: user.contract_type,
+          party_a_name: partyANames[user.contract_type] || 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី',
+          party_a_signature: 'data:image/png;base64,PLACEHOLDER', // Admin will sign later
+          party_b_name: fullUser?.full_name || 'Unknown',
+          party_b_signature: fullUser?.signature_data || '',
+          start_date: signedDate,
+          end_date: endDate,
+          status: 'signed',
+          party_b_signed_date: signedDate,
+          created_by_id: user.id
+        },
+        select: {
+          id: true,
+          status: true
+        }
+      })
+    }
+
     if (!contract) {
       return NextResponse.json(
         {
@@ -102,7 +151,7 @@ export async function POST(request: NextRequest) {
             meta: {
               userContractSigned: user.contract_signed,
               contractType: user.contract_type,
-              suggestion: 'User has contract_signed flag but no contract record. This is a data inconsistency.'
+              suggestion: 'User needs to sign the contract before configuring deliverables.'
             }
           }
         },
@@ -149,9 +198,12 @@ export async function POST(request: NextRequest) {
         success: false,
         error: {
           message: 'Failed to save deliverable selections',
-          code: 'SAVE_SELECTIONS_ERROR',
+          code: error.code || 'SAVE_SELECTIONS_ERROR',
           meta: {
-            error: error.message
+            errorMessage: error.message,
+            errorCode: error.code,
+            errorMeta: error.meta,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
           }
         }
       },

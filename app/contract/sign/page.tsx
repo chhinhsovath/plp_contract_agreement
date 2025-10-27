@@ -177,12 +177,43 @@ export default function ContractSignPage() {
       return false
     }
 
-    // Read file and convert to base64
+    // Read file and resize if needed
     const reader = new FileReader()
     reader.onload = (e) => {
-      const dataUrl = e.target?.result as string
-      setUploadedImage(dataUrl)
-      message.success('បានផ្ទុករូបភាពហត្ថលេខា')
+      const img = new Image()
+      img.onload = () => {
+        // Create canvas to resize image
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+
+        // Set max dimensions (keeping aspect ratio)
+        const maxWidth = 600
+        const maxHeight = 300
+        let width = img.width
+        let height = img.height
+
+        // Calculate new dimensions maintaining aspect ratio
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width
+          width = maxWidth
+        }
+        if (height > maxHeight) {
+          width = (width * maxHeight) / height
+          height = maxHeight
+        }
+
+        canvas.width = width
+        canvas.height = height
+
+        // Draw resized image
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height)
+          const resizedDataUrl = canvas.toDataURL('image/png')
+          setUploadedImage(resizedDataUrl)
+          message.success('បានផ្ទុករូបភាពហត្ថលេខា')
+        }
+      }
+      img.src = e.target?.result as string
     }
     reader.readAsDataURL(file)
 
@@ -569,7 +600,8 @@ export default function ContractSignPage() {
                           <img
                             src={uploadedImage}
                             alt="Signature"
-                            className="max-h-40 mx-auto border border-gray-200 rounded"
+                            className="max-h-40 max-w-full mx-auto border border-gray-200 rounded object-contain"
+                            style={{ maxHeight: '160px', width: 'auto' }}
                           />
                           <p className="mt-2 text-sm text-green-600 font-hanuman">
                             ✓ បានផ្ទុករូបភាព (ចុចដើម្បីប្តូរ)
