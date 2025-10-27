@@ -141,17 +141,20 @@ export default function ContractPrintPage() {
           width: 100%;
           border-collapse: collapse;
           margin: 0 0 0.1cm 0;
+          table-layout: fixed;
         }
 
         .implementer-table td {
           border: 1px solid #000;
-          padding: 8px;
+          padding: 6px;
           vertical-align: top;
-          font-size: 11pt;
+          font-size: 10pt;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
 
         .implementer-table .label-col {
-          width: 33%;
+          width: 40%;
           font-weight: bold;
         }
 
@@ -166,6 +169,7 @@ export default function ContractPrintPage() {
           width: 100%;
           border-collapse: collapse;
           margin: 0.1cm 0 0.5cm 0;
+          table-layout: fixed;
         }
 
         .deliverables-table th,
@@ -189,22 +193,38 @@ export default function ContractPrintPage() {
         .deliverables-table .no-col {
           width: 5%;
           text-align: center;
+          min-width: 20px;
         }
 
-        .deliverables-table .activity-col {
-          width: 25%;
-        }
-
+        /* Contract 4: Simple 4-column table */
         .deliverables-table .deliverable-col {
-          width: 35%;
+          width: 45%;
         }
 
         .deliverables-table .indicator-col {
-          width: 25%;
+          width: 30%;
         }
 
         .deliverables-table .timeline-col {
-          width: 10%;
+          width: 20%;
+        }
+
+        /* Contract 5: Multiple tables with activities */
+        .deliverables-table .activity-col {
+          width: 45%;
+        }
+
+        /* Responsive for different content lengths */
+        @media print {
+          .deliverables-table {
+            font-size: 9pt;
+            line-height: 1.3;
+          }
+
+          .deliverables-table th,
+          .deliverables-table td {
+            padding: 4px;
+          }
         }
 
         .section-title {
@@ -281,12 +301,15 @@ export default function ContractPrintPage() {
           width: 100%;
           border-collapse: collapse;
           margin-top: 0.3cm;
+          table-layout: fixed;
         }
 
         .bank-info-table td {
           border: 1px solid #000;
-          padding: 8px;
-          font-size: 11pt;
+          padding: 6px;
+          font-size: 10pt;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
 
         .bank-info-label {
