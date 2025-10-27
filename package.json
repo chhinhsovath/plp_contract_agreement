@@ -13,7 +13,11 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "npx ts-node --compiler-options '{\"module\":\"commonjs\"}' prisma/seed.ts",
     "seed:demo-users": "npx ts-node --compiler-options '{\"module\":\"commonjs\"}' prisma/seed-demo-users.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:check-health": "curl -s http://localhost:3000/api/health/database | npx json",
+    "db:check-health:prod": "curl -s https://mobile.openplp.com/api/health/database | npx json",
+    "check:connections": "node scripts/check-connection-patterns.js",
+    "precommit": "npm run check:connections"
   },
   "keywords": [],
   "author": "",
