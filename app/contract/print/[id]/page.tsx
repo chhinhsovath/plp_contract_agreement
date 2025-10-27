@@ -66,7 +66,7 @@ export default function ContractPrintPage() {
 
         @page {
           size: A4;
-          margin: 1.5cm 2cm;
+          margin: 1cm 1.5cm;
         }
 
         @media print {
@@ -102,7 +102,7 @@ export default function ContractPrintPage() {
           max-width: 21cm;
           margin: 0 auto;
           background: white;
-          padding: 1cm;
+          padding: 0.5cm;
         }
 
         .header {
@@ -171,10 +171,14 @@ export default function ContractPrintPage() {
         .deliverables-table th,
         .deliverables-table td {
           border: 1px solid #000;
-          padding: 8px;
+          padding: 5px;
           vertical-align: top;
           text-align: left;
-          font-size: 11pt;
+          font-size: 10pt;
+          word-wrap: break-word;
+          word-break: break-word;
+          white-space: normal;
+          overflow-wrap: break-word;
         }
 
         .deliverables-table th {
@@ -188,19 +192,19 @@ export default function ContractPrintPage() {
         }
 
         .deliverables-table .activity-col {
-          width: 40%;
+          width: 25%;
         }
 
         .deliverables-table .deliverable-col {
-          width: 45%;
-        }
-
-        .deliverables-table .indicator-col {
           width: 35%;
         }
 
+        .deliverables-table .indicator-col {
+          width: 25%;
+        }
+
         .deliverables-table .timeline-col {
-          width: 15%;
+          width: 10%;
         }
 
         .section-title {
