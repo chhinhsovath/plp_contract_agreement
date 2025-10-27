@@ -20,7 +20,7 @@ export default function ContractPage() {
 
   const [form] = Form.useForm()
   const [activeTab, setActiveTab] = useState('1')
-  const [partyASignature, setPartyASignature] = useState<string>(defaultPartyA.signature.data)
+  const [partyASignature, setPartyASignature] = useState<string>(defaultPartyA.signature.publicPath)
   const [partyBSignature, setPartyBSignature] = useState<string>('')
   const [formData, setFormData] = useState<any>({})
   const [previewMode, setPreviewMode] = useState(false)
