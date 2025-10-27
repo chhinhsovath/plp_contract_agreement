@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message, Dropdown, Avatar, Modal, Form, Input, Spin } from 'antd'
-import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, BarChartOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, CheckOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, FileDoneOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined, CloseCircleOutlined, SettingOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
@@ -1067,6 +1067,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                       key: 'profile',
                       icon: <UserOutlined />,
                       label: <span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>,
+                      onClick: () => setShowPersonalInfoForm(true)
                     },
                     {
                       key: 'change-password',
@@ -1074,6 +1075,13 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                       label: <span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>,
                       onClick: () => setShowChangePasswordModal(true)
                     },
+                    // Show Configure Deliverables only for Contract Type 4 & 5
+                    ...(user?.contract_type === 4 || user?.contract_type === 5 ? [{
+                      key: 'configure-deliverables',
+                      icon: <SettingOutlined />,
+                      label: <span className="font-hanuman">កំណត់សមិទ្ធកម្ម</span>,
+                      onClick: () => router.push('/contract/configure')
+                    }] : []),
                     { type: 'divider' },
                     {
                       key: 'logout',
@@ -1094,7 +1102,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                     border: 'none',
                     cursor: 'pointer'
                   }}
-                  bodyStyle={{ padding: '12px 16px' }}
+                  styles={{ body: { padding: '12px 16px' } }}
                 >
                   <Space>
                     <Avatar icon={<UserOutlined />} size={48} style={{ background: '#fff', color: '#1890ff' }} />
@@ -1118,7 +1126,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 48px 48px' }}>
 
       {/* Filters - Ant Design Style */}
-      <Card style={{ marginBottom: 24, borderRadius: 8 }} bodyStyle={{ padding: 24 }}>
+      <Card style={{ marginBottom: 24, borderRadius: 8 }} styles={{ body: { padding: 24 } }}>
         <Row gutter={[24, 16]} align="bottom">
           <Col flex="1" style={{ minWidth: 240 }}>
             <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 15, fontFamily: 'Hanuman' }}>
@@ -1207,7 +1215,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 borderRadius: 12,
                 minHeight: 160
               }}
-              bodyStyle={{ padding: 24, height: '100%' }}
+              styles={{ body: { padding: 24, height: '100%' } }}
             >
               <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
@@ -1240,7 +1248,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 borderRadius: 12,
                 minHeight: 160
               }}
-              bodyStyle={{ padding: 24, height: '100%' }}
+              styles={{ body: { padding: 24, height: '100%' } }}
             >
               <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
@@ -1273,7 +1281,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 borderRadius: 12,
                 minHeight: 160
               }}
-              bodyStyle={{ padding: 24, height: '100%' }}
+              styles={{ body: { padding: 24, height: '100%' } }}
             >
               <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
@@ -1306,7 +1314,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 borderRadius: 12,
                 minHeight: 160
               }}
-              bodyStyle={{ padding: 24, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+              styles={{ body: { padding: 24, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' } }}
             >
               <div>
                 <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
@@ -1321,7 +1329,7 @@ ${index + 1}. ${act.activity_name_khmer} (${act.activity_code})
                 showInfo={false}
                 strokeColor="#fff"
                 trailColor="rgba(255, 255, 255, 0.25)"
-                strokeWidth={8}
+                size={['100%', 8]}
               />
             </Card>
           </Badge.Ribbon>

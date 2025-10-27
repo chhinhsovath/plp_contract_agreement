@@ -98,7 +98,7 @@ export default function LoginPage() {
 
             {/* Features */}
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
-              <Card bordered={false} style={{ background: '#e6f7ff', border: 'none' }}>
+              <Card variant="borderless" style={{ background: '#e6f7ff', border: 'none' }}>
                 <Space align="start" size="middle">
                   <div style={{
                     width: 48,
@@ -123,7 +123,7 @@ export default function LoginPage() {
                 </Space>
               </Card>
 
-              <Card bordered={false} style={{ background: '#f6ffed', border: 'none' }}>
+              <Card variant="borderless" style={{ background: '#f6ffed', border: 'none' }}>
                 <Space align="start" size="middle">
                   <div style={{
                     width: 48,
@@ -148,7 +148,7 @@ export default function LoginPage() {
                 </Space>
               </Card>
 
-              <Card bordered={false} style={{ background: '#fff2f0', border: 'none' }}>
+              <Card variant="borderless" style={{ background: '#fff2f0', border: 'none' }}>
                 <Space align="start" size="middle">
                   <div style={{
                     width: 48,

@@ -60,12 +60,8 @@ export default function ContractConfigurePage() {
           return
         }
 
-        // If already signed contract, redirect to dashboard
-        if (userData.contract_signed) {
-          router.push('/me-dashboard')
-          return
-        }
-
+        // Allow access for signed users to configure deliverables
+        // This page is accessible both before and after contract signing
         setUser(userData)
         await fetchDeliverables(userData.contract_type)
       } else {
@@ -121,8 +117,8 @@ export default function ContractConfigurePage() {
     if (currentStep < deliverables.length - 1) {
       setCurrentStep(currentStep + 1)
     } else {
-      // Last step - go to review
-      router.push('/contract/sign')
+      // Last step - submit selections
+      handleSubmit()
     }
   }
 
@@ -142,11 +138,26 @@ export default function ContractConfigurePage() {
 
     setSubmitting(true)
     try {
-      // Save selections to localStorage for the sign page to use
-      localStorage.setItem('contract_selections', JSON.stringify(selections))
+      if (user?.contract_signed) {
+        // User already signed - save selections directly to database
+        const response = await fetch('/api/contract-deliverables/selections', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ selections })
+        })
 
-      message.success('រក្សាទុកការជ្រើសរើសរបស់អ្នកដោយជោគជ័យ')
-      router.push('/contract/sign')
+        if (!response.ok) {
+          throw new Error('Failed to save selections')
+        }
+
+        message.success('រក្សាទុកការជ្រើសរើសរបស់អ្នកដោយជោគជ័យ')
+        router.push('/me-dashboard')
+      } else {
+        // User hasn't signed yet - save to localStorage for sign page
+        localStorage.setItem('contract_selections', JSON.stringify(selections))
+        message.success('រក្សាទុកការជ្រើសរើសរបស់អ្នកដោយជោគជ័យ')
+        router.push('/contract/sign')
+      }
     } catch (error) {
       console.error('Failed to save selections:', error)
       message.error('មានបញ្ហាក្នុងការរក្សាទុក')

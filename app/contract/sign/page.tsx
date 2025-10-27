@@ -305,7 +305,7 @@ export default function ContractSignPage() {
             percent={scrollProgress}
             status={hasScrolledToBottom ? 'success' : 'active'}
             showInfo={false}
-            strokeWidth={10}
+            size={['100%', 10]}
           />
           {!hasScrolledToBottom && (
             <Text type="secondary" className="text-sm mt-3 font-hanuman">

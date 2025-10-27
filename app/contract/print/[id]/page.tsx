@@ -451,8 +451,8 @@ export default function ContractPrintPage() {
           {/* Signature Section */}
           <div className="signature-section">
             <div className="signature-box">
+            <div className="signature-label-moul">ជ.ប្រធានគម្រោង</div>
               <div className="signature-label-moul">ប្រធាននាយកដ្ឋាន</div>
-              <div className="signature-label-moul">ជ.ប្រធានគម្រោង</div>
               <div className="signature-label" style={{fontWeight: 400}}>ហត្ថលេខានិងឈ្មោះ</div>
             </div>
             <div className="signature-box">

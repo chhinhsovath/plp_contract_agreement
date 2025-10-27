@@ -337,7 +337,7 @@ export const contractTemplates = {
   4: {
     id: 4,
     title: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំក្រុង ស្រុក ខណ្ឌ',
-    subtitle: 'Performance Agreement between Primary Education Department and District Education Office',
+    subtitle: '',
     defaultPartyA: {
       name: 'លោកបណ្ឌិត កាន់ ពុទ្ធី',
       position: 'ប្រធាននាយកដ្ឋានបឋមសិក្សា',

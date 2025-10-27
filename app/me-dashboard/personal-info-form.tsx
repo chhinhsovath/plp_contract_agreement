@@ -1,19 +1,19 @@
-import { Form, Input, Button, Card, message } from 'antd';
+import { Form, Input, Button, Modal, message, Space } from 'antd';
 import { useEffect, useState } from 'react';
 
 interface PersonalInfoFormProps {
   visible: boolean;
-  onClose?: () => void;
+  onClose: () => void;
   onSuccess?: () => void;
   user: any;
 }
 
-export default function PersonalInfoForm({ onClose, onSuccess, user }: PersonalInfoFormProps) {
+export default function PersonalInfoForm({ visible, onClose, onSuccess, user }: PersonalInfoFormProps) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (user && visible) {
       form.setFieldsValue({
         fullName: user.full_name,
         email: user.email,
@@ -23,7 +23,7 @@ export default function PersonalInfoForm({ onClose, onSuccess, user }: PersonalI
         gender: user.gender || ''
       });
     }
-  }, [user, form]);
+  }, [user, visible, form]);
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -41,11 +41,11 @@ export default function PersonalInfoForm({ onClose, onSuccess, user }: PersonalI
           gender: values.gender
         })
       });
-      
+
       if (response.ok) {
         message.success('ព័ត៌មានផ្ទាល់ខ្លួនបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ!');
         if (onSuccess) onSuccess();
-        if (onClose) onClose();
+        onClose();
       } else {
         message.error('មានកំហុសកើតឡើងក្នុងពេលធ្វើបច្ចុប្បន្នភាពព័ត៌មានផ្ទាល់ខ្លួន!');
       }
@@ -57,7 +57,13 @@ export default function PersonalInfoForm({ onClose, onSuccess, user }: PersonalI
   };
 
   return (
-    <Card title={<span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>}>
+    <Modal
+      title={<span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>}
+      open={visible}
+      onCancel={onClose}
+      footer={null}
+      width={600}
+    >
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
           name="fullName"
@@ -105,18 +111,16 @@ export default function PersonalInfoForm({ onClose, onSuccess, user }: PersonalI
         </Form.Item>
         
         <Form.Item className="mb-0">
-          <div className="flex justify-end gap-2">
-            {onClose && (
-              <Button onClick={onClose}>
-                បោះបង់
-              </Button>
-            )}
+          <Space className="w-full justify-end">
+            <Button onClick={onClose}>
+              បោះបង់
+            </Button>
             <Button type="primary" htmlType="submit" loading={loading}>
               រក្សាទុក
             </Button>
-          </div>
+          </Space>
         </Form.Item>
       </Form>
-    </Card>
+    </Modal>
   );
 }

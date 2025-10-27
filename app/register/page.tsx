@@ -135,7 +135,7 @@ export default function RegisterPage() {
 
             {/* Registration Steps */}
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
-              <Card bordered={false} style={{ background: '#f6ffed', border: 'none' }}>
+              <Card variant="borderless" style={{ background: '#f6ffed', border: 'none' }}>
                 <Space align="start" size="middle">
                   <div style={{
                     width: 48,
@@ -160,7 +160,7 @@ export default function RegisterPage() {
                 </Space>
               </Card>
 
-              <Card bordered={false} style={{ background: '#e6f7ff', border: 'none' }}>
+              <Card variant="borderless" style={{ background: '#e6f7ff', border: 'none' }}>
                 <Space align="start" size="middle">
                   <div style={{
                     width: 48,
@@ -185,7 +185,7 @@ export default function RegisterPage() {
                 </Space>
               </Card>
 
-              <Card bordered={false} style={{ background: '#fffbe6', border: 'none' }}>
+              <Card variant="borderless" style={{ background: '#fffbe6', border: 'none' }}>
                 <Space align="start" size="middle">
                   <div style={{
                     width: 48,

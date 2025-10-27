@@ -122,7 +122,8 @@ export default function HomePage() {
     try {
       const response = await fetch('/api/contracts')
       if (response.ok) {
-        const data = await response.json()
+        const result = await response.json()
+        const data = result.data || []
         // Filter contracts based on user role
         if (user.role === UserRole.PARTNER) {
           // Partners only see their own signed contracts
@@ -580,32 +581,30 @@ export default function HomePage() {
             onChange={setActiveTab}
             size="large"
             style={{ marginBottom: 32 }}
-          >
-            <Tabs.TabPane
-              tab={
-                <span>
-                  <FormOutlined />
-                  ប្រភេទកិច្ចព្រមព្រៀង
-                </span>
+            items={[
+              {
+                key: 'browse',
+                label: (
+                  <span>
+                    <FormOutlined />
+                    ប្រភេទកិច្ចព្រមព្រៀង
+                  </span>
+                ),
+                children: <BrowseContracts />
+              },
+              {
+                key: 'dashboard',
+                label: (
+                  <span>
+                    <DashboardOutlined />
+                    ផ្ទាំងគ្រប់គ្រង
+                    {contracts.length > 0 && <Badge count={contracts.length} offset={[10, 0]} />}
+                  </span>
+                ),
+                children: <Dashboard />
               }
-              key="browse"
-            >
-              <BrowseContracts />
-            </Tabs.TabPane>
-
-            <Tabs.TabPane
-              tab={
-                <span>
-                  <DashboardOutlined />
-                  ផ្ទាំងគ្រប់គ្រង
-                  {contracts.length > 0 && <Badge count={contracts.length} offset={[10, 0]} />}
-                </span>
-              }
-              key="dashboard"
-            >
-              <Dashboard />
-            </Tabs.TabPane>
-          </Tabs>
+            ]}
+          />
         ) : (
           <BrowseContracts />
         )}

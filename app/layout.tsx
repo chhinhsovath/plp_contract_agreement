@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, App } from 'antd'
 import khKH from 'antd/locale/km_KH'
 import '@ant-design/v5-patch-for-react-19'
 import './globals.css'
@@ -141,7 +141,9 @@ export default function RootLayout({
             },
           }}
         >
-          {children}
+          <App>
+            {children}
+          </App>
         </ConfigProvider>
       </body>
     </html>

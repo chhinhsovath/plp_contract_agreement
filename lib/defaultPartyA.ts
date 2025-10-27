@@ -6,25 +6,25 @@
 export const defaultPartyA = {
   // Organization Information
   organization: {
-    name_khmer: 'ប្រជាជនមាយកដាំនបបវ្បស្សនា',
-    name_english: 'People Led Platform',
-    abbreviation: 'PLP'
+    name_khmer: 'ប្រធាននាយកដ្ឋានបឋមសិក្សា',
+    name_english: 'Primary Education Department',
+    abbreviation: 'PED'
   },
 
   // Default signatory
   signatory: {
-    name_khmer: 'កាន ពុទ្ធ',
-    name_english: 'Kan Puth',
-    position_khmer: 'ប្រធានមាយកដាំនបបវ្បស្សនា',
-    position_english: 'President of People Led Platform',
-    title: 'លោកបណ្ឌិត / Dr.'
+    name_khmer: 'កាន់ ពុទ្ធី',
+    name_english: 'Kann Puthy',
+    position_khmer: 'ប្រធាននាយកដ្ឋានបឋមសិក្សា',
+    position_english: 'ប្រធាននាយកដ្ឋានបឋមសិក្សា',
+    title: 'លោកបណ្ឌិត'
   },
 
   // Contact Information
   contact: {
     phone: '+855 12 345 678',
     email: 'info@openplp.com',
-    website: 'https://openplp.com',
+    website: 'https://plp.moeyes.gov.kh',
     address_khmer: 'ភ្នំពេញ, កម្ពុជា',
     address_english: 'Phnom Penh, Cambodia'
   },
