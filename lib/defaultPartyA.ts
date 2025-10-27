@@ -32,10 +32,32 @@ export const defaultPartyA = {
   // Default signature (actual image file)
   // Dr. Kan Puth's actual signature from public/signatures/image.png
   signature: {
-    // Path to the actual signature image in public directory
-    data: '/signatures/image.png',
+    // Public URL path for client-side access
+    publicPath: '/signatures/image.png',
     type: 'image/png'
   }
+}
+
+// Helper function to convert signature image to base64
+export async function getPartyASignatureBase64(): Promise<string> {
+  // For server-side: read the file and convert to base64
+  if (typeof window === 'undefined') {
+    const fs = await import('fs')
+    const path = await import('path')
+    const signaturePath = path.join(process.cwd(), 'public', 'signatures', 'image.png')
+
+    try {
+      const imageBuffer = fs.readFileSync(signaturePath)
+      const base64Image = imageBuffer.toString('base64')
+      return `data:image/png;base64,${base64Image}`
+    } catch (error) {
+      console.error('Failed to read Party A signature:', error)
+      return 'data:image/png;base64,PLACEHOLDER'
+    }
+  }
+
+  // For client-side: return the public path (will be fetched by browser)
+  return defaultPartyA.signature.publicPath
 }
 
 // Helper function to get Party A details for contracts
@@ -44,7 +66,7 @@ export function getDefaultPartyA() {
     party_a_name: `${defaultPartyA.signatory.title} ${defaultPartyA.signatory.name_khmer}`,
     party_a_position: defaultPartyA.signatory.position_khmer,
     party_a_organization: defaultPartyA.organization.name_khmer,
-    party_a_signature: defaultPartyA.signature.data
+    party_a_signature: defaultPartyA.signature.publicPath
   }
 }
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getPartyASignatureBase64 } from '@/lib/defaultPartyA'
 
 /**
  * POST /api/contracts/configure
@@ -49,6 +50,9 @@ export async function POST(request: NextRequest) {
       5: 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី'
     }
 
+    // Get Party A signature as base64
+    const partyASignature = await getPartyASignatureBase64()
+
     // Create contract with 1-year duration
     const today = new Date()
     const nextYear = new Date(today)
@@ -59,7 +63,8 @@ export async function POST(request: NextRequest) {
         contract_number,
         contract_type_id: contractType,
         party_a_name: partyANames[contractType],
-        party_a_signature: 'data:image/png;base64,PLACEHOLDER', // Admin will sign later
+        party_a_signature: partyASignature,
+        party_a_signed_date: today,
         party_b_name: user.full_name,
         party_b_signature: signature,
         start_date: today,
