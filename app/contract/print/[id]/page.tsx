@@ -245,6 +245,14 @@ export default function ContractPrintPage() {
           font-size: 11pt;
         }
 
+        .signature-image {
+          max-width: 200px;
+          max-height: 100px;
+          margin: 0.5cm auto;
+          display: block;
+          object-fit: contain;
+        }
+
         .print-button {
           position: fixed;
           top: 20px;
@@ -451,17 +459,55 @@ export default function ContractPrintPage() {
           {/* Signature Section */}
           <div className="signature-section">
             <div className="signature-box">
-            <div className="signature-label-moul">ជ.ប្រធានគម្រោង</div>
+              <div className="signature-label-moul">ជ.ប្រធានគម្រោង</div>
               <div className="signature-label-moul">ប្រធាននាយកដ្ឋាន</div>
+
+              {/* Party A Signature Image */}
+              {contractData.party_a_signature && contractData.party_a_signature !== 'data:image/png;base64,PLACEHOLDER' && (
+                <img
+                  src={contractData.party_a_signature}
+                  alt="Party A Signature"
+                  className="signature-image"
+                />
+              )}
+
               <div className="signature-label" style={{fontWeight: 400}}>ហត្ថលេខានិងឈ្មោះ</div>
+              {contractData.party_a_signed_date && (
+                <div style={{ fontSize: '10pt', marginTop: '0.2cm' }}>
+                  {new Date(contractData.party_a_signed_date).toLocaleDateString('km-KH', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </div>
+              )}
             </div>
             <div className="signature-box">
               <div className="signature-line">
                 ថ្ងៃទី............ ខែ...............ឆ្នាំ............
               </div>
+
+              {/* Party B Signature Image */}
+              {contractData.party_b_signature && (
+                <img
+                  src={contractData.party_b_signature}
+                  alt="Party B Signature"
+                  className="signature-image"
+                />
+              )}
+
               <div className="signature-label" style={{fontWeight: 400}}>
                 ហត្ថលេខានិងឈ្មោះ ({isContractType4 ? 'ប្រធានការិយាល័យអប់រំ' : 'នាយកសាលា'})
               </div>
+              {contractData.party_b_signed_date && (
+                <div style={{ fontSize: '10pt', marginTop: '0.2cm' }}>
+                  {new Date(contractData.party_b_signed_date).toLocaleDateString('km-KH', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
