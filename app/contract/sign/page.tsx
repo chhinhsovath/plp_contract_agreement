@@ -230,14 +230,14 @@ export default function ContractSignPage() {
     const readTime = Math.round((Date.now() - readStartTime) / 1000)
 
     try {
-      // Check if this is Contract 4 or 5 with configuration selections
-      const isConfigurableContract = user.contract_type === 4 || user.contract_type === 5
+      // Check if this is a configurable contract (Types 1-5) with configuration selections
+      const isConfigurableContract = user.contract_type >= 1 && user.contract_type <= 5
       const selectionsJson = localStorage.getItem('contract_selections')
 
       let response
 
       if (isConfigurableContract && selectionsJson) {
-        // New flow: Contract 4 & 5 with configuration selections
+        // New flow: All contract types (1-5) with configuration selections
         const selections = JSON.parse(selectionsJson)
 
         response = await fetch('/api/contracts/configure', {
@@ -256,7 +256,7 @@ export default function ContractSignPage() {
           localStorage.removeItem('contract_selections')
         }
       } else {
-        // Old flow: Contract 1, 2, 3 with generic templates
+        // Fallback flow for contracts without configuration selections
         response = await fetch('/api/contracts/sign', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

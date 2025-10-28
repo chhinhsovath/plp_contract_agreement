@@ -53,9 +53,16 @@ export default function ContractConfigurePage() {
         const data = await response.json()
         const userData = data.user
 
-        // Only Contract 4 & 5 PARTNER users can access this page
-        if (userData.role !== UserRole.PARTNER || (userData.contract_type !== 4 && userData.contract_type !== 5)) {
-          message.error('អ្នកមិនមានសិទ្ធិចូលប្រើទំព័រនេះ')
+        // Only PARTNER users can access this page for all contract types
+        if (userData.role !== UserRole.PARTNER) {
+          message.error('អ្នកមិនមានសិទ្ធិចូលប្រើទំព័របង្កើតកិច្ចព្រមព្រៀង')
+          router.push('/')
+          return
+        }
+
+        // Support all contract types 1-5
+        if (!userData.contract_type || userData.contract_type < 1 || userData.contract_type > 5) {
+          message.error('ប្រភេទកិច្ចព្រមព្រៀងមិនត្រឹមត្រូវ')
           router.push('/')
           return
         }
