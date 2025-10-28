@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 /**
- * GET /api/contract-deliverables?contract_type=4
+ * GET /api/contract-deliverables?contract_type=1
  * Get all deliverables and their options for a contract type
  * Used by partners to configure their contract selections
+ * Supports Contract Types 1-5
  */
 export async function GET(request: NextRequest) {
   try {
@@ -20,10 +21,10 @@ export async function GET(request: NextRequest) {
 
     const contractTypeNum = parseInt(contract_type)
 
-    // Only allow Contract 4 & 5 (DoE-District and DoE-School)
-    if (contractTypeNum !== 4 && contractTypeNum !== 5) {
+    // Allow Contract Types 1-5
+    if (contractTypeNum < 1 || contractTypeNum > 5) {
       return NextResponse.json(
-        { error: 'Only Contract Type 4 and 5 are supported for configuration' },
+        { error: 'Invalid contract type. Supported types: 1-5' },
         { status: 400 }
       )
     }

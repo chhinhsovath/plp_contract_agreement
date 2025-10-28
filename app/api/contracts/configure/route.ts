@@ -5,7 +5,7 @@ import { getPartyASignatureBase64 } from '@/lib/defaultPartyA'
 /**
  * POST /api/contracts/configure
  * Create contract with user's selected deliverable options
- * For Contract Type 4 & 5 only
+ * Supports Contract Types 1-5
  */
 export async function POST(request: NextRequest) {
   try {
@@ -20,10 +20,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Only allow Contract 4 & 5
-    if (contractType !== 4 && contractType !== 5) {
+    // Allow Contract Types 1-5
+    if (contractType < 1 || contractType > 5) {
       return NextResponse.json(
-        { error: 'Only Contract Type 4 and 5 are supported' },
+        { error: 'Invalid contract type. Supported types: 1-5' },
         { status: 400 }
       )
     }
@@ -46,8 +46,11 @@ export async function POST(request: NextRequest) {
 
     // Get party A details based on contract type
     const partyANames: any = {
-      4: 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី',
-      5: 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី'
+      1: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ (គបស)',
+      2: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (គបក)',
+      3: 'ប្រធានគម្រោង',
+      4: 'នាយកដ្ឋានបឋមសិក្សា',
+      5: 'នាយកដ្ឋានបឋមសិក្សា'
     }
 
     // Get Party A signature as base64
@@ -107,15 +110,30 @@ export async function POST(request: NextRequest) {
       })
     )
 
-    // Get all indicators for this contract type
+    // Get indicators for this contract type
+    // Indicators are organized by type: 101-105 (Type 1), 201-205 (Type 2), 301-305 (Type 3), etc.
+    const indicatorRanges: any = {
+      1: { min: 101, max: 105 },
+      2: { min: 201, max: 205 },
+      3: { min: 301, max: 305 },
+      4: { min: 1, max: 5 },     // Existing indicators
+      5: { min: 1, max: 5 }       // Existing indicators
+    }
+
+    const range = indicatorRanges[contractType] || { min: 1, max: 5 }
+
     const indicators = await prisma.indicators.findMany({
       where: {
-        is_active: true
+        is_active: true,
+        indicator_number: {
+          gte: range.min,
+          lte: range.max
+        }
       },
       orderBy: {
         indicator_number: 'asc'
       },
-      take: 5 // Only 5 indicators for Contract 4 & 5
+      take: 5
     })
 
     // Create contract_indicators linkages with baseline/target from selected options
