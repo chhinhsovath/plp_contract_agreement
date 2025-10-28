@@ -42,7 +42,7 @@ async function main() {
         },
         {
           option_number: 2,
-          option_text_khmer: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ៩៣.៧% ត្រូវបង្កើនដល់ ៩៥%',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៩៣.៧% ត្រូវបង្កើនដល់ ៩៥%',
           option_text_english: 'If baseline = 93.7%, increase to 95%',
           condition_type: 'equal',
           baseline_percentage: 93.7,
@@ -75,7 +75,7 @@ async function main() {
         },
         {
           option_number: 2,
-          option_text_khmer: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ៣៦% ត្រូវបង្កើនដល់ ៤៦%',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៣៦% ត្រូវបង្កើនដល់ ៤៦%',
           option_text_english: 'If baseline = 36%, increase to 46%',
           condition_type: 'equal',
           baseline_percentage: 36.0,
@@ -108,7 +108,7 @@ async function main() {
         },
         {
           option_number: 2,
-          option_text_khmer: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ៣០% ត្រូវបង្កើនដល់ ៥០%',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៣០% ត្រូវបង្កើនដល់ ៥០%',
           option_text_english: 'If baseline = 30%, increase to 50%',
           condition_type: 'equal',
           baseline_percentage: 30.0,
@@ -141,7 +141,7 @@ async function main() {
         },
         {
           option_number: 2,
-          option_text_khmer: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ៥១% ត្រូវបន្ថយ មកដល់ ៤៦%',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៥១% ត្រូវបន្ថយ មកដល់ ៤៦%',
           option_text_english: 'If baseline = 51%, decrease to 46%',
           condition_type: 'equal',
           baseline_percentage: 51.0,
@@ -174,7 +174,7 @@ async function main() {
         },
         {
           option_number: 2,
-          option_text_khmer: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ២៨% ត្រូវបង្កើនដល់ ៣២%',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ២៨% ត្រូវបង្កើនដល់ ៣២%',
           option_text_english: 'If baseline = 28%, increase to 32%',
           condition_type: 'equal',
           baseline_percentage: 28.0,

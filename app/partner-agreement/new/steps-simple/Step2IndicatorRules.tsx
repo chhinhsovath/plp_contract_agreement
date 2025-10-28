@@ -34,7 +34,7 @@ const FIXED_INDICATORS = [
     implementation_period: '2025-2026',
     rules: [
       { id: 1, text_km: 'បើទិន្នន័យមូលដ្ឋាន ទាបជាង ៩៣.៧% ត្រូវបង្កើន១.៣%', text_en: 'If baseline < 93.7%, increase by 1.3%' },
-      { id: 2, text_km: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ៩៣.៧% ត្រូវបង្កើនដល់ ៩៥%', text_en: 'If baseline = 93.7%, increase to 95%' },
+      { id: 2, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៩៣.៧% ត្រូវបង្កើនដល់ ៩៥%', text_en: 'If baseline = 93.7%, increase to 95%' },
       { id: 3, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៩៥% ឬលើសត្រូវរក្សា', text_en: 'If baseline ≥ 95%, maintain level' }
     ]
   },
@@ -48,7 +48,7 @@ const FIXED_INDICATORS = [
     implementation_period: '2025-2026',
     rules: [
       { id: 1, text_km: 'បើទិន្នន័យមូលដ្ឋាន ទាបជាង ៣៦% ត្រូវបង្កើន១០%', text_en: 'If baseline < 36%, increase by 10%' },
-      { id: 2, text_km: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ៣៦% ត្រូវបង្កើនដល់ ៤៦%', text_en: 'If baseline = 36%, increase to 46%' },
+      { id: 2, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៣៦% ត្រូវបង្កើនដល់ ៤៦%', text_en: 'If baseline = 36%, increase to 46%' },
       { id: 3, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៤៦% ឬលើសត្រូវរក្សា', text_en: 'If baseline ≥ 46%, maintain level' }
     ]
   },
@@ -62,7 +62,7 @@ const FIXED_INDICATORS = [
     implementation_period: '2025-2026',
     rules: [
       { id: 1, text_km: 'បើទិន្នន័យមូលដ្ឋាន ទាបជាង ៣០% ត្រូវបង្កើន២០%', text_en: 'If baseline < 30%, increase by 20%' },
-      { id: 2, text_km: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ៣០% ត្រូវបង្កើនដល់ ៥០%', text_en: 'If baseline = 30%, increase to 50%' },
+      { id: 2, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៣០% ត្រូវបង្កើនដល់ ៥០%', text_en: 'If baseline = 30%, increase to 50%' },
       { id: 3, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៥០% ឬលើសត្រូវរក្សា', text_en: 'If baseline ≥ 50%, maintain level' }
     ]
   },
@@ -76,7 +76,7 @@ const FIXED_INDICATORS = [
     implementation_period: '2025-2026',
     rules: [
       { id: 1, text_km: 'បើទិន្នន័យមូលដ្ឋាន ខ្ពស់ជាង ៥១% ត្រូវបន្ថយ៥%', text_en: 'If baseline > 51%, reduce by 5%' },
-      { id: 2, text_km: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ៥១% ត្រូវបន្ថយមក ៤៦%', text_en: 'If baseline = 51%, reduce to 46%' },
+      { id: 2, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៥១% ត្រូវបន្ថយមក ៤៦%', text_en: 'If baseline = 51%, reduce to 46%' },
       { id: 3, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៤៦% ឬទាបជាងត្រូវរក្សា', text_en: 'If baseline ≤ 46%, maintain level' }
     ]
   },
@@ -90,7 +90,7 @@ const FIXED_INDICATORS = [
     implementation_period: '2025-2026',
     rules: [
       { id: 1, text_km: 'បើទិន្នន័យមូលដ្ឋាន ទាបជាង ២៨% ត្រូវបង្កើន៤%', text_en: 'If baseline < 28%, increase by 4%' },
-      { id: 2, text_km: 'បើទិន្ន័យមូលដ្ឋាន ស្មើ ២៨% ត្រូវបង្កើនដល់ ៣២%', text_en: 'If baseline = 28%, increase to 32%' },
+      { id: 2, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ២៨% ត្រូវបង្កើនដល់ ៣២%', text_en: 'If baseline = 28%, increase to 32%' },
       { id: 3, text_km: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៣២% ឬលើសត្រូវរក្សា', text_en: 'If baseline ≥ 32%, maintain level' }
     ]
   }

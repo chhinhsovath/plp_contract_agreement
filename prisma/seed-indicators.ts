@@ -33,7 +33,7 @@ async function main() {
         {
           condition: 'baseline == 93.7',
           target_increase: 'up_to_95',
-          description_km: 'បើទិន្ន័យមូលដ្ឋានស្មើ 93.7% ត្រូវបង្កើនដល់ 95%',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 93.7% ត្រូវបង្កើនដល់ 95%',
           description_en: 'If baseline = 93.7%, reach 95%'
         },
         {
@@ -72,7 +72,7 @@ async function main() {
         {
           condition: 'baseline == 36',
           target_increase: 'up_to_46',
-          description_km: 'បើទិន្ន័យមូលដ្ឋានស្មើ 36% ត្រូវបង្កើនដល់ 46%',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 36% ត្រូវបង្កើនដល់ 46%',
           description_en: 'If baseline = 36%, reach 46%'
         },
         {
@@ -111,7 +111,7 @@ async function main() {
         {
           condition: 'baseline == 30',
           target_increase: 'up_to_50',
-          description_km: 'បើទិន្ន័យមូលដ្ឋានស្មើ 30% ត្រូវបង្កើនដល់ 50%',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 30% ត្រូវបង្កើនដល់ 50%',
           description_en: 'If baseline = 30%, reach 50%'
         },
         {
@@ -150,7 +150,7 @@ async function main() {
         {
           condition: 'baseline == 51',
           target_decrease: 'down_to_46',
-          description_km: 'បើទិន្ន័យមូលដ្ឋានស្មើ 51% ត្រូវបន្ថយមកដល់ 46%',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 51% ត្រូវបន្ថយមកដល់ 46%',
           description_en: 'If baseline = 51%, reduce to 46%'
         },
         {
@@ -189,7 +189,7 @@ async function main() {
         {
           condition: 'baseline == 28',
           target_increase: 'up_to_32',
-          description_km: 'បើទិន្ន័យមូលដ្ឋានស្មើ 28% ត្រូវបង្កើនដល់ 32%',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 28% ត្រូវបង្កើនដល់ 32%',
           description_en: 'If baseline = 28%, reach 32%'
         },
         {
