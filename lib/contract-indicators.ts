@@ -396,7 +396,7 @@ export const CONTRACT_ACTIVITIES: Activity[] = [
     progress: 90,
     budget: 15000,
     spent: 13500,
-    responsible: 'គណៈកម្មការជ្រើសរើស'
+    responsible: 'គណៈកម្មាធិការជ្រើសរើស'
   },
   {
     id: 'act-2-3',

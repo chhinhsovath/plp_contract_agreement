@@ -163,7 +163,7 @@ export const PROJECT_PLANS: ProjectPlan[] = [
         endDate: '2024-02-28',
         progress: 90,
         status: 'in-progress',
-        responsible: 'គណៈកម្មការជ្រើសរើស'
+        responsible: 'គណៈកម្មាធិការជ្រើសរើស'
       },
       {
         id: 'pcu-3',

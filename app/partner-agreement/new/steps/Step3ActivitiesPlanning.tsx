@@ -60,7 +60,7 @@ export default function Step3ActivitiesPlanning({ formData, updateFormData }: Pr
     const indicatorNames: any = {
       'IND-001': 'ចុះឈ្មោះសិស្សថ្នាក់ទី១',
       'IND-002': 'បណ្ណព័ត៌មានសាលារៀន',
-      'IND-003': 'គណៈកម្មការគ្រប់គ្រង',
+      'IND-003': 'គណៈកម្មាធិការគ្រប់គ្រង',
       'IND-004': 'សិស្សក្រោមមូលដ្ឋានថយចុះ',
       'IND-005': 'សិស្សទទួលនិទ្ទេស A,B,C'
     }

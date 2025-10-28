@@ -55,7 +55,7 @@ const FIXED_INDICATORS = [
   {
     indicator_id: 3,
     indicator_number: 3,
-    indicator_name_km: 'ភាគរយសាលារៀនមានគណៈកម្មការគ្រប់គ្រង',
+    indicator_name_km: 'ភាគរយសាលារៀនមានគណៈកម្មាធិការគ្រប់គ្រង',
     indicator_name_en: 'Schools with management committees',
     baseline_percentage: 30,
     target_percentage: 50,

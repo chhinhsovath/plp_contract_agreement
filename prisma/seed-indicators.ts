@@ -92,14 +92,14 @@ async function main() {
     data: {
       indicator_code: 'IND-003',
       indicator_number: 3,
-      indicator_name_km: 'ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន',
+      indicator_name_km: 'ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន',
       indicator_name_en: 'Percentage of schools establishing school management committees',
       target_percentage: 50,
       baseline_percentage: 30,
       is_reduction_target: false,
       implementation_start: '2025-10',
       implementation_end: '2026-03',
-      description_km: 'សូចនាករទី៣: ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន (៥០%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣០%',
+      description_km: 'សូចនាករទី៣: ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន (៥០%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣០%',
       description_en: 'Indicator 3: Percentage of schools establishing school management committees (50%) in academic year 2025-2026 compared to baseline 30%',
       calculation_rules: [
         {

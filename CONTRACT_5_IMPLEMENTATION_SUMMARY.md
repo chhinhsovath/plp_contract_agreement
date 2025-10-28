@@ -148,7 +148,7 @@ All 5 deliverables configured with baseline → target percentages:
    - (School information boards)
    - Baseline: 36% → Target: 46%
 
-3. **ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រង**
+3. **ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រង**
    - (School management committees)
    - Baseline: 30% → Target: 50%
 
