@@ -391,12 +391,13 @@ export default function MEDashboardPage() {
       key: 'type',
       width: 100,
       render: (type: string) => {
-        const colors = {
-          output: 'blue',
-          outcome: 'green',
-          impact: 'purple'
+        const colors: any = {
+          'លទ្ធផល': 'blue',       // OUTPUT
+          'កាត់បន្ថយ': 'orange',   // REDUCTION
+          'outcome': 'green',
+          'impact': 'purple'
         }
-        return <Tag color={colors[type as keyof typeof colors]}>{type.toUpperCase()}</Tag>
+        return <Tag color={colors[type] || 'blue'}>{type}</Tag>
       }
     },
     {
