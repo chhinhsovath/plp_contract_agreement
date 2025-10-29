@@ -23,8 +23,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const contractType = searchParams.get('contractType')
 
-    let whereClause: any = {}
-
     // Determine which contract type to filter by
     let effectiveContractType = null
     if (user.role === UserRole.PARTNER && user.contract_type) {
