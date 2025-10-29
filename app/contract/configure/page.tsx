@@ -67,8 +67,25 @@ export default function ContractConfigurePage() {
           return
         }
 
-        // Allow access for signed users to configure deliverables
-        // This page is accessible both before and after contract signing
+        // CRITICAL: Check if user has already configured deliverables
+        // Users cannot reconfigure without admin approval
+        if (userData.contract_signed) {
+          const checkResponse = await fetch(`/api/me/deliverables`)
+          if (checkResponse.ok) {
+            const checkData = await checkResponse.json()
+            if (checkData.success && checkData.data.hasDeliverables && checkData.data.deliverables.length > 0) {
+              // User already has configured deliverables
+              message.error({
+                content: 'អ្នកបានកំណត់រចនាសម្ព័ន្ធរួចហើយ។ ប្រសិនបើចង់ផ្លាស់ប្តូរ សូមស្នើសុំការអនុម័តពីអ្នកគ្រប់គ្រង។',
+                duration: 5
+              })
+              router.push('/me-dashboard')
+              return
+            }
+          }
+        }
+
+        // Allow access only for users who haven't configured yet
         setUser(userData)
         await fetchDeliverables(userData.contract_type)
       } else {
