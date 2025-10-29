@@ -25,21 +25,40 @@ export async function GET(request: Request) {
 
     let whereClause: any = {}
 
-    // Filter based on user role and contract type
+    // Determine which contract type to filter by
+    let effectiveContractType = null
     if (user.role === UserRole.PARTNER && user.contract_type) {
       // Partners only see their contract type indicators
-      whereClause.contract_type = user.contract_type
+      effectiveContractType = user.contract_type
     } else if (contractType) {
       // Admin/others can filter by contract type
-      whereClause.contract_type = parseInt(contractType)
+      effectiveContractType = parseInt(contractType)
     }
 
-    // Fetch REAL 5 indicators from indicators table (NOT me_indicators!)
-    // These are the 5 fixed performance indicators from PRD
+    // Define indicator_number ranges for each contract type
+    const indicatorRanges: any = {
+      1: { min: 101, max: 105 },  // AGR1-IND-001 to AGR1-IND-005
+      2: { min: 201, max: 205 },  // AGR2-IND-001 to AGR2-IND-005
+      3: { min: 301, max: 305 },  // AGR3-IND-001 to AGR3-IND-005
+      4: { min: 1, max: 5 },      // IND-001 to IND-005
+      5: { min: 1, max: 5 }       // IND-001 to IND-005
+    }
+
+    // Build where clause for indicators query
+    let indicatorsWhere: any = { is_active: true }
+
+    // Filter by indicator_number range if contract type is specified
+    if (effectiveContractType && indicatorRanges[effectiveContractType]) {
+      const range = indicatorRanges[effectiveContractType]
+      indicatorsWhere.indicator_number = {
+        gte: range.min,
+        lte: range.max
+      }
+    }
+
+    // Fetch indicators filtered by contract type range
     const indicators = await prisma.indicators.findMany({
-      where: {
-        is_active: true
-      },
+      where: indicatorsWhere,
       orderBy: { indicator_number: 'asc' }
     })
 
