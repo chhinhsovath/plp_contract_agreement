@@ -88,12 +88,8 @@ export default function MEDashboardPage() {
           return
         }
 
-        // Check if Contract Type 4 or 5 user has incomplete contract configuration
-        if (userData.role === UserRole.PARTNER &&
-            userData.contract_signed &&
-            (userData.contract_type === 4 || userData.contract_type === 5)) {
-          await checkIncompleteConfiguration(userData.id, userData.contract_type)
-        }
+        // Note: Configuration check removed - sign page now enforces proper configuration
+        // Users can no longer bypass deliverable selection, so this check is no longer needed
 
         setUser(userData)
         // Set initial contract filter for PARTNER users
@@ -111,52 +107,6 @@ export default function MEDashboardPage() {
     }
   }
 
-  const checkIncompleteConfiguration = async (userId: number, contractType: number) => {
-    try {
-      // Check if user's contract has deliverable selections
-      const response = await fetch(`/api/contracts/check-configuration?userId=${userId}`)
-      if (response.ok) {
-        const data = await response.json()
-
-        if (!data.hasConfiguration) {
-          // User has signed contract but no deliverable selections
-          Modal.confirm({
-            title: <span style={{ fontFamily: 'Hanuman' }}>ការកំណត់រចនាសម្ព័ន្ធមិនពេញលេញ</span>,
-            content: (
-              <div style={{ fontFamily: 'Hanuman' }}>
-                <p>កិច្ចសន្យារបស់អ្នកត្រូវបានចុះហត្ថលេខា ប៉ុន្តែមិនបានជ្រើសរើសជម្រើសសមិទ្ធកម្ម។</p>
-                <p>សូមធ្វើការជ្រើសរើសជម្រើស (១, ២, ឬ ៣) សម្រាប់សមិទ្ធកម្មនីមួយៗ ដើម្បីទទួលបានតម្លៃគោលដៅត្រឹមត្រូវ។</p>
-              </div>
-            ),
-            okText: 'ជ្រើសរើសឥឡូវនេះ',
-            cancelText: 'ចាកចេញ',
-            icon: <AlertOutlined style={{ color: '#faad14' }} />,
-            onOk: async () => {
-              // Delete incomplete contract and reset user flag
-              const deleteResponse = await fetch('/api/contracts/reset-incomplete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, contractType })
-              })
-
-              if (deleteResponse.ok) {
-                message.success('សូមជ្រើសរើសជម្រើសសមិទ្ធកម្មរបស់អ្នក')
-                router.push('/contract/configure')
-              } else {
-                message.error('មានបញ្ហាក្នុងការកំណត់ឡើងវិញ')
-              }
-            },
-            onCancel: () => {
-              // User chose to logout
-              handleLogout()
-            }
-          })
-        }
-      }
-    } catch (error) {
-      console.error('Failed to check configuration:', error)
-    }
-  }
 
   // Fetch indicators from database
   const fetchIndicators = async () => {
