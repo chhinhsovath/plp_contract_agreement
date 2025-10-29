@@ -230,9 +230,21 @@ export default function ContractSignPage() {
     const readTime = Math.round((Date.now() - readStartTime) / 1000)
 
     try {
-      // Check if this is a configurable contract (Types 1-5) with configuration selections
+      // Check if this is a configurable contract (Types 1-5) requiring deliverable selection
       const isConfigurableContract = user.contract_type >= 1 && user.contract_type <= 5
       const selectionsJson = localStorage.getItem('contract_selections')
+
+      // CRITICAL: For Contract Types 1-5, deliverable configuration is REQUIRED
+      if (isConfigurableContract && !selectionsJson) {
+        message.error({
+          content: 'សូមជ្រើសរើសជម្រើសសមិទ្ធកម្មមុនពេលចុះហត្ថលេខា',
+          duration: 5
+        })
+        setSigning(false)
+        // Redirect to configuration page
+        router.push('/contract/configure')
+        return
+      }
 
       let response
 
@@ -256,7 +268,8 @@ export default function ContractSignPage() {
           localStorage.removeItem('contract_selections')
         }
       } else {
-        // Fallback flow for contracts without configuration selections
+        // Fallback flow for contracts without configuration selections (DEPRECATED)
+        // This should never be reached for Contract Types 1-5
         response = await fetch('/api/contracts/sign', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

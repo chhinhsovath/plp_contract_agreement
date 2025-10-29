@@ -76,6 +76,16 @@ export async function GET(request: Request) {
       orderBy: { created_at: 'desc' }
     })
 
+    // CRITICAL: For ALL Contract Types 1-5, return empty if no contract exists
+    // This prevents showing indicators to users who haven't configured deliverables
+    if (!userContract && effectiveContractType && effectiveContractType >= 1 && effectiveContractType <= 5) {
+      return NextResponse.json({
+        indicators: [],
+        total: 0,
+        message: 'Please configure your contract deliverables first'
+      })
+    }
+
     // Map indicators with user's contract data
     const indicatorsWithProgress = indicators.map(indicator => {
       // Find if user has this indicator in their contract
