@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button, Card, Col, Row, Typography, Space, Dropdown, Avatar, message, Tabs, Badge, Statistic, Tag, Table, Empty, Spin } from 'antd'
-import { FileTextOutlined, EditOutlined, FileAddOutlined, FolderOpenOutlined, UserOutlined, LogoutOutlined, TeamOutlined, DashboardOutlined, CheckCircleOutlined, ClockCircleOutlined, FileDoneOutlined, FormOutlined, BankOutlined, SolutionOutlined, BookOutlined, HomeOutlined } from '@ant-design/icons'
+import { FileTextOutlined, EditOutlined, FileAddOutlined, FolderOpenOutlined, UserOutlined, LogoutOutlined, TeamOutlined, DashboardOutlined, CheckCircleOutlined, ClockCircleOutlined, FileDoneOutlined, FormOutlined, BankOutlined, SolutionOutlined, BookOutlined, HomeOutlined, BellOutlined, AppstoreOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { getAvailableContractIds, getContractTemplate } from '@/lib/contract-templates'
 import { UserRole, getRoleLabel, hasPermission } from '@/lib/roles'
@@ -198,6 +198,27 @@ export default function HomePage() {
       icon: <TeamOutlined />,
       onClick: () => router.push('/admin/users'),
     }] : []),
+    ...(['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user?.role) ? [{
+      key: 'content-management',
+      label: 'គ្រប់គ្រងខ្លឹមសារ (CMS)',
+      icon: <FileTextOutlined />,
+      onClick: () => router.push('/admin/content-management'),
+    }] : []),
+    ...(['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user?.role) ? [{
+      key: 'deliverables-management',
+      label: 'គ្រប់គ្រងសមិទ្ធកម្ម',
+      icon: <FormOutlined />,
+      onClick: () => router.push('/admin/deliverables-management'),
+    }] : []),
+    ...(user?.role === 'SUPER_ADMIN' ? [{
+      key: 'reconfig-requests',
+      label: 'សំណើផ្លាស់ប្តូរសមិទ្ធកម្ម',
+      icon: <BellOutlined />,
+      onClick: () => router.push('/admin/reconfiguration-requests'),
+    }] : []),
+    {
+      type: 'divider' as const,
+    },
     {
       key: 'logout',
       label: 'ចាកចេញ',

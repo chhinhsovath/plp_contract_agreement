@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message, Dropdown, Avatar, Modal, Form, Input, Spin } from 'antd'
-import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined, CloseCircleOutlined, SettingOutlined } from '@ant-design/icons'
+import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined, CloseCircleOutlined, SettingOutlined, BellOutlined, FormOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { PROJECT_PLANS, getProjectPlanByContract, calculateProjectProgress, getUpcomingMilestones, getDelayedDeliverables } from '@/lib/project-deliverables'
@@ -948,6 +948,32 @@ export default function MEDashboardPage() {
                       onClick: () => router.push('/contract/configure')
                     }] : []),
                     { type: 'divider' },
+                    // Admin menu items for SUPER_ADMIN, ADMIN, COORDINATOR
+                    ...(user?.role === 'SUPER_ADMIN' ? [{
+                      key: 'manage-users',
+                      icon: <TeamOutlined />,
+                      label: 'គ្រប់គ្រងអ្នកប្រើប្រាស់',
+                      onClick: () => router.push('/admin/users')
+                    }] : []),
+                    ...(['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user?.role) ? [{
+                      key: 'content-management',
+                      icon: <FileTextOutlined />,
+                      label: 'គ្រប់គ្រងខ្លឹមសារ (CMS)',
+                      onClick: () => router.push('/admin/content-management')
+                    }] : []),
+                    ...(['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user?.role) ? [{
+                      key: 'deliverables-management',
+                      icon: <FormOutlined />,
+                      label: 'គ្រប់គ្រងសមិទ្ធកម្ម',
+                      onClick: () => router.push('/admin/deliverables-management')
+                    }] : []),
+                    ...(user?.role === 'SUPER_ADMIN' ? [{
+                      key: 'reconfig-requests',
+                      icon: <BellOutlined />,
+                      label: 'សំណើផ្លាស់ប្តូរសមិទ្ធកម្ម',
+                      onClick: () => router.push('/admin/reconfiguration-requests')
+                    }] : []),
+                    ...(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR' ? [{ type: 'divider' }] : []),
                     {
                       key: 'logout',
                       icon: <LogoutOutlined />,
