@@ -12,6 +12,7 @@ export default function ContractPrintPage() {
   const [contractData, setContractData] = useState<any>(null)
   const [user, setUser] = useState<any>(null)
   const [editMode, setEditMode] = useState(false)
+  const [editorMode, setEditorMode] = useState<'simple' | 'advanced'>('simple') // NEW: Editor mode toggle
   const [editedFields, setEditedFields] = useState<any>({})
   const [saving, setSaving] = useState(false)
 
@@ -28,6 +29,7 @@ export default function ContractPrintPage() {
   const [sectionOrder, setSectionOrder] = useState<string[]>(
     DEFAULT_SECTIONS.map(s => s.id)
   )
+  const [sectionVisibility, setSectionVisibility] = useState<Record<string, boolean>>({}) // NEW: Track section visibility
   const [layoutChanged, setLayoutChanged] = useState(false)
 
   useEffect(() => {
@@ -625,13 +627,38 @@ export default function ContractPrintPage() {
                 checked={editMode}
                 onChange={(checked) => {
                   setEditMode(checked)
-                  if (!checked) setEditedFields({})
+                  if (!checked) {
+                    setEditedFields({})
+                    setEditorMode('simple')
+                  }
                 }}
                 checkedChildren={<EditOutlined />}
                 unCheckedChildren="កែប្រែ"
               />
 
               {editMode && (
+                <>
+                  {/* Mode Selector */}
+                  <Space.Compact>
+                    <Button
+                      size="small"
+                      type={editorMode === 'simple' ? 'primary' : 'default'}
+                      onClick={() => setEditorMode('simple')}
+                    >
+                      ធម្មតា
+                    </Button>
+                    <Button
+                      size="small"
+                      type={editorMode === 'advanced' ? 'primary' : 'default'}
+                      onClick={() => setEditorMode('advanced')}
+                    >
+                      កម្រិតខ្ពស់
+                    </Button>
+                  </Space.Compact>
+                </>
+              )}
+
+              {editMode && editorMode === 'simple' && (
                 <>
                   {Object.keys(editedFields).length > 0 && (
                     <Button
