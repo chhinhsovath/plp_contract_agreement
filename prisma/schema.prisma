@@ -8,28 +8,30 @@ datasource db {
 }
 
 model users {
-  id                     Int         @id @default(autoincrement())
-  full_name              String
-  phone_number           String      @unique
-  passcode               String
-  organization           String?
-  position               String?
-  email                  String?
-  created_at             DateTime    @default(now())
-  updated_at             DateTime    @updatedAt
-  last_login             DateTime?
-  is_active              Boolean     @default(true)
-  role                   String      @default("PARTNER")
-  contract_type          Int?
-  contract_read          Boolean     @default(false)
-  contract_read_time     Int?
-  configuration_complete Boolean     @default(false)
-  contract_signed        Boolean     @default(false)
-  contract_signed_date   DateTime?
-  ip_address_signed      String?
-  signature_data         String?
-  last_reset_at          DateTime?
-  contracts_created      contracts[] @relation("UserContracts")
+  id                            Int                              @id @default(autoincrement())
+  full_name                     String
+  phone_number                  String                           @unique
+  passcode                      String
+  organization                  String?
+  position                      String?
+  email                         String?
+  created_at                    DateTime                         @default(now())
+  updated_at                    DateTime                         @updatedAt
+  last_login                    DateTime?
+  is_active                     Boolean                          @default(true)
+  role                          String                           @default("PARTNER")
+  contract_type                 Int?
+  contract_read                 Boolean                          @default(false)
+  contract_read_time            Int?
+  configuration_complete        Boolean                          @default(false)
+  contract_signed               Boolean                          @default(false)
+  contract_signed_date          DateTime?
+  ip_address_signed             String?
+  signature_data                String?
+  last_reset_at                 DateTime?
+  contracts_created             contracts[]                      @relation("UserContracts")
+  reconfiguration_requests      reconfiguration_requests[]       @relation("UserRequests")
+  reviewed_requests             reconfiguration_requests[]       @relation("ReviewerRequests")
 
   @@index([phone_number])
   @@index([role])
@@ -504,4 +506,25 @@ model monitoring_visits {
 
   @@index([milestone_id])
   @@index([visit_date])
+}
+
+model reconfiguration_requests {
+  id                      Int       @id @default(autoincrement())
+  user_id                 Int
+  contract_type           Int
+  request_reason          String
+  current_selections      Json
+  requested_changes       String?
+  status                  String    @default("pending")
+  reviewed_by_id          Int?
+  reviewed_at             DateTime?
+  reviewer_notes          String?
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
+  user                    users     @relation("UserRequests", fields: [user_id], references: [id], onDelete: Cascade)
+  reviewed_by             users?    @relation("ReviewerRequests", fields: [reviewed_by_id], references: [id])
+
+  @@index([user_id])
+  @@index([status])
+  @@index([created_at])
 }

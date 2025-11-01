@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Button, Radio, Steps, Typography, Space, Alert, Spin, message } from 'antd'
-import { CheckCircleOutlined, RightOutlined, LeftOutlined, FileTextOutlined } from '@ant-design/icons'
+import { Card, Button, Radio, Steps, Typography, Space, Alert, Spin, message, Modal, Input, Badge } from 'antd'
+import { CheckCircleOutlined, RightOutlined, LeftOutlined, FileTextOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { UserRole } from '@/lib/roles'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text, Paragraph, TextArea } = Typography
 
 interface DeliverableOption {
   id: number
@@ -33,6 +33,14 @@ interface Selection {
   selected_option_id: number
 }
 
+interface ExistingSelection {
+  deliverable_id: number
+  deliverable_title_khmer: string
+  selected_option_id: number
+  option_text_khmer: string
+  option_number: number
+}
+
 export default function ContractConfigurePage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
@@ -41,6 +49,14 @@ export default function ContractConfigurePage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [selections, setSelections] = useState<Selection[]>([])
   const [submitting, setSubmitting] = useState(false)
+
+  // New state for viewing existing configuration
+  const [viewMode, setViewMode] = useState<'view' | 'edit'>('edit')
+  const [existingSelections, setExistingSelections] = useState<ExistingSelection[]>([])
+  const [showRequestModal, setShowRequestModal] = useState(false)
+  const [requestReason, setRequestReason] = useState('')
+  const [requestingChange, setRequestingChange] = useState(false)
+  const [pendingRequest, setPendingRequest] = useState<any>(null)
 
   useEffect(() => {
     checkSession()
@@ -67,36 +83,65 @@ export default function ContractConfigurePage() {
           return
         }
 
-        // Check if user already signed the contract
-        if (userData.contract_signed) {
-          message.info('អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យារួចហើយ')
-          router.push('/me-dashboard')
-          return
-        }
-
-        // Check if user already completed configuration - redirect to signature
-        if (userData.configuration_complete) {
-          message.info('អ្នកបានកំណត់រចនាសម្ព័ន្ធរួចហើយ')
-          router.push('/contract/submit')
-          return
-        }
-
-        // Check if user has read the contract first
-        if (!userData.contract_read) {
-          message.warning('សូមអានកិច្ចសន្យាជាមុនសិន')
-          router.push('/contract/sign')
-          return
-        }
-
-        // Allow access for users who have read but not configured yet
         setUser(userData)
-        await fetchDeliverables(userData.contract_type)
+
+        // Check if user already completed configuration or signed
+        if (userData.configuration_complete || userData.contract_signed) {
+          // Fetch existing selections to show in view mode
+          await fetchExistingSelections(userData.id)
+          await checkPendingRequest(userData.id)
+          setViewMode('view')
+        } else {
+          // Check if user has read the contract first
+          if (!userData.contract_read) {
+            message.warning('សូមអានកិច្ចសន្យាជាមុនសិន')
+            router.push('/contract/sign')
+            return
+          }
+          // Allow access for users who have read but not configured yet
+          await fetchDeliverables(userData.contract_type)
+          setViewMode('edit')
+        }
       } else {
         router.push('/login')
       }
     } catch (error) {
       console.error('Session check failed:', error)
       router.push('/login')
+    }
+  }
+
+  const fetchExistingSelections = async (userId: number) => {
+    setLoading(true)
+    try {
+      const response = await fetch(`/api/me/deliverables`)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.data.deliverables) {
+          setExistingSelections(data.data.deliverables)
+        }
+      } else {
+        message.error('មិនអាចទាញយកការជ្រើសរើសបច្ចុប្បន្នបាន')
+      }
+    } catch (error) {
+      console.error('Failed to fetch existing selections:', error)
+      message.error('មានបញ្ហាក្នុងការទាញយកទិន្នន័យ')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const checkPendingRequest = async (userId: number) => {
+    try {
+      const response = await fetch(`/api/reconfiguration-requests/my-request`)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.request && data.request.status === 'pending') {
+          setPendingRequest(data.request)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check pending request:', error)
     }
   }
 
@@ -193,6 +238,47 @@ export default function ContractConfigurePage() {
     }
   }
 
+  const handleRequestChange = () => {
+    setShowRequestModal(true)
+  }
+
+  const handleSubmitChangeRequest = async () => {
+    if (!requestReason.trim()) {
+      message.warning('សូមបញ្ចូលហេតុផលនៃការស្នើសុំផ្លាស់ប្តូរ')
+      return
+    }
+
+    setRequestingChange(true)
+    try {
+      const response = await fetch('/api/reconfiguration-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          contractType: user.contract_type,
+          requestReason: requestReason,
+          currentSelections: existingSelections
+        })
+      })
+
+      if (response.ok) {
+        message.success('បានបញ្ជូនសំណើស្នើសុំផ្លាស់ប្តូរទៅកាន់អ្នកគ្រប់គ្រងដោយជោគជ័យ')
+        setShowRequestModal(false)
+        setRequestReason('')
+        // Refresh to show pending request
+        await checkPendingRequest(user.id)
+      } else {
+        const data = await response.json()
+        message.error(data.error || 'មានបញ្ហាក្នុងការបញ្ជូនសំណើ')
+      }
+    } catch (error) {
+      console.error('Failed to submit request:', error)
+      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+    } finally {
+      setRequestingChange(false)
+    }
+  }
+
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f2f5' }}>
@@ -201,6 +287,159 @@ export default function ContractConfigurePage() {
     )
   }
 
+  // View Mode: Show existing selections
+  if (viewMode === 'view') {
+    return (
+      <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '40px 24px' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          {/* Header */}
+          <Card style={{ marginBottom: 32, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <Title level={2} style={{ marginBottom: 0 }}>
+                <EyeOutlined style={{ marginRight: 12 }} />
+                ការជ្រើសរើសសមិទ្ធកម្មរបស់អ្នក
+              </Title>
+              <Text type="secondary" style={{ fontSize: 15 }}>
+                នេះគឺជាការជ្រើសរើសសមិទ្ធកម្មដែលអ្នកបានជ្រើសរើស
+              </Text>
+            </Space>
+          </Card>
+
+          {/* Pending Request Alert */}
+          {pendingRequest && (
+            <Alert
+              message={<span style={{ fontSize: 15 }}>សំណើផ្លាស់ប្តូររបស់អ្នកកំពុងរង់ចាំការពិនិត្យ</span>}
+              description={
+                <div>
+                  <Text>ហេតុផល: {pendingRequest.request_reason}</Text>
+                  <br />
+                  <Text type="secondary">កាលបរិច្ឆេទស្នើសុំ: {new Date(pendingRequest.created_at).toLocaleDateString('km-KH')}</Text>
+                </div>
+              }
+              type="info"
+              showIcon
+              style={{ marginBottom: 32 }}
+            />
+          )}
+
+          {/* Current Selections */}
+          <Card title="សមិទ្ធកម្មដែលបានជ្រើសរើស" style={{ marginBottom: 32 }}>
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+              {existingSelections.map((selection, index) => (
+                <Card key={selection.deliverable_id} type="inner">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                    <div style={{ flex: 1 }}>
+                      <Badge count={selection.option_number} style={{ backgroundColor: '#52c41a' }}>
+                        <Title level={5} style={{ marginBottom: 8, paddingRight: 30 }}>
+                          សមិទ្ធកម្មទី {index + 1}
+                        </Title>
+                      </Badge>
+                      <Paragraph style={{ fontSize: 16, marginBottom: 12, color: '#0047AB' }}>
+                        {selection.deliverable_title_khmer}
+                      </Paragraph>
+                      <Alert
+                        message={<Text strong>ជម្រើសដែលបានជ្រើស: ជម្រើសទី {selection.option_number}</Text>}
+                        description={selection.option_text_khmer}
+                        type="success"
+                        showIcon
+                      />
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </Space>
+          </Card>
+
+          {/* Request Change Button */}
+          <Card style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+            <div style={{ textAlign: 'center', padding: 16 }}>
+              {user.contract_signed ? (
+                <Alert
+                  message="អ្នកបានចុះហត្ថលេខារួចហើយ"
+                  description="ការផ្លាស់ប្តូរការជ្រើសរើសត្រូវការការអនុម័តពីអ្នកគ្រប់គ្រង SUPER_ADMIN"
+                  type="warning"
+                  showIcon
+                  style={{ marginBottom: 24 }}
+                />
+              ) : null}
+
+              <Button
+                type="primary"
+                size="large"
+                icon={<EditOutlined />}
+                onClick={handleRequestChange}
+                disabled={!!pendingRequest}
+                style={{ padding: '0 32px', height: 48, fontSize: 15 }}
+              >
+                {pendingRequest ? 'សំណើកំពុងរង់ចាំ' : 'ស្នើសុំផ្លាស់ប្តូរការជ្រើសរើស'}
+              </Button>
+
+              <div style={{ marginTop: 16 }}>
+                <Button
+                  size="large"
+                  onClick={() => router.push('/me-dashboard')}
+                  style={{ padding: '0 32px', height: 48 }}
+                >
+                  ត្រឡប់ទៅផ្ទាំងគ្រប់គ្រង
+                </Button>
+              </div>
+            </div>
+          </Card>
+
+          {/* Request Change Modal */}
+          <Modal
+            title={<span className="font-hanuman">ស្នើសុំផ្លាស់ប្តូរការជ្រើសរើសសមិទ្ធកម្ម</span>}
+            open={showRequestModal}
+            onCancel={() => {
+              setShowRequestModal(false)
+              setRequestReason('')
+            }}
+            footer={[
+              <Button key="cancel" onClick={() => {
+                setShowRequestModal(false)
+                setRequestReason('')
+              }}>
+                បោះបង់
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                loading={requestingChange}
+                onClick={handleSubmitChangeRequest}
+              >
+                បញ្ជូនសំណើ
+              </Button>
+            ]}
+            width={600}
+          >
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <Alert
+                message="ការស្នើសុំផ្លាស់ប្តូរត្រូវការការអនុម័តពី SUPER_ADMIN"
+                description="សូមបញ្ជាក់ហេតុផលច្បាស់លាស់ថាហេតុអ្វីបានជាអ្នកត្រូវការផ្លាស់ប្តូរការជ្រើសរើសសមិទ្ធកម្មរបស់អ្នក"
+                type="info"
+                showIcon
+              />
+
+              <div>
+                <Text strong>ហេតុផលនៃការស្នើសុំ:</Text>
+                <TextArea
+                  rows={4}
+                  value={requestReason}
+                  onChange={(e) => setRequestReason(e.target.value)}
+                  placeholder="សូមបញ្ជាក់ហេតុផលដែលអ្នកត្រូវការផ្លាស់ប្តូរការជ្រើសរើស..."
+                  maxLength={500}
+                  showCount
+                  style={{ marginTop: 8 }}
+                />
+              </div>
+            </Space>
+          </Modal>
+        </div>
+      </div>
+    )
+  }
+
+  // Edit Mode: Initial configuration
   const currentDeliverable = deliverables[currentStep]
   const currentSelection = selections[currentStep]
 
@@ -328,7 +567,7 @@ export default function ContractConfigurePage() {
           </Card>
         )}
 
-        {/* Navigation Buttons - Optimized for Tablet/Desktop */}
+        {/* Navigation Buttons */}
         <Card style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
             <Button
