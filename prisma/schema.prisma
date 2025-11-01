@@ -32,6 +32,7 @@ model users {
   contracts_created             contracts[]                      @relation("UserContracts")
   reconfiguration_requests      reconfiguration_requests[]       @relation("UserRequests")
   reviewed_requests             reconfiguration_requests[]       @relation("ReviewerRequests")
+  downloads                     contract_downloads[]
 
   @@index([phone_number])
   @@index([role])
@@ -72,7 +73,10 @@ model contracts {
   updated_at             DateTime                          @updatedAt
   created_by_id          Int?
   section_order          Json?
+  contract_html          String?
+  download_count         Int                               @default(0)
   attachments            attachments[]
+  downloads              contract_downloads[]
   deliverable_selections contract_deliverable_selections[]
   contract_fields        contract_fields[]
   contract_indicators    contract_indicators[]
@@ -544,4 +548,19 @@ model content_texts {
   @@index([category])
   @@index([key])
   @@index([is_active])
+}
+
+model contract_downloads {
+  id            Int       @id @default(autoincrement())
+  contract_id   Int
+  user_id       Int?
+  downloaded_at DateTime  @default(now())
+  ip_address    String?
+  user_agent    String?
+  contract      contracts @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  user          users?    @relation(fields: [user_id], references: [id])
+
+  @@index([contract_id])
+  @@index([user_id])
+  @@index([downloaded_at])
 }
