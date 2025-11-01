@@ -2,17 +2,35 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Spin } from 'antd'
+import { Spin, Button, Switch, Space, message } from 'antd'
+import { EditOutlined, SaveOutlined, PrinterOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 
 export default function ContractPrintPage() {
   const params = useParams()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [contractData, setContractData] = useState<any>(null)
+  const [user, setUser] = useState<any>(null)
+  const [editMode, setEditMode] = useState(false)
+  const [editedFields, setEditedFields] = useState<any>({})
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
+    checkSession()
     fetchContractData()
   }, [])
+
+  const checkSession = async () => {
+    try {
+      const response = await fetch('/api/auth/session')
+      if (response.ok) {
+        const data = await response.json()
+        setUser(data.user)
+      }
+    } catch (error) {
+      console.error('Session check failed:', error)
+    }
+  }
 
   const fetchContractData = async () => {
     try {
@@ -29,6 +47,78 @@ export default function ContractPrintPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const canEdit = () => {
+    if (!user || !contractData) return false
+    // Contract owner can edit their own contract
+    if (contractData.created_by_id === user.id) return true
+    // SUPER_ADMIN and ADMIN can edit any contract
+    if (['SUPER_ADMIN', 'ADMIN'].includes(user.role)) return true
+    return false
+  }
+
+  const handleFieldChange = (field: string, value: string) => {
+    setEditedFields({ ...editedFields, [field]: value })
+  }
+
+  const handleSaveChanges = async () => {
+    if (Object.keys(editedFields).length === 0) {
+      message.info('មិនមានការផ្លាស់ប្តូរ')
+      return
+    }
+
+    setSaving(true)
+    try {
+      const response = await fetch(`/api/contracts/${params.id}/update-party-b`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editedFields)
+      })
+
+      if (response.ok) {
+        message.success('បានរក្សាទុកការផ្លាស់ប្តូរ')
+        setEditedFields({})
+        setEditMode(false)
+        // Reload contract data
+        await fetchContractData()
+      } else {
+        const data = await response.json()
+        message.error(data.error || 'មានបញ្ហាក្នុងការរក្សាទុក')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const getCurrentValue = (field: string) => {
+    return editedFields[field] !== undefined ? editedFields[field] : contractData[field] || ''
+  }
+
+  const renderEditableField = (field: string, value: string, placeholder: string = '') => {
+    if (!editMode) return value || placeholder
+
+    return (
+      <input
+        type="text"
+        value={getCurrentValue(field)}
+        onChange={(e) => handleFieldChange(field, e.target.value)}
+        placeholder={placeholder}
+        style={{
+          fontFamily: 'Hanuman, serif',
+          fontSize: '11pt',
+          border: '1px dashed #1890ff',
+          background: '#e6f7ff',
+          padding: '2px 8px',
+          borderRadius: 4,
+          width: '100%',
+          maxWidth: 400
+        }}
+        className="editable-field"
+      />
+    )
   }
 
   if (loading) {
@@ -342,11 +432,70 @@ export default function ContractPrintPage() {
         ទាញយកជា PDF
       </button>
 
-      <div className="contract-container">
-        {/* Page 1 */}
-        <div>
-          {/* Header */}
-          <div className="header">
+      {/* Edit Control Panel - No Print */}
+      {canEdit() && (
+        <div className="no-print" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          background: '#fff',
+          borderBottom: '2px solid #e8e8e8',
+          padding: '12px 24px',
+          zIndex: 1000,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Space>
+              <Button icon={<ArrowLeftOutlined />} onClick={() => router.back()}>
+                ត្រឡប់ក្រោយ
+              </Button>
+              <span style={{ fontSize: 14, color: '#8c8c8c' }}>កិច្ចសន្យា #{contractData.contract_number}</span>
+            </Space>
+
+            <Space>
+              {editMode && Object.keys(editedFields).length > 0 && (
+                <span style={{ color: '#faad14', fontSize: 13 }}>
+                  មានការផ្លាស់ប្តូរ {Object.keys(editedFields).length} ចំណុច
+                </span>
+              )}
+
+              <Switch
+                checked={editMode}
+                onChange={(checked) => {
+                  setEditMode(checked)
+                  if (!checked) setEditedFields({})
+                }}
+                checkedChildren={<EditOutlined />}
+                unCheckedChildren="កែប្រែ"
+              />
+
+              {editMode && (
+                <Button
+                  type="primary"
+                  icon={<SaveOutlined />}
+                  loading={saving}
+                  onClick={handleSaveChanges}
+                  disabled={Object.keys(editedFields).length === 0}
+                >
+                  រក្សាទុក
+                </Button>
+              )}
+
+              <Button icon={<PrinterOutlined />} onClick={() => window.print()}>
+                បោះពុម្ព
+              </Button>
+            </Space>
+          </div>
+        </div>
+      )}
+
+      <div style={{ paddingTop: canEdit() ? 70 : 0 }}>
+        <div className="contract-container">
+          {/* Page 1 */}
+          <div>
+            {/* Header */}
+            <div className="header">
             <div className="header-line centered">ព្រះរាជាណាចក្រកម្ពុជា</div>
             <div className="header-line centered">ជាតិ  សាសនា  ព្រះមហាក្សត្រ</div>
             <div className="header-divider">3</div>
@@ -374,8 +523,8 @@ export default function ContractPrintPage() {
               </tr>
               <tr>
                 <td>{isContractType4 ? 'ការិយាល័យអប់រំ' : 'សាលាបឋមសិក្សា'}</td>
-                <td>{contractData.party_b_name}</td>
-                <td>{partyBTitle}</td>
+                <td>{renderEditableField('party_b_name', contractData.party_b_name, 'ឈ្មោះរបស់អ្នក')}</td>
+                <td>{renderEditableField('party_b_position', contractData.party_b_position || partyBTitle, partyBTitle)}</td>
               </tr>
             </tbody>
           </table>
@@ -383,11 +532,11 @@ export default function ContractPrintPage() {
           {/* Intro Text */}
           {isContractType4 ? (
             <div className="intro-text">
-              គណៈគ្រប់គ្រង និងបុគ្គលិកអប់រំនៃការិយាល័យអប់រំ{contractData.party_b_organization || '........................................'}ព្រមព្រៀងក្នុងការគាំទ្រ ជំរុញ និងពិនិត្យតាមដានការអនុវត្តរបស់សាលានៅក្រុងស្រុកខណ្ឌរបស់ខ្លួនឯងដើម្បីមានលទ្ធភាពគ្រប់គ្រាន់បំពេញសូចនាករសមិទ្ធកម្មដូចខាងក្រោម៖
+              គណៈគ្រប់គ្រង និងបុគ្គលិកអប់រំនៃការិយាល័យអប់រំ{renderEditableField('party_b_organization', contractData.party_b_organization, 'ឈ្មោះការិយាល័យ/ស្រុក/ខណ្ឌ')}ព្រមព្រៀងក្នុងការគាំទ្រ ជំរុញ និងពិនិត្យតាមដានការអនុវត្តរបស់សាលានៅក្រុងស្រុកខណ្ឌរបស់ខ្លួនឯងដើម្បីមានលទ្ធភាពគ្រប់គ្រាន់បំពេញសូចនាករសមិទ្ធកម្មដូចខាងក្រោម៖
             </div>
           ) : (
             <div className="intro-text">
-              សាលាគណៈបឋមសិក្សា{contractData.party_b_organization || '........................................'}ព្រមព្រៀងក្នុងការបំពេញសូចនាករសមិទ្ធកម្មដូចខាងក្រោម៖
+              សាលាគណៈបឋមសិក្សា{renderEditableField('party_b_organization', contractData.party_b_organization, 'ឈ្មោះសាលា')}ព្រមព្រៀងក្នុងការបំពេញសូចនាករសមិទ្ធកម្មដូចខាងក្រោម៖
             </div>
           )}
 
