@@ -577,6 +577,22 @@ export default function ContractPrintPage() {
         ទាញយកជា PDF
       </button>
 
+      {/* Debug Info - Remove after testing */}
+      <div className="no-print" style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        background: '#000',
+        color: '#fff',
+        padding: 8,
+        fontSize: 12,
+        zIndex: 9999
+      }}>
+        Debug: user={user ? `${user.id}/${user.role}` : 'null'} |
+        contract={contractData ? `${contractData.id}/owner:${contractData.created_by_id}` : 'null'} |
+        canEdit={String(canEdit())}
+      </div>
+
       {/* Edit Control Panel - No Print */}
       {canEdit() && (
         <div className="no-print" style={{
