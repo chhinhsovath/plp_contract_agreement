@@ -96,6 +96,17 @@ const demoUsers = [
         contractType: 'សិទ្ធិប្រើប្រាស់ពេញលេញ',
         description: 'គ្រប់គ្រងប្រព័ន្ធទាំងស្រុង',
         color: 'red'
+      },
+      {
+        id: 8,
+        name: 'អ្នកគ្រប់គ្រងខ្លឹមសារ',
+        phone: '077123456',
+        passcode: '3456',
+        role: 'អ្នកសម្របសម្រួល',
+        roleEn: 'COORDINATOR',
+        contractType: 'គ្រប់គ្រងខ្លឹមសារ និងសមិទ្ធកម្ម',
+        description: 'កែប្រែអត្ថបទ កិច្ចសន្យា និងសមិទ្ធកម្ម',
+        color: 'green'
       }
     ]
   }
@@ -157,8 +168,12 @@ export default function DemoLoginPage() {
         // Check if user needs to sign contract (PARTNER role and not signed)
         if (data.requiresContractSigning) {
           router.push('/contract/sign')
-        } else if (user.roleEn === 'SUPER_ADMIN' || user.roleEn === 'ADMIN') {
+        } else if (user.roleEn === 'SUPER_ADMIN') {
           router.push('/admin/users')
+        } else if (user.roleEn === 'ADMIN') {
+          router.push('/admin/users')
+        } else if (user.roleEn === 'COORDINATOR') {
+          router.push('/admin/content-management')
         } else {
           router.push('/me-dashboard')
         }
