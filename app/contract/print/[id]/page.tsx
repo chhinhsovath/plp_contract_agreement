@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Spin, Button, Switch, Space, message, Modal } from 'antd'
-import { EditOutlined, SaveOutlined, PrinterOutlined, ArrowLeftOutlined } from '@ant-design/icons'
+import { EditOutlined, SaveOutlined, PrinterOutlined, ArrowLeftOutlined, DatabaseOutlined } from '@ant-design/icons'
 import { RichTextEditor } from '@/components/RichTextEditor'
+import { ContractJSONEditor } from '@/components/ContractJSONEditor'
 
 export default function ContractPrintPage() {
   const params = useParams()
@@ -37,6 +38,7 @@ export default function ContractPrintPage() {
   const [editingSection, setEditingSection] = useState<string | null>(null)
   const [sectionContent, setSectionContent] = useState<Record<string, string>>({})
   const [showRichEditor, setShowRichEditor] = useState(false)
+  const [showJSONEditor, setShowJSONEditor] = useState(false)
 
   useEffect(() => {
     const init = async () => {
@@ -233,6 +235,29 @@ export default function ContractPrintPage() {
       message.success('បានរក្សាទុកខ្លឹមសារ')
     } catch (error) {
       message.error('មានបញ្ហា')
+    }
+  }
+
+  const handleSaveFullJSON = async (updatedData: any) => {
+    try {
+      const response = await fetch(`/api/contracts/${params.id}/update-full`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      })
+
+      if (response.ok) {
+        message.success('បានធ្វើបច្ចុប្បន្នភាពទាំងអស់')
+        setShowJSONEditor(false)
+        // Reload contract data
+        await fetchContractData()
+      } else {
+        const data = await response.json()
+        message.error(data.error || 'មានបញ្ហា')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+      throw error
     }
   }
 
@@ -751,6 +776,17 @@ export default function ContractPrintPage() {
                 </>
               )}
 
+              {editMode && editorMode === 'advanced' && (
+                <Button
+                  type="primary"
+                  icon={<DatabaseOutlined />}
+                  onClick={() => setShowJSONEditor(true)}
+                  size="large"
+                >
+                  កែប្រែទាំងអស់
+                </Button>
+              )}
+
               <Button icon={<PrinterOutlined />} onClick={() => window.print()}>
                 បោះពុម្ព
               </Button>
@@ -1003,6 +1039,25 @@ export default function ContractPrintPage() {
               setShowRichEditor(false)
               setEditingSection(null)
             }}
+          />
+        )}
+      </Modal>
+
+      {/* Full JSON Editor Modal for Advanced Mode */}
+      <Modal
+        title="កែប្រែកិច្ចសន្យាទាំងស្រុង (Full Contract Editor)"
+        open={showJSONEditor}
+        onCancel={() => setShowJSONEditor(false)}
+        footer={null}
+        width={1200}
+        className="font-hanuman"
+        styles={{ body: { padding: 0 } }}
+      >
+        {contractData && (
+          <ContractJSONEditor
+            contractData={contractData}
+            onSave={handleSaveFullJSON}
+            onCancel={() => setShowJSONEditor(false)}
           />
         )}
       </Modal>
