@@ -52,8 +52,16 @@ export async function GET(
       return NextResponse.json({ error: 'Contract not found' }, { status: 404 })
     }
 
-    // Verify user has access to this contract
-    if (contract.created_by_id !== session.userId) {
+    // Verify user has access to this contract (allow owner or admins)
+    const user = await prisma.users.findUnique({
+      where: { id: Number(session.userId) },
+      select: { role: true }
+    })
+
+    const isOwner = contract.created_by_id === Number(session.userId)
+    const isAdmin = user && ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user.role)
+
+    if (!isOwner && !isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
