@@ -973,7 +973,7 @@ export default function MEDashboardPage() {
                       label: 'សំណើផ្លាស់ប្តូរសមិទ្ធកម្ម',
                       onClick: () => router.push('/admin/reconfiguration-requests')
                     }] : []),
-                    ...(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR' ? [{ type: 'divider' }] : []),
+                    ...(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR' ? [{ type: 'divider' as const }] : []),
                     {
                       key: 'logout',
                       icon: <LogoutOutlined />,

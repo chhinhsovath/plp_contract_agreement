@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation'
 import { UserRole } from '@/lib/roles'
 import { useContent } from '@/lib/hooks/useContent'
 
-const { Title, Text, Paragraph, TextArea } = Typography
+const { Title, Text, Paragraph } = Typography
+const { TextArea } = Input
 
 interface DeliverableOption {
   id: number

@@ -5,8 +5,9 @@ import { getSession } from '@/lib/auth'
 // PUT - Update content text
 export async function PUT(
   request: Request,
-  { params }: { params: { key: string } }
+  context: { params: Promise<{ key: string }> }
 ) {
+  const params = await context.params
   try {
     const session = await getSession()
 
@@ -82,8 +83,9 @@ export async function PUT(
 // DELETE - Delete content text
 export async function DELETE(
   request: Request,
-  { params }: { params: { key: string } }
+  context: { params: Promise<{ key: string }> }
 ) {
+  const params = await context.params
   try {
     const session = await getSession()
 

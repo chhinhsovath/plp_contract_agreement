@@ -4,8 +4,9 @@ import { getDefaultPartyA } from '@/lib/defaultPartyA'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params
   try {
     const contractType = parseInt(params.id)
 

@@ -3,7 +3,11 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
 
 // PUT - Update deliverable option
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const params = await context.params
   try {
     const session = await getSession()
     if (!session) {

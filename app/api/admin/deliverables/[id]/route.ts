@@ -3,7 +3,11 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
 
 // PUT - Update deliverable
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const params = await context.params
   try {
     const session = await getSession()
     if (!session) {
@@ -45,7 +49,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 // DELETE - Soft delete deliverable
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const params = await context.params
   try {
     const session = await getSession()
     if (!session) {
