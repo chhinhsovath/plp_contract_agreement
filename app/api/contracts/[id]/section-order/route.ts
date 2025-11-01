@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
+import { Prisma } from '@prisma/client'
 
 export async function PUT(
   request: Request,
@@ -85,7 +86,7 @@ export async function POST(
     await prisma.contracts.update({
       where: { id: contractId },
       data: {
-        section_order: null,
+        section_order: Prisma.JsonNull,
         updated_at: new Date()
       }
     })

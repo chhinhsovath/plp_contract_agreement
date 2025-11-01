@@ -15,10 +15,32 @@ export default function ContractPrintPage() {
   const [editedFields, setEditedFields] = useState<any>({})
   const [saving, setSaving] = useState(false)
 
+  // Section reordering state
+  const DEFAULT_SECTIONS = [
+    { id: 'header', label: 'បឋមកថា', moveable: false },
+    { id: 'title', label: 'ចំណងជើង', moveable: true },
+    { id: 'parties', label: 'តារាងភាគី', moveable: true },
+    { id: 'intro', label: 'អត្ថបទផ្តើម', moveable: true },
+    { id: 'deliverables', label: 'សមិទ្ធកម្ម', moveable: true },
+    { id: 'signatures', label: 'ហត្ថលេខា', moveable: false }
+  ]
+
+  const [sectionOrder, setSectionOrder] = useState<string[]>(
+    DEFAULT_SECTIONS.map(s => s.id)
+  )
+  const [layoutChanged, setLayoutChanged] = useState(false)
+
   useEffect(() => {
     checkSession()
     fetchContractData()
   }, [])
+
+  // Load section order from contractData
+  useEffect(() => {
+    if (contractData?.section_order) {
+      setSectionOrder(contractData.section_order)
+    }
+  }, [contractData])
 
   const checkSession = async () => {
     try {
@@ -118,6 +140,112 @@ export default function ContractPrintPage() {
         }}
         className="editable-field"
       />
+    )
+  }
+
+  const moveSection = (index: number, direction: 'up' | 'down') => {
+    const newOrder = [...sectionOrder]
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (targetIndex < 0 || targetIndex >= newOrder.length) return
+
+    // Swap positions
+    [newOrder[index], newOrder[targetIndex]] = [newOrder[targetIndex], newOrder[index]]
+
+    setSectionOrder(newOrder)
+    setLayoutChanged(true)
+  }
+
+  const handleSaveLayout = async () => {
+    try {
+      const response = await fetch(`/api/contracts/${params.id}/section-order`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section_order: sectionOrder })
+      })
+
+      if (response.ok) {
+        message.success('បានរក្សាទុករចនាសម្ព័ន្ធ')
+        setLayoutChanged(false)
+      } else {
+        message.error('មានបញ្ហាក្នុងការរក្សាទុក')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+    }
+  }
+
+  const handleResetLayout = async () => {
+    try {
+      const response = await fetch(`/api/contracts/${params.id}/section-order`, {
+        method: 'POST'
+      })
+
+      if (response.ok) {
+        message.success('បានកំណត់រចនាសម្ព័ន្ធឡើងវិញ')
+        setSectionOrder(DEFAULT_SECTIONS.map(s => s.id))
+        setLayoutChanged(false)
+        await fetchContractData()
+      }
+    } catch (error) {
+      message.error('មានបញ្ហា')
+    }
+  }
+
+  const renderSectionWithControls = (sectionId: string, content: React.ReactNode, index: number) => {
+    const section = DEFAULT_SECTIONS.find(s => s.id === sectionId)
+    if (!section) return content
+
+    if (!editMode || !canEdit()) {
+      return <div key={sectionId}>{content}</div>
+    }
+
+    const isFirst = index === 0
+    const isLast = index === sectionOrder.length - 1
+
+    return (
+      <div key={sectionId} style={{ position: 'relative', marginBottom: 16 }}>
+        {section.moveable && (
+          <div className="no-print" style={{
+            position: 'absolute',
+            top: -10,
+            right: 0,
+            background: '#fff',
+            border: '1px solid #d9d9d9',
+            borderRadius: 4,
+            padding: '4px 8px',
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            zIndex: 100,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          }}>
+            <span style={{ fontSize: 12, color: '#8c8c8c' }}>{section.label}</span>
+            <Button
+              size="small"
+              disabled={isFirst}
+              onClick={() => moveSection(index, 'up')}
+              style={{ padding: '0 8px', height: 24 }}
+            >
+              ↑
+            </Button>
+            <Button
+              size="small"
+              disabled={isLast}
+              onClick={() => moveSection(index, 'down')}
+              style={{ padding: '0 8px', height: 24 }}
+            >
+              ↓
+            </Button>
+          </div>
+        )}
+        <div style={{
+          border: editMode && section.moveable ? '1px dashed #1890ff' : 'none',
+          padding: editMode && section.moveable ? 8 : 0
+        }}>
+          {content}
+        </div>
+      </div>
     )
   }
 
@@ -471,15 +599,33 @@ export default function ContractPrintPage() {
               />
 
               {editMode && (
-                <Button
-                  type="primary"
-                  icon={<SaveOutlined />}
-                  loading={saving}
-                  onClick={handleSaveChanges}
-                  disabled={Object.keys(editedFields).length === 0}
-                >
-                  រក្សាទុក
-                </Button>
+                <>
+                  {Object.keys(editedFields).length > 0 && (
+                    <Button
+                      type="primary"
+                      icon={<SaveOutlined />}
+                      loading={saving}
+                      onClick={handleSaveChanges}
+                    >
+                      រក្សាទុក
+                    </Button>
+                  )}
+                  {layoutChanged && (
+                    <Button
+                      type="primary"
+                      icon={<SaveOutlined />}
+                      onClick={handleSaveLayout}
+                    >
+                      រក្សារចនាសម្ព័ន្ធ
+                    </Button>
+                  )}
+                  <Button
+                    size="small"
+                    onClick={handleResetLayout}
+                  >
+                    កំណត់ឡើងវិញ
+                  </Button>
+                </>
               )}
 
               <Button icon={<PrinterOutlined />} onClick={() => window.print()}>
@@ -494,211 +640,224 @@ export default function ContractPrintPage() {
         <div className="contract-container">
           {/* Page 1 */}
           <div>
-            {/* Header */}
-            <div className="header">
-            <div className="header-line centered">ព្រះរាជាណាចក្រកម្ពុជា</div>
-            <div className="header-line centered">ជាតិ  សាសនា  ព្រះមហាក្សត្រ</div>
-            <div className="header-divider">3</div>
-            <div className="header-line">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
-            <div className="header-line">នាយកដ្ឋានបឋមសិក្សា</div>
-          </div>
-
-          {/* Title */}
-          <div className="title">
-            កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ
-          </div>
-
-          {/* Implementer Table */}
-          <table className="implementer-table">
-            <tbody>
-              <tr>
-                <td className="label-col">អ្នកអនុវត្ត</td>
-                <td className="label-col">ឈ្មោះ</td>
-                <td className="label-col">មុខតំណែង/តួនាទី</td>
-              </tr>
-              <tr>
-                <td>នាយកដ្ឋានបឋមសិក្សា</td>
-                <td>លោកបណ្ឌិត កាន់ ពុទ្ធី</td>
-                <td>ប្រធាននាយកដ្ឋានបឋមសិក្សា</td>
-              </tr>
-              <tr>
-                <td>{isContractType4 ? 'ការិយាល័យអប់រំ' : 'សាលាបឋមសិក្សា'}</td>
-                <td>{renderEditableField('party_b_name', contractData.party_b_name, 'ឈ្មោះរបស់អ្នក')}</td>
-                <td>{renderEditableField('party_b_position', contractData.party_b_position || partyBTitle, partyBTitle)}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* Intro Text */}
-          {isContractType4 ? (
-            <div className="intro-text">
-              គណៈគ្រប់គ្រង និងបុគ្គលិកអប់រំនៃការិយាល័យអប់រំ{renderEditableField('party_b_organization', contractData.party_b_organization, 'ឈ្មោះការិយាល័យ/ស្រុក/ខណ្ឌ')}ព្រមព្រៀងក្នុងការគាំទ្រ ជំរុញ និងពិនិត្យតាមដានការអនុវត្តរបស់សាលានៅក្រុងស្រុកខណ្ឌរបស់ខ្លួនឯងដើម្បីមានលទ្ធភាពគ្រប់គ្រាន់បំពេញសូចនាករសមិទ្ធកម្មដូចខាងក្រោម៖
-            </div>
-          ) : (
-            <div className="intro-text">
-              សាលាគណៈបឋមសិក្សា{renderEditableField('party_b_organization', contractData.party_b_organization, 'ឈ្មោះសាលា')}ព្រមព្រៀងក្នុងការបំពេញសូចនាករសមិទ្ធកម្មដូចខាងក្រោម៖
-            </div>
-          )}
-
-          {/* Deliverables Table - Different for Type 4 and Type 5 */}
-          {isContractType4 ? (
-            <table className="deliverables-table">
-              <thead>
-                <tr>
-                  <th className="no-col">ល.រ</th>
-                  <th className="deliverable-col">សមិទ្ធកម្ម</th>
-                  <th className="indicator-col">សូចនាករ</th>
-                  <th className="timeline-col">ពេលវេលាអនុវត្ត</th>
-                </tr>
-              </thead>
-              <tbody>
-                {contractData.deliverables.map((deliverable: any) => (
-                  <tr key={deliverable.deliverable_number}>
-                    <td className="no-col">{deliverable.deliverable_number}.</td>
-                    <td>({deliverable.deliverable_number}) {deliverable.deliverable_title_khmer}</td>
-                    <td>{deliverable.selected_indicator_text}</td>
-                    <td>{deliverable.timeline}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <>
-              {contractData.deliverables.map((deliverable: any, index: number) => (
-                <div key={deliverable.deliverable_number}>
-                  <div className="section-title" style={{ marginTop: index === 0 ? '0' : '0.5cm' }}>
-                    សមិទ្ធិកម្មទី{deliverable.deliverable_number}៖ {deliverable.deliverable_title_khmer}
+            {/* Define all sections */}
+            {(() => {
+              const sections: Record<string, React.ReactNode> = {
+                header: (
+                  <div className="header">
+                    <div className="header-line centered">ព្រះរាជាណាចក្រកម្ពុជា</div>
+                    <div className="header-line centered">ជាតិ  សាសនា  ព្រះមហាក្សត្រ</div>
+                    <div className="header-divider">3</div>
+                    <div className="header-line">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
+                    <div className="header-line">នាយកដ្ឋានបឋមសិក្សា</div>
                   </div>
-                  <table className="deliverables-table">
-                    <thead>
-                      <tr>
-                        <th className="no-col">ល.រ</th>
-                        <th className="activity-col">សកម្មភាពនាយកសាលាអនុវត្ត</th>
-                        <th className="indicator-col">សូចនាករ</th>
-                        <th className="timeline-col">ពេលវេលាអនុវត្ត</th>
-                      </tr>
-                    </thead>
+                ),
+                title: (
+                  <div className="title">
+                    កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាងនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ
+                  </div>
+                ),
+                parties: (
+                  <table className="implementer-table">
                     <tbody>
                       <tr>
-                        <td className="no-col">{deliverable.deliverable_number}.</td>
-                        <td>
-                          {deliverable.activities_text ? (
-                            <div dangerouslySetInnerHTML={{ __html: deliverable.activities_text.replace(/\n/g, '<br/>') }} />
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td>{deliverable.selected_indicator_text}</td>
-                        <td>{deliverable.timeline}</td>
+                        <td className="label-col">អ្នកអនុវត្ត</td>
+                        <td className="label-col">ឈ្មោះ</td>
+                        <td className="label-col">មុខតំណែង/តួនាទី</td>
+                      </tr>
+                      <tr>
+                        <td>នាយកដ្ឋានបឋមសិក្សា</td>
+                        <td>លោកបណ្ឌិត កាន់ ពុទ្ធី</td>
+                        <td>ប្រធាននាយកដ្ឋានបឋមសិក្សា</td>
+                      </tr>
+                      <tr>
+                        <td>{isContractType4 ? 'ការិយាល័យអប់រំ' : 'សាលាបឋមសិក្សា'}</td>
+                        <td>{renderEditableField('party_b_name', contractData.party_b_name, 'ឈ្មោះរបស់អ្នក')}</td>
+                        <td>{renderEditableField('party_b_position', contractData.party_b_position || partyBTitle, partyBTitle)}</td>
                       </tr>
                     </tbody>
                   </table>
-                </div>
-              ))}
-            </>
-          )}
+                ),
+                intro: isContractType4 ? (
+                  <div className="intro-text">
+                    គណៈគ្រប់គ្រង និងបុគ្គលិកអប់រំនៃការិយាល័យអប់រំ{renderEditableField('party_b_organization', contractData.party_b_organization, 'ឈ្មោះការិយាល័យ/ស្រុក/ខណ្ឌ')}ព្រមព្រៀងក្នុងការគាំទ្រ ជំរុញ និងពិនិត្យតាមដានការអនុវត្តរបស់សាលានៅក្រុងស្រុកខណ្ឌរបស់ខ្លួនឯងដើម្បីមានលទ្ធភាពគ្រប់គ្រាន់បំពេញសូចនាករសមិទ្ធកម្មដូចខាងក្រោម៖
+                  </div>
+                ) : (
+                  <div className="intro-text">
+                    សាលាគណៈបឋមសិក្សា{renderEditableField('party_b_organization', contractData.party_b_organization, 'ឈ្មោះសាលា')}ព្រមព្រៀងក្នុងការបំពេញសូចនាករសមិទ្ធកម្មដូចខាងក្រោម៖
+                  </div>
+                ),
+                deliverables: (
+                  <>
+                    {isContractType4 ? (
+                      <table className="deliverables-table">
+                        <thead>
+                          <tr>
+                            <th className="no-col">ល.រ</th>
+                            <th className="deliverable-col">សមិទ្ធកម្ម</th>
+                            <th className="indicator-col">សូចនាករ</th>
+                            <th className="timeline-col">ពេលវេលាអនុវត្ត</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {contractData.deliverables.map((deliverable: any) => (
+                            <tr key={deliverable.deliverable_number}>
+                              <td className="no-col">{deliverable.deliverable_number}.</td>
+                              <td>({deliverable.deliverable_number}) {deliverable.deliverable_title_khmer}</td>
+                              <td>{deliverable.selected_indicator_text}</td>
+                              <td>{deliverable.timeline}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <>
+                        {contractData.deliverables.map((deliverable: any, index: number) => (
+                          <div key={deliverable.deliverable_number}>
+                            <div className="section-title" style={{ marginTop: index === 0 ? '0' : '0.5cm' }}>
+                              សមិទ្ធិកម្មទី{deliverable.deliverable_number}៖ {deliverable.deliverable_title_khmer}
+                            </div>
+                            <table className="deliverables-table">
+                              <thead>
+                                <tr>
+                                  <th className="no-col">ល.រ</th>
+                                  <th className="activity-col">សកម្មភាពនាយកសាលាអនុវត្ត</th>
+                                  <th className="indicator-col">សូចនាករ</th>
+                                  <th className="timeline-col">ពេលវេលាអនុវត្ត</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td className="no-col">{deliverable.deliverable_number}.</td>
+                                  <td>
+                                    {deliverable.activities_text ? (
+                                      <div dangerouslySetInnerHTML={{ __html: deliverable.activities_text.replace(/\n/g, '<br/>') }} />
+                                    ) : (
+                                      '-'
+                                    )}
+                                  </td>
+                                  <td>{deliverable.selected_indicator_text}</td>
+                                  <td>{deliverable.timeline}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        ))}
+                      </>
+                    )}
 
-          {/* Account Information Section - After Deliverables in Table Format */}
-          <table className="deliverables-table" style={{ marginTop: '0.5cm' }}>
-            <thead>
-              <tr>
-                <th className="no-col" style={{ width: '5%' }}></th>
-                <th className="deliverable-col" style={{ width: '25%' }}>ការលើកទឹកចិត្តសមិទ្ធកម្ម</th>
-                <th colSpan={2} className="indicator-col" style={{ width: '70%', textAlign: 'left' }}>
-                  <div className="section-content" style={{ marginLeft: 0, fontWeight: 400, textAlign: 'left' }}>
-                    ១.ថវិកាដែលទទួលបានសរុប៖……………………………
-                  </div>
-                  <div className="section-content" style={{ marginLeft: 0, fontWeight: 400, textAlign: 'left' }}>
-                    ២.ចំនួនដងនៃការបើកផ្តលៗ៖ ៤ ដង
-                  </div>
-                  <div style={{ marginBottom: '0.5cm' }}>
-                    <div className="section-content" style={{ fontWeight: 400, marginLeft: 0, textAlign: 'left' }}>
-                      ៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖
+                    {/* Account Information Section - After Deliverables in Table Format */}
+                    <table className="deliverables-table" style={{ marginTop: '0.5cm' }}>
+                      <thead>
+                        <tr>
+                          <th className="no-col" style={{ width: '5%' }}></th>
+                          <th className="deliverable-col" style={{ width: '25%' }}>ការលើកទឹកចិត្តសមិទ្ធកម្ម</th>
+                          <th colSpan={2} className="indicator-col" style={{ width: '70%', textAlign: 'left' }}>
+                            <div className="section-content" style={{ marginLeft: 0, fontWeight: 400, textAlign: 'left' }}>
+                              ១.ថវិកាដែលទទួលបានសរុប៖……………………………
+                            </div>
+                            <div className="section-content" style={{ marginLeft: 0, fontWeight: 400, textAlign: 'left' }}>
+                              ២.ចំនួនដងនៃការបើកផ្តលៗ៖ ៤ ដង
+                            </div>
+                            <div style={{ marginBottom: '0.5cm' }}>
+                              <div className="section-content" style={{ fontWeight: 400, marginLeft: 0, textAlign: 'left' }}>
+                                ៣. លក្ខខណ្ឌដើម្បីទទួលបានថវិកាគាំទ្រសមិទ្ធកម្ម៖
+                              </div>
+                              <div className="section-content" style={{ marginLeft: '1cm', fontWeight: 400, textAlign: 'left' }}>
+                                - ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង
+                              </div>
+                              <div className="section-content" style={{ marginLeft: '1cm', fontWeight: 400, textAlign: 'left' }}>
+                                - លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។
+                              </div>
+                            </div>
+                            <div className="section-content" style={{ fontWeight: 400, marginLeft: 0, textAlign: 'left' }}>
+                              ៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </>
+                ),
+                signatures: (
+                  <div className="page-break" style={{ marginTop: '1cm' }}>
+                    {/* Signature Section */}
+                    <div className="signature-section">
+                      <div className="signature-box">
+                        <div className="signature-label-moul">ជ.ប្រធានគម្រោង</div>
+                        <div className="signature-label-moul">ប្រធាននាយកដ្ឋាន</div>
+
+                        {/* Party A Signature Image */}
+                        {contractData.party_a_signature && contractData.party_a_signature !== 'data:image/png;base64,PLACEHOLDER' && (
+                          <img
+                            src={contractData.party_a_signature}
+                            alt="Party A Signature"
+                            className="signature-image"
+                          />
+                        )}
+
+                        <div className="signature-label" style={{fontWeight: 400}}>ហត្ថលេខានិងឈ្មោះ</div>
+                        {contractData.party_a_signed_date && (
+                          <div style={{ fontSize: '10pt', marginTop: '0.2cm' }}>
+                            {new Date(contractData.party_a_signed_date).toLocaleDateString('km-KH', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      <div className="signature-box">
+                        <div className="signature-line">
+                          ថ្ងៃទី............ ខែ...............ឆ្នាំ............
+                        </div>
+
+                        {/* Party B Signature Image */}
+                        {contractData.party_b_signature && (
+                          <img
+                            src={contractData.party_b_signature}
+                            alt="Party B Signature"
+                            className="signature-image"
+                          />
+                        )}
+
+                        <div className="signature-label" style={{fontWeight: 400}}>
+                          ហត្ថលេខានិងឈ្មោះ ({isContractType4 ? 'ប្រធានការិយាល័យអប់រំ' : 'នាយកសាលា'})
+                        </div>
+                        {contractData.party_b_signed_date && (
+                          <div style={{ fontSize: '10pt', marginTop: '0.2cm' }}>
+                            {new Date(contractData.party_b_signed_date).toLocaleDateString('km-KH', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="section-content" style={{ marginLeft: '1cm', fontWeight: 400, textAlign: 'left' }}>
-                      - ការផ្តល់របាយការណ៍សមិទ្ធកម្មរបស់គម្រោង
-                    </div>
-                    <div className="section-content" style={{ marginLeft: '1cm', fontWeight: 400, textAlign: 'left' }}>
-                      - លទ្ធផលនៃការវាយតម្លៃសមិទ្ធកម្មរបស់គ.ប.ក.។
-                    </div>
+
+                    {/* Bottom centered text for Contract Type 5 */}
+                    {isContractType5 && (
+                      <div className="centered-text">
+                        <div className="large-khmer">មូលនិធិសាលាមុត្តុនា</div>
+                        <div className="large-khmer">ខ ហូលដាលសាលាមុត្តុនា</div>
+                        <div>បក្សុលសខីងលុណៈ</div>
+                        <div style={{ marginTop: '0.5cm' }}>
+                          ស្ថិទី............ ខែ................ឆ្នាំ............<br />
+                          បក្សុលសខីងលុណៈ : (ប្រធានការិយាល័យអប់រំ)
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="section-content" style={{ fontWeight: 400, marginLeft: 0, textAlign: 'left' }}>
-                    ៤. ឈ្មោះនិងលេខ គណនី ប្រធានការិយាល័យអប់រំ
-                  </div>
-                </th>
-              </tr>
-            </thead>
-          </table>        </div>
+                )
+              }
 
-        {/* Page 2 - Signature Section */}
-        <div className="page-break" style={{ marginTop: '1cm' }}>
-          {/* Signature Section */}
-          <div className="signature-section">
-            <div className="signature-box">
-              <div className="signature-label-moul">ជ.ប្រធានគម្រោង</div>
-              <div className="signature-label-moul">ប្រធាននាយកដ្ឋាន</div>
-
-              {/* Party A Signature Image */}
-              {contractData.party_a_signature && contractData.party_a_signature !== 'data:image/png;base64,PLACEHOLDER' && (
-                <img
-                  src={contractData.party_a_signature}
-                  alt="Party A Signature"
-                  className="signature-image"
-                />
-              )}
-
-              <div className="signature-label" style={{fontWeight: 400}}>ហត្ថលេខានិងឈ្មោះ</div>
-              {contractData.party_a_signed_date && (
-                <div style={{ fontSize: '10pt', marginTop: '0.2cm' }}>
-                  {new Date(contractData.party_a_signed_date).toLocaleDateString('km-KH', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  })}
-                </div>
-              )}
-            </div>
-            <div className="signature-box">
-              <div className="signature-line">
-                ថ្ងៃទី............ ខែ...............ឆ្នាំ............
-              </div>
-
-              {/* Party B Signature Image */}
-              {contractData.party_b_signature && (
-                <img
-                  src={contractData.party_b_signature}
-                  alt="Party B Signature"
-                  className="signature-image"
-                />
-              )}
-
-              <div className="signature-label" style={{fontWeight: 400}}>
-                ហត្ថលេខានិងឈ្មោះ ({isContractType4 ? 'ប្រធានការិយាល័យអប់រំ' : 'នាយកសាលា'})
-              </div>
-              {contractData.party_b_signed_date && (
-                <div style={{ fontSize: '10pt', marginTop: '0.2cm' }}>
-                  {new Date(contractData.party_b_signed_date).toLocaleDateString('km-KH', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  })}
-                </div>
-              )}
-            </div>
+              // Render sections in dynamic order
+              return sectionOrder.map((sectionId, index) =>
+                renderSectionWithControls(sectionId, sections[sectionId], index)
+              )
+            })()}
           </div>
-
-          {/* Bottom centered text for Contract Type 5 */}
-          {isContractType5 && (
-            <div className="centered-text">
-              <div className="large-khmer">មូលនិធិសាលាមុត្តុនា</div>
-              <div className="large-khmer">ខ ហូលដាលសាលាមុត្តុនា</div>
-              <div>បក្សុលសខីងលុណៈ</div>
-              <div style={{ marginTop: '0.5cm' }}>
-                ស្ថិទី............ ខែ................ឆ្នាំ............<br />
-                បក្សុលសខីងលុណៈ : (ប្រធានការិយាល័យអប់រំ)
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </>
