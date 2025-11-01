@@ -8,16 +8,16 @@ import { getSession } from '@/lib/auth'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params
   try {
     const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    const { id } = await params
-    const contractId = parseInt(id)
+    const contractId = parseInt(params.id)
 
     // Fetch contract with all related data
     const contract = await prisma.contracts.findUnique({
