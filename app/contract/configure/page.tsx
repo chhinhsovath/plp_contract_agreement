@@ -67,25 +67,28 @@ export default function ContractConfigurePage() {
           return
         }
 
-        // CRITICAL: Check if user has already configured deliverables
-        // Users cannot reconfigure without admin approval
+        // Check if user already signed the contract
         if (userData.contract_signed) {
-          const checkResponse = await fetch(`/api/me/deliverables`)
-          if (checkResponse.ok) {
-            const checkData = await checkResponse.json()
-            if (checkData.success && checkData.data.hasDeliverables && checkData.data.deliverables.length > 0) {
-              // User already has configured deliverables
-              message.error({
-                content: 'អ្នកបានកំណត់រចនាសម្ព័ន្ធរួចហើយ។ ប្រសិនបើចង់ផ្លាស់ប្តូរ សូមស្នើសុំការអនុម័តពីអ្នកគ្រប់គ្រង។',
-                duration: 5
-              })
-              router.push('/me-dashboard')
-              return
-            }
-          }
+          message.info('អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យារួចហើយ')
+          router.push('/me-dashboard')
+          return
         }
 
-        // Allow access only for users who haven't configured yet
+        // Check if user already completed configuration - redirect to signature
+        if (userData.configuration_complete) {
+          message.info('អ្នកបានកំណត់រចនាសម្ព័ន្ធរួចហើយ')
+          router.push('/contract/submit')
+          return
+        }
+
+        // Check if user has read the contract first
+        if (!userData.contract_read) {
+          message.warning('សូមអានកិច្ចសន្យាជាមុនសិន')
+          router.push('/contract/sign')
+          return
+        }
+
+        // Allow access for users who have read but not configured yet
         setUser(userData)
         await fetchDeliverables(userData.contract_type)
       } else {
@@ -162,28 +165,28 @@ export default function ContractConfigurePage() {
 
     setSubmitting(true)
     try {
-      if (user?.contract_signed) {
-        // User already signed - save selections directly to database
-        const response = await fetch('/api/contract-deliverables/selections', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ selections })
+      // Save selections to localStorage for submission page
+      localStorage.setItem('contract_selections', JSON.stringify(selections))
+
+      // Mark configuration as complete in database
+      const response = await fetch('/api/contracts/save-configuration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          selections
         })
+      })
 
-        if (!response.ok) {
-          throw new Error('Failed to save selections')
-        }
-
-        message.success('រក្សាទុកការជ្រើសរើសរបស់អ្នកដោយជោគជ័យ')
-        router.push('/me-dashboard')
-      } else {
-        // User hasn't signed yet - save to localStorage for sign page
-        localStorage.setItem('contract_selections', JSON.stringify(selections))
-        message.success('រក្សាទុកការជ្រើសរើសរបស់អ្នកដោយជោគជ័យ')
-        router.push('/contract/sign')
+      if (!response.ok) {
+        throw new Error('Failed to save configuration')
       }
+
+      message.success('រក្សាទុកការជ្រើសរើសរបស់អ្នកដោយជោគជ័យ')
+      // Redirect to signature submission page
+      router.push('/contract/submit')
     } catch (error) {
-      console.error('Failed to save selections:', error)
+      console.error('Failed to save configuration:', error)
       message.error('មានបញ្ហាក្នុងការរក្សាទុក')
     } finally {
       setSubmitting(false)

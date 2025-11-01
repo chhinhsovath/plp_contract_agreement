@@ -8,26 +8,28 @@ datasource db {
 }
 
 model users {
-  id                   Int         @id @default(autoincrement())
-  full_name            String
-  phone_number         String      @unique
-  passcode             String
-  organization         String?
-  position             String?
-  email                String?
-  created_at           DateTime    @default(now())
-  updated_at           DateTime    @updatedAt
-  last_login           DateTime?
-  is_active            Boolean     @default(true)
-  role                 String      @default("PARTNER")
-  contract_type        Int?
-  contract_read_time   Int?
-  contract_signed      Boolean     @default(false)
-  contract_signed_date DateTime?
-  ip_address_signed    String?
-  signature_data       String?
-  last_reset_at        DateTime?
-  contracts_created    contracts[] @relation("UserContracts")
+  id                     Int         @id @default(autoincrement())
+  full_name              String
+  phone_number           String      @unique
+  passcode               String
+  organization           String?
+  position               String?
+  email                  String?
+  created_at             DateTime    @default(now())
+  updated_at             DateTime    @updatedAt
+  last_login             DateTime?
+  is_active              Boolean     @default(true)
+  role                   String      @default("PARTNER")
+  contract_type          Int?
+  contract_read          Boolean     @default(false)
+  contract_read_time     Int?
+  configuration_complete Boolean     @default(false)
+  contract_signed        Boolean     @default(false)
+  contract_signed_date   DateTime?
+  ip_address_signed      String?
+  signature_data         String?
+  last_reset_at          DateTime?
+  contracts_created      contracts[] @relation("UserContracts")
 
   @@index([phone_number])
   @@index([role])

@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Card, Button, Typography, Checkbox, Progress, message, Spin, Alert, Divider, Space, Modal, Tabs, Upload } from 'antd'
-import { CheckCircleOutlined, FileTextOutlined, EditOutlined, ClockCircleOutlined, UploadOutlined } from '@ant-design/icons'
+import { Card, Button, Typography, Checkbox, Progress, message, Spin, Alert, Divider, Space } from 'antd'
+import { CheckCircleOutlined, FileTextOutlined, ClockCircleOutlined, RightOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { contractTemplates } from '@/lib/contractTemplates'
-import type { UploadFile } from 'antd'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -17,16 +16,10 @@ export default function ContractSignPage() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false)
   const [agreed, setAgreed] = useState(false)
-  const [signing, setSigning] = useState(false)
-  const [signature, setSignature] = useState('')
+  const [proceeding, setProceeding] = useState(false)
   const [readStartTime] = useState(Date.now())
-  const [showSignatureModal, setShowSignatureModal] = useState(false)
-  const [signatureMethod, setSignatureMethod] = useState<'draw' | 'upload'>('draw')
-  const [uploadedImage, setUploadedImage] = useState<string>('')
 
   const contractRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isDrawing, setIsDrawing] = useState(false)
 
   useEffect(() => {
     checkSession()
@@ -40,10 +33,17 @@ export default function ContractSignPage() {
         const userData = data.user
         setUser(userData)
 
-        // Check if user already signed contract
+        // Check if user already completed the workflow
         if (userData.contract_signed) {
           message.info('អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យារួចហើយ')
           router.push('/me-dashboard')
+          return
+        }
+
+        // Check if user already read the contract - redirect to next step
+        if (userData.contract_read) {
+          message.info('អ្នកបានអានកិច្ចសន្យារួចហើយ')
+          router.push('/contract/configure')
           return
         }
 
@@ -81,224 +81,39 @@ export default function ContractSignPage() {
     }
   }
 
-  const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current) return { x: 0, y: 0 }
-    const canvas = canvasRef.current
-    const rect = canvas.getBoundingClientRect()
-
-    if ('touches' in e) {
-      // Touch event
-      const touch = e.touches[0] || e.changedTouches[0]
-      return {
-        x: touch.clientX - rect.left,
-        y: touch.clientY - rect.top
-      }
-    } else {
-      // Mouse event
-      return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      }
-    }
-  }
-
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    e.preventDefault()
-    if (!canvasRef.current) return
-    setIsDrawing(true)
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    const coords = getCoordinates(e)
-    if (ctx) {
-      ctx.beginPath()
-      ctx.moveTo(coords.x, coords.y)
-    }
-  }
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    e.preventDefault()
-    if (!isDrawing || !canvasRef.current) return
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    const coords = getCoordinates(e)
-    if (ctx) {
-      ctx.lineWidth = 2
-      ctx.lineCap = 'round'
-      ctx.strokeStyle = '#000'
-      ctx.lineTo(coords.x, coords.y)
-      ctx.stroke()
-    }
-  }
-
-  const stopDrawing = (e?: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (e) e.preventDefault()
-    setIsDrawing(false)
-  }
-
-  const clearSignature = () => {
-    if (!canvasRef.current) return
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-    }
-    setSignature('')
-  }
-
-  const saveSignature = () => {
-    if (signatureMethod === 'draw') {
-      if (!canvasRef.current) return
-      const canvas = canvasRef.current
-      const dataUrl = canvas.toDataURL()
-      setSignature(dataUrl)
-    } else {
-      if (!uploadedImage) {
-        message.warning('សូមជ្រើសរើសរូបភាពហត្ថលេខា')
-        return
-      }
-      setSignature(uploadedImage)
-    }
-    setShowSignatureModal(false)
-    message.success('ហត្ថលេខាបានរក្សាទុក')
-  }
-
-  const handleImageUpload = (file: File) => {
-    // Validate file type
-    const validTypes = ['image/png', 'image/jpeg', 'image/jpg']
-    if (!validTypes.includes(file.type)) {
-      message.error('សូមជ្រើសរើសរូបភាពប្រភេទ PNG ឬ JPG')
-      return false
-    }
-
-    // Validate file size (max 2MB)
-    const maxSize = 2 * 1024 * 1024
-    if (file.size > maxSize) {
-      message.error('ទំហំរូបភាពធំពេក (អតិបរមា 2MB)')
-      return false
-    }
-
-    // Read file and resize if needed
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const img = new Image()
-      img.onload = () => {
-        // Create canvas to resize image
-        const canvas = document.createElement('canvas')
-        const ctx = canvas.getContext('2d')
-
-        // Set max dimensions (keeping aspect ratio)
-        const maxWidth = 600
-        const maxHeight = 300
-        let width = img.width
-        let height = img.height
-
-        // Calculate new dimensions maintaining aspect ratio
-        if (width > maxWidth) {
-          height = (height * maxWidth) / width
-          width = maxWidth
-        }
-        if (height > maxHeight) {
-          width = (width * maxHeight) / height
-          height = maxHeight
-        }
-
-        canvas.width = width
-        canvas.height = height
-
-        // Draw resized image
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height)
-          const resizedDataUrl = canvas.toDataURL('image/png')
-          setUploadedImage(resizedDataUrl)
-          message.success('បានផ្ទុករូបភាពហត្ថលេខា')
-        }
-      }
-      img.src = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
-
-    return false // Prevent auto upload
-  }
-
-  const handleSign = async () => {
-    if (!agreed || !signature) {
-      message.warning('សូមយល់ព្រម និងចុះហត្ថលេខា')
+  const handleProceedToConfiguration = async () => {
+    if (!agreed) {
+      message.warning('សូមយល់ព្រមលើកិច្ចសន្យា')
       return
     }
 
-    setSigning(true)
+    setProceeding(true)
     const readTime = Math.round((Date.now() - readStartTime) / 1000)
 
     try {
-      // Check if this is a configurable contract (Types 1-5) requiring deliverable selection
-      const isConfigurableContract = user.contract_type >= 1 && user.contract_type <= 5
-      const selectionsJson = localStorage.getItem('contract_selections')
-
-      // CRITICAL: For Contract Types 1-5, deliverable configuration is REQUIRED
-      if (isConfigurableContract && !selectionsJson) {
-        message.error({
-          content: 'សូមជ្រើសរើសជម្រើសសមិទ្ធកម្មមុនពេលចុះហត្ថលេខា',
-          duration: 5
+      // Mark contract as read
+      const response = await fetch('/api/contracts/mark-read', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          readTime: readTime
         })
-        setSigning(false)
-        // Redirect to configuration page
-        router.push('/contract/configure')
-        return
-      }
-
-      let response
-
-      if (isConfigurableContract && selectionsJson) {
-        // New flow: All contract types (1-5) with configuration selections
-        const selections = JSON.parse(selectionsJson)
-
-        response = await fetch('/api/contracts/configure', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: user.id,
-            contractType: user.contract_type,
-            selections,
-            signature
-          })
-        })
-
-        // Clear selections from localStorage after submission
-        if (response.ok) {
-          localStorage.removeItem('contract_selections')
-        }
-      } else {
-        // Fallback flow for contracts without configuration selections (DEPRECATED)
-        // This should never be reached for Contract Types 1-5
-        response = await fetch('/api/contracts/sign', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: user.id,
-            contractType: user.contract_type,
-            signature: signature,
-            readTime: readTime,
-            agreed: agreed
-          })
-        })
-      }
+      })
 
       if (response.ok) {
-        message.success('អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យាដោយជោគជ័យ!')
-
-        // Short delay to show success message
-        setTimeout(() => {
-          router.push('/me-dashboard')
-        }, 1500)
+        message.success('អ្នកបានអានកិច្ចសន្យារួចរាល់!')
+        // Redirect to configuration page
+        router.push('/contract/configure')
       } else {
         const data = await response.json()
-        message.error(data.error || 'មានបញ្ហាក្នុងការចុះហត្ថលេខា')
+        message.error(data.error || 'មានបញ្ហាក្នុងការរក្សាទុក')
       }
     } catch (error) {
-      console.error('Signing error:', error)
+      console.error('Mark read error:', error)
       message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
     } finally {
-      setSigning(false)
+      setProceeding(false)
     }
   }
 
@@ -467,13 +282,13 @@ export default function ContractSignPage() {
           </div>
         </Card>
 
-        {/* Agreement Section - Optimized for Tablet/Desktop */}
+        {/* Agreement Section - Read Only */}
         {hasScrolledToBottom && (
           <Card className="mb-8 shadow-md">
             <Space direction="vertical" size="large" className="w-full">
               <Alert
                 message={<span className="font-hanuman text-base">អ្នកបានអានកិច្ចសន្យារួចរាល់</span>}
-                description={<span className="font-hanuman">ឥឡូវនេះអ្នកអាចយល់ព្រម និងចុះហត្ថលេខាបាន</span>}
+                description={<span className="font-hanuman">ឥឡូវនេះអ្នកអាចយល់ព្រម និងបន្តទៅជំហានបន្ទាប់</span>}
                 type="success"
                 showIcon
                 icon={<CheckCircleOutlined />}
@@ -488,158 +303,23 @@ export default function ContractSignPage() {
                 ខ្ញុំបានអាន យល់ និងយល់ព្រមតាមលក្ខខណ្ឌទាំងអស់នៃកិច្ចព្រមព្រៀងនេះ
               </Checkbox>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  {signature ? (
-                    <div>
-                      <Text className="font-hanuman text-base">ហត្ថលេខា: ✓ បានរក្សាទុក</Text>
-                      <Button
-                        size="large"
-                        onClick={() => setShowSignatureModal(true)}
-                        className="ml-3 font-hanuman"
-                      >
-                        កែប្រែ
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      icon={<EditOutlined />}
-                      onClick={() => setShowSignatureModal(true)}
-                      disabled={!agreed}
-                      size="large"
-                      className="font-hanuman"
-                    >
-                      ចុះហត្ថលេខា
-                    </Button>
-                  )}
-                </div>
-
+              <div className="flex items-center justify-end">
                 <Button
                   type="primary"
                   size="large"
-                  loading={signing}
-                  onClick={handleSign}
-                  disabled={!agreed || !signature}
+                  loading={proceeding}
+                  onClick={handleProceedToConfiguration}
+                  disabled={!agreed}
+                  icon={<RightOutlined />}
+                  iconPosition="end"
                   className="font-hanuman px-8 py-6 h-auto text-base"
                 >
-                  បញ្ជាក់ និងចុះហត្ថលេខា
+                  បន្តទៅជំហានបន្ទាប់
                 </Button>
               </div>
             </Space>
           </Card>
         )}
-
-        {/* Signature Modal */}
-        <Modal
-          title={<span className="font-hanuman">ចុះហត្ថលេខារបស់អ្នក</span>}
-          open={showSignatureModal}
-          onCancel={() => {
-            setShowSignatureModal(false)
-            setUploadedImage('')
-          }}
-          width={600}
-          footer={[
-            <Button
-              key="clear"
-              onClick={() => {
-                if (signatureMethod === 'draw') {
-                  clearSignature()
-                } else {
-                  setUploadedImage('')
-                }
-              }}
-            >
-              {signatureMethod === 'draw' ? 'សម្អាត' : 'លុបរូបភាព'}
-            </Button>,
-            <Button key="cancel" onClick={() => {
-              setShowSignatureModal(false)
-              setUploadedImage('')
-            }}>
-              បោះបង់
-            </Button>,
-            <Button key="save" type="primary" onClick={saveSignature}>
-              រក្សាទុក
-            </Button>
-          ]}
-        >
-          <Tabs
-            activeKey={signatureMethod}
-            onChange={(key) => setSignatureMethod(key as 'draw' | 'upload')}
-            items={[
-              {
-                key: 'draw',
-                label: <span className="font-hanuman"><EditOutlined /> គូរហត្ថលេខា</span>,
-                children: (
-                  <div>
-                    <div className="text-center mb-4">
-                      <Text className="font-hanuman">សូមគូរហត្ថលេខារបស់អ្នកខាងក្រោម:</Text>
-                    </div>
-                    <canvas
-                      ref={canvasRef}
-                      width={500}
-                      height={200}
-                      className="border border-gray-300 rounded w-full cursor-crosshair bg-white"
-                      style={{ touchAction: 'none' }}
-                      onMouseDown={startDrawing}
-                      onMouseMove={draw}
-                      onMouseUp={stopDrawing}
-                      onMouseLeave={stopDrawing}
-                      onTouchStart={startDrawing}
-                      onTouchMove={draw}
-                      onTouchEnd={stopDrawing}
-                    />
-                  </div>
-                )
-              },
-              {
-                key: 'upload',
-                label: <span className="font-hanuman"><UploadOutlined /> ផ្ទុកហត្ថលេខា</span>,
-                children: (
-                  <div>
-                    <div className="text-center mb-4">
-                      <Text className="font-hanuman">សូមជ្រើសរើសរូបភាពហត្ថលេខារបស់អ្នក:</Text>
-                      <div className="text-sm text-gray-500 mt-2 font-hanuman">
-                        (ប្រភេទ: PNG, JPG | ទំហំអតិបរមា: 2MB)
-                      </div>
-                    </div>
-                    <Upload.Dragger
-                      accept="image/png,image/jpeg,image/jpg"
-                      beforeUpload={handleImageUpload}
-                      showUploadList={false}
-                      maxCount={1}
-                    >
-                      {uploadedImage ? (
-                        <div className="p-4">
-                          <img
-                            src={uploadedImage}
-                            alt="Signature"
-                            className="max-h-40 max-w-full mx-auto border border-gray-200 rounded object-contain"
-                            style={{ maxHeight: '160px', width: 'auto' }}
-                          />
-                          <p className="mt-2 text-sm text-green-600 font-hanuman">
-                            ✓ បានផ្ទុករូបភាព (ចុចដើម្បីប្តូរ)
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="p-8">
-                          <p className="ant-upload-drag-icon">
-                            <UploadOutlined style={{ fontSize: 48, color: '#1890ff' }} />
-                          </p>
-                          <p className="ant-upload-text font-hanuman">
-                            ចុច ឬអូសរូបភាពមកទីនេះ
-                          </p>
-                          <p className="ant-upload-hint font-hanuman text-gray-500">
-                            ជ្រើសរើសរូបភាពហត្ថលេខារបស់អ្នក (PNG ឬ JPG)
-                          </p>
-                        </div>
-                      )}
-                    </Upload.Dragger>
-                  </div>
-                )
-              }
-            ]}
-          />
-        </Modal>
       </div>
     </div>
   )

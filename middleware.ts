@@ -53,12 +53,18 @@ export async function middleware(request: NextRequest) {
 
   // Special handling for PARTNER users
   if (userRole === 'PARTNER') {
-    // Partners can only access contract forms and their own profile
+    // Partners can access contract workflow pages and their own profile
     const allowedPartnerPaths = [
       '/contracts/new',
       '/contract/edit',
+      '/contract/sign',        // Step 1: Read contract
+      '/contract/configure',   // Step 2: Configure indicators
+      '/contract/submit',      // Step 3: Sign and submit
+      '/me-dashboard',         // Dashboard after completion
       '/profile',
       '/api/contracts',
+      '/api/contract-deliverables',
+      '/api/me',
       '/api/auth/logout',
       '/api/auth/session',
       '/'
@@ -67,8 +73,8 @@ export async function middleware(request: NextRequest) {
     const isAllowed = allowedPartnerPaths.some(allowed => path.startsWith(allowed))
 
     if (!isAllowed) {
-      // Redirect partners to contracts/new page if trying to access restricted areas
-      return NextResponse.redirect(new URL('/contracts/new', request.url))
+      // Redirect partners to home page if trying to access restricted areas
+      return NextResponse.redirect(new URL('/', request.url))
     }
   }
 
