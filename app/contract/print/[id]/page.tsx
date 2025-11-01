@@ -574,7 +574,7 @@ export default function ContractPrintPage() {
       ` }} />
 
       <button className="no-print print-button" onClick={() => window.print()}>
-        ទាញយកជា PDF
+        ទាញយកជា PDF v2.0
       </button>
 
       {/* Debug Info - Remove after testing */}
