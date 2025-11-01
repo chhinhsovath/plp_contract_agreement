@@ -71,6 +71,7 @@ model contracts {
   created_at             DateTime                          @default(now())
   updated_at             DateTime                          @updatedAt
   created_by_id          Int?
+  section_order          Json?
   attachments            attachments[]
   deliverable_selections contract_deliverable_selections[]
   contract_fields        contract_fields[]
