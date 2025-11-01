@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Spin, Button, Switch, Space, message } from 'antd'
+import { Spin, Button, Switch, Space, message, Modal } from 'antd'
 import { EditOutlined, SaveOutlined, PrinterOutlined, ArrowLeftOutlined } from '@ant-design/icons'
+import { RichTextEditor } from '@/components/RichTextEditor'
 
 export default function ContractPrintPage() {
   const params = useParams()
@@ -31,6 +32,11 @@ export default function ContractPrintPage() {
   )
   const [sectionVisibility, setSectionVisibility] = useState<Record<string, boolean>>({}) // NEW: Track section visibility
   const [layoutChanged, setLayoutChanged] = useState(false)
+
+  // Rich text editor state (Advanced mode)
+  const [editingSection, setEditingSection] = useState<string | null>(null)
+  const [sectionContent, setSectionContent] = useState<Record<string, string>>({})
+  const [showRichEditor, setShowRichEditor] = useState(false)
 
   useEffect(() => {
     const init = async () => {
@@ -211,6 +217,25 @@ export default function ContractPrintPage() {
     }
   }
 
+  const handleEditSectionContent = (sectionId: string) => {
+    setEditingSection(sectionId)
+    setShowRichEditor(true)
+  }
+
+  const handleSaveSectionContent = async (html: string) => {
+    if (!editingSection) return
+
+    try {
+      // Store section content for now (will save to DB later)
+      setSectionContent(prev => ({ ...prev, [editingSection]: html }))
+      setShowRichEditor(false)
+      setEditingSection(null)
+      message.success('បានរក្សាទុកខ្លឹមសារ')
+    } catch (error) {
+      message.error('មានបញ្ហា')
+    }
+  }
+
   const renderSectionWithControls = (sectionId: string, content: React.ReactNode, index: number) => {
     const section = DEFAULT_SECTIONS.find(s => s.id === sectionId)
     if (!section) return content
@@ -222,6 +247,44 @@ export default function ContractPrintPage() {
     const isFirst = index === 0
     const isLast = index === sectionOrder.length - 1
 
+    // ADVANCED MODE: Rich text editor
+    if (editorMode === 'advanced') {
+      return (
+        <div key={sectionId} style={{ position: 'relative', marginBottom: 16 }}>
+          <div className="no-print" style={{
+            background: '#f0f7ff',
+            border: '2px solid #1890ff',
+            borderRadius: 4,
+            padding: 12,
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onClick={() => section.moveable && handleEditSectionContent(sectionId)}
+          onMouseEnter={(e) => {
+            if (section.moveable) {
+              e.currentTarget.style.background = '#bae7ff'
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#f0f7ff'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <Space>
+                <span style={{ fontWeight: 600, color: '#1890ff' }}>📝 {section.label}</span>
+                {section.moveable && <span style={{ fontSize: 12, color: '#8c8c8c' }}>ចុចដើម្បីកែប្រែ</span>}
+              </Space>
+            </div>
+            {sectionContent[sectionId] ? (
+              <div dangerouslySetInnerHTML={{ __html: sectionContent[sectionId] }} />
+            ) : (
+              content
+            )}
+          </div>
+        </div>
+      )
+    }
+
+    // SIMPLE MODE: Up/down arrows (existing)
     return (
       <div key={sectionId} style={{ position: 'relative', marginBottom: 16 }}>
         {section.moveable && (
@@ -920,6 +983,29 @@ export default function ContractPrintPage() {
           </div>
         </div>
       </div>
+      {/* Rich Text Editor Modal for Advanced Mode */}
+      <Modal
+        title={`កែប្រែផ្នែក: ${DEFAULT_SECTIONS.find(s => s.id === editingSection)?.label}`}
+        open={showRichEditor}
+        onCancel={() => {
+          setShowRichEditor(false)
+          setEditingSection(null)
+        }}
+        footer={null}
+        width={900}
+        className="font-hanuman"
+      >
+        {editingSection && (
+          <RichTextEditor
+            content={sectionContent[editingSection] || ''}
+            onSave={handleSaveSectionContent}
+            onCancel={() => {
+              setShowRichEditor(false)
+              setEditingSection(null)
+            }}
+          />
+        )}
+      </Modal>
     </>
   )
 }
