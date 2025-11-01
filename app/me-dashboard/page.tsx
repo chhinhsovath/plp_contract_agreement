@@ -11,6 +11,7 @@ import IndicatorForm from './components/IndicatorForm'
 import ActivityForm from './components/ActivityForm'
 import DataCollectionForm from './components/DataCollectionForm'
 import PersonalInfoForm from './personal-info-form'
+import { useContent } from '@/lib/hooks/useContent'
 
 const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
@@ -26,6 +27,7 @@ const CONTRACT_TYPES = {
 
 export default function MEDashboardPage() {
   const router = useRouter()
+  const { t } = useContent()
   const [loading, setLoading] = useState(false)
   const [dateRange, setDateRange] = useState([dayjs().subtract(30, 'days'), dayjs()])
   const [selectedContract, setSelectedContract] = useState<number | null>(null)
@@ -83,7 +85,7 @@ export default function MEDashboardPage() {
 
         // Check if PARTNER user has signed contract
         if (userData.role === UserRole.PARTNER && !userData.contract_signed) {
-          message.warning('សូមចុះហត្ថលេខាលើកិច្ចសន្យាមុនសិន')
+          message.warning(t('dashboard_contract_warning'))
           router.push('/contract/sign')
           return
         }
@@ -228,13 +230,13 @@ export default function MEDashboardPage() {
         method: 'DELETE'
       })
       if (response.ok) {
-        message.success('សូចនាករបានលុប')
+        message.success(t('dashboard_indicator_deleted'))
         fetchIndicators()
       } else {
-        message.error('មិនអាចលុបសូចនាករបាន')
+        message.error(t('dashboard_indicator_delete_error'))
       }
     } catch (error) {
-      message.error('មានបញ្ហាក្នុងការលុបសូចនាករ')
+      message.error(t('dashboard_indicator_delete_error'))
     }
   }
 
@@ -249,13 +251,13 @@ export default function MEDashboardPage() {
         method: 'DELETE'
       })
       if (response.ok) {
-        message.success('សកម្មភាពបានលុប')
+        message.success(t('dashboard_activity_deleted'))
         fetchActivities()
       } else {
-        message.error('មិនអាចលុបសកម្មភាពបាន')
+        message.error(t('dashboard_activity_delete_error'))
       }
     } catch (error) {
-      message.error('មានបញ្ហាក្នុងការលុបសកម្មភាព')
+      message.error(t('dashboard_activity_delete_error'))
     }
   }
 
@@ -375,18 +377,18 @@ export default function MEDashboardPage() {
 
   const indicatorColumns = [
     {
-      title: 'កូដ',
+      title: t('dashboard_table_code'),
       dataIndex: 'code',
       key: 'code',
       width: 100
     },
     {
-      title: 'សូចនាករ',
+      title: t('dashboard_table_indicator'),
       dataIndex: 'name',
       key: 'name'
     },
     {
-      title: 'ប្រភេទ',
+      title: t('dashboard_table_type'),
       dataIndex: 'type',
       key: 'type',
       width: 100,
@@ -401,7 +403,7 @@ export default function MEDashboardPage() {
       }
     },
     {
-      title: 'គោលដៅ',
+      title: t('dashboard_table_target'),
       dataIndex: 'target',
       key: 'target',
       width: 100,
@@ -410,7 +412,7 @@ export default function MEDashboardPage() {
       }
     },
     {
-      title: 'បច្ចុប្បន្ន',
+      title: t('dashboard_table_current'),
       dataIndex: 'current',
       key: 'current',
       width: 80,
@@ -423,7 +425,7 @@ export default function MEDashboardPage() {
       width: 80
     },
     {
-      title: 'វឌ្ឍនភាព',
+      title: t('dashboard_table_progress'),
       key: 'progress',
       width: 150,
       render: (record: any) => (
@@ -435,22 +437,22 @@ export default function MEDashboardPage() {
       )
     },
     {
-      title: 'ស្ថានភាព',
+      title: t('dashboard_table_status'),
       key: 'status',
       width: 100,
       render: (record: any) => {
         const statusConfig = {
-          'on-track': { color: 'green', text: 'តាមគម្រោង' },
+          'on-track': { color: 'green', text: t('dashboard_on_track') },
           'delayed': { color: 'orange', text: 'យឺត' },
           'at-risk': { color: 'red', text: 'មានហានិភ័យ' },
-          'achieved': { color: 'blue', text: 'សម្រេច' }
+          'achieved': { color: 'blue', text: t('dashboard_achieved') }
         }
         const config = statusConfig[record.status as keyof typeof statusConfig] || { color: 'default', text: record.status }
         return <Tag color={config.color}>{config.text}</Tag>
       }
     },
     {
-      title: 'សកម្មភាព',
+      title: t('dashboard_table_actions'),
       key: 'actions',
       width: 150,
       render: (record: any) => (
@@ -460,7 +462,7 @@ export default function MEDashboardPage() {
             icon={<SaveOutlined />}
             onClick={() => handleAddDataCollection(record.key)}
           >
-            បញ្ចូល
+            {t('dashboard_input_data')}
           </Button>
           {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) && (
             <>
@@ -471,10 +473,10 @@ export default function MEDashboardPage() {
               />
               {user?.role === UserRole.SUPER_ADMIN && (
                 <Popconfirm
-                  title="តើអ្នកចង់លុបសូចនាករនេះមែនទេ?"
+                  title={t('dashboard_delete_indicator_confirm')}
                   onConfirm={() => handleDeleteIndicator(record.key)}
-                  okText="បាទ/ចាស"
-                  cancelText="ទេ"
+                  okText={t('dashboard_confirm_yes')}
+                  cancelText={t('dashboard_confirm_no')}
                 >
                   <Button
                     size="small"
@@ -492,7 +494,7 @@ export default function MEDashboardPage() {
 
   const activityColumns = [
     {
-      title: 'កូដ',
+      title: t('dashboard_table_code'),
       dataIndex: 'code',
       key: 'code',
       width: 100
@@ -517,15 +519,15 @@ export default function MEDashboardPage() {
       width: 150
     },
     {
-      title: 'ស្ថានភាព',
+      title: t('dashboard_table_status'),
       dataIndex: 'status',
       key: 'status',
       width: 120,
       render: (status: string) => {
         const statusConfig = {
           planned: { color: 'default', text: 'គម្រោង' },
-          ongoing: { color: 'processing', text: 'កំពុងដំណើរការ' },
-          completed: { color: 'success', text: 'បានបញ្ចប់' },
+          ongoing: { color: 'processing', text: t('dashboard_in_progress') },
+          completed: { color: 'success', text: t('dashboard_completed') },
           delayed: { color: 'warning', text: 'យឺតយ៉ាវ' },
           cancelled: { color: 'error', text: 'បានលុបចោល' }
         }
@@ -544,7 +546,7 @@ export default function MEDashboardPage() {
       )
     },
     {
-      title: 'វឌ្ឍនភាព',
+      title: t('dashboard_table_progress'),
       key: 'progress',
       width: 150,
       render: (record: any) => (
@@ -567,7 +569,7 @@ export default function MEDashboardPage() {
       )
     },
     {
-      title: 'សកម្មភាព',
+      title: t('dashboard_table_actions'),
       key: 'actions',
       width: 120,
       render: (record: any) => (
@@ -581,10 +583,10 @@ export default function MEDashboardPage() {
               />
               {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) && (
                 <Popconfirm
-                  title="តើអ្នកចង់លុបសកម្មភាពនេះមែនទេ?"
+                  title={t('dashboard_delete_activity_confirm')}
                   onConfirm={() => handleDeleteActivity(record.key)}
-                  okText="បាទ/ចាស"
-                  cancelText="ទេ"
+                  okText={t('dashboard_confirm_yes')}
+                  cancelText={t('dashboard_confirm_no')}
                 >
                   <Button
                     size="small"
@@ -830,11 +832,11 @@ export default function MEDashboardPage() {
     try {
       const response = await fetch('/api/auth/logout', { method: 'POST' })
       if (response.ok) {
-        message.success('ចាកចេញដោយជោគជ័យ')
+        message.success(t('dashboard_logout_success'))
         router.push('/login')
       }
     } catch (error) {
-      message.error('មានបញ្ហាក្នុងការចាកចេញ')
+      message.error(t('dashboard_logout_error'))
     }
   }
 
@@ -852,14 +854,14 @@ export default function MEDashboardPage() {
       })
 
       if (response.ok) {
-        message.success('បានផ្លាស់ប្តូរពាក្យសម្ងាត់ដោយជោគជ័យ')
+        message.success(t('dashboard_password_success'))
         setShowChangePasswordModal(false)
         passwordForm.resetFields()
       } else {
-        message.error('ពាក្យសម្ងាត់បច្ចុប្បន្នមិនត្រឹមត្រូវ')
+        message.error(t('dashboard_password_incorrect'))
       }
     } catch (error) {
-      message.error('មានបញ្ហាក្នុងការផ្លាស់ប្តូរពាក្យសម្ងាត់')
+      message.error(t('dashboard_password_error'))
     } finally {
       setChangingPassword(false)
     }
@@ -876,14 +878,14 @@ export default function MEDashboardPage() {
       })
 
       if (response.ok) {
-        message.success('កំណត់ដាក់ទិន្នន័យសាកល្បងឡើងវិញដោយជោគជ័យ')
+        message.success(t('dashboard_reset_success'))
         // Refresh the page to show updated data
         window.location.reload()
       } else {
-        message.error('មានបញ្ហាក្នុងការកំណត់ឡើងវិញ')
+        message.error(t('dashboard_reset_error'))
       }
     } catch (error) {
-      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+      message.error(t('dashboard_reset_error'))
     } finally {
       setResettingDemo(false)
     }
@@ -912,10 +914,10 @@ export default function MEDashboardPage() {
                 />
                 <div>
                   <Title level={2} style={{ color: '#fff', marginBottom: 4, fontFamily: 'Hanuman' }}>
-                    ផ្ទាំងគ្រប់គ្រង M&E
+                    {t('dashboard_title')}
                   </Title>
                   <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Hanuman' }}>
-                    តាមដានវឌ្ឍនភាព វាយតម្លៃលទ្ធផល និងផែនការគម្រោង
+                    {t('dashboard_subtitle')}
                   </Text>
                 </div>
               </Space>
@@ -929,27 +931,27 @@ export default function MEDashboardPage() {
                     {
                       key: 'profile',
                       icon: <UserOutlined />,
-                      label: <span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>,
+                      label: <span className="font-hanuman">{t('dashboard_menu_profile')}</span>,
                       onClick: () => setShowPersonalInfoForm(true)
                     },
                     {
                       key: 'change-password',
                       icon: <KeyOutlined />,
-                      label: <span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>,
+                      label: <span className="font-hanuman">{t('dashboard_menu_password')}</span>,
                       onClick: () => setShowChangePasswordModal(true)
                     },
                     // Show Configure Deliverables only for Contract Type 4 & 5
                     ...(user?.contract_type === 4 || user?.contract_type === 5 ? [{
                       key: 'configure-deliverables',
                       icon: <SettingOutlined />,
-                      label: <span className="font-hanuman">កំណត់សមិទ្ធកម្ម</span>,
+                      label: <span className="font-hanuman">{t('dashboard_menu_configure')}</span>,
                       onClick: () => router.push('/contract/configure')
                     }] : []),
                     { type: 'divider' },
                     {
                       key: 'logout',
                       icon: <LogoutOutlined />,
-                      label: <span className="font-hanuman">ចាកចេញ</span>,
+                      label: <span className="font-hanuman">{t('dashboard_menu_logout')}</span>,
                       onClick: handleLogout,
                       danger: true
                     }
@@ -993,7 +995,7 @@ export default function MEDashboardPage() {
         <Row gutter={[24, 16]} align="bottom">
           <Col flex="1" style={{ minWidth: 240 }}>
             <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 15, fontFamily: 'Hanuman' }}>
-              ប្រភេទកិច្ចព្រមព្រៀង:
+              {t('dashboard_contract_type_filter')}
             </Text>
             <Select
               style={{ width: '100%' }}
@@ -1013,7 +1015,7 @@ export default function MEDashboardPage() {
           </Col>
           <Col flex="1" style={{ minWidth: 320 }}>
             <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 15, fontFamily: 'Hanuman' }}>
-              រយៈពេល:
+              {t('dashboard_duration_filter')}
             </Text>
             <RangePicker
               style={{ width: '100%' }}
@@ -1035,7 +1037,7 @@ export default function MEDashboardPage() {
                   }}
                   style={{ fontFamily: 'Hanuman' }}
                 >
-                  ទាញយកកិច្ចសន្យា PDF
+                  {t('dashboard_download_contract')}
                 </Button>
               )}
 
@@ -1048,7 +1050,7 @@ export default function MEDashboardPage() {
                   loading={resettingDemo}
                   style={{ fontFamily: 'Hanuman' }}
                 >
-                  កំណត់ឡើងវិញ
+                  {t('dashboard_reset_demo')}
                 </Button>
               )}
             </Space>
@@ -1073,7 +1075,7 @@ export default function MEDashboardPage() {
               <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
                   <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                    {hasDeliverables ? 'សូចនាករសរុប' : 'សកម្មភាពសរុប'}
+                    {hasDeliverables ? t('dashboard_total_indicators') : t('dashboard_total_activities')}
                   </Text>
                   <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
                     {dashboardData.totalDeliverables}
@@ -1106,7 +1108,7 @@ export default function MEDashboardPage() {
               <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
                   <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                    {hasDeliverables ? 'សម្រេច' : 'បានបញ្ចប់'}
+                    {hasDeliverables ? t('dashboard_achieved') : t('dashboard_completed')}
                   </Text>
                   <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
                     {dashboardData.completedDeliverables}
@@ -1139,7 +1141,7 @@ export default function MEDashboardPage() {
               <Row justify="space-between" align="middle" style={{ height: '100%' }}>
                 <Col>
                   <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                    {hasDeliverables ? 'តាមគម្រោង' : 'កំពុងដំណើរការ'}
+                    {hasDeliverables ? t('dashboard_on_track') : t('dashboard_in_progress')}
                   </Text>
                   <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
                     {dashboardData.inProgressDeliverables}
@@ -1171,7 +1173,7 @@ export default function MEDashboardPage() {
             >
               <div>
                 <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                  វឌ្ឍនភាពរួម
+                  {t('dashboard_overall_progress')}
                 </Text>
                 <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36, marginBottom: 16 }}>
                   {dashboardData.overallProgress}%
@@ -1223,7 +1225,7 @@ export default function MEDashboardPage() {
               label: (
                 <span className="font-hanuman text-base">
                   <FundProjectionScreenOutlined className="mr-2" />
-                  សូចនាករ
+                  {t('dashboard_tab_indicators')}
                 </span>
               ),
               children: (
@@ -1239,7 +1241,7 @@ export default function MEDashboardPage() {
                           setShowIndicatorForm(true)
                         }}
                       >
-                        បង្កើតសូចនាករថ្មី
+                        {t('dashboard_create_indicator')}
                       </Button>
                     </div>
                   )}
@@ -1261,7 +1263,7 @@ export default function MEDashboardPage() {
                       />
                     </div>
                   ) : (
-                    <Empty description="គ្មានសូចនាករ" />
+                    <Empty description={t('dashboard_no_indicators')} />
                   )}
                 </div>
               )
@@ -1272,7 +1274,7 @@ export default function MEDashboardPage() {
               label: (
                 <span className="font-hanuman text-base">
                   <TrophyOutlined className="mr-2" />
-                  សមិទ្ធកម្ម
+                  {t('dashboard_tab_deliverables')}
                 </span>
               ),
               children: (
@@ -1295,14 +1297,14 @@ export default function MEDashboardPage() {
                             )
                           },
                           {
-                            title: <span className="font-hanuman">សមិទ្ធកម្ម</span>,
+                            title: <span className="font-hanuman">{t('dashboard_table_deliverable')}</span>,
                             key: 'deliverable',
                             render: (_, record) => (
                               <Text className="font-hanuman">{record.deliverable_title_khmer}</Text>
                             )
                           },
                           {
-                            title: <span className="font-hanuman">សូចនាករ</span>,
+                            title: <span className="font-hanuman">{t('dashboard_table_indicator')}</span>,
                             key: 'indicator',
                             render: (_, record) => (
                               <div className="font-hanuman space-y-3">
@@ -1320,7 +1322,7 @@ export default function MEDashboardPage() {
                                         <Text className="text-blue-700 font-medium">
                                           {option.option_text_khmer}
                                         </Text>
-                                        <Tag color="blue">បានជ្រើសរើស</Tag>
+                                        <Tag color="blue">{t('dashboard_table_selected')}</Tag>
                                       </div>
                                     </div>
                                   ))}
@@ -1328,7 +1330,7 @@ export default function MEDashboardPage() {
                             )
                           },
                           {
-                            title: <span className="font-hanuman">ពេលវេលាអនុវត្ត</span>,
+                            title: <span className="font-hanuman">{t('dashboard_table_timeline')}</span>,
                             key: 'timeline',
                             width: 200,
                             render: (_, record) => (
@@ -1346,7 +1348,7 @@ export default function MEDashboardPage() {
                     <Empty
                       description={
                         <Text className="font-hanuman text-gray-500">
-                          គ្មានសមិទ្ធកម្ម
+                          {t('dashboard_no_deliverables')}
                         </Text>
                       }
                     />
@@ -1360,7 +1362,7 @@ export default function MEDashboardPage() {
               label: (
                 <span className="font-hanuman text-base">
                   <CheckCircleOutlined className="mr-2" />
-                  ចំណុចសំខាន់
+                  {t('dashboard_tab_milestones')}
                 </span>
               ),
               children: (
@@ -1512,7 +1514,7 @@ export default function MEDashboardPage() {
                     <Empty
                       description={
                         <Text className="font-hanuman text-gray-500">
-                          មិនទាន់មានទិន្នន័យតាមដានសមិទ្ធកម្ម
+                          {t('dashboard_no_milestones')}
                         </Text>
                       }
                     />
@@ -1526,7 +1528,7 @@ export default function MEDashboardPage() {
               label: (
                 <span className="font-hanuman text-base">
                   <FileTextOutlined className="mr-2" />
-                  បញ្ជីកិច្ចសន្យា
+                  {t('dashboard_tab_contracts')}
                 </span>
               ),
               children: (
@@ -1599,10 +1601,10 @@ export default function MEDashboardPage() {
                                     icon={<EditOutlined />}
                                     onClick={() => {
                                       // TODO: Implement edit functionality
-                                      message.info('មុខងារកែសម្រួលនឹងមានឆាប់ៗនេះ')
+                                      message.info(t('dashboard_edit_coming_soon'))
                                     }}
                                   >
-                                    កែសម្រួល
+                                    {t('common_edit')}
                                   </Button>
                                 )}
                               </Space>
@@ -1620,7 +1622,7 @@ export default function MEDashboardPage() {
                     <Empty
                       description={
                         <Text className="font-hanuman text-gray-500">
-                          គ្មានកិច្ចសន្យា
+                          {t('dashboard_no_contracts')}
                         </Text>
                       }
                     />
@@ -1691,7 +1693,7 @@ export default function MEDashboardPage() {
 
       {/* Change Password Modal */}
       <Modal
-        title={<span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>}
+        title={<span className="font-hanuman">{t('dashboard_password_modal_title')}</span>}
         open={showChangePasswordModal}
         onCancel={() => {
           setShowChangePasswordModal(false)
@@ -1707,26 +1709,26 @@ export default function MEDashboardPage() {
         >
           <Form.Item
             name="currentPassword"
-            label={<span className="font-hanuman">ពាក្យសម្ងាត់បច្ចុប្បន្ន</span>}
+            label={<span className="font-hanuman">{t('dashboard_current_password')}</span>}
             rules={[{ required: true, message: 'សូមបញ្ចូលពាក្យសម្ងាត់បច្ចុប្បន្ន' }]}
           >
-            <Input.Password placeholder="ពាក្យសម្ងាត់បច្ចុប្បន្ន" />
+            <Input.Password placeholder={t('dashboard_current_password')} />
           </Form.Item>
 
           <Form.Item
             name="newPassword"
-            label={<span className="font-hanuman">ពាក្យសម្ងាត់ថ្មី</span>}
+            label={<span className="font-hanuman">{t('dashboard_new_password')}</span>}
             rules={[
               { required: true, message: 'សូមបញ្ចូលពាក្យសម្ងាត់ថ្មី' },
-              { min: 6, message: 'ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច 6 តួអក្សរ' }
+              { min: 6, message: t('dashboard_password_min_length') }
             ]}
           >
-            <Input.Password placeholder="ពាក្យសម្ងាត់ថ្មី" />
+            <Input.Password placeholder={t('dashboard_new_password')} />
           </Form.Item>
 
           <Form.Item
             name="confirmPassword"
-            label={<span className="font-hanuman">បញ្ជាក់ពាក្យសម្ងាត់ថ្មី</span>}
+            label={<span className="font-hanuman">{t('dashboard_confirm_password')}</span>}
             dependencies={['newPassword']}
             rules={[
               { required: true, message: 'សូមបញ្ជាក់ពាក្យសម្ងាត់ថ្មី' },
@@ -1735,12 +1737,12 @@ export default function MEDashboardPage() {
                   if (!value || getFieldValue('newPassword') === value) {
                     return Promise.resolve()
                   }
-                  return Promise.reject(new Error('ពាក្យសម្ងាត់មិនដូចគ្នា'))
+                  return Promise.reject(new Error(t('dashboard_password_mismatch')))
                 }
               })
             ]}
           >
-            <Input.Password placeholder="បញ្ជាក់ពាក្យសម្ងាត់ថ្មី" />
+            <Input.Password placeholder={t('dashboard_confirm_password')} />
           </Form.Item>
 
           <Form.Item className="mb-0">

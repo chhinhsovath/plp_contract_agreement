@@ -44,7 +44,7 @@ interface ExistingSelection {
 
 export default function ContractConfigurePage() {
   const router = useRouter()
-  const { t } = useContent() // Dynamic content hook
+  const { t } = useContent()
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
   const [deliverables, setDeliverables] = useState<Deliverable[]>([])
@@ -73,14 +73,14 @@ export default function ContractConfigurePage() {
 
         // Only PARTNER users can access this page for all contract types
         if (userData.role !== UserRole.PARTNER) {
-          message.error('អ្នកមិនមានសិទ្ធិចូលប្រើទំព័របង្កើតកិច្ចព្រមព្រៀង')
+          message.error(t('configure_no_access_error'))
           router.push('/')
           return
         }
 
         // Support all contract types 1-5
         if (!userData.contract_type || userData.contract_type < 1 || userData.contract_type > 5) {
-          message.error('ប្រភេទកិច្ចព្រមព្រៀងមិនត្រឹមត្រូវ')
+          message.error(t('configure_invalid_type_error'))
           router.push('/')
           return
         }
@@ -96,7 +96,7 @@ export default function ContractConfigurePage() {
         } else {
           // Check if user has read the contract first
           if (!userData.contract_read) {
-            message.warning('សូមអានកិច្ចសន្យាជាមុនសិន')
+            message.warning(t('configure_read_first_warning'))
             router.push('/contract/sign')
             return
           }
@@ -123,11 +123,11 @@ export default function ContractConfigurePage() {
           setExistingSelections(data.data.deliverables)
         }
       } else {
-        message.error('មិនអាចទាញយកការជ្រើសរើសបច្ចុប្បន្នបាន')
+        message.error(t('configure_fetch_current_error'))
       }
     } catch (error) {
       console.error('Failed to fetch existing selections:', error)
-      message.error('មានបញ្ហាក្នុងការទាញយកទិន្នន័យ')
+      message.error(t('configure_data_error'))
     } finally {
       setLoading(false)
     }
@@ -161,11 +161,11 @@ export default function ContractConfigurePage() {
           selected_option_id: 0 // 0 means not selected yet
         })))
       } else {
-        message.error('មិនអាចទាញយកទិន្នន័យបាន')
+        message.error(t('configure_load_error'))
       }
     } catch (error) {
       console.error('Failed to fetch deliverables:', error)
-      message.error('មានបញ្ហាក្នុងការទាញយកទិន្នន័យ')
+      message.error(t('configure_data_error'))
     } finally {
       setLoading(false)
     }
@@ -184,7 +184,7 @@ export default function ContractConfigurePage() {
   const handleNext = () => {
     const currentSelection = selections[currentStep]
     if (!currentSelection || currentSelection.selected_option_id === 0) {
-      message.warning('សូមជ្រើសរើសជម្រើសមួយ')
+      message.warning(t('configure_select_one_warning'))
       return
     }
 
@@ -206,7 +206,7 @@ export default function ContractConfigurePage() {
     // Check all selections are made
     const allSelected = selections.every(s => s.selected_option_id !== 0)
     if (!allSelected) {
-      message.error('សូមជ្រើសរើសជម្រើសសម្រាប់សមិទ្ធកម្មទាំងអស់')
+      message.error(t('configure_select_all_error'))
       return
     }
 
@@ -229,12 +229,12 @@ export default function ContractConfigurePage() {
         throw new Error('Failed to save configuration')
       }
 
-      message.success('រក្សាទុកការជ្រើសរើសរបស់អ្នកដោយជោគជ័យ')
+      message.success(t('contract_configure_success_message'))
       // Redirect to signature submission page
       router.push('/contract/submit')
     } catch (error) {
       console.error('Failed to save configuration:', error)
-      message.error('មានបញ្ហាក្នុងការរក្សាទុក')
+      message.error(t('configure_save_error'))
     } finally {
       setSubmitting(false)
     }
@@ -246,7 +246,7 @@ export default function ContractConfigurePage() {
 
   const handleSubmitChangeRequest = async () => {
     if (!requestReason.trim()) {
-      message.warning('សូមបញ្ចូលហេតុផលនៃការស្នើសុំផ្លាស់ប្តូរ')
+      message.warning(t('reconfig_reason_required_warning'))
       return
     }
 
@@ -264,18 +264,18 @@ export default function ContractConfigurePage() {
       })
 
       if (response.ok) {
-        message.success('បានបញ្ជូនសំណើស្នើសុំផ្លាស់ប្តូរទៅកាន់អ្នកគ្រប់គ្រងដោយជោគជ័យ')
+        message.success(t('reconfig_success_message'))
         setShowRequestModal(false)
         setRequestReason('')
         // Refresh to show pending request
         await checkPendingRequest(user.id)
       } else {
         const data = await response.json()
-        message.error(data.error || 'មានបញ្ហាក្នុងការបញ្ជូនសំណើ')
+        message.error(data.error || t('reconfig_submit_error'))
       }
     } catch (error) {
       console.error('Failed to submit request:', error)
-      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+      message.error(t('configure_connection_error'))
     } finally {
       setRequestingChange(false)
     }
@@ -299,10 +299,10 @@ export default function ContractConfigurePage() {
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <Title level={2} style={{ marginBottom: 0 }}>
                 <EyeOutlined style={{ marginRight: 12 }} />
-                ការជ្រើសរើសសមិទ្ធកម្មរបស់អ្នក
+                {t('contract_configure_view_title')}
               </Title>
               <Text type="secondary" style={{ fontSize: 15 }}>
-                នេះគឺជាការជ្រើសរើសសមិទ្ធកម្មដែលអ្នកបានជ្រើសរើស
+                {t('contract_configure_view_subtitle')}
               </Text>
             </Space>
           </Card>
@@ -310,10 +310,10 @@ export default function ContractConfigurePage() {
           {/* Pending Request Alert */}
           {pendingRequest && (
             <Alert
-              message={<span style={{ fontSize: 15 }}>សំណើផ្លាស់ប្តូររបស់អ្នកកំពុងរង់ចាំការពិនិត្យ</span>}
+              message={<span style={{ fontSize: 15 }}>{t('reconfig_request_pending_alert')}</span>}
               description={
                 <div>
-                  <Text>ហេតុផល: {pendingRequest.request_reason}</Text>
+                  <Text>{t('reconfig_request_reason_label')} {pendingRequest.request_reason}</Text>
                   <br />
                   <Text type="secondary">កាលបរិច្ឆេទស្នើសុំ: {new Date(pendingRequest.created_at).toLocaleDateString('km-KH')}</Text>
                 </div>
@@ -325,7 +325,7 @@ export default function ContractConfigurePage() {
           )}
 
           {/* Current Selections */}
-          <Card title="សមិទ្ធកម្មដែលបានជ្រើសរើស" style={{ marginBottom: 32 }}>
+          <Card title={t('configure_selected_deliverables_title')} style={{ marginBottom: 32 }}>
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
               {existingSelections.map((selection, index) => (
                 <Card key={selection.deliverable_id} type="inner">
@@ -333,14 +333,14 @@ export default function ContractConfigurePage() {
                     <div style={{ flex: 1 }}>
                       <Badge count={selection.option_number} style={{ backgroundColor: '#52c41a' }}>
                         <Title level={5} style={{ marginBottom: 8, paddingRight: 30 }}>
-                          សមិទ្ធកម្មទី {index + 1}
+                          {t('contract_configure_deliverable_label')} {index + 1}
                         </Title>
                       </Badge>
                       <Paragraph style={{ fontSize: 16, marginBottom: 12, color: '#0047AB' }}>
                         {selection.deliverable_title_khmer}
                       </Paragraph>
                       <Alert
-                        message={<Text strong>ជម្រើសដែលបានជ្រើស: ជម្រើសទី {selection.option_number}</Text>}
+                        message={<Text strong>{t('configure_selected_option_label')} {t('contract_configure_option_label')} {selection.option_number}</Text>}
                         description={selection.option_text_khmer}
                         type="success"
                         showIcon
@@ -357,8 +357,8 @@ export default function ContractConfigurePage() {
             <div style={{ textAlign: 'center', padding: 16 }}>
               {user.contract_signed ? (
                 <Alert
-                  message="អ្នកបានចុះហត្ថលេខារួចហើយ"
-                  description="ការផ្លាស់ប្តូរការជ្រើសរើសត្រូវការការអនុម័តពីអ្នកគ្រប់គ្រង SUPER_ADMIN"
+                  message={t('configure_signed_alert_title')}
+                  description={t('configure_signed_alert_description')}
                   type="warning"
                   showIcon
                   style={{ marginBottom: 24 }}
@@ -373,7 +373,7 @@ export default function ContractConfigurePage() {
                 disabled={!!pendingRequest}
                 style={{ padding: '0 32px', height: 48, fontSize: 15 }}
               >
-                {pendingRequest ? 'សំណើកំពុងរង់ចាំ' : 'ស្នើសុំផ្លាស់ប្តូរការជ្រើសរើស'}
+                {pendingRequest ? t('configure_pending_request_message') : t('contract_configure_request_change_button')}
               </Button>
 
               <div style={{ marginTop: 16 }}>
@@ -382,7 +382,7 @@ export default function ContractConfigurePage() {
                   onClick={() => router.push('/me-dashboard')}
                   style={{ padding: '0 32px', height: 48 }}
                 >
-                  ត្រឡប់ទៅផ្ទាំងគ្រប់គ្រង
+                  {t('contract_configure_return_dashboard_button')}
                 </Button>
               </div>
             </div>
@@ -390,7 +390,7 @@ export default function ContractConfigurePage() {
 
           {/* Request Change Modal */}
           <Modal
-            title={<span className="font-hanuman">ស្នើសុំផ្លាស់ប្តូរការជ្រើសរើសសមិទ្ធកម្ម</span>}
+            title={<span className="font-hanuman">{t('reconfig_request_modal_title')}</span>}
             open={showRequestModal}
             onCancel={() => {
               setShowRequestModal(false)
@@ -401,7 +401,7 @@ export default function ContractConfigurePage() {
                 setShowRequestModal(false)
                 setRequestReason('')
               }}>
-                បោះបង់
+                {t('common_cancel')}
               </Button>,
               <Button
                 key="submit"
@@ -409,26 +409,26 @@ export default function ContractConfigurePage() {
                 loading={requestingChange}
                 onClick={handleSubmitChangeRequest}
               >
-                បញ្ជូនសំណើ
+                {t('reconfig_submit_button')}
               </Button>
             ]}
             width={600}
           >
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <Alert
-                message="ការស្នើសុំផ្លាស់ប្តូរត្រូវការការអនុម័តពី SUPER_ADMIN"
-                description="សូមបញ្ជាក់ហេតុផលច្បាស់លាស់ថាហេតុអ្វីបានជាអ្នកត្រូវការផ្លាស់ប្តូរការជ្រើសរើសសមិទ្ធកម្មរបស់អ្នក"
+                message={t('reconfig_request_alert_message')}
+                description={t('reconfig_request_alert_description')}
                 type="info"
                 showIcon
               />
 
               <div>
-                <Text strong>ហេតុផលនៃការស្នើសុំ:</Text>
+                <Text strong>{t('reconfig_request_reason_label')}</Text>
                 <TextArea
                   rows={4}
                   value={requestReason}
                   onChange={(e) => setRequestReason(e.target.value)}
-                  placeholder="សូមបញ្ជាក់ហេតុផលដែលអ្នកត្រូវការផ្លាស់ប្តូរការជ្រើសរើស..."
+                  placeholder={t('reconfig_reason_placeholder')}
                   maxLength={500}
                   showCount
                   style={{ marginTop: 8 }}
@@ -453,10 +453,10 @@ export default function ContractConfigurePage() {
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <Title level={2} style={{ marginBottom: 0 }}>
               <FileTextOutlined style={{ marginRight: 12 }} />
-              កំណត់រចនាសម្ព័ន្ធកិច្ចសន្យា
+              {t('contract_configure_page_title')}
             </Title>
             <Text type="secondary" style={{ fontSize: 15 }}>
-              សូមជ្រើសរើសជម្រើសមួយសម្រាប់សមិទ្ធកម្មនីមួយៗ ដោយផ្អែកលើទិន្នន័យមូលដ្ឋានរបស់អ្នក
+              {t('contract_configure_subtitle')}
             </Text>
           </Space>
         </Card>
@@ -468,7 +468,7 @@ export default function ContractConfigurePage() {
             items={deliverables.map((d, index) => ({
               title: (
                 <span style={{ fontSize: 14 }}>
-                  សមិទ្ធកម្មទី {d.deliverable_number}
+                  {t('contract_configure_deliverable_label')} {d.deliverable_number}
                 </span>
               ),
               status:
@@ -485,7 +485,7 @@ export default function ContractConfigurePage() {
         <Alert
           message={
             <span style={{ fontSize: 15 }}>
-              សូមអានជម្រើសទាំង ៣ យ៉ាងត្រឹមត្រូវ ហើយជ្រើសរើសជម្រើសដែលត្រូវនឹងស្ថានភាពសាលារៀនរបស់អ្នក
+              {t('contract_configure_alert_message')}
             </span>
           }
           type="info"
@@ -500,25 +500,25 @@ export default function ContractConfigurePage() {
               {/* Deliverable Title */}
               <div>
                 <Title level={4} style={{ color: '#0047AB', marginBottom: 8 }}>
-                  សមិទ្ធកម្មទី {currentDeliverable.deliverable_number}
+                  {t('contract_configure_deliverable_label')} {currentDeliverable.deliverable_number}
                 </Title>
                 <Paragraph style={{ fontSize: 16, marginBottom: 8 }}>
                   {currentDeliverable.deliverable_title_khmer}
                 </Paragraph>
                 {currentDeliverable.activities_text && (
                   <Paragraph style={{ color: '#595959', fontSize: 14, background: '#fafafa', padding: 12, borderRadius: 8 }}>
-                    <strong>សកម្មភាព:</strong> {currentDeliverable.activities_text}
+                    <strong>{t('contract_configure_activities_label')}</strong> {currentDeliverable.activities_text}
                   </Paragraph>
                 )}
                 <Text type="secondary" style={{ fontSize: 14 }}>
-                  <strong>ពេលវេលាអនុវត្ត:</strong> {currentDeliverable.timeline}
+                  <strong>{t('contract_configure_timeline_label')}</strong> {currentDeliverable.timeline}
                 </Text>
               </div>
 
               {/* Options */}
               <div>
                 <Title level={5} style={{ marginBottom: 12 }}>
-                  សូមជ្រើសរើសជម្រើសមួយ:
+                  {t('contract_configure_select_option_label')}
                 </Title>
                 <Radio.Group
                   value={currentSelection?.selected_option_id || 0}
@@ -548,14 +548,14 @@ export default function ContractConfigurePage() {
                         <Radio value={option.id} style={{ width: '100%' }}>
                           <Space direction="vertical" size="small" style={{ width: '100%', marginLeft: 8 }}>
                             <Text strong style={{ fontSize: 15 }}>
-                              ជម្រើសទី {option.option_number}
+                              {t('contract_configure_option_label')} {option.option_number}
                             </Text>
                             <Paragraph style={{ marginBottom: 0, color: '#262626' }}>
                               {option.option_text_khmer}
                             </Paragraph>
                             {option.baseline_percentage !== null && option.target_percentage !== null && (
                               <Text style={{ fontSize: 14, color: '#8c8c8c' }}>
-                                គោលដៅ: {option.baseline_percentage}% → {option.target_percentage}%
+                                {t('contract_configure_target_label')} {option.baseline_percentage}% → {option.target_percentage}%
                               </Text>
                             )}
                           </Space>
@@ -579,7 +579,7 @@ export default function ContractConfigurePage() {
               size="large"
               style={{ padding: '0 32px', height: 48, fontSize: 15 }}
             >
-              <span>ថយក្រោយ</span>
+              <span>{t('contract_configure_back_button')}</span>
             </Button>
 
             <Text style={{ color: '#8c8c8c', fontSize: 16, fontWeight: 500 }}>
@@ -595,7 +595,7 @@ export default function ContractConfigurePage() {
                 size="large"
                 style={{ padding: '0 32px', height: 48, fontSize: 15 }}
               >
-                <span>បន្ទាប់</span>
+                <span>{t('contract_configure_next_button')}</span>
               </Button>
             ) : (
               <Button
@@ -606,7 +606,7 @@ export default function ContractConfigurePage() {
                 size="large"
                 style={{ padding: '0 32px', height: 48, fontSize: 15 }}
               >
-                <span>ពិនិត្យ និងចុះហត្ថលេខា</span>
+                <span>{t('contract_configure_submit_button')}</span>
               </Button>
             )}
           </div>

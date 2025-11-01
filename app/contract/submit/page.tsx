@@ -5,11 +5,13 @@ import { Card, Button, Typography, message, Spin, Alert, Space, Modal, Tabs, Upl
 import { CheckCircleOutlined, FileTextOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import type { UploadFile } from 'antd'
+import { useContent } from '@/lib/hooks/useContent'
 
 const { Title, Text } = Typography
 
 export default function ContractSubmitPage() {
   const router = useRouter()
+  const { t } = useContent()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -35,21 +37,21 @@ export default function ContractSubmitPage() {
 
         // Check if user already signed contract
         if (userData.contract_signed) {
-          message.info('អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យារួចហើយ')
+          message.info(t('submit_already_signed'))
           router.push('/me-dashboard')
           return
         }
 
         // Check if user completed configuration
         if (!userData.configuration_complete) {
-          message.warning('សូមបំពេញការកំណត់រចនាសម្ព័ន្ធជាមុនសិន')
+          message.warning(t('submit_config_required'))
           router.push('/contract/configure')
           return
         }
 
         // Check if user has read the contract
         if (!userData.contract_read) {
-          message.warning('សូមអានកិច្ចសន្យាជាមុនសិន')
+          message.warning(t('submit_read_required'))
           router.push('/contract/sign')
           return
         }
@@ -57,7 +59,7 @@ export default function ContractSubmitPage() {
         // Check if selections exist in localStorage
         const selectionsJson = localStorage.getItem('contract_selections')
         if (!selectionsJson) {
-          message.error('ការជ្រើសរើសរបស់អ្នកបាត់បង់ សូមធ្វើការកំណត់រចនាសម្ព័ន្ធឡើងវិញ')
+          message.error(t('submit_selections_lost'))
           router.push('/contract/configure')
           return
         }
@@ -142,25 +144,25 @@ export default function ContractSubmitPage() {
       setSignature(dataUrl)
     } else {
       if (!uploadedImage) {
-        message.warning('សូមជ្រើសរើសរូបភាពហត្ថលេខា')
+        message.warning(t('signature_select_warning'))
         return
       }
       setSignature(uploadedImage)
     }
     setShowSignatureModal(false)
-    message.success('ហត្ថលេខាបានរក្សាទុក')
+    message.success(t('signature_saved'))
   }
 
   const handleImageUpload = (file: File) => {
     const validTypes = ['image/png', 'image/jpeg', 'image/jpg']
     if (!validTypes.includes(file.type)) {
-      message.error('សូមជ្រើសរើសរូបភាពប្រភេទ PNG ឬ JPG')
+      message.error(t('signature_invalid_type'))
       return false
     }
 
     const maxSize = 2 * 1024 * 1024
     if (file.size > maxSize) {
-      message.error('ទំហំរូបភាពធំពេក (អតិបរមា 2MB)')
+      message.error(t('signature_too_large'))
       return false
     }
 
@@ -192,7 +194,7 @@ export default function ContractSubmitPage() {
           ctx.drawImage(img, 0, 0, width, height)
           const resizedDataUrl = canvas.toDataURL('image/png')
           setUploadedImage(resizedDataUrl)
-          message.success('បានផ្ទុករូបភាពហត្ថលេខា')
+          message.success(t('signature_uploaded'))
         }
       }
       img.src = e.target?.result as string
@@ -204,7 +206,7 @@ export default function ContractSubmitPage() {
 
   const handleSubmit = async () => {
     if (!signature) {
-      message.warning('សូមចុះហត្ថលេខា')
+      message.warning(t('submit_signature_warning'))
       return
     }
 
@@ -213,7 +215,7 @@ export default function ContractSubmitPage() {
     try {
       const selectionsJson = localStorage.getItem('contract_selections')
       if (!selectionsJson) {
-        message.error('ការជ្រើសរើសរបស់អ្នកបាត់បង់')
+        message.error(t('submit_selections_lost'))
         router.push('/contract/configure')
         return
       }
@@ -235,18 +237,18 @@ export default function ContractSubmitPage() {
         // Clear selections from localStorage after successful submission
         localStorage.removeItem('contract_selections')
 
-        message.success('អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យាដោយជោគជ័យ!')
+        message.success(t('contract_submit_success_message'))
 
         setTimeout(() => {
           router.push('/me-dashboard')
         }, 1500)
       } else {
         const data = await response.json()
-        message.error(data.error || 'មានបញ្ហាក្នុងការចុះហត្ថលេខា')
+        message.error(data.error || t('submit_signature_error'))
       }
     } catch (error) {
       console.error('Submission error:', error)
-      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+      message.error(t('submit_connection_error'))
     } finally {
       setSubmitting(false)
     }
@@ -268,10 +270,10 @@ export default function ContractSubmitPage() {
           <div className="text-center p-4">
             <Title level={2} className="font-hanuman text-blue-800 mb-3">
               <FileTextOutlined className="mr-3" />
-              ចុះហត្ថលេខាលើកិច្ចសន្យា
+              {t('contract_submit_page_title')}
             </Title>
             <Text className="font-hanuman text-gray-600 text-base">
-              អ្នកបានបំពេញការអាន និងការកំណត់រចនាសម្ព័ន្ធរួចរាល់ សូមចុះហត្ថលេខាដើម្បីបញ្ចប់
+              {t('contract_submit_subtitle')}
             </Text>
           </div>
         </Card>
@@ -282,21 +284,21 @@ export default function ContractSubmitPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <CheckCircleOutlined className="text-green-500 text-xl" />
-                <Text className="font-hanuman">អានកិច្ចសន្យា</Text>
+                <Text className="font-hanuman">{t('contract_submit_step_read')}</Text>
               </div>
               <CheckCircleOutlined className="text-green-500 text-2xl" />
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <CheckCircleOutlined className="text-green-500 text-xl" />
-                <Text className="font-hanuman">កំណត់រចនាសម្ព័ន្ធសមិទ្ធកម្ម</Text>
+                <Text className="font-hanuman">{t('contract_submit_step_configure')}</Text>
               </div>
               <CheckCircleOutlined className="text-green-500 text-2xl" />
             </div>
             <div className="flex items-center justify-between border-l-4 border-blue-500 pl-4">
               <div className="flex items-center space-x-2">
                 <EditOutlined className="text-blue-500 text-xl" />
-                <Text className="font-hanuman font-bold text-blue-600">ចុះហត្ថលេខា (ជំហានចុងក្រោយ)</Text>
+                <Text className="font-hanuman font-bold text-blue-600">{t('contract_submit_step_sign')}</Text>
               </div>
             </div>
           </Space>
@@ -306,8 +308,8 @@ export default function ContractSubmitPage() {
         <Card className="mb-8 shadow-md">
           <Space direction="vertical" size="large" className="w-full">
             <Alert
-              message={<span className="font-hanuman text-base">សូមចុះហត្ថលេខារបស់អ្នក</span>}
-              description={<span className="font-hanuman">នេះគឺជាជំហានចុងក្រោយក្នុងការបញ្ចប់កិច្ចសន្យា</span>}
+              message={<span className="font-hanuman text-base">{t('contract_submit_signature_prompt')}</span>}
+              description={<span className="font-hanuman">{t('contract_submit_signature_description')}</span>}
               type="info"
               showIcon
               className="p-4"
@@ -320,7 +322,7 @@ export default function ContractSubmitPage() {
                     <div className="flex items-center space-x-3">
                       <CheckCircleOutlined className="text-green-500 text-2xl" />
                       <div>
-                        <Text className="font-hanuman text-base font-bold">ហត្ថលេខា: បានរក្សាទុក</Text>
+                        <Text className="font-hanuman text-base font-bold">{t('contract_submit_signature_saved')}</Text>
                         <div className="mt-2">
                           <img
                             src={signature}
@@ -335,7 +337,7 @@ export default function ContractSubmitPage() {
                       onClick={() => setShowSignatureModal(true)}
                       className="font-hanuman"
                     >
-                      កែប្រែ
+                      {t('common_edit')}
                     </Button>
                   </div>
                 </div>
@@ -348,7 +350,7 @@ export default function ContractSubmitPage() {
                     size="large"
                     className="font-hanuman"
                   >
-                    ចុចដើម្បីចុះហត្ថលេខា
+                    {t('contract_submit_click_to_sign')}
                   </Button>
                 </div>
               )}
@@ -364,7 +366,7 @@ export default function ContractSubmitPage() {
                 icon={<CheckCircleOutlined />}
                 className="font-hanuman px-8 py-6 h-auto text-base"
               >
-                បញ្ជូនកិច្ចសន្យា
+                {t('contract_submit_button')}
               </Button>
             </div>
           </Space>
@@ -372,7 +374,7 @@ export default function ContractSubmitPage() {
 
         {/* Signature Modal */}
         <Modal
-          title={<span className="font-hanuman">ចុះហត្ថលេខារបស់អ្នក</span>}
+          title={<span className="font-hanuman">{t('signature_modal_title')}</span>}
           open={showSignatureModal}
           onCancel={() => {
             setShowSignatureModal(false)
@@ -390,16 +392,16 @@ export default function ContractSubmitPage() {
                 }
               }}
             >
-              {signatureMethod === 'draw' ? 'សម្អាត' : 'លុបរូបភាព'}
+              {signatureMethod === 'draw' ? t('signature_clear_button') : t('signature_delete_image')}
             </Button>,
             <Button key="cancel" onClick={() => {
               setShowSignatureModal(false)
               setUploadedImage('')
             }}>
-              បោះបង់
+              {t('signature_cancel_button')}
             </Button>,
             <Button key="save" type="primary" onClick={saveSignature}>
-              រក្សាទុក
+              {t('signature_save_button')}
             </Button>
           ]}
         >
@@ -409,11 +411,11 @@ export default function ContractSubmitPage() {
             items={[
               {
                 key: 'draw',
-                label: <span className="font-hanuman"><EditOutlined /> គូរហត្ថលេខា</span>,
+                label: <span className="font-hanuman"><EditOutlined /> {t('signature_draw_tab')}</span>,
                 children: (
                   <div>
                     <div className="text-center mb-4">
-                      <Text className="font-hanuman">សូមគូរហត្ថលេខារបស់អ្នកខាងក្រោម:</Text>
+                      <Text className="font-hanuman">{t('signature_draw_prompt')}</Text>
                     </div>
                     <canvas
                       ref={canvasRef}
@@ -434,13 +436,13 @@ export default function ContractSubmitPage() {
               },
               {
                 key: 'upload',
-                label: <span className="font-hanuman"><UploadOutlined /> ផ្ទុកហត្ថលេខា</span>,
+                label: <span className="font-hanuman"><UploadOutlined /> {t('signature_upload_tab')}</span>,
                 children: (
                   <div>
                     <div className="text-center mb-4">
-                      <Text className="font-hanuman">សូមជ្រើសរើសរូបភាពហត្ថលេខារបស់អ្នក:</Text>
+                      <Text className="font-hanuman">{t('signature_upload_prompt')}</Text>
                       <div className="text-sm text-gray-500 mt-2 font-hanuman">
-                        (ប្រភេទ: PNG, JPG | ទំហំអតិបរមា: 2MB)
+                        {t('signature_file_hint')}
                       </div>
                     </div>
                     <Upload.Dragger
@@ -458,7 +460,7 @@ export default function ContractSubmitPage() {
                             style={{ maxHeight: '160px', width: 'auto' }}
                           />
                           <p className="mt-2 text-sm text-green-600 font-hanuman">
-                            ✓ បានផ្ទុករូបភាព (ចុចដើម្បីប្តូរ)
+                            {t('signature_uploaded_click_change')}
                           </p>
                         </div>
                       ) : (
@@ -467,10 +469,10 @@ export default function ContractSubmitPage() {
                             <UploadOutlined style={{ fontSize: 48, color: '#1890ff' }} />
                           </p>
                           <p className="ant-upload-text font-hanuman">
-                            ចុច ឬអូសរូបភាពមកទីនេះ
+                            {t('signature_drag_text')}
                           </p>
                           <p className="ant-upload-hint font-hanuman text-gray-500">
-                            ជ្រើសរើសរូបភាពហត្ថលេខារបស់អ្នក (PNG ឬ JPG)
+                            {t('signature_drag_hint')}
                           </p>
                         </div>
                       )}
