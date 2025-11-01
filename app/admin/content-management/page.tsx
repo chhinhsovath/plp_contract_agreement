@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Card, Table, Button, Input, Select, Space, Modal, Form, message, Spin, Tag, Typography, Alert, Popconfirm } from 'antd'
 import { EditOutlined, DeleteOutlined, PlusOutlined, FileTextOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
+import { AdminNav } from '@/components/admin/AdminNav'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
@@ -266,6 +267,8 @@ export default function ContentManagementPage() {
 
   return (
     <div style={{ padding: 24 }}>
+      <AdminNav />
+
       <Card style={{ marginBottom: 24 }}>
         <Title level={2}>
           <FileTextOutlined style={{ marginRight: 12 }} />

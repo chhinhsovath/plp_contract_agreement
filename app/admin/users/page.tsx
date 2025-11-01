@@ -5,6 +5,7 @@ import { Table, Button, Tag, Space, Typography, Input, message, Modal, Select, C
 import { SearchOutlined, EditOutlined, UserOutlined, HomeOutlined, TeamOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import { UserRole, ROLE_DEFINITIONS, getRoleLabel, hasPermission } from '@/lib/roles'
+import { AdminNav } from '@/components/admin/AdminNav'
 
 const { Title, Text } = Typography
 const { Search } = Input
@@ -236,17 +237,14 @@ export default function UsersManagementPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '40px' }}>
       <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-        <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <AdminNav />
+
+        <Card style={{ marginBottom: 24 }}>
           <Title level={2} style={{ margin: 0 }}>
             <TeamOutlined style={{ marginRight: 8 }} />
             គ្រប់គ្រងអ្នកប្រើប្រាស់
           </Title>
-          <Link href="/">
-            <Button icon={<HomeOutlined />} size="large">
-              ត្រឡប់ទៅទំព័រដើម
-            </Button>
-          </Link>
-        </div>
+        </Card>
 
         {/* Role Statistics - Optimized for Tablet/Desktop */}
         <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Card, Table, Button, Tag, Space, Modal, Input, message, Spin, Descriptions, Alert, Typography, Badge } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
+import { AdminNav } from '@/components/admin/AdminNav'
 
 const { Title, Text, Paragraph } = Typography
 const { TextArea } = Input
@@ -261,6 +262,8 @@ export default function ReconfigurationRequestsPage() {
 
   return (
     <div style={{ padding: 24 }}>
+      <AdminNav />
+
       <Card style={{ marginBottom: 24 }}>
         <Title level={2}>
           <FileTextOutlined style={{ marginRight: 12 }} />
