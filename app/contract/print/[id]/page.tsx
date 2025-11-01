@@ -31,8 +31,11 @@ export default function ContractPrintPage() {
   const [layoutChanged, setLayoutChanged] = useState(false)
 
   useEffect(() => {
-    checkSession()
-    fetchContractData()
+    const init = async () => {
+      await checkSession()
+      await fetchContractData()
+    }
+    init()
   }, [])
 
   // Load section order from contractData
