@@ -106,6 +106,8 @@ export async function GET(
       end_date: contract.end_date,
       signed_date: contract.party_b_signed_date,
       section_order: contract.section_order,
+      contract_html: contract.contract_html,
+      download_count: contract.download_count,
       deliverables: deliverables,
       indicators: contract.contract_indicators.map(ci => ({
         indicator_code: ci.indicator.indicator_code,

@@ -6,6 +6,7 @@ import { Spin, Button, Switch, Space, message, Modal } from 'antd'
 import { EditOutlined, SaveOutlined, PrinterOutlined, ArrowLeftOutlined, DatabaseOutlined } from '@ant-design/icons'
 import { RichTextEditor } from '@/components/RichTextEditor'
 import { ContractJSONEditor } from '@/components/ContractJSONEditor'
+import { generateContractHTML } from '@/lib/contractHTMLGenerator'
 
 export default function ContractPrintPage() {
   const params = useParams()
@@ -39,6 +40,8 @@ export default function ContractPrintPage() {
   const [sectionContent, setSectionContent] = useState<Record<string, string>>({})
   const [showRichEditor, setShowRichEditor] = useState(false)
   const [showJSONEditor, setShowJSONEditor] = useState(false)
+  const [showFullPageEditor, setShowFullPageEditor] = useState(false)
+  const [fullDocumentHTML, setFullDocumentHTML] = useState<string>('')
 
   useEffect(() => {
     const init = async () => {
@@ -259,6 +262,47 @@ export default function ContractPrintPage() {
       message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
       throw error
     }
+  }
+
+  const handleOpenFullPageEditor = () => {
+    // Load existing HTML or generate from JSON
+    const html = contractData.contract_html || generateContractHTML(contractData)
+    setFullDocumentHTML(html)
+    setShowFullPageEditor(true)
+  }
+
+  const handleSaveFullDocument = async (html: string) => {
+    try {
+      const response = await fetch(`/api/contracts/${params.id}/save-html`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html })
+      })
+
+      if (response.ok) {
+        message.success('បានរក្សាទុកឯកសារ')
+        setShowFullPageEditor(false)
+        await fetchContractData()
+      } else {
+        message.error('មានបញ្ហា')
+      }
+    } catch (error) {
+      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+    }
+  }
+
+  const handlePrint = async () => {
+    try {
+      // Track download
+      await fetch(`/api/contracts/${params.id}/track-download`, {
+        method: 'POST'
+      })
+    } catch (error) {
+      console.error('Failed to track download:', error)
+    }
+
+    // Print
+    window.print()
   }
 
   const renderSectionWithControls = (sectionId: string, content: React.ReactNode, index: number) => {
@@ -779,15 +823,21 @@ export default function ContractPrintPage() {
               {editMode && editorMode === 'advanced' && (
                 <Button
                   type="primary"
-                  icon={<DatabaseOutlined />}
-                  onClick={() => setShowJSONEditor(true)}
+                  icon={<EditOutlined />}
+                  onClick={handleOpenFullPageEditor}
                   size="large"
                 >
-                  កែប្រែទាំងអស់
+                  កែប្រែឯកសារពេញលេញ
                 </Button>
               )}
 
-              <Button icon={<PrinterOutlined />} onClick={() => window.print()}>
+              {contractData?.download_count > 0 && (
+                <span style={{ fontSize: 12, color: '#8c8c8c' }}>
+                  ទាញយក: {contractData.download_count} ដង
+                </span>
+              )}
+
+              <Button icon={<PrinterOutlined />} onClick={handlePrint}>
                 បោះពុម្ព
               </Button>
             </Space>
@@ -1061,6 +1111,77 @@ export default function ContractPrintPage() {
           />
         )}
       </Modal>
+
+      {/* Full-Page WordPress-Style Editor */}
+      {showFullPageEditor && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: '#fff',
+          zIndex: 10000,
+          display: 'flex',
+          flexDirection: 'column'
+        }} className="no-print">
+          {/* Editor Toolbar */}
+          <div style={{
+            background: '#f5f5f5',
+            borderBottom: '2px solid #e8e8e8',
+            padding: '12px 24px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <Space>
+              <Button
+                icon={<ArrowLeftOutlined />}
+                onClick={() => {
+                  setShowFullPageEditor(false)
+                  setFullDocumentHTML('')
+                }}
+              >
+                បិទ
+              </Button>
+              <span style={{ fontSize: 16, fontWeight: 600 }}>
+                កែប្រែកិច្ចសន្យា #{contractData?.contract_number}
+              </span>
+              <span style={{ fontSize: 12, color: '#52c41a' }}>
+                ✏️ WordPress-Style Editor
+              </span>
+            </Space>
+
+            <Space>
+              <span style={{ fontSize: 12, color: '#8c8c8c' }}>
+                Ctrl+S = រក្សាទុក
+              </span>
+              <Button
+                type="primary"
+                size="large"
+                icon={<SaveOutlined />}
+                onClick={() => handleSaveFullDocument(fullDocumentHTML)}
+              >
+                រក្សាទុកឯកសារ
+              </Button>
+            </Space>
+          </div>
+
+          {/* Editor Content */}
+          <div style={{ flex: 1, overflow: 'auto', background: '#f9f9f9', padding: 24 }}>
+            <div style={{ maxWidth: 900, margin: '0 auto', background: '#fff', minHeight: '100%', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+              <RichTextEditor
+                content={fullDocumentHTML}
+                onSave={handleSaveFullDocument}
+                onCancel={() => {
+                  setShowFullPageEditor(false)
+                  setFullDocumentHTML('')
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
