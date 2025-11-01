@@ -5,6 +5,7 @@ import { Card, Button, Radio, Steps, Typography, Space, Alert, Spin, message, Mo
 import { CheckCircleOutlined, RightOutlined, LeftOutlined, FileTextOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { UserRole } from '@/lib/roles'
+import { useContent } from '@/lib/hooks/useContent'
 
 const { Title, Text, Paragraph, TextArea } = Typography
 
@@ -43,6 +44,7 @@ interface ExistingSelection {
 
 export default function ContractConfigurePage() {
   const router = useRouter()
+  const { t } = useContent() // Dynamic content hook
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
   const [deliverables, setDeliverables] = useState<Deliverable[]>([])

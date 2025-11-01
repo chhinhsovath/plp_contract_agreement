@@ -37,14 +37,14 @@ export default function ContractSignPage() {
 
         // Check if user already completed the workflow
         if (userData.contract_signed) {
-          message.info('អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យារួចហើយ')
+          message.info(t('sign_already_signed_message'))
           router.push('/me-dashboard')
           return
         }
 
         // Check if user already read the contract - redirect to next step
         if (userData.contract_read) {
-          message.info('អ្នកបានអានកិច្ចសន្យារួចហើយ')
+          message.info(t('sign_already_read_message'))
           router.push('/contract/configure')
           return
         }
@@ -54,7 +54,7 @@ export default function ContractSignPage() {
           const userContract = contractTemplates.find(c => c.id === userData.contract_type)
           setContract(userContract)
         } else {
-          message.error('អ្នកមិនមានប្រភេទកិច្ចសន្យា')
+          message.error(t('sign_no_contract_type_error'))
           router.push('/login')
         }
       } else {
@@ -85,7 +85,7 @@ export default function ContractSignPage() {
 
   const handleProceedToConfiguration = async () => {
     if (!agreed) {
-      message.warning('សូមយល់ព្រមលើកិច្ចសន្យា')
+      message.warning(t('sign_agree_warning'))
       return
     }
 
@@ -109,11 +109,11 @@ export default function ContractSignPage() {
         router.push('/contract/configure')
       } else {
         const data = await response.json()
-        message.error(data.error || 'មានបញ្ហាក្នុងការរក្សាទុក')
+        message.error(data.error || t('sign_save_error'))
       }
     } catch (error) {
       console.error('Mark read error:', error)
-      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+      message.error(t('sign_connection_error'))
     } finally {
       setProceeding(false)
     }
@@ -131,8 +131,8 @@ export default function ContractSignPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Alert
-          message="មិនមានកិច្ចសន្យា"
-          description="មិនអាចរកឃើញកិច្ចសន្យាសម្រាប់អ្នក"
+          message={t('sign_no_contract_error_title')}
+          description={t('sign_no_contract_error_description')}
           type="error"
           showIcon
         />
@@ -188,69 +188,63 @@ export default function ContractSignPage() {
               <h3 className="text-center text-lg font-bold mb-4">{contract.title}</h3>
 
               <div className="mb-4">
-                <strong>ភាគី ក:</strong>
+                <strong>{t('sign_party_a_label')}</strong>
                 <div className="ml-4">
                   <p>{contract.partyA}</p>
                   {contract.partyASignatory && (
                     <>
-                      <p className="text-sm text-gray-600">តំណាងដោយ: {contract.partyASignatory}</p>
-                      <p className="text-sm text-gray-600">មុខតំណែង: {contract.partyAPosition}</p>
+                      <p className="text-sm text-gray-600">{t('sign_representative_label')} {contract.partyASignatory}</p>
+                      <p className="text-sm text-gray-600">{t('sign_position_label')} {contract.partyAPosition}</p>
                     </>
                   )}
                 </div>
               </div>
               <div className="mb-4">
-                <strong>ភាគី ខ:</strong> {contract.partyB} ({user?.full_name})
+                <strong>{t('sign_party_b_label')}</strong> {contract.partyB} ({user?.full_name})
               </div>
 
               <Divider />
 
-              <h4 className="font-bold">មាត្រា ១: គោលបំណង</h4>
+              <h4 className="font-bold">{t('sign_article_1_title')}</h4>
               <p className="mb-4">
-                កិច្ចព្រមព្រៀងនេះមានគោលបំណងកំណត់ការទទួលខុសត្រូវ និងកាតព្វកិច្ចរបស់ភាគីទាំងពីរក្នុងការអនុវត្តគម្រោងកម្មវិធីអប់រំ។
-                ភាគីទាំងពីរយល់ព្រមអនុវត្តតាមលក្ខខណ្ឌ និងកាតព្វកិច្ចដែលបានកំណត់ក្នុងកិច្ចព្រមព្រៀងនេះ។
+                {t('sign_article_1_content')}
               </p>
 
-              <h4 className="font-bold">មាត្រា ២: មុខងារនិងទំនួលខុសត្រូវ:</h4>
+              <h4 className="font-bold">{t('sign_article_2_title')}</h4>
               <ul className="mb-6">
                 {contract.responsibilities?.map((resp: string, idx: number) => (
                   <li key={idx} className="mb-2">{resp}</li>
                 ))}
               </ul>
 
-              <h4 className="font-bold">មាត្រា ៣: លក្ខខណ្ឌនៃកិច្ចព្រមព្រៀង:</h4>
+              <h4 className="font-bold">{t('sign_article_3_title')}</h4>
               <div dangerouslySetInnerHTML={{ __html: contract.content }} className="mb-6" />
 
-              <h4 className="font-bold">មាត្រា ៤: រយៈពេលនៃកិច្ចព្រមព្រៀង</h4>
+              <h4 className="font-bold">{t('sign_article_4_title')}</h4>
               <p className="mb-4">
-                កិច្ចព្រមព្រៀងនេះមានសុពលភាពរយៈពេល ១ឆ្នាំ ចាប់ពីថ្ងៃចុះហត្ថលេខា។
-                ការបន្តកិច្ចព្រមព្រៀងត្រូវធ្វើឡើងដោយការព្រមព្រៀងរវាងភាគីទាំងពីរ។
+                {t('sign_article_4_content')}
               </p>
 
-              <h4 className="font-bold">មាត្រា ៥: ការតាមដាន និងវាយតម្លៃ</h4>
+              <h4 className="font-bold">{t('sign_article_5_title')}</h4>
               <p className="mb-4">
-                ភាគីទាំងពីរយល់ព្រមធ្វើការតាមដាន និងវាយតម្លៃការអនុវត្តកិច្ចព្រមព្រៀងជាប្រចាំត្រីមាស។
-                របាយការណ៍វឌ្ឍនភាពត្រូវដាក់ជូនភាគីពាក់ព័ន្ធតាមពេលវេលាដែលបានកំណត់។
+                {t('sign_article_5_content')}
               </p>
 
-              <h4 className="font-bold">មាត្រា ៦: ការកែប្រែកិច្ចព្រមព្រៀង</h4>
+              <h4 className="font-bold">{t('sign_article_6_title')}</h4>
               <p className="mb-4">
-                រាល់ការកែប្រែលើខ្លឹមសារនៃកិច្ចព្រមព្រៀងនេះ ត្រូវធ្វើឡើងជាលាយលក្ខណ៍អក្សរ
-                និងមានការយល់ព្រមពីភាគីទាំងពីរ។
+                {t('sign_article_6_content')}
               </p>
 
-              <h4 className="font-bold">មាត្រា ៧: ការទទួលខុសត្រូវផ្នែកច្បាប់</h4>
+              <h4 className="font-bold">{t('sign_article_7_title')}</h4>
               <p className="mb-8">
-                ភាគីទាំងពីរយល់ព្រមគោរពតាមច្បាប់ និងបទប្បញ្ញត្តិជាធរមានទាំងអស់។
-                ក្នុងករណីមានវិវាទកើតឡើង ភាគីទាំងពីរនឹងដោះស្រាយតាមការចរចា និងការសម្របសម្រួល។
+                {t('sign_article_7_content')}
               </p>
 
               <Divider />
 
-              <h4 className="font-bold">មាត្រា ៨: ហត្ថលេខា និងការបញ្ជាក់</h4>
+              <h4 className="font-bold">{t('sign_article_8_title')}</h4>
               <p className="mb-8">
-                កិច្ចព្រមព្រៀងនេះធ្វើឡើងជាពីរច្បាប់ដូចគ្នា ដែលមានសុពលភាពស្មើគ្នា។
-                ភាគីនីមួយៗរក្សាទុកមួយច្បាប់។
+                {t('sign_article_8_content')}
               </p>
 
               <div className="grid grid-cols-2 gap-8 mt-12">
@@ -263,22 +257,22 @@ export default function ContractSignPage() {
                     </>
                   )}
                   <div className="mt-4 h-20 border-b-2 border-gray-400"></div>
-                  <p className="text-sm mt-2">ហត្ថលេខា និងត្រា</p>
+                  <p className="text-sm mt-2">{t('sign_signature_seal_label')}</p>
                 </div>
                 <div className="text-center">
-                  <p className="font-bold mb-2">ភាគី ខ</p>
+                  <p className="font-bold mb-2">{t('sign_party_b_label').replace(':', '')}</p>
                   <p className="text-sm">{user?.full_name}</p>
                   <p className="text-sm text-gray-600">{user?.position || contract.partyB}</p>
                   <div className="mt-4 h-20 border-b-2 border-gray-400"></div>
-                  <p className="text-sm mt-2">ហត្ថលេខា និងត្រា</p>
+                  <p className="text-sm mt-2">{t('sign_signature_seal_label')}</p>
                 </div>
               </div>
 
               <Divider />
 
               <div className="mt-8 text-center text-gray-500">
-                <p className="font-bold">*** ចុងបញ្ចប់នៃកិច្ចសន្យា ***</p>
-                <p className="text-sm mt-4">សូមអានដោយប្រុងប្រយ័ត្ន មុនពេលចុះហត្ថលេខា</p>
+                <p className="font-bold">{t('sign_end_of_contract')}</p>
+                <p className="text-sm mt-4">{t('contract_sign_subtitle')}</p>
               </div>
             </div>
           </div>
