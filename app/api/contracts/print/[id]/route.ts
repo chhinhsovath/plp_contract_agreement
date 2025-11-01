@@ -88,7 +88,9 @@ export async function GET(
 
     // Format response
     const printData = {
+      id: contract.id,
       contract_id: contract.id,
+      created_by_id: contract.created_by_id,
       contract_number: contract.contract_number,
       contract_type_id: contract.contract_type_id,
       contract_type_name: contract.contract_type.type_name_khmer,
@@ -99,9 +101,11 @@ export async function GET(
       party_b_signature: contract.party_b_signature,
       party_b_signed_date: contract.party_b_signed_date,
       party_b_organization: contract.party_b_organization,
+      party_b_position: contract.party_b_position,
       start_date: contract.start_date,
       end_date: contract.end_date,
       signed_date: contract.party_b_signed_date,
+      section_order: contract.section_order,
       deliverables: deliverables,
       indicators: contract.contract_indicators.map(ci => ({
         indicator_code: ci.indicator.indicator_code,
