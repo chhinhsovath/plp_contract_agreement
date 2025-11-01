@@ -26,10 +26,12 @@ export async function GET() {
         position: true,
         email: true,
         is_active: true,
+        contract_read: true,  // NEW: Workflow state field
+        contract_read_time: true,
+        configuration_complete: true,  // NEW: Workflow state field
         contract_signed: true,
         contract_signed_date: true,
-        signature_data: true,  // Include signature data
-        contract_read_time: true,
+        signature_data: true,
         ip_address_signed: true,
       },
     })
