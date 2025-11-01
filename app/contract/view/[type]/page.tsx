@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import { Card, Button, Typography, Divider, Spin, Alert, Tag, Space } from 'antd'
-import { FileTextOutlined, DownloadOutlined, PrinterOutlined, CheckCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons'
+import { Card, Button, Typography, Divider, Spin, Alert, Space, Switch, message, Tag } from 'antd'
+import { ArrowLeftOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
-import { contractTemplates } from '@/lib/contractTemplates'
-import dayjs from 'dayjs'
+import { InlineEditText } from '@/components/InlineEditText'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text } = Typography
 
 export default function ViewContractPage({ params }: { params: Promise<{ type: string }> }) {
   const resolvedParams = use(params)
@@ -15,28 +14,28 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [contract, setContract] = useState<any>(null)
+  const [editMode, setEditMode] = useState(false)
+  const [deliverables, setDeliverables] = useState<any[]>([])
+
+  const isAdmin = user && ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user.role)
 
   useEffect(() => {
     checkSession()
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      loadContract()
+      loadDeliverables()
+    }
+  }, [user])
 
   const checkSession = async () => {
     try {
       const response = await fetch('/api/auth/session')
       if (response.ok) {
         const data = await response.json()
-        const userData = data.user
-        setUser(userData)
-
-        // Load contract based on type parameter
-        const contractType = parseInt(resolvedParams.type)
-        const userContract = contractTemplates.find(c => c.id === contractType)
-
-        if (userContract) {
-          setContract(userContract)
-        } else {
-          router.push('/me-dashboard')
-        }
+        setUser(data.user)
       } else {
         router.push('/login')
       }
@@ -48,18 +47,90 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
     }
   }
 
-  const handlePrint = () => {
-    window.print()
+  const loadContract = async () => {
+    try {
+      const contractType = parseInt(resolvedParams.type)
+      const response = await fetch(`/api/contract-templates/${contractType}`)
+      if (response.ok) {
+        const data = await response.json()
+        setContract(data.template)
+      }
+    } catch (error) {
+      console.error('Failed to load contract:', error)
+    }
   }
 
-  const handleDownload = () => {
-    // In a real app, this would generate and download a PDF
-    window.print()
+  const loadDeliverables = async () => {
+    try {
+      const contractType = parseInt(resolvedParams.type)
+      const response = await fetch(`/api/admin/deliverables?contract_type=${contractType}`)
+      if (response.ok) {
+        const data = await response.json()
+        setDeliverables(data.deliverables)
+      }
+    } catch (error) {
+      console.error('Failed to load deliverables:', error)
+    }
+  }
+
+  const handleUpdateContent = async (key: string, newValue: string) => {
+    try {
+      const response = await fetch(`/api/content-texts/${encodeURIComponent(key)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text_khmer: newValue })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update')
+      }
+
+      // Reload contract to show updated content
+      await loadContract()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const handleUpdateDeliverable = async (deliverableId: number, field: string, newValue: string) => {
+    try {
+      const response = await fetch(`/api/admin/deliverables/${deliverableId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [field]: newValue })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update')
+      }
+
+      await loadDeliverables()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const handleUpdateOption = async (optionId: number, newValue: string) => {
+    try {
+      const response = await fetch(`/api/admin/deliverable-options/${optionId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ option_text_khmer: newValue })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update')
+      }
+
+      await loadDeliverables()
+    } catch (error) {
+      throw error
+    }
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Spin size="large" />
       </div>
     )
@@ -67,232 +138,203 @@ export default function ViewContractPage({ params }: { params: Promise<{ type: s
 
   if (!contract) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Alert
-          message="មិនមានកិច្ចសន្យា"
-          description="មិនអាចរកឃើញកិច្ចសន្យា"
-          type="error"
-          showIcon
-        />
+      <div style={{ padding: 40 }}>
+        <Alert message="មិនមានកិច្ចសន្យា" type="error" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <Card className="mb-4 shadow-md">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div>
-              <Title level={2} className="font-hanuman text-blue-800 mb-2">
-                <FileTextOutlined className="mr-2" />
-                កិច្ចព្រមព្រៀងរបស់ខ្ញុំ
-              </Title>
-              <Space wrap>
-                <Tag color="green" icon={<CheckCircleOutlined />}>
-                  បានចុះហត្ថលេខា
-                </Tag>
-                {user?.contract_signed_date && (
-                  <Text type="secondary" className="font-hanuman">
-                    ថ្ងៃទី {dayjs(user.contract_signed_date).format('DD/MM/YYYY')}
-                  </Text>
+    <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: 24 }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        {/* Header Actions */}
+        <Card style={{ marginBottom: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Button icon={<ArrowLeftOutlined />} onClick={() => router.back()}>
+              ត្រឡប់ក្រោយ
+            </Button>
+
+            {isAdmin && (
+              <Space>
+                <Text>របៀបកែប្រែ:</Text>
+                <Switch
+                  checked={editMode}
+                  onChange={setEditMode}
+                  checkedChildren={<EditOutlined />}
+                  unCheckedChildren="បិទ"
+                />
+                {editMode && (
+                  <Tag color="blue">ចុចលើអត្ថបទណាមួយដើម្បីកែប្រែ</Tag>
                 )}
               </Space>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button
-                icon={<ArrowLeftOutlined />}
-                onClick={() => router.push('/me-dashboard')}
-                className="w-full sm:w-auto"
-              >
-                ត្រឡប់ក្រោយ
-              </Button>
-              <Button
-                icon={<PrinterOutlined />}
-                onClick={handlePrint}
-                className="w-full sm:w-auto"
-              >
-                បោះពុម្ព
-              </Button>
-              <Button
-                type="primary"
-                icon={<DownloadOutlined />}
-                onClick={handleDownload}
-                className="w-full sm:w-auto"
-              >
-                ទាញយក PDF
-              </Button>
-            </div>
+            )}
           </div>
         </Card>
 
-        {/* Contract Information - Mobile Friendly */}
-        <Card className="mb-4 shadow-md">
-          <Title level={4} className="font-hanuman mb-4">ព័ត៌មានកិច្ចសន្យា</Title>
-
-          <div className="space-y-4">
-            {/* Each info item as a card-like section */}
-            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
-              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">ប្រភេទកិច្ចសន្យា:</Text>
-              <Text className="font-hanuman font-medium">{contract.title}</Text>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
-              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">លេខកិច្ចសន្យា:</Text>
-              <Text className="font-hanuman font-medium">PLP-{String(contract.id).padStart(3, '0')}-2025</Text>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
-              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">ភាគី ក:</Text>
-              <Text className="font-hanuman font-medium text-right sm:text-right">{contract.partyA}</Text>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
-              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">ភាគី ខ:</Text>
-              <Text className="font-hanuman font-medium text-right sm:text-right">{contract.partyB}</Text>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
-              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">អ្នកចុះហត្ថលេខា:</Text>
-              <Text className="font-hanuman font-medium">{user?.full_name}</Text>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-between pb-3 border-b border-gray-200">
-              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">តួនាទី:</Text>
-              <Text className="font-hanuman font-medium">{user?.position || user?.role}</Text>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-between">
-              <Text className="font-hanuman text-gray-600 mb-1 sm:mb-0">ស្ថានភាព:</Text>
-              <Tag color="success">សកម្ម</Tag>
-            </div>
-          </div>
+        {/* Contract Header */}
+        <Card style={{ marginBottom: 16 }}>
+          <Title level={3}>
+            {editMode && isAdmin ? (
+              <InlineEditText
+                value={contract.title}
+                onSave={(val) => handleUpdateContent(`contract_${contract.id}_title`, val)}
+                className="font-hanuman"
+              />
+            ) : (
+              contract.title
+            )}
+          </Title>
+          <Space>
+            <Tag color="green">ចុះហត្ថលេខារួចរាល់</Tag>
+            <Text type="secondary">កិច្ចសន្យា: PLP-001-2025</Text>
+          </Space>
         </Card>
 
         {/* Contract Content */}
-        <Card className="mb-4 shadow-md" id="contract-content">
-          <div className="prose prose-sm max-w-none font-hanuman">
-            <h3 className="text-center text-lg font-bold mb-4">{contract.title}</h3>
-
-            <div className="mb-4">
-              <strong>ភាគី ក:</strong>
-              <div className="ml-4">
-                <p>{contract.partyA}</p>
-                {contract.partyASignatory && (
-                  <>
-                    <p className="text-sm text-gray-600">តំណាងដោយ: {contract.partyASignatory}</p>
-                    <p className="text-sm text-gray-600">មុខតំណែង: {contract.partyAPosition}</p>
-                  </>
-                )}
-              </div>
+        <Card title="ព័ត៌មានកិច្ចសនា" style={{ marginBottom: 16 }}>
+          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+            <div>
+              <Text strong>ភាគី ក: </Text>
+              {editMode && isAdmin ? (
+                <InlineEditText
+                  value={contract.partyA}
+                  onSave={(val) => handleUpdateContent(`contract_${contract.id}_party_a`, val)}
+                />
+              ) : (
+                <Text>{contract.partyA}</Text>
+              )}
             </div>
-            <div className="mb-4">
-              <strong>ភាគី ខ:</strong>
-              <div className="ml-4">
-                <p>{contract.partyB}</p>
-                <p className="text-sm text-gray-600">តំណាងដោយ: {user?.full_name}</p>
-                <p className="text-sm text-gray-600">មុខតំណែង: {user?.position || user?.role}</p>
-              </div>
+
+            <div>
+              <Text strong>តំណាងដោយ: </Text>
+              <Text>{contract.partyASignatory}</Text>
+            </div>
+
+            <div>
+              <Text strong>មុខតំណែង: </Text>
+              <Text>{contract.partyAPosition}</Text>
             </div>
 
             <Divider />
 
-            <h4 className="font-bold">មុខងារនិងទំនួលខុសត្រូវ:</h4>
-            <ul>
-              {contract.responsibilities?.map((resp: string, idx: number) => (
-                <li key={idx}>{resp}</li>
-              ))}
-            </ul>
-
-            <h4 className="font-bold mt-4">លក្ខខណ្ឌនៃកិច្ចព្រមព្រៀង:</h4>
-            <div dangerouslySetInnerHTML={{ __html: contract.content }} />
-
-            <Divider />
-
-            {/* Signature Section - Mobile Friendly */}
-            <div className="mt-8">
-              <h4 className="font-bold">ហត្ថលេខា និងការបញ្ជាក់:</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mt-8">
-                {/* Party A Signature */}
-                <div className="text-center border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <p className="font-bold mb-2">ភាគី ក</p>
-                  {contract.partyASignatory && (
-                    <>
-                      <p className="text-sm">{contract.partyASignatory}</p>
-                      <p className="text-sm text-gray-600 mb-4">{contract.partyAPosition}</p>
-                    </>
-                  )}
-                  {contract.partyASignature ? (
-                    <div className="mb-2 bg-white p-3 rounded">
-                      <img
-                        src={contract.partyASignature}
-                        alt="Party A Signature"
-                        className="mx-auto"
-                        style={{ maxWidth: '100%', height: '80px', objectFit: 'contain' }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-20 border-b-2 border-gray-400 mb-2 bg-white"></div>
-                  )}
-                  <Text className="text-sm text-gray-500">ហត្ថលេខា និងត្រា</Text>
-                </div>
-
-                {/* Party B Signature */}
-                <div className="text-center border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <p className="font-bold mb-2">ភាគី ខ</p>
-                  <p className="text-sm">{user?.full_name}</p>
-                  <p className="text-sm text-gray-600 mb-4">{user?.position || contract.partyB}</p>
-                  {user?.signature_data ? (
-                    <div className="mb-2 bg-white p-3 rounded">
-                      <img
-                        src={user.signature_data}
-                        alt="Party B Signature"
-                        className="mx-auto"
-                        style={{ maxWidth: '100%', height: '80px', objectFit: 'contain' }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-20 border-b-2 border-gray-400 mb-2 bg-white"></div>
-                  )}
-                  <Text className="text-sm text-gray-500">ហត្ថលេខា និងត្រា</Text>
-                  {user?.contract_signed_date && (
-                    <Text type="secondary" className="text-xs block mt-2">
-                      ចុះហត្ថលេខា: {dayjs(user.contract_signed_date).format('DD/MM/YYYY HH:mm')}
-                    </Text>
-                  )}
-                </div>
-              </div>
+            <div>
+              <Text strong>ភាគី ខ: </Text>
+              {editMode && isAdmin ? (
+                <InlineEditText
+                  value={contract.partyB}
+                  onSave={(val) => handleUpdateContent(`contract_${contract.id}_party_b`, val)}
+                />
+              ) : (
+                <Text>{contract.partyB}</Text>
+              )}
             </div>
-
-            <div className="mt-8 text-center text-gray-500">
-              <p>*** ចុងបញ្ចប់នៃកិច្ចសន្យា ***</p>
-            </div>
-          </div>
+          </Space>
         </Card>
 
-        {/* Footer */}
-        <Card className="text-center bg-gray-50">
-          <Text type="secondary" className="font-hanuman">
-            កិច្ចសន្យានេះត្រូវបានចុះហត្ថលេខាតាមប្រព័ន្ធឌីជីថល
-          </Text>
+        {/* Responsibilities */}
+        <Card title="មុខងារនិងទំនួលខុសត្រូវ" style={{ marginBottom: 16 }}>
+          <ul style={{ paddingLeft: 20 }}>
+            {contract.responsibilities?.map((resp: string, idx: number) => (
+              <li key={idx} style={{ marginBottom: 12 }}>
+                {editMode && isAdmin ? (
+                  <InlineEditText
+                    value={resp}
+                    onSave={(val) => handleUpdateContent(`contract_${contract.id}_responsibility_${idx + 1}`, val)}
+                    className="font-hanuman"
+                  />
+                ) : (
+                  <Text>{resp}</Text>
+                )}
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        {/* Contract Content/Conditions */}
+        <Card title="លក្ខខណ្ឌកិច្ចសនា" style={{ marginBottom: 16 }}>
+          <div
+            className="font-hanuman"
+            dangerouslySetInnerHTML={{ __html: contract.content }}
+            style={{
+              cursor: editMode && isAdmin ? 'pointer' : 'default'
+            }}
+          />
+          {editMode && isAdmin && (
+            <Alert
+              message="កែប្រែខ្លឹមសារលម្អិត"
+              description="សូមទៅកាន់ គ្រប់គ្រងខ្លឹមសារ (CMS) ដើម្បីកែប្រែផ្នែកនេះ"
+              type="info"
+              showIcon
+              style={{ marginTop: 16 }}
+              action={
+                <Button size="small" onClick={() => router.push('/admin/content-management')}>
+                  ទៅកាន់ CMS
+                </Button>
+              }
+            />
+          )}
+        </Card>
+
+        {/* Deliverables & Options */}
+        <Card title={`សមិទ្ធកម្ម (${deliverables.length})`}>
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            {deliverables.map((deliverable, idx) => (
+              <Card key={deliverable.id} type="inner" size="small">
+                <div style={{ marginBottom: 12 }}>
+                  <Text strong>សមិទ្ធកម្មទី {deliverable.deliverable_number}: </Text>
+                  {editMode && isAdmin ? (
+                    <InlineEditText
+                      value={deliverable.deliverable_title_khmer}
+                      onSave={(val) => handleUpdateDeliverable(deliverable.id, 'deliverable_title_khmer', val)}
+                      className="font-hanuman"
+                      multiline
+                    />
+                  ) : (
+                    <Text className="font-hanuman">{deliverable.deliverable_title_khmer}</Text>
+                  )}
+                </div>
+
+                {deliverable.timeline && (
+                  <div style={{ marginBottom: 12 }}>
+                    <Text type="secondary" style={{ fontSize: 13 }}>
+                      ពេលវេលា: {deliverable.timeline}
+                    </Text>
+                  </div>
+                )}
+
+                {/* Options */}
+                <div style={{ marginTop: 16 }}>
+                  <Text strong style={{ display: 'block', marginBottom: 8 }}>ជម្រើស:</Text>
+                  <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                    {deliverable.options?.map((option: any) => (
+                      <div key={option.id} style={{ paddingLeft: 16, borderLeft: '2px solid #e8e8e8' }}>
+                        <Tag color="purple">ជម្រើស {option.option_number}</Tag>
+                        {editMode && isAdmin ? (
+                          <InlineEditText
+                            value={option.option_text_khmer}
+                            onSave={(val) => handleUpdateOption(option.id, val)}
+                            className="font-hanuman"
+                            multiline
+                          />
+                        ) : (
+                          <Text className="font-hanuman">{option.option_text_khmer}</Text>
+                        )}
+                        {option.baseline_percentage !== null && (
+                          <div style={{ marginTop: 4 }}>
+                            <Text type="secondary" style={{ fontSize: 12 }}>
+                              គោលដៅ: {option.baseline_percentage}% → {option.target_percentage}%
+                            </Text>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </Space>
+                </div>
+              </Card>
+            ))}
+          </Space>
         </Card>
       </div>
-
-      {/* Print Styles */}
-      <style jsx global>{`
-        @media print {
-          .ant-btn,
-          .ant-card:first-child,
-          .ant-card:last-child {
-            display: none !important;
-          }
-          #contract-content {
-            box-shadow: none !important;
-            border: none !important;
-          }
-        }
-      `}</style>
     </div>
   )
 }
