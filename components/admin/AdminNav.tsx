@@ -1,7 +1,7 @@
 'use client'
 
 import { Menu, Card } from 'antd'
-import { TeamOutlined, FileTextOutlined, EditOutlined, HomeOutlined, BellOutlined } from '@ant-design/icons'
+import { TeamOutlined, FileTextOutlined, EditOutlined, HomeOutlined, BellOutlined, AppstoreOutlined } from '@ant-design/icons'
 import { useRouter, usePathname } from 'next/navigation'
 import type { MenuProps } from 'antd'
 
@@ -23,12 +23,17 @@ export function AdminNav() {
     {
       key: '/admin/content-management',
       icon: <FileTextOutlined />,
-      label: 'គ្រប់គ្រងខ្លឹមសារ (CMS)'
+      label: 'គ្រប់គ្រងខ្លឹមសារ'
+    },
+    {
+      key: '/admin/deliverables-management',
+      icon: <AppstoreOutlined />,
+      label: 'គ្រប់គ្រងសមិទ្ធកម្ម'
     },
     {
       key: '/admin/reconfiguration-requests',
       icon: <BellOutlined />,
-      label: 'សំណើផ្លាស់ប្តូរសមិទ្ធកម្ម'
+      label: 'សំណើផ្លាស់ប្តូរ'
     }
   ]
 

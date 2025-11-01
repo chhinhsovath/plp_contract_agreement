@@ -40,8 +40,11 @@ export async function middleware(request: NextRequest) {
     '/admin/users': ['SUPER_ADMIN'], // User management - SUPER_ADMIN only
     '/admin/reconfiguration-requests': ['SUPER_ADMIN'], // Reconfiguration requests - SUPER_ADMIN only
     '/admin/content-management': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Content management - COORDINATOR can access
+    '/admin/deliverables-management': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Deliverables management - COORDINATOR can access
     '/api/admin/users': ['SUPER_ADMIN'], // User API - SUPER_ADMIN only
     '/api/admin/reconfiguration-requests': ['SUPER_ADMIN'], // Reconfig API - SUPER_ADMIN only
+    '/api/admin/deliverables': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Deliverables API - COORDINATOR can access
+    '/api/admin/deliverable-options': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Options API - COORDINATOR can access
   }
 
   // Check if current path is restricted
