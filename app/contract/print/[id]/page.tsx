@@ -75,11 +75,25 @@ export default function ContractPrintPage() {
   }
 
   const canEdit = () => {
-    if (!user || !contractData) return false
+    if (!user || !contractData) {
+      console.log('canEdit: user or contractData missing', { user: !!user, contractData: !!contractData })
+      return false
+    }
     // Contract owner can edit their own contract
-    if (contractData.created_by_id === user.id) return true
-    // SUPER_ADMIN and ADMIN can edit any contract
-    if (['SUPER_ADMIN', 'ADMIN'].includes(user.role)) return true
+    const isOwner = contractData.created_by_id === user.id
+    const isAdmin = ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user.role)
+
+    console.log('canEdit check:', {
+      userId: user.id,
+      createdById: contractData.created_by_id,
+      isOwner,
+      userRole: user.role,
+      isAdmin,
+      result: isOwner || isAdmin
+    })
+
+    if (isOwner) return true
+    if (isAdmin) return true
     return false
   }
 
