@@ -51,8 +51,16 @@ export default function ContractSignPage() {
 
         // Load contract based on user's contract type
         if (userData.contract_type) {
-          const userContract = contractTemplates.find(c => c.id === userData.contract_type)
-          setContract(userContract)
+          // Fetch dynamic contract template from CMS
+          const templateResponse = await fetch(`/api/contract-templates/${userData.contract_type}`)
+          if (templateResponse.ok) {
+            const templateData = await templateResponse.json()
+            setContract(templateData.template)
+          } else {
+            // Fallback to static template if API fails
+            const userContract = contractTemplates.find(c => c.id === userData.contract_type)
+            setContract(userContract)
+          }
         } else {
           message.error(t('sign_no_contract_type_error'))
           router.push('/login')
