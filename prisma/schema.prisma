@@ -528,3 +528,19 @@ model reconfiguration_requests {
   @@index([status])
   @@index([created_at])
 }
+
+model content_texts {
+  id           Int      @id @default(autoincrement())
+  key          String   @unique
+  text_khmer   String
+  text_english String?
+  category     String
+  description  String?
+  is_active    Boolean  @default(true)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@index([category])
+  @@index([key])
+  @@index([is_active])
+}
