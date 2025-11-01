@@ -37,8 +37,11 @@ export async function middleware(request: NextRequest) {
   // Define restricted paths and their allowed roles
   const restrictedPaths: Record<string, string[]> = {
     '/contracts': ['SUPER_ADMIN', 'ADMIN'], // Contract list view
-    '/admin': ['SUPER_ADMIN'], // Admin pages
-    '/api/admin': ['SUPER_ADMIN'], // Admin API endpoints
+    '/admin/users': ['SUPER_ADMIN'], // User management - SUPER_ADMIN only
+    '/admin/reconfiguration-requests': ['SUPER_ADMIN'], // Reconfiguration requests - SUPER_ADMIN only
+    '/admin/content-management': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Content management - COORDINATOR can access
+    '/api/admin/users': ['SUPER_ADMIN'], // User API - SUPER_ADMIN only
+    '/api/admin/reconfiguration-requests': ['SUPER_ADMIN'], // Reconfig API - SUPER_ADMIN only
   }
 
   // Check if current path is restricted

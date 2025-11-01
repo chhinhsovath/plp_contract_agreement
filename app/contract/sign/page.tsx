@@ -5,11 +5,13 @@ import { Card, Button, Typography, Checkbox, Progress, message, Spin, Alert, Div
 import { CheckCircleOutlined, FileTextOutlined, ClockCircleOutlined, RightOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { contractTemplates } from '@/lib/contractTemplates'
+import { useContent } from '@/lib/hooks/useContent'
 
 const { Title, Text, Paragraph } = Typography
 
 export default function ContractSignPage() {
   const router = useRouter()
+  const { t } = useContent() // Dynamic content hook
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [contract, setContract] = useState<any>(null)
@@ -102,7 +104,7 @@ export default function ContractSignPage() {
       })
 
       if (response.ok) {
-        message.success('អ្នកបានអានកិច្ចសន្យារួចរាល់!')
+        message.success(t('contract_sign_success_message'))
         // Redirect to configuration page
         router.push('/contract/configure')
       } else {
@@ -146,10 +148,10 @@ export default function ContractSignPage() {
           <div className="text-center p-4">
             <Title level={2} className="font-hanuman text-blue-800 mb-3">
               <FileTextOutlined className="mr-3" />
-              កិច្ចព្រមព្រៀង {contract.title}
+              {t('contract_sign_page_title')} {contract.title}
             </Title>
             <Text className="font-hanuman text-gray-600 text-base">
-              សូមអានកិច្ចសន្យាដោយប្រុងប្រយ័ត្ន មុនពេលចុះហត្ថលេខា
+              {t('contract_sign_subtitle')}
             </Text>
           </div>
         </Card>
@@ -157,7 +159,7 @@ export default function ContractSignPage() {
         {/* Progress Bar */}
         <Card className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <Text className="font-hanuman">វឌ្ឍនភាពនៃការអាន:</Text>
+            <Text className="font-hanuman">{t('contract_sign_progress_label')}</Text>
             <Text className="font-hanuman">{scrollProgress}%</Text>
           </div>
           <Progress
@@ -169,7 +171,7 @@ export default function ContractSignPage() {
           {!hasScrolledToBottom && (
             <Text type="secondary" className="text-sm mt-3 font-hanuman">
               <ClockCircleOutlined className="mr-2" />
-              សូមរមូរចុះក្រោមដើម្បីអានកិច្ចសន្យាទាំងស្រុង
+              {t('contract_sign_scroll_message')}
             </Text>
           )}
         </Card>
@@ -287,8 +289,8 @@ export default function ContractSignPage() {
           <Card className="mb-8 shadow-md">
             <Space direction="vertical" size="large" className="w-full">
               <Alert
-                message={<span className="font-hanuman text-base">អ្នកបានអានកិច្ចសន្យារួចរាល់</span>}
-                description={<span className="font-hanuman">ឥឡូវនេះអ្នកអាចយល់ព្រម និងបន្តទៅជំហានបន្ទាប់</span>}
+                message={<span className="font-hanuman text-base">{t('contract_sign_completed_title')}</span>}
+                description={<span className="font-hanuman">{t('contract_sign_completed_description')}</span>}
                 type="success"
                 showIcon
                 icon={<CheckCircleOutlined />}
@@ -300,7 +302,7 @@ export default function ContractSignPage() {
                 onChange={(e) => setAgreed(e.target.checked)}
                 className="font-hanuman text-base"
               >
-                ខ្ញុំបានអាន យល់ និងយល់ព្រមតាមលក្ខខណ្ឌទាំងអស់នៃកិច្ចព្រមព្រៀងនេះ
+                {t('contract_sign_agreement_checkbox')}
               </Checkbox>
 
               <div className="flex items-center justify-end">
@@ -314,7 +316,7 @@ export default function ContractSignPage() {
                   iconPosition="end"
                   className="font-hanuman px-8 py-6 h-auto text-base"
                 >
-                  បន្តទៅជំហានបន្ទាប់
+                  {t('contract_sign_proceed_button')}
                 </Button>
               </div>
             </Space>
