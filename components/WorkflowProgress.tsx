@@ -60,14 +60,15 @@ export function WorkflowProgress({ currentStep }: WorkflowProgressProps) {
       <Steps
         current={currentStep}
         items={steps.map((step, index) => ({
-          ...step,
+          title: step.title,
+          icon: step.icon,
           style: { cursor: index <= currentStep ? 'pointer' : 'not-allowed' },
           disabled: index > currentStep
         }))}
         size="small"
         className="font-hanuman"
         onChange={(step) => {
-          if (step <= currentStep && steps[step].onClick) {
+          if (step <= currentStep) {
             steps[step].onClick()
           }
         }}
