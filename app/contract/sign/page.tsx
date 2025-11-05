@@ -6,6 +6,7 @@ import { CheckCircleOutlined, FileTextOutlined, ClockCircleOutlined, RightOutlin
 import { useRouter } from 'next/navigation'
 import { contractTemplates } from '@/lib/contractTemplates'
 import { useContent } from '@/lib/hooks/useContent'
+import { WorkflowProgress } from '@/components/WorkflowProgress'
 
 const { Title, Text, Paragraph } = Typography
 

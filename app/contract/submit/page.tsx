@@ -6,6 +6,7 @@ import { CheckCircleOutlined, FileTextOutlined, EditOutlined, UploadOutlined } f
 import { useRouter } from 'next/navigation'
 import type { UploadFile } from 'antd'
 import { useContent } from '@/lib/hooks/useContent'
+import { WorkflowProgress } from '@/components/WorkflowProgress'
 
 const { Title, Text } = Typography
 
