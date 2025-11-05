@@ -118,16 +118,18 @@ export async function POST(request: Request) {
         }
       })
 
-      // 3. Reset contract signing status for demo users
+      // 3. Reset contract signing status and workflow flags for demo users
       const resetUsers = await tx.users.updateMany({
         where: {
           phone_number: { in: DEMO_USER_PHONES }
         },
         data: {
+          contract_read: false,
+          contract_read_time: null,
+          configuration_complete: false,
           contract_signed: false,
           contract_signed_date: null,
           signature_data: null,
-          contract_read_time: null,
           ip_address_signed: null,
           last_login: null,
           last_reset_at: new Date() // Track when reset occurred
