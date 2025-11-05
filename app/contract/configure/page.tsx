@@ -91,9 +91,29 @@ export default function ContractConfigurePage() {
         // Check if user already completed configuration or signed
         if (userData.configuration_complete || userData.contract_signed) {
           // Fetch existing selections to show in view mode
-          await fetchExistingSelections(userData.id)
-          await checkPendingRequest(userData.id)
-          setViewMode('view')
+          const selections = await fetchExistingSelections(userData.id)
+
+          // If no selections found, user needs to configure (reset scenario)
+          if (!selections || selections.length === 0) {
+            // Reset the flags since there's no actual configuration
+            userData.configuration_complete = false
+            userData.contract_signed = false
+
+            // Check if user has read the contract
+            if (!userData.contract_read) {
+              message.warning(t('configure_read_first_warning'))
+              router.push('/contract/sign')
+              return
+            }
+
+            // Load deliverables for configuration
+            await fetchDeliverables(userData.contract_type)
+            setViewMode('edit')
+          } else {
+            // Has selections, show view mode
+            await checkPendingRequest(userData.id)
+            setViewMode('view')
+          }
         } else {
           // Check if user has read the contract first
           if (!userData.contract_read) {
@@ -122,13 +142,16 @@ export default function ContractConfigurePage() {
         const data = await response.json()
         if (data.success && data.data.deliverables) {
           setExistingSelections(data.data.deliverables)
+          return data.data.deliverables
         }
       } else {
         message.error(t('configure_fetch_current_error'))
       }
+      return []
     } catch (error) {
       console.error('Failed to fetch existing selections:', error)
       message.error(t('configure_data_error'))
+      return []
     } finally {
       setLoading(false)
     }
