@@ -282,31 +282,7 @@ export default function ContractSubmitPage() {
           </div>
         </Card>
 
-        {/* Progress Indicator */}
-        <Card className="mb-8 shadow-md">
-          <Space direction="vertical" size="middle" className="w-full">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <CheckCircleOutlined className="text-green-500 text-xl" />
-                <Text className="font-hanuman">{t('contract_submit_step_read')}</Text>
-              </div>
-              <CheckCircleOutlined className="text-green-500 text-2xl" />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <CheckCircleOutlined className="text-green-500 text-xl" />
-                <Text className="font-hanuman">{t('contract_submit_step_configure')}</Text>
-              </div>
-              <CheckCircleOutlined className="text-green-500 text-2xl" />
-            </div>
-            <div className="flex items-center justify-between border-l-4 border-blue-500 pl-4">
-              <div className="flex items-center space-x-2">
-                <EditOutlined className="text-blue-500 text-xl" />
-                <Text className="font-hanuman font-bold text-blue-600">{t('contract_submit_step_sign')}</Text>
-              </div>
-            </div>
-          </Space>
-        </Card>
+        {/* Progress Indicator - Removed (using WorkflowProgress component instead) */}
 
         {/* Signature Section */}
         <Card className="mb-8 shadow-md">
