@@ -265,6 +265,9 @@ export default function ContractSubmitPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
       <div className="max-w-4xl mx-auto">
+        {/* Workflow Progress */}
+        <WorkflowProgress currentStep={3} />
+
         {/* Header */}
         <Card className="mb-8 shadow-md">
           <div className="text-center p-4">

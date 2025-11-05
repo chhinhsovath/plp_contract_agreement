@@ -151,6 +151,9 @@ export default function ContractSignPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
       <div className="max-w-5xl mx-auto">
+        {/* Workflow Progress */}
+        <WorkflowProgress currentStep={1} />
+
         {/* Header */}
         <Card className="mb-8 shadow-md">
           <div className="text-center p-4">

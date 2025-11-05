@@ -6,6 +6,7 @@ import { CheckCircleOutlined, RightOutlined, LeftOutlined, FileTextOutlined, Edi
 import { useRouter } from 'next/navigation'
 import { UserRole } from '@/lib/roles'
 import { useContent } from '@/lib/hooks/useContent'
+import { WorkflowProgress } from '@/components/WorkflowProgress'
 
 const { Title, Text, Paragraph } = Typography
 const { TextArea } = Input
@@ -318,6 +319,9 @@ export default function ContractConfigurePage() {
     return (
       <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '40px 24px' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          {/* Workflow Progress */}
+          <WorkflowProgress currentStep={2} />
+
           {/* Header */}
           <Card style={{ marginBottom: 32, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
@@ -472,6 +476,9 @@ export default function ContractConfigurePage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '40px 24px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        {/* Workflow Progress */}
+        <WorkflowProgress currentStep={2} />
+
         {/* Header */}
         <Card style={{ marginBottom: 32, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
