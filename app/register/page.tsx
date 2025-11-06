@@ -77,12 +77,50 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (response.ok) {
-        message.success(`ការចុះឈ្មោះបានជោគជ័យ! លេខសម្ងាត់របស់អ្នកគឺ ${passcode}`)
-        // Store contract type preference for automatic login redirect
+        message.success(`ការចុះឈ្មោះបានជោគជ័យ! កំពុងផ្ទេរទៅទំព័រកម្មវិធី...`)
+        // Store contract type preference
         localStorage.setItem('user_contract_type', values.contract_type)
-        setTimeout(() => {
-          router.push('/login')
-        }, 2000)
+
+        // Auto-login after successful registration
+        setTimeout(async () => {
+          try {
+            const loginResponse = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                phone_number: phoneNumber,
+                passcode: passcode,
+              }),
+            })
+
+            const loginData = await loginResponse.json()
+
+            if (loginResponse.ok) {
+              // Redirect based on contract type and signing requirements
+              const contractType = values.contract_type
+              const requiresContractSigning = loginData.requiresContractSigning
+
+              if (requiresContractSigning) {
+                // For contract types 4 & 5, go to configure page
+                if (contractType === 4 || contractType === 5) {
+                  router.push('/contract/configure')
+                } else {
+                  // For contract types 1, 2, 3, go to sign page
+                  router.push('/contract/sign')
+                }
+              } else {
+                // If already signed, go to dashboard
+                router.push('/me-dashboard')
+              }
+            } else {
+              message.error(loginData.error || 'ការចូលប្រើប្រាស់មិនជោគជ័យ')
+              router.push('/login')
+            }
+          } catch (error) {
+            message.error('កំហុសក្នុងការតភ្ជាប់')
+            router.push('/login')
+          }
+        }, 1500)
       } else {
         message.error(data.error || 'ការចុះឈ្មោះមិនជោគជ័យ')
       }
