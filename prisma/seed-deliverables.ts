@@ -27,7 +27,7 @@ async function main() {
   const deliverablesData = [
     {
       deliverable_number: 1,
-      deliverable_title_khmer: 'ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ (៩៥%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៩៣.៧%',
+      deliverable_title_khmer: 'ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ ',
       deliverable_title_english: 'Percentage of children enrolled in Grade 1 at the correct age (95%) in academic year 2025-2026 compared to baseline 93.7%',
       timeline: 'ខែតុលា-ខែវិច្ឆិកា ឆ្នាំ២០២៥',
       activities_text_type5: '- រៀបចំផែនទីខ្នងផ្ទះតាមសាលារៀន\n- ធ្វើយុទ្ធនាការប្រមូលកុមារចូលរៀន ជាពិសេសកុមារដល់វ័យសិក្សា\n- ប្រជុំជាមួយអាជ្ញាធរមូលដ្ឋានតាមសាលារៀន ដើម្បីជួយសម្របសម្រួលក្នុងការប្រមូលកុមារចូលរៀន',
@@ -60,7 +60,7 @@ async function main() {
     },
     {
       deliverable_number: 2,
-      deliverable_title_khmer: 'ភាគរយសាលាបឋមសិក្សាមានបណ្ណព័ត៌មានសាលារៀន (៤៦%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣៦%',
+      deliverable_title_khmer: 'ភាគរយសាលាបឋមសិក្សាមានបណ្ណព័ត៌មានសាលារៀន ',
       deliverable_title_english: 'Percentage of primary schools with school information boards (46%) in 2025-2026 compared to baseline 36%',
       timeline: 'ខែតុលា ឆ្នាំ២០២៥- ខែកុម្ភៈ ឆ្នាំ២០២៦',
       activities_text_type5: '- រៀបចំបង្កើតបណ្ណព័ត៌មានសាលារៀន',
@@ -93,7 +93,7 @@ async function main() {
     },
     {
       deliverable_number: 3,
-      deliverable_title_khmer: 'ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន (៥០%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣០%',
+      deliverable_title_khmer: 'ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន ',
       deliverable_title_english: 'Percentage of schools establishing school management committees (50%) in 2025-2026 compared to baseline 30%',
       timeline: 'ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦',
       activities_text_type5: '- បង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន តាមសេចក្តីណែនាំលេខ ៥៩ អយក.សណន ចុះថ្ងៃទី ១០.កញ្ញា.២០២១\n- ជំរុញលើកទឹកចិត្ត​ មូលដ្ឋានភូមិឃុំ ចូលរួមក្នុងគណៈកម្មាធិការដឹកនាំសាលា',
@@ -126,7 +126,7 @@ async function main() {
     },
     {
       deliverable_number: 4,
-      deliverable_title_khmer: 'ភាគរយសិស្សដែលនៅក្រោមមូលដ្ឋានលើមុខវិជ្ជាភាសាខ្មែរ និងគណិតវិទ្យាថ្នាក់ទី៣ថយចុះ ៥% មកនៅ (៤៦%) នៅត្រីមាសទី១ ឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន (៥១ %) នៃតេស្តស្តង់ដាថ្នាក់ទី៣ ឆ្នាំ២០១៩',
+      deliverable_title_khmer: 'ភាគរយសិស្សដែលនៅក្រោមមូលដ្ឋានលើមុខវិជ្ជាភាសាខ្មែរ និងគណិតវិទ្យាថ្នាក់ទី៣ថយចុះ ',
       deliverable_title_english: 'Percentage of students below baseline in Khmer and Math Grade 3 decreases by 5% to 46% in Q1 2025-2026 compared to baseline 51% from Grade 3 standard test 2019',
       timeline: 'ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦',
       activities_text_type5: '- ជំរុញលោកគ្រូអ្នកគ្រូ ក្នុង​ការប្រើប្រាស់ថ្នាលបឋម ដើម្បីលើកកម្ពស់លទ្ធផលសិក្សារបស់សិស្ស\n- ជំរុញលោកគ្រូអ្នកគ្រូ អនុវត្តការធ្វើតេស្តតាមមេរៀន ប្រចាំខែ ឆមាស ដំណាច់ឆ្នាំនិងអនុវត្តកម្មវិធីបង្រៀនសម្របតាមសមត្ថភាពសិស្សរៀនយឺតតាមរយៈថ្នាលបឋម\n- ជំរុញការអនុវត្តកញ្ចប់សម្ភារៈអំណាន និងគណិតវិទ្យាថ្នាក់ដំបូង\n- អនុវត្តការគាំទ្រគរុកោសល្យ ដើម្បីជួយ និងជំរុញការបង្រៀន និងរៀន',
@@ -159,7 +159,7 @@ async function main() {
     },
     {
       deliverable_number: 5,
-      deliverable_title_khmer: 'ភាគរយសិស្សបឋមសិក្សា ទទួលបាននិទ្ទេស A,B,C លើមុខវិជ្ជាភាសាខ្មែរ និង គណិតវិទ្យាថ្នាក់ទី៣ឡើងដល់ (៣២%) នៅត្រីមាសទី១ ឆ្នាំសិក្សា២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន (២៨%) នៃតេស្តស្តង់ដាថ្នាក់ទី៣ ឆ្នាំ២០១៩',
+      deliverable_title_khmer: 'ភាគរយសិស្សបឋមសិក្សា ទទួលបាននិទ្ទេស A,B,C លើមុខវិជ្ជាភាសាខ្មែរ និង គណិតវិទ្យាថ្នាក់ទី៣',
       deliverable_title_english: 'Percentage of primary students receiving grades A, B, C in Khmer and Math Grade 3 increases to 32% in Q1 2025-2026 compared to baseline 28% from Grade 3 standard test 2019',
       timeline: 'ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦',
       activities_text_type5: '- ជំរុញលោកគ្រូអ្នកគ្រូ ក្នុង​ការប្រើប្រាស់ថ្នាលបឋម ដើម្បីលើកកម្ពស់លទ្ធផលសិក្សារបស់សិស្ស\n- ជំរុញលោកគ្រូអ្នកគ្រូ អនុវត្តការធ្វើតេស្តតាមមេរៀន ប្រចាំខែ ឆមាស ដំណាច់ឆ្នាំនិងអនុវត្តកម្មវិធីបង្រៀនសម្របតាមសមត្ថភាពសិស្សរៀនយឺតតាមរយៈថ្នាលបឋម\n- ជំរុញការអនុវត្តកញ្ចប់សម្ភារៈអំណាន និងគណិតវិទ្យាថ្នាក់ដំបូង\n- អនុវត្តការគាំទ្រគរុកោសល្យ ដើម្បីជួយ និងជំរុញការបង្រៀន និងរៀន',

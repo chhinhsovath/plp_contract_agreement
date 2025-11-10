@@ -84,7 +84,11 @@ export async function POST(request: NextRequest) {
         data: {
           contract_id: contract.id,
           deliverable_id: selection.deliverable_id,
-          selected_option_id: selection.selected_option_id
+          selected_option_id: selection.selected_option_id,
+          baseline_percentage: selection.baseline_percentage || 0,
+          baseline_source: selection.baseline_source || '',
+          baseline_date: selection.baseline_date ? new Date(selection.baseline_date) : today,
+          baseline_notes: selection.baseline_notes || null
         }
       })
     )

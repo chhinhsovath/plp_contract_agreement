@@ -21,7 +21,7 @@ async function main() {
       is_reduction_target: false,
       implementation_start: '2025-10',
       implementation_end: '2025-11',
-      description_km: 'សូចនាករទី១: ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ (៩៥%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៩៣.៧%',
+      description_km: 'សូចនាករទី១: ភាគរយកុមារចុះឈ្មោះចូលរៀនថ្នាក់ទី១ត្រឹមត្រូវតាមអាយុ ',
       description_en: 'Indicator 1: Percentage of children enrolled in Grade 1 at correct age (95%) in academic year 2025-2026 compared to baseline 93.7%',
       calculation_rules: [
         {
@@ -60,7 +60,7 @@ async function main() {
       is_reduction_target: false,
       implementation_start: '2025-10',
       implementation_end: '2026-02',
-      description_km: 'សូចនាករទី២: ភាគរយសាលាបឋមសិក្សាមានបណ្ណព័ត៌មានសាលារៀន (៤៦%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣៦%',
+      description_km: 'សូចនាករទី២: ភាគរយសាលាបឋមសិក្សាមានបណ្ណព័ត៌មានសាលារៀន ',
       description_en: 'Indicator 2: Percentage of primary schools with school information boards (46%) in academic year 2025-2026 compared to baseline 36%',
       calculation_rules: [
         {
@@ -99,7 +99,7 @@ async function main() {
       is_reduction_target: false,
       implementation_start: '2025-10',
       implementation_end: '2026-03',
-      description_km: 'សូចនាករទី៣: ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន (៥០%) នៅឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន ៣០%',
+      description_km: 'សូចនាករទី៣: ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន ',
       description_en: 'Indicator 3: Percentage of schools establishing school management committees (50%) in academic year 2025-2026 compared to baseline 30%',
       calculation_rules: [
         {

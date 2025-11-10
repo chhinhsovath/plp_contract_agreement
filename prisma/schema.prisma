@@ -296,18 +296,22 @@ model deliverable_options {
 }
 
 model contract_deliverable_selections {
-  id                 Int                   @id @default(autoincrement())
-  contract_id        Int
-  deliverable_id     Int
-  selected_option_id Int
-  selected_at        DateTime              @default(now())
-  selected_by        String?
-  notes              String?
-  created_at         DateTime              @default(now())
-  updated_at         DateTime              @updatedAt
-  contract           contracts             @relation(fields: [contract_id], references: [id], onDelete: Cascade)
-  deliverable        contract_deliverables @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
-  selected_option    deliverable_options   @relation(fields: [selected_option_id], references: [id], onDelete: Cascade)
+  id                     Int                   @id @default(autoincrement())
+  contract_id            Int
+  deliverable_id         Int
+  selected_option_id     Int
+  baseline_percentage    Float
+  baseline_source        String
+  baseline_date          DateTime
+  baseline_notes         String?
+  selected_at            DateTime              @default(now())
+  selected_by            String?
+  notes                  String?
+  created_at             DateTime              @default(now())
+  updated_at             DateTime              @updatedAt
+  contract               contracts             @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  deliverable            contract_deliverables @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
+  selected_option        deliverable_options   @relation(fields: [selected_option_id], references: [id], onDelete: Cascade)
 
   @@unique([contract_id, deliverable_id])
   @@index([contract_id])

@@ -176,6 +176,10 @@ export async function POST(request: NextRequest) {
       contract_id: contract.id,
       deliverable_id: s.deliverable_id,
       selected_option_id: s.selected_option_id,
+      baseline_percentage: s.baseline_percentage,
+      baseline_source: s.baseline_source,
+      baseline_date: s.baseline_date ? new Date(s.baseline_date) : new Date(),
+      baseline_notes: s.baseline_notes || null,
       selected_by: String(user.id),
       selected_at: new Date()
     }))

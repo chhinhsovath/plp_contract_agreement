@@ -232,12 +232,16 @@ export async function POST(request: NextRequest) {
       where: { contract_id: contractId }
     });
 
-    // Create new selections
+    // Create new selections with baseline data
     const createdSelections = await prisma.contract_deliverable_selections.createMany({
       data: selections.map((selection: any) => ({
         contract_id: contractId,
         deliverable_id: selection.deliverableId,
         selected_option_id: selection.selectedOptionId,
+        baseline_percentage: selection.baseline_percentage || 0,
+        baseline_source: selection.baseline_source || '',
+        baseline_date: selection.baseline_date ? new Date(selection.baseline_date) : new Date(),
+        baseline_notes: selection.baseline_notes || null,
         selected_by: selectedBy || null,
         notes: selection.notes || null
       }))

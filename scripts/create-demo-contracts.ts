@@ -95,6 +95,10 @@ async function main() {
         contract_id: contract4.id,
         deliverable_id: deliverable.id,
         selected_option_id: selectedOption.id,
+        baseline_percentage: selectedOption.baseline_percentage || 80,
+        baseline_source: 'Demo Contract',
+        baseline_date: new Date(),
+        baseline_notes: 'Demo data created for testing',
         selected_by: demoDoEDistrict.id.toString(),
         selected_at: new Date()
       }
@@ -126,6 +130,10 @@ async function main() {
         contract_id: contract5.id,
         deliverable_id: deliverable.id,
         selected_option_id: selectedOption.id,
+        baseline_percentage: selectedOption.baseline_percentage || 75,
+        baseline_source: 'Demo Contract',
+        baseline_date: new Date(),
+        baseline_notes: 'Demo data created for testing',
         selected_by: demoDoESchool.id.toString(),
         selected_at: new Date()
       }

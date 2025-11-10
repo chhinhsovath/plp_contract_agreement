@@ -108,27 +108,44 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Fetch user's selections
+    // Fetch user's selections with baseline data
     const selections = await prisma.contract_deliverable_selections.findMany({
       where: {
         contract_id: contract.id
       },
       select: {
         deliverable_id: true,
-        selected_option_id: true
+        selected_option_id: true,
+        baseline_percentage: true,
+        baseline_source: true,
+        baseline_date: true,
+        baseline_notes: true
       }
     })
 
     // Map selections for quick lookup
     const selectionMap = new Map(
-      selections.map(s => [s.deliverable_id, s.selected_option_id])
+      selections.map(s => [s.deliverable_id, {
+        selected_option_id: s.selected_option_id,
+        baseline_percentage: s.baseline_percentage,
+        baseline_source: s.baseline_source,
+        baseline_date: s.baseline_date,
+        baseline_notes: s.baseline_notes
+      }])
     )
 
     // Add selection info to deliverables
-    const deliverablesWithSelections = deliverables.map(d => ({
-      ...d,
-      selected_option_id: selectionMap.get(d.id) || null
-    }))
+    const deliverablesWithSelections = deliverables.map(d => {
+      const selection = selectionMap.get(d.id)
+      return {
+        ...d,
+        selected_option_id: selection?.selected_option_id || null,
+        baseline_percentage: selection?.baseline_percentage || undefined,
+        baseline_source: selection?.baseline_source || undefined,
+        baseline_date: selection?.baseline_date || undefined,
+        baseline_notes: selection?.baseline_notes || undefined
+      }
+    })
 
     return NextResponse.json(
       {

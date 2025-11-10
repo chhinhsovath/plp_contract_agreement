@@ -34,6 +34,10 @@ interface Deliverable {
 interface Selection {
   deliverable_id: number
   selected_option_id: number
+  baseline_percentage?: number
+  baseline_source?: string
+  baseline_date?: string
+  baseline_notes?: string
 }
 
 interface ExistingSelection {
@@ -42,6 +46,10 @@ interface ExistingSelection {
   selected_option_id: number
   option_text_khmer: string
   option_number: number
+  baseline_percentage?: number
+  baseline_source?: string
+  baseline_date?: string
+  baseline_notes?: string
 }
 
 export default function ContractConfigurePage() {
@@ -206,10 +214,26 @@ export default function ContractConfigurePage() {
     )
   }
 
+  const handleBaselineChange = (deliverableId: number, field: string, value: any) => {
+    setSelections(prev =>
+      prev.map(s =>
+        s.deliverable_id === deliverableId
+          ? { ...s, [field]: value }
+          : s
+      )
+    )
+  }
+
   const handleNext = () => {
     const currentSelection = selections[currentStep]
     if (!currentSelection || currentSelection.selected_option_id === 0) {
       message.warning(t('configure_select_one_warning'))
+      return
+    }
+
+    // Validate baseline fields
+    if (!currentSelection.baseline_percentage || !currentSelection.baseline_source || !currentSelection.baseline_date) {
+      message.warning('សូមបំពេញព័ត៌មាននៃតម្លៃមូលដ្ឋាន / Please fill all baseline information')
       return
     }
 
@@ -228,10 +252,15 @@ export default function ContractConfigurePage() {
   }
 
   const handleSubmit = async () => {
-    // Check all selections are made
-    const allSelected = selections.every(s => s.selected_option_id !== 0)
+    // Check all selections are made with baseline data
+    const allSelected = selections.every(s =>
+      s.selected_option_id !== 0 &&
+      s.baseline_percentage &&
+      s.baseline_source &&
+      s.baseline_date
+    )
     if (!allSelected) {
-      message.error(t('configure_select_all_error'))
+      message.error(t('configure_select_all_error') || 'Please complete all selections with baseline information')
       return
     }
 
@@ -240,8 +269,22 @@ export default function ContractConfigurePage() {
       // Save selections to localStorage for submission page
       localStorage.setItem('contract_selections', JSON.stringify(selections))
 
-      // Mark configuration as complete in database
-      const response = await fetch('/api/contracts/save-configuration', {
+      // Save selections to database via API endpoint
+      const response = await fetch('/api/contract-deliverables/selections', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          selections
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error?.message || 'Failed to save selections')
+      }
+
+      // Also mark configuration as complete
+      await fetch('/api/contracts/save-configuration', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -250,16 +293,12 @@ export default function ContractConfigurePage() {
         })
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to save configuration')
-      }
-
       message.success(t('contract_configure_success_message'))
       // Redirect to signature submission page
       router.push('/contract/submit')
     } catch (error) {
       console.error('Failed to save configuration:', error)
-      message.error(t('configure_save_error'))
+      message.error(error instanceof Error ? error.message : t('configure_save_error'))
     } finally {
       setSubmitting(false)
     }
@@ -355,28 +394,73 @@ export default function ContractConfigurePage() {
           {/* Current Selections */}
           <Card title={t('configure_selected_deliverables_title')} style={{ marginBottom: 32 }}>
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
-              {existingSelections.map((selection, index) => (
-                <Card key={selection.deliverable_id} type="inner">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                    <div style={{ flex: 1 }}>
-                      <Badge count={selection.option_number} style={{ backgroundColor: '#52c41a' }}>
-                        <Title level={5} style={{ marginBottom: 8, paddingRight: 30 }}>
-                          {t('contract_configure_deliverable_label')} {index + 1}
-                        </Title>
-                      </Badge>
-                      <Paragraph style={{ fontSize: 16, marginBottom: 12, color: '#0047AB' }}>
-                        {selection.deliverable_title_khmer}
-                      </Paragraph>
-                      <Alert
-                        message={<Text strong>{t('configure_selected_option_label')} {t('contract_configure_option_label')} {selection.option_number}</Text>}
-                        description={selection.option_text_khmer}
-                        type="success"
-                        showIcon
-                      />
+              {existingSelections.map((deliverable: any, index: number) => {
+                // Find the selected option from the deliverable's options array
+                const selectedOption = deliverable.options?.find((opt: any) => opt.id === deliverable.selected_option_id)
+
+                return (
+                  <Card key={deliverable.id} type="inner">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                      <div style={{ flex: 1 }}>
+                        <Badge count={selectedOption?.option_number} style={{ backgroundColor: '#52c41a' }}>
+                          <Title level={5} style={{ marginBottom: 8, paddingRight: 30 }}>
+                            {t('contract_configure_deliverable_label')} {index + 1}
+                          </Title>
+                        </Badge>
+                        <Paragraph style={{ fontSize: 16, marginBottom: 12, color: '#0047AB' }}>
+                          {deliverable.deliverable_title_khmer}
+                        </Paragraph>
+                        {selectedOption && (
+                          <Alert
+                            message={<Text strong>{t('configure_selected_option_label')} {t('contract_configure_option_label')} {selectedOption.option_number}</Text>}
+                            description={selectedOption.option_text_khmer}
+                            type="success"
+                            showIcon
+                            style={{ marginBottom: 16 }}
+                          />
+                        )}
+
+                        {/* Baseline Information Display */}
+                        {deliverable.baseline_percentage !== undefined && (
+                          <div style={{ background: '#fafafa', padding: 12, borderRadius: 6, marginTop: 12 }}>
+                            <Text strong style={{ display: 'block', marginBottom: 8, color: '#0047AB' }}>
+                              ព័ត៌មាននៃតម្លៃមូលដ្ឋាន / Baseline Information
+                            </Text>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                              <div>
+                                <Text type="secondary" style={{ fontSize: 12 }}>តម្លៃមូលដ្ឋាន / Baseline %</Text>
+                                <Paragraph style={{ marginBottom: 0, fontWeight: 500 }}>
+                                  {deliverable.baseline_percentage}%
+                                </Paragraph>
+                              </div>
+                              <div>
+                                <Text type="secondary" style={{ fontSize: 12 }}>ប្រភព / Source</Text>
+                                <Paragraph style={{ marginBottom: 0, fontWeight: 500 }}>
+                                  {deliverable.baseline_source}
+                                </Paragraph>
+                              </div>
+                              <div>
+                                <Text type="secondary" style={{ fontSize: 12 }}>កាលបរិច្ឆេទ / Date</Text>
+                                <Paragraph style={{ marginBottom: 0, fontWeight: 500 }}>
+                                  {deliverable.baseline_date ? new Date(deliverable.baseline_date).toLocaleDateString('km-KH') : '-'}
+                                </Paragraph>
+                              </div>
+                              {deliverable.baseline_notes && (
+                                <div style={{ gridColumn: '1 / -1' }}>
+                                  <Text type="secondary" style={{ fontSize: 12 }}>ចំណាំ / Notes</Text>
+                                  <Paragraph style={{ marginBottom: 0, fontWeight: 500 }}>
+                                    {deliverable.baseline_notes}
+                                  </Paragraph>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                )
+              })}
             </Space>
           </Card>
 
@@ -596,6 +680,88 @@ export default function ContractConfigurePage() {
                   </Space>
                 </Radio.Group>
               </div>
+
+              {/* Baseline Input Section - Show only when option is selected */}
+              {currentSelection?.selected_option_id !== 0 && (
+                <div style={{ background: '#fafafa', padding: 16, borderRadius: 8, border: '1px solid #f0f0f0' }}>
+                  <Title level={5} style={{ marginBottom: 16, color: '#0047AB' }}>
+                    {t('contract_configure_baseline_label') || 'ព័ត៌មាននៃតម្លៃមូលដ្ឋាន / Baseline Information'}
+                  </Title>
+                  <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                    {/* Baseline Percentage */}
+                    <div>
+                      <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                        តម្លៃមូលដ្ឋាននៃលទ្ធផលបច្ចុប្បន្ន (%) *
+                        <br />
+                        <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
+                          Current Baseline Percentage
+                        </span>
+                      </Text>
+                      <Input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="ឧ. 85.5"
+                        value={currentSelection?.baseline_percentage || ''}
+                        onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_percentage', e.target.value ? parseFloat(e.target.value) : undefined)}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+
+                    {/* Baseline Source */}
+                    <div>
+                      <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                        ប្រភពទិន្នន័យមូលដ្ឋាន *
+                        <br />
+                        <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
+                          Source of Baseline Data (e.g., 2024 Annual Report, School Assessment)
+                        </span>
+                      </Text>
+                      <Input
+                        placeholder="ឧ. របាយការណ៍ឆ្នាំ 2024"
+                        value={currentSelection?.baseline_source || ''}
+                        onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_source', e.target.value)}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+
+                    {/* Baseline Date */}
+                    <div>
+                      <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                        កាលបរិច្ឆេទដែលបានវាស់វែងតម្លៃមូលដ្ឋាន *
+                        <br />
+                        <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
+                          Date Baseline was Measured
+                        </span>
+                      </Text>
+                      <Input
+                        type="date"
+                        value={currentSelection?.baseline_date || ''}
+                        onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_date', e.target.value)}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+
+                    {/* Baseline Notes (Optional) */}
+                    <div>
+                      <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                        ចំណាំលម្អិតបន្ថែម (ស្ម័យ)
+                        <br />
+                        <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
+                          Additional Notes (Optional)
+                        </span>
+                      </Text>
+                      <Input.TextArea
+                        placeholder="ពន្យល់លម្អិតបន្ថែមពីលើតម្លៃមូលដ្ឋាននេះ..."
+                        value={currentSelection?.baseline_notes || ''}
+                        onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_notes', e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+                  </Space>
+                </div>
+              )}
             </Space>
           </Card>
         )}
