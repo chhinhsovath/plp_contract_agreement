@@ -254,27 +254,31 @@ export default function ContractConfigurePage() {
   }
 
   const handleSubmit = async () => {
-    // Check all selections are made with baseline data
-    const allSelected = selections.every(s => {
-      // Option must be selected
-      if (s.selected_option_id === 0) return false
+    // Validate all selections are complete
+    for (const s of selections) {
+      // Option must be selected for all deliverables
+      if (s.selected_option_id === 0) {
+        message.error(t('configure_select_all_error') || 'Please complete all selections')
+        return
+      }
 
       // Find the deliverable to check its number
       const deliverable = deliverables.find(d => d.id === s.deliverable_id)
-      if (!deliverable) return false
+      if (!deliverable) continue
 
-      // For Type 5 deliverables 2 & 3: require Yes/No answer instead of baseline data
+      // For Type 5 deliverables 2 & 3: only require Yes/No answer
       if (user?.contract_type === 5 && (deliverable.deliverable_number === 2 || deliverable.deliverable_number === 3)) {
-        return s.yes_no_answer && (s.yes_no_answer === 'yes' || s.yes_no_answer === 'no')
+        if (!s.yes_no_answer || (s.yes_no_answer !== 'yes' && s.yes_no_answer !== 'no')) {
+          message.error(`សូមជ្រើសរើស បាទ/ចាស ឬ ទេ សម្រាប់សមិទ្ធកម្មលេខ ${deliverable.deliverable_number}`)
+          return
+        }
+      } else {
+        // For all other deliverables: require full baseline data
+        if (!s.baseline_percentage || !s.baseline_source || !s.baseline_date) {
+          message.error(`សូមបំពេញព័ត៌មានមូលដ្ឋាននៃសមិទ្ធកម្មលេខ ${deliverable.deliverable_number}`)
+          return
+        }
       }
-
-      // For all other deliverables: require full baseline data
-      return s.baseline_percentage && s.baseline_source && s.baseline_date
-    })
-
-    if (!allSelected) {
-      message.error(t('configure_select_all_error') || 'Please complete all selections with baseline information')
-      return
     }
 
     setSubmitting(true)
