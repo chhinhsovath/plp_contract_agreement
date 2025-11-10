@@ -72,6 +72,9 @@ export default function ContractSubmitPage() {
           router.push('/contract/configure')
           return
         }
+
+        // All checks passed, user can now submit signature
+        setLoading(false)
       } else {
         setLoading(false)
         router.push('/login')
