@@ -746,7 +746,7 @@ export default function ContractConfigurePage() {
                     {/* Baseline Notes (Optional) */}
                     <div>
                       <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                        ចំណាំលម្អិតបន្ថែម (ស្ម័យ)
+                        ចំណាំលម្អិតបន្ថែម (ជម្រើស)
                         <br />
                         <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
                           Additional Notes (Optional)
