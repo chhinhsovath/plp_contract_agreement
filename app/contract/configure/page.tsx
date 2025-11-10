@@ -714,7 +714,7 @@ export default function ContractConfigurePage() {
                         >
                           <Space direction="vertical">
                             <Radio value="yes">
-                              <Text style={{ fontSize: 16 }}>ឆ្នោត</Text>
+                              <Text style={{ fontSize: 16 }}>បាទ/ចាស</Text>
                             </Radio>
                             <Radio value="no">
                               <Text style={{ fontSize: 16 }}>ទេ</Text>

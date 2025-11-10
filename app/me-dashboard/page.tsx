@@ -1356,7 +1356,7 @@ export default function MEDashboardPage() {
                             )
                           },
                           {
-                            title: <span className="font-hanuman">តម្លៃមូលដ្ឋាន/ឆ្នោត</span>,
+                            title: <span className="font-hanuman">តម្លៃមូលដ្ឋាន/បាទ</span>,
                             key: 'baseline_percentage',
                             width: 150,
                             render: (_, record) => {
@@ -1364,7 +1364,7 @@ export default function MEDashboardPage() {
                               if (record.baseline_percentage === null && (record.baseline_source === 'Yes' || record.baseline_source === 'No')) {
                                 return (
                                   <Tag color={record.baseline_source === 'Yes' ? 'green' : 'red'} className="font-hanuman">
-                                    {record.baseline_source === 'Yes' ? 'ឆ្នោត' : 'ទេ'}
+                                    {record.baseline_source === 'Yes' ? 'បាទ/ចាស' : 'ទេ'}
                                   </Tag>
                                 )
                               }
