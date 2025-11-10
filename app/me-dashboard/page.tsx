@@ -1356,6 +1356,50 @@ export default function MEDashboardPage() {
                             )
                           },
                           {
+                            title: <span className="font-hanuman">តម្លៃមូលដ្ឋាន (%)</span>,
+                            key: 'baseline_percentage',
+                            width: 120,
+                            render: (_, record) => (
+                              <Text className="font-hanuman">
+                                {record.baseline_percentage !== undefined && record.baseline_percentage !== null
+                                  ? `${record.baseline_percentage}%`
+                                  : '-'}
+                              </Text>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">ប្រភពទិន្នន័យ</span>,
+                            key: 'baseline_source',
+                            width: 150,
+                            render: (_, record) => (
+                              <Text className="font-hanuman">
+                                {record.baseline_source || '-'}
+                              </Text>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">កាលបរិច្ឆេទ</span>,
+                            key: 'baseline_date',
+                            width: 120,
+                            render: (_, record) => (
+                              <Text className="font-hanuman">
+                                {record.baseline_date
+                                  ? new Date(record.baseline_date).toLocaleDateString('km-KH')
+                                  : '-'}
+                              </Text>
+                            )
+                          },
+                          {
+                            title: <span className="font-hanuman">ចំណាំ</span>,
+                            key: 'baseline_notes',
+                            width: 200,
+                            render: (_, record) => (
+                              <Text className="font-hanuman">
+                                {record.baseline_notes || '-'}
+                              </Text>
+                            )
+                          },
+                          {
                             title: <span className="font-hanuman">{t('dashboard_table_timeline')}</span>,
                             key: 'timeline',
                             width: 200,
@@ -1368,6 +1412,7 @@ export default function MEDashboardPage() {
                         pagination={false}
                         rowKey="id"
                         size="middle"
+                        scroll={{ x: 1500 }}
                       />
                     </div>
                   ) : (
