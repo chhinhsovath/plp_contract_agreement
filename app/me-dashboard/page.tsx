@@ -1356,48 +1356,77 @@ export default function MEDashboardPage() {
                             )
                           },
                           {
-                            title: <span className="font-hanuman">តម្លៃមូលដ្ឋាន (%)</span>,
+                            title: <span className="font-hanuman">តម្លៃមូលដ្ឋាន/ឆ្នោត</span>,
                             key: 'baseline_percentage',
-                            width: 120,
-                            render: (_, record) => (
-                              <Text className="font-hanuman">
-                                {record.baseline_percentage !== undefined && record.baseline_percentage !== null
-                                  ? `${record.baseline_percentage}%`
-                                  : '-'}
-                              </Text>
-                            )
+                            width: 150,
+                            render: (_, record) => {
+                              // For Type 5 deliverables 2 & 3: baseline_source contains "Yes" or "No"
+                              if (record.baseline_percentage === null && (record.baseline_source === 'Yes' || record.baseline_source === 'No')) {
+                                return (
+                                  <Tag color={record.baseline_source === 'Yes' ? 'green' : 'red'} className="font-hanuman">
+                                    {record.baseline_source === 'Yes' ? 'ឆ្នោត' : 'ទេ'}
+                                  </Tag>
+                                )
+                              }
+                              // For other deliverables: show percentage
+                              return (
+                                <Text className="font-hanuman">
+                                  {record.baseline_percentage !== undefined && record.baseline_percentage !== null
+                                    ? `${record.baseline_percentage}%`
+                                    : '-'}
+                                </Text>
+                              )
+                            }
                           },
                           {
                             title: <span className="font-hanuman">ប្រភពទិន្នន័យ</span>,
                             key: 'baseline_source',
                             width: 150,
-                            render: (_, record) => (
-                              <Text className="font-hanuman">
-                                {record.baseline_source || '-'}
-                              </Text>
-                            )
+                            render: (_, record) => {
+                              // Hide for Type 5 deliverables 2 & 3 (Yes/No case)
+                              if (record.baseline_percentage === null && (record.baseline_source === 'Yes' || record.baseline_source === 'No')) {
+                                return <Text className="font-hanuman">-</Text>
+                              }
+                              return (
+                                <Text className="font-hanuman">
+                                  {record.baseline_source || '-'}
+                                </Text>
+                              )
+                            }
                           },
                           {
                             title: <span className="font-hanuman">កាលបរិច្ឆេទ</span>,
                             key: 'baseline_date',
                             width: 120,
-                            render: (_, record) => (
-                              <Text className="font-hanuman">
-                                {record.baseline_date
-                                  ? new Date(record.baseline_date).toLocaleDateString('km-KH')
-                                  : '-'}
-                              </Text>
-                            )
+                            render: (_, record) => {
+                              // Hide for Type 5 deliverables 2 & 3 (Yes/No case)
+                              if (record.baseline_percentage === null && (record.baseline_source === 'Yes' || record.baseline_source === 'No')) {
+                                return <Text className="font-hanuman">-</Text>
+                              }
+                              return (
+                                <Text className="font-hanuman">
+                                  {record.baseline_date
+                                    ? new Date(record.baseline_date).toLocaleDateString('km-KH')
+                                    : '-'}
+                                </Text>
+                              )
+                            }
                           },
                           {
                             title: <span className="font-hanuman">ចំណាំ</span>,
                             key: 'baseline_notes',
                             width: 200,
-                            render: (_, record) => (
-                              <Text className="font-hanuman">
-                                {record.baseline_notes || '-'}
-                              </Text>
-                            )
+                            render: (_, record) => {
+                              // Hide for Type 5 deliverables 2 & 3 (Yes/No case)
+                              if (record.baseline_percentage === null && (record.baseline_source === 'Yes' || record.baseline_source === 'No')) {
+                                return <Text className="font-hanuman">-</Text>
+                              }
+                              return (
+                                <Text className="font-hanuman">
+                                  {record.baseline_notes || '-'}
+                                </Text>
+                              )
+                            }
                           },
                           {
                             title: <span className="font-hanuman">{t('dashboard_table_timeline')}</span>,

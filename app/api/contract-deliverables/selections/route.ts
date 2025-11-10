@@ -155,18 +155,40 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // For Type 5, fetch deliverables to know which ones are 2 & 3 (for Yes/No handling)
+    let deliverableMap: Map<number, any> = new Map()
+    if (user.contract_type === 5) {
+      const typeDeliverables = await prisma.contract_deliverables.findMany({
+        where: {
+          contract_type: 5,
+          is_active: true
+        },
+        select: {
+          id: true,
+          deliverable_number: true
+        }
+      })
+      typeDeliverables.forEach(d => deliverableMap.set(d.id, d))
+    }
+
     // Insert new selections
-    const selectionsData = selections.map((s: any) => ({
-      contract_id: contract.id,
-      deliverable_id: s.deliverable_id,
-      selected_option_id: s.selected_option_id,
-      baseline_percentage: s.baseline_percentage,
-      baseline_source: s.baseline_source,
-      baseline_date: s.baseline_date ? new Date(s.baseline_date) : new Date(),
-      baseline_notes: s.baseline_notes || null,
-      selected_by: String(user.id),
-      selected_at: new Date()
-    }))
+    const selectionsData = selections.map((s: any) => {
+      // For Type 5 deliverables 2 & 3: store yes_no_answer in baseline_source
+      const deliverable = deliverableMap.get(s.deliverable_id)
+      const isType5Deliverable2Or3 = user.contract_type === 5 && deliverable && (deliverable.deliverable_number === 2 || deliverable.deliverable_number === 3)
+
+      return {
+        contract_id: contract.id,
+        deliverable_id: s.deliverable_id,
+        selected_option_id: s.selected_option_id,
+        baseline_percentage: isType5Deliverable2Or3 ? null : (s.baseline_percentage || null),
+        baseline_source: isType5Deliverable2Or3 ? (s.yes_no_answer ? (s.yes_no_answer === 'yes' ? 'Yes' : 'No') : null) : (s.baseline_source || null),
+        baseline_date: isType5Deliverable2Or3 ? null : (s.baseline_date ? new Date(s.baseline_date) : new Date()),
+        baseline_notes: isType5Deliverable2Or3 ? null : (s.baseline_notes || null),
+        selected_by: String(user.id),
+        selected_at: new Date()
+      }
+    })
 
     await prisma.contract_deliverable_selections.createMany({
       data: selectionsData

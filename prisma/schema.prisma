@@ -300,9 +300,9 @@ model contract_deliverable_selections {
   contract_id            Int
   deliverable_id         Int
   selected_option_id     Int
-  baseline_percentage    Float
-  baseline_source        String
-  baseline_date          DateTime
+  baseline_percentage    Float?
+  baseline_source        String?
+  baseline_date          DateTime?
   baseline_notes         String?
   selected_at            DateTime              @default(now())
   selected_by            String?

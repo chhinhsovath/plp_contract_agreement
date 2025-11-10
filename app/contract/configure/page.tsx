@@ -38,6 +38,7 @@ interface Selection {
   baseline_source?: string
   baseline_date?: string
   baseline_notes?: string
+  yes_no_answer?: string // For Type 5 deliverables 2 & 3
 }
 
 interface ExistingSelection {
@@ -50,6 +51,7 @@ interface ExistingSelection {
   baseline_source?: string
   baseline_date?: string
   baseline_notes?: string
+  yes_no_answer?: string // For Type 5 deliverables 2 & 3
 }
 
 export default function ContractConfigurePage() {
@@ -253,12 +255,23 @@ export default function ContractConfigurePage() {
 
   const handleSubmit = async () => {
     // Check all selections are made with baseline data
-    const allSelected = selections.every(s =>
-      s.selected_option_id !== 0 &&
-      s.baseline_percentage &&
-      s.baseline_source &&
-      s.baseline_date
-    )
+    const allSelected = selections.every(s => {
+      // Option must be selected
+      if (s.selected_option_id === 0) return false
+
+      // Find the deliverable to check its number
+      const deliverable = deliverables.find(d => d.id === s.deliverable_id)
+      if (!deliverable) return false
+
+      // For Type 5 deliverables 2 & 3: require Yes/No answer instead of baseline data
+      if (user?.contract_type === 5 && (deliverable.deliverable_number === 2 || deliverable.deliverable_number === 3)) {
+        return s.yes_no_answer && (s.yes_no_answer === 'yes' || s.yes_no_answer === 'no')
+      }
+
+      // For all other deliverables: require full baseline data
+      return s.baseline_percentage && s.baseline_source && s.baseline_date
+    })
+
     if (!allSelected) {
       message.error(t('configure_select_all_error') || 'Please complete all selections with baseline information')
       return
@@ -688,61 +701,86 @@ export default function ContractConfigurePage() {
                     {t('contract_configure_baseline_label') || 'ព័ត៌មាននៃតម្លៃមូលដ្ឋាន / Baseline Information'}
                   </Title>
                   <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                    {/* Baseline Percentage */}
-                    <div>
-                      <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                        តម្លៃមូលដ្ឋាននៃលទ្ធផលនៅឆ្នាំសិក្សា២០២៤-២០២៥ (%) *
-                      </Text>
-                      <Input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.1"
-                        placeholder="ឧ. 85.5"
-                        value={currentSelection?.baseline_percentage || ''}
-                        onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_percentage', e.target.value ? parseFloat(e.target.value) : undefined)}
-                        style={{ width: '100%' }}
-                      />
-                    </div>
+                    {/* For Type 5 deliverables 2 & 3: Show Yes/No selection */}
+                    {user?.contract_type === 5 && (currentDeliverable.deliverable_number === 2 || currentDeliverable.deliverable_number === 3) ? (
+                      <div>
+                        <Text strong style={{ display: 'block', marginBottom: 16 }}>
+                          តើលទ្ធផលនេះមានឬទេ? *
+                        </Text>
+                        <Radio.Group
+                          value={currentSelection?.yes_no_answer || ''}
+                          onChange={(e) => handleBaselineChange(currentDeliverable.id, 'yes_no_answer', e.target.value)}
+                          style={{ width: '100%' }}
+                        >
+                          <Space direction="vertical">
+                            <Radio value="yes">
+                              <Text style={{ fontSize: 16 }}>ឆ្នោត</Text>
+                            </Radio>
+                            <Radio value="no">
+                              <Text style={{ fontSize: 16 }}>ទេ</Text>
+                            </Radio>
+                          </Space>
+                        </Radio.Group>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Baseline Percentage */}
+                        <div>
+                          <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                            តម្លៃមូលដ្ឋាននៃលទ្ធផលនៅឆ្នាំសិក្សា២០២៤-២០២៥ (%) *
+                          </Text>
+                          <Input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                            placeholder="ឧ. 85.5"
+                            value={currentSelection?.baseline_percentage || ''}
+                            onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_percentage', e.target.value ? parseFloat(e.target.value) : undefined)}
+                            style={{ width: '100%' }}
+                          />
+                        </div>
 
-                    {/* Baseline Source */}
-                    <div>
-                      <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                        ប្រភពទិន្នន័យមូលដ្ឋាន *
-                      </Text>
-                      <Input
-                        placeholder="ឧ. របាយការណ៍ឆ្នាំ 2024"
-                        value={currentSelection?.baseline_source || ''}
-                        onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_source', e.target.value)}
-                        style={{ width: '100%' }}
-                      />
-                    </div>
+                        {/* Baseline Source */}
+                        <div>
+                          <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                            ប្រភពទិន្នន័យមូលដ្ឋាន *
+                          </Text>
+                          <Input
+                            placeholder="ឧ. របាយការណ៍ឆ្នាំ 2024"
+                            value={currentSelection?.baseline_source || ''}
+                            onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_source', e.target.value)}
+                            style={{ width: '100%' }}
+                          />
+                        </div>
 
-                    {/* Baseline Date */}
-                    <div>
-                      <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                        កាលបរិច្ឆេទដែលបានវាស់វែងតម្លៃមូលដ្ឋាន *
-                      </Text>
-                      <Input
-                        type="date"
-                        value={currentSelection?.baseline_date || ''}
-                        onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_date', e.target.value)}
-                        style={{ width: '100%' }}
-                      />
-                    </div>
+                        {/* Baseline Date */}
+                        <div>
+                          <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                            កាលបរិច្ឆេទដែលបានវាស់វែងតម្លៃមូលដ្ឋាន *
+                          </Text>
+                          <Input
+                            type="date"
+                            value={currentSelection?.baseline_date || ''}
+                            onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_date', e.target.value)}
+                            style={{ width: '100%' }}
+                          />
+                        </div>
 
-                    {/* Baseline Notes (Optional) */}
-                    <div>
-                      <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                        ចំណាំលម្អិតបន្ថែម (ជម្រើស)
-                      </Text>
-                      <Input.TextArea
-                        placeholder="ពន្យល់លម្អិតបន្ថែមពីលើតម្លៃមូលដ្ឋាននេះ..."
-                        value={currentSelection?.baseline_notes || ''}
-                        onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_notes', e.target.value)}
-                        rows={3}
-                      />
-                    </div>
+                        {/* Baseline Notes (Optional) */}
+                        <div>
+                          <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                            ចំណាំលម្អិតបន្ថែម (ជម្រើស)
+                          </Text>
+                          <Input.TextArea
+                            placeholder="ពន្យល់លម្អិតបន្ថែមពីលើតម្លៃមូលដ្ឋាននេះ..."
+                            value={currentSelection?.baseline_notes || ''}
+                            onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_notes', e.target.value)}
+                            rows={3}
+                          />
+                        </div>
+                      </>
+                    )}
                   </Space>
                 </div>
               )}
