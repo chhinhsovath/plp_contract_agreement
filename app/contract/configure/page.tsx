@@ -233,10 +233,22 @@ export default function ContractConfigurePage() {
       return
     }
 
-    // Validate baseline fields
-    if (!currentSelection.baseline_percentage || !currentSelection.baseline_source || !currentSelection.baseline_date) {
-      message.warning('សូមបំពេញព័ត៌មាននៃតម្លៃមូលដ្ឋាន / Please fill all baseline information')
-      return
+    // Validate baseline information based on deliverable type
+    const deliverable = deliverables[currentStep]
+    if (deliverable) {
+      // For Type 5 deliverables 2 & 3: only need yes_no_answer
+      if (user?.contract_type === 5 && (deliverable.deliverable_number === 2 || deliverable.deliverable_number === 3)) {
+        if (!currentSelection.yes_no_answer || (currentSelection.yes_no_answer !== 'yes' && currentSelection.yes_no_answer !== 'no')) {
+          message.warning('សូមជ្រើសរើស បាទ/ចាស ឬ ទេ')
+          return
+        }
+      } else {
+        // For all other deliverables: only need baseline_percentage
+        if (!currentSelection.baseline_percentage) {
+          message.warning('សូមបំពេញតម្លៃមូលដ្ឋាន')
+          return
+        }
+      }
     }
 
     if (currentStep < deliverables.length - 1) {
@@ -273,9 +285,9 @@ export default function ContractConfigurePage() {
           return
         }
       } else {
-        // For all other deliverables: require full baseline data
-        if (!s.baseline_percentage || !s.baseline_source || !s.baseline_date) {
-          message.error(`សូមបំពេញព័ត៌មានមូលដ្ឋាននៃសមិទ្ធកម្មលេខ ${deliverable.deliverable_number}`)
+        // For all other deliverables: require only baseline percentage
+        if (!s.baseline_percentage) {
+          message.error(`សូមបំពេញតម្លៃមូលដ្ឋាននៃសមិទ្ធកម្មលេខ ${deliverable.deliverable_number}`)
           return
         }
       }
@@ -748,7 +760,7 @@ export default function ContractConfigurePage() {
                         {/* Baseline Source */}
                         <div>
                           <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                            ប្រភពទិន្នន័យមូលដ្ឋាន *
+                            ប្រភពទិន្នន័យមូលដ្ឋាន (ជម្រើស)
                           </Text>
                           <Input
                             placeholder="ឧ. របាយការណ៍ឆ្នាំ 2024"
@@ -761,7 +773,7 @@ export default function ContractConfigurePage() {
                         {/* Baseline Date */}
                         <div>
                           <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                            កាលបរិច្ឆេទដែលបានវាស់វែងតម្លៃមូលដ្ឋាន *
+                            កាលបរិច្ឆេទដែលបានវាស់វែងតម្លៃមូលដ្ឋាន (ជម្រើស)
                           </Text>
                           <Input
                             type="date"
