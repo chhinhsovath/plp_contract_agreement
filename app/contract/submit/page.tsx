@@ -23,9 +23,13 @@ export default function ContractSubmitPage() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
+  const sessionCheckStarted = useRef(false)
 
   useEffect(() => {
-    checkSession()
+    if (!sessionCheckStarted.current) {
+      sessionCheckStarted.current = true
+      checkSession()
+    }
   }, [])
 
   const checkSession = async () => {
@@ -38,6 +42,7 @@ export default function ContractSubmitPage() {
 
         // Check if user already signed contract
         if (userData.contract_signed) {
+          setLoading(false)
           message.info(t('submit_already_signed'))
           router.push('/me-dashboard')
           return
@@ -45,6 +50,7 @@ export default function ContractSubmitPage() {
 
         // Check if user completed configuration
         if (!userData.configuration_complete) {
+          setLoading(false)
           message.warning(t('submit_config_required'))
           router.push('/contract/configure')
           return
@@ -52,6 +58,7 @@ export default function ContractSubmitPage() {
 
         // Check if user has read the contract
         if (!userData.contract_read) {
+          setLoading(false)
           message.warning(t('submit_read_required'))
           router.push('/contract/sign')
           return
@@ -60,18 +67,19 @@ export default function ContractSubmitPage() {
         // Check if selections exist in localStorage
         const selectionsJson = localStorage.getItem('contract_selections')
         if (!selectionsJson) {
+          setLoading(false)
           message.error(t('submit_selections_lost'))
           router.push('/contract/configure')
           return
         }
       } else {
+        setLoading(false)
         router.push('/login')
       }
     } catch (error) {
       console.error('Session check failed:', error)
-      router.push('/login')
-    } finally {
       setLoading(false)
+      router.push('/login')
     }
   }
 

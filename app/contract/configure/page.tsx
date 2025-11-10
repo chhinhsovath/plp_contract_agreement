@@ -103,51 +103,31 @@ export default function ContractConfigurePage() {
           return
         }
 
-        // User must sign contract before configuring deliverables
-        if (!userData.contract_signed) {
+        // User must read contract before configuring deliverables
+        if (!userData.contract_read) {
           setLoading(false)
-          message.warning(t('configure_must_sign_first_warning') || 'សូមចុះហត្ថលេខលើលិខិតកិច្ចព្រមាណ មុនពេលកំណត់រចនាសម្ព័ន្ធលទ្ធផល / Please sign the contract first before configuring deliverables')
-          router.push('/contract/submit')
+          message.warning(t('configure_read_first_warning') || 'សូមអានលិខិតកិច្ចព្រមាណ មុនពេលកំណត់រចនាសម្ព័ន្ធលទ្ធផល / Please read the contract first before configuring deliverables')
+          router.push('/contract/sign')
           return
         }
 
         setUser(userData)
 
-        // Check if user already completed configuration or signed
-        if (userData.configuration_complete || userData.contract_signed) {
+        // Check if user already completed configuration
+        if (userData.configuration_complete) {
           // Fetch existing selections to show in view mode
           const selections = await fetchExistingSelections(userData.id)
 
-          // If no selections found, user needs to configure (reset scenario)
-          if (!selections || selections.length === 0) {
-            // Reset the flags since there's no actual configuration
-            userData.configuration_complete = false
-            userData.contract_signed = false
-
-            // Check if user has read the contract
-            if (!userData.contract_read) {
-              setLoading(false)
-              message.warning(t('configure_read_first_warning'))
-              router.push('/contract/sign')
-              return
-            }
-
-            // Load deliverables for configuration
-            await fetchDeliverables(userData.contract_type)
-            setViewMode('edit')
-          } else {
+          if (selections && selections.length > 0) {
             // Has selections, show view mode
             await checkPendingRequest(userData.id)
             setViewMode('view')
+          } else {
+            // Treat as not configured if no selections found
+            await fetchDeliverables(userData.contract_type)
+            setViewMode('edit')
           }
         } else {
-          // Check if user has read the contract first
-          if (!userData.contract_read) {
-            setLoading(false)
-            message.warning(t('configure_read_first_warning'))
-            router.push('/contract/sign')
-            return
-          }
           // Allow access for users who have read but not configured yet
           await fetchDeliverables(userData.contract_type)
           setViewMode('edit')
