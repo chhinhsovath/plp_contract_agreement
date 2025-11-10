@@ -691,7 +691,7 @@ export default function ContractConfigurePage() {
                     {/* Baseline Percentage */}
                     <div>
                       <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                        តម្លៃមូលដ្ឋាននៃលទ្ធផលបច្ចុប្បន្ន (%) *
+                        តម្លៃមូលដ្ឋាននៃលទ្ធផលនៅឆ្នាំសិក្សា២០២៤-២០២៥ (%) *
                         <br />
                         <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
                           Current Baseline Percentage
