@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, Button, Radio, Steps, Typography, Space, Alert, Spin, message, Modal, Input, Badge } from 'antd'
 import { CheckCircleOutlined, RightOutlined, LeftOutlined, FileTextOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
@@ -70,8 +70,14 @@ export default function ContractConfigurePage() {
   const [requestingChange, setRequestingChange] = useState(false)
   const [pendingRequest, setPendingRequest] = useState<any>(null)
 
+  // Track if we've already started checking session to prevent race conditions
+  const sessionCheckStarted = useRef(false)
+
   useEffect(() => {
-    checkSession()
+    if (!sessionCheckStarted.current) {
+      sessionCheckStarted.current = true
+      checkSession()
+    }
   }, [])
 
   const checkSession = async () => {
