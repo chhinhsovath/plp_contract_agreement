@@ -95,6 +95,13 @@ export default function ContractConfigurePage() {
           return
         }
 
+        // User must sign contract before configuring deliverables
+        if (!userData.contract_signed) {
+          message.warning(t('configure_must_sign_first_warning') || 'សូមចុះហត្ថលេខលើលិខិតកិច្ចព្រមាណ មុនពេលកំណត់រចនាសម្ព័ន្ធលទ្ធផល / Please sign the contract first before configuring deliverables')
+          router.push('/contract/submit')
+          return
+        }
+
         setUser(userData)
 
         // Check if user already completed configuration or signed
