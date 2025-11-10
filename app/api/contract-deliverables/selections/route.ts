@@ -93,9 +93,8 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // If no contract exists but user has signed, create a contract record
-    // This handles the case where user signed before configuring deliverables
-    if (!contract && user.contract_signed) {
+    // If no contract exists, create one (for new workflow where configuration happens before signing)
+    if (!contract) {
       // Generate contract number
       const timestamp = Date.now()
       const contract_number = `PLP-${user.contract_type}-${timestamp}`
@@ -119,8 +118,10 @@ export async function POST(request: NextRequest) {
       // Get Party A signature as base64
       const partyASignature = await getPartyASignatureBase64()
 
-      // Create contract with 1-year duration
-      const signedDate = fullUser?.contract_signed_date || new Date()
+      // Create contract
+      // Status depends on whether user has signed
+      const contractStatus = user.contract_signed ? 'signed' : 'draft'
+      const signedDate = user.contract_signed ? (fullUser?.contract_signed_date || new Date()) : new Date()
       const endDate = new Date(signedDate)
       endDate.setFullYear(endDate.getFullYear() + 1)
 
@@ -130,13 +131,13 @@ export async function POST(request: NextRequest) {
           contract_type_id: user.contract_type,
           party_a_name: partyANames[user.contract_type] || 'នាយកដ្ឋានអប់រំយុវជន និងកីឡាខេត្ត/រាជធានី',
           party_a_signature: partyASignature,
-          party_a_signed_date: signedDate,
+          party_a_signed_date: user.contract_signed ? signedDate : null,
           party_b_name: fullUser?.full_name || 'Unknown',
           party_b_signature: fullUser?.signature_data || '',
           start_date: signedDate,
           end_date: endDate,
-          status: 'signed',
-          party_b_signed_date: signedDate,
+          status: contractStatus,
+          party_b_signed_date: user.contract_signed ? signedDate : null,
           created_by_id: user.id
         },
         select: {
@@ -146,23 +147,6 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    if (!contract) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            message: 'No contract found for this user. Please sign the contract first, then configure deliverables.',
-            code: 'CONTRACT_NOT_FOUND',
-            meta: {
-              userContractSigned: user.contract_signed,
-              contractType: user.contract_type,
-              suggestion: 'User needs to sign the contract before configuring deliverables.'
-            }
-          }
-        },
-        { status: 404 }
-      )
-    }
 
     // Delete existing selections for this contract
     await prisma.contract_deliverable_selections.deleteMany({
