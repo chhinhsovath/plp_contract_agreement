@@ -692,10 +692,6 @@ export default function ContractConfigurePage() {
                     <div>
                       <Text strong style={{ display: 'block', marginBottom: 8 }}>
                         តម្លៃមូលដ្ឋាននៃលទ្ធផលនៅឆ្នាំសិក្សា២០២៤-២០២៥ (%) *
-                        <br />
-                        <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
-                          Current Baseline Percentage
-                        </span>
                       </Text>
                       <Input
                         type="number"
@@ -713,10 +709,6 @@ export default function ContractConfigurePage() {
                     <div>
                       <Text strong style={{ display: 'block', marginBottom: 8 }}>
                         ប្រភពទិន្នន័យមូលដ្ឋាន *
-                        <br />
-                        <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
-                          Source of Baseline Data (e.g., 2024 Annual Report, School Assessment)
-                        </span>
                       </Text>
                       <Input
                         placeholder="ឧ. របាយការណ៍ឆ្នាំ 2024"
@@ -730,10 +722,6 @@ export default function ContractConfigurePage() {
                     <div>
                       <Text strong style={{ display: 'block', marginBottom: 8 }}>
                         កាលបរិច្ឆេទដែលបានវាស់វែងតម្លៃមូលដ្ឋាន *
-                        <br />
-                        <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
-                          Date Baseline was Measured
-                        </span>
                       </Text>
                       <Input
                         type="date"
@@ -747,10 +735,6 @@ export default function ContractConfigurePage() {
                     <div>
                       <Text strong style={{ display: 'block', marginBottom: 8 }}>
                         ចំណាំលម្អិតបន្ថែម (ជម្រើស)
-                        <br />
-                        <span style={{ fontSize: 12, fontWeight: 'normal', color: '#595959' }}>
-                          Additional Notes (Optional)
-                        </span>
                       </Text>
                       <Input.TextArea
                         placeholder="ពន្យល់លម្អិតបន្ថែមពីលើតម្លៃមូលដ្ឋាននេះ..."
