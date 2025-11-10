@@ -83,6 +83,7 @@ export default function ContractConfigurePage() {
 
         // Only PARTNER users can access this page for all contract types
         if (userData.role !== UserRole.PARTNER) {
+          setLoading(false)
           message.error(t('configure_no_access_error'))
           router.push('/')
           return
@@ -90,6 +91,7 @@ export default function ContractConfigurePage() {
 
         // Support all contract types 1-5
         if (!userData.contract_type || userData.contract_type < 1 || userData.contract_type > 5) {
+          setLoading(false)
           message.error(t('configure_invalid_type_error'))
           router.push('/')
           return
@@ -97,6 +99,7 @@ export default function ContractConfigurePage() {
 
         // User must sign contract before configuring deliverables
         if (!userData.contract_signed) {
+          setLoading(false)
           message.warning(t('configure_must_sign_first_warning') || 'សូមចុះហត្ថលេខលើលិខិតកិច្ចព្រមាណ មុនពេលកំណត់រចនាសម្ព័ន្ធលទ្ធផល / Please sign the contract first before configuring deliverables')
           router.push('/contract/submit')
           return
@@ -117,6 +120,7 @@ export default function ContractConfigurePage() {
 
             // Check if user has read the contract
             if (!userData.contract_read) {
+              setLoading(false)
               message.warning(t('configure_read_first_warning'))
               router.push('/contract/sign')
               return
@@ -133,6 +137,7 @@ export default function ContractConfigurePage() {
         } else {
           // Check if user has read the contract first
           if (!userData.contract_read) {
+            setLoading(false)
             message.warning(t('configure_read_first_warning'))
             router.push('/contract/sign')
             return
@@ -142,10 +147,12 @@ export default function ContractConfigurePage() {
           setViewMode('edit')
         }
       } else {
+        setLoading(false)
         router.push('/login')
       }
     } catch (error) {
       console.error('Session check failed:', error)
+      setLoading(false)
       router.push('/login')
     }
   }
