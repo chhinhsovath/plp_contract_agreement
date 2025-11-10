@@ -112,6 +112,13 @@ const contentTexts = [
     description: 'Label for option number'
   },
   {
+    key: 'contract_configure_baseline_label',
+    text_khmer: 'ព័ត៌មាននៃតម្លៃមូលដ្ឋាន',
+    text_english: 'Baseline Information',
+    category: 'contract_configure',
+    description: 'Section title for baseline inputs'
+  },
+  {
     key: 'contract_configure_target_label',
     text_khmer: 'គោលដៅ:',
     text_english: 'Target:',

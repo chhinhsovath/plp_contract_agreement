@@ -138,8 +138,8 @@ async function main() {
       is_reduction_target: true,
       implementation_start: '2025-10',
       implementation_end: '2026-03',
-      description_km: 'សូចនាករទី៤: ភាគរយសិស្សដែលនៅក្រោមមូលដ្ឋានលើមុខវិជ្ជាភាសាខ្មែរ និងគណិតវិទ្យាថ្នាក់ទី៣ថយចុះ ៥% មកនៅ (៤៦%) នៅត្រីមាសទី១ ឆ្នាំសិក្សា ២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន (៥១ %)',
-      description_en: 'Indicator 4: Percentage decrease of Grade 3 students below baseline in Khmer and Math by 5% to (46%) in Q1 2025-2026 compared to baseline (51%)',
+      description_km: 'សូចនាករទី៤: ភាគរយសិស្សដែលនៅក្រោមមូលដ្ឋានលើមុខវិជ្ជាភាសាខ្មែរ និងគណិតវិទ្យាថ្នាក់ទី៣ថយចុះ',
+      description_en: 'Indicator 4: Percentage decrease of Grade 3 students below baseline in Khmer and Math',
       calculation_rules: [
         {
           condition: 'baseline > 51',
@@ -177,8 +177,8 @@ async function main() {
       is_reduction_target: false,
       implementation_start: '2025-10',
       implementation_end: '2026-03',
-      description_km: 'សូចនាករទី៥: ភាគរយសិស្សបឋមសិក្សា ទទួលបាននិទ្ទេស A,B,C លើមុខវិជ្ជាភាសាខ្មែរ និង គណិតវិទ្យាថ្នាក់ទី៣ឡើងដល់ (៣២%) នៅត្រីមាសទី១ ឆ្នាំសិក្សា២០២៥-២០២៦ ធៀបនឹងទិន្នន័យមូលដ្ឋាន (២៨%)',
-      description_en: 'Indicator 5: Percentage of Grade 3 students achieving grades A, B, C in Khmer and Math reaching (32%) in Q1 2025-2026 compared to baseline (28%)',
+      description_km: 'សូចនាករទី៥: ភាគរយសិស្សបឋមសិក្សា ទទួលបាននិទ្ទេស A,B,C លើមុខវិជ្ជាភាសាខ្មែរ និង គណិតវិទ្យាថ្នាក់ទី៣',
+      description_en: 'Indicator 5: Percentage of Grade 3 students achieving grades A, B, C in Khmer and Math',
       calculation_rules: [
         {
           condition: 'baseline < 28',
