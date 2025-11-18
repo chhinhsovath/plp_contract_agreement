@@ -9,7 +9,7 @@ const partyAByType: any = {
   1: {
     // Agreement 1: PMU ↔ PCU
     organization: {
-      name_khmer: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ',
+      name_khmer: 'គណៈកម្មការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ',
       name_english: 'National Project Management Unit (PMU)',
       abbreviation: 'PMU'
     },
@@ -24,7 +24,7 @@ const partyAByType: any = {
   2: {
     // Agreement 2: PCU Chief ↔ Project Manager
     organization: {
-      name_khmer: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ',
+      name_khmer: 'គណៈកម្មការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ',
       name_english: 'Sub-national Project Management Unit (PCU)',
       abbreviation: 'PCU'
     },

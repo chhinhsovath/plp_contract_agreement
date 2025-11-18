@@ -330,7 +330,7 @@ async function seedMEData() {
       status: 'ongoing',
       budget_allocated: 15000,
       budget_spent: 13500,
-      responsible_person: 'គណៈកម្មាធិការជ្រើសរើស'
+      responsible_person: 'គណៈកម្មការជ្រើសរើស'
     },
 
     // Contract 3: Regional Activities

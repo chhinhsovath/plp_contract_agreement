@@ -291,7 +291,7 @@ Both types have the SAME 5 deliverables with SAME indicators:
 2. If baseline = 36%, increase to 46%
 3. If baseline ≥ 46%, maintain
 
-#### Deliverable 3: ភាគរយសាលារៀនបង្កើតគណៈកម្មាធិការ
+#### Deliverable 3: ភាគរយសាលារៀនបង្កើតគណៈកម្មការ
 **Target:** 50% from baseline 30%
 **Timeline:** ខែតុលា ២០២៥- ខែមីនា ២០២៦
 

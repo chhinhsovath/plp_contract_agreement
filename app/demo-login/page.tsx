@@ -22,7 +22,7 @@ const demoUsers = [
         role: 'ដៃគូ',
         roleEn: 'PARTNER',
         contractType: 'កិច្ចព្រមព្រៀង PMU-PCU',
-        description: 'គណៈកម្មាធិការសម្របសម្រួលខេត្ត',
+        description: 'គណៈកម្មការសម្របសម្រួលខេត្ត',
         color: 'blue'
       },
       {

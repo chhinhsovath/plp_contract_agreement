@@ -16,7 +16,7 @@ This document defines the 5 deliverables for each of Agreements 1, 2, and 3, mat
 
 ### Agreement Context
 - **Type ID**: 1
-- **Parties**: គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ (PMU) ↔ គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (PCU)
+- **Parties**: គណៈកម្មការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ (PMU) ↔ គណៈកម្មការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (PCU)
 - **Scope**: National program management and coordination
 - **Focus**: Policy guidance, planning, monitoring, and evaluation
 

@@ -5,13 +5,13 @@ const prisma = new PrismaClient()
 const contractTemplateContent = [
   // Contract Type 1: PMU-PCU
   { key: 'contract_1_title', text_khmer: 'កិច្ចព្រមព្រៀងសមិទ្ធកម្មរវាង គបស និង គបក', text_english: 'Achievement Agreement between PMU and PCU', category: 'contract_templates', description: 'Contract 1 title' },
-  { key: 'contract_1_party_b', text_khmer: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (គបក)', text_english: 'Provincial Committee for Project Management (PCU)', category: 'contract_templates', description: 'Contract 1 Party B' },
+  { key: 'contract_1_party_b', text_khmer: 'គណៈកម្មការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (គបក)', text_english: 'Provincial Committee for Project Management (PCU)', category: 'contract_templates', description: 'Contract 1 Party B' },
   { key: 'contract_1_responsibility_1', text_khmer: 'ផ្តល់ការណែនាំគោលនយោបាយ និងយុទ្ធសាស្ត្រ', text_english: 'Provide policy and strategy guidance', category: 'contract_templates', description: 'Contract 1 responsibility 1' },
   { key: 'contract_1_responsibility_2', text_khmer: 'អនុម័តផែនការការងារ និងថវិកាប្រចាំឆ្នាំ', text_english: 'Approve annual work plan and budget', category: 'contract_templates', description: 'Contract 1 responsibility 2' },
   { key: 'contract_1_responsibility_3', text_khmer: 'តាមដាន និងវាយតម្លៃការអនុវត្តគម្រោង', text_english: 'Monitor and evaluate project implementation', category: 'contract_templates', description: 'Contract 1 responsibility 3' },
   { key: 'contract_1_responsibility_4', text_khmer: 'សម្របសម្រួលជាមួយភាគីពាក់ព័ន្ធ', text_english: 'Coordinate with stakeholders', category: 'contract_templates', description: 'Contract 1 responsibility 4' },
   { key: 'contract_1_responsibility_5', text_khmer: 'ធានាការអនុវត្តតាមបទដ្ឋានគតិយុត្តិ', text_english: 'Ensure implementation according to quality standards', category: 'contract_templates', description: 'Contract 1 responsibility 5' },
-  { key: 'contract_1_content_intro', text_khmer: 'កិច្ចព្រមព្រៀងនេះមានគោលបំណងកំណត់ការទទួលខុសត្រូវ និងកាតព្វកិច្ចរបស់គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ និងថ្នាក់ក្រោមជាតិ។', text_english: 'This agreement defines responsibilities of national and provincial committees.', category: 'contract_templates', description: 'Contract 1 intro paragraph' },
+  { key: 'contract_1_content_intro', text_khmer: 'កិច្ចព្រមព្រៀងនេះមានគោលបំណងកំណត់ការទទួលខុសត្រូវ និងកាតព្វកិច្ចរបស់គណៈកម្មការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ និងថ្នាក់ក្រោមជាតិ។', text_english: 'This agreement defines responsibilities of national and provincial committees.', category: 'contract_templates', description: 'Contract 1 intro paragraph' },
   { key: 'contract_1_conditions_title', text_khmer: 'លក្ខខណ្ឌទូទៅ:', text_english: 'General Conditions:', category: 'contract_templates', description: 'Contract 1 conditions title' },
   { key: 'contract_1_condition_duration', text_khmer: 'រយៈពេលកិច្ចព្រមព្រៀង: ១ឆ្នាំ', text_english: 'Agreement duration: 1 year', category: 'contract_templates', description: 'Contract 1 duration' },
   { key: 'contract_1_condition_budget', text_khmer: 'ថវិកាសរុប: តាមការអនុម័តប្រចាំឆ្នាំ', text_english: 'Total budget: As approved annually', category: 'contract_templates', description: 'Contract 1 budget' },
@@ -46,7 +46,7 @@ const contractTemplateContent = [
   { key: 'contract_3_coverage_students', text_khmer: 'គោលដៅសិស្ស: តាមផែនការ', text_english: 'Student target: As planned', category: 'contract_templates', description: 'Contract 3 students' },
 
   // Contract Type 4: Provincial-District
-  { key: 'contract_4_title', text_khmer: 'កិច្ចព្រមព្រៀងរវាងមន្ទីរអប់រំ និងការិយាល័យអប់រំស្រុក', text_english: 'Agreement between Provincial and District Education Office', category: 'contract_templates', description: 'Contract 4 title' },
+  { key: 'contract_4_title', text_khmer: 'កិច្ចព្រមព្រៀងរនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក', text_english: 'Agreement between Provincial and District Education Office', category: 'contract_templates', description: 'Contract 4 title' },
   { key: 'contract_4_party_b', text_khmer: 'ការិយាល័យអប់រំ យុវជន និងកីឡាស្រុក', text_english: 'District Office of Education, Youth and Sports', category: 'contract_templates', description: 'Contract 4 Party B' },
   { key: 'contract_4_responsibility_1', text_khmer: 'អនុវត្តគោលនយោបាយអប់រំថ្នាក់ជាតិ', text_english: 'Implement national education policy', category: 'contract_templates', description: 'Contract 4 responsibility 1' },
   { key: 'contract_4_responsibility_2', text_khmer: 'គ្រប់គ្រងគ្រូបង្រៀន និងសាលារៀន', text_english: 'Manage teachers and schools', category: 'contract_templates', description: 'Contract 4 responsibility 2' },

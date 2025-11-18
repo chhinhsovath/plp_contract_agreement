@@ -50,7 +50,7 @@ async function main() {
         },
         {
           option_number: 3,
-          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៩៥% ឬលើសត្រូវរក្សា យ៉ាងហោចណាស់ អោយនៅដដែល',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៩៥% ឬលើសត្រូវរក្សា យ៉ាងហោចណាស់ ឱ្យនៅដដែល',
           option_text_english: 'If baseline ≥ 95%, maintain at least the same level',
           condition_type: 'greater_or_equal',
           baseline_percentage: 95.0,
@@ -83,7 +83,7 @@ async function main() {
         },
         {
           option_number: 3,
-          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៤៦% ឬលើសត្រូវរក្សា យ៉ាងហោចណាស់ អោយនៅដដែល',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៤៦% ឬលើសត្រូវរក្សា យ៉ាងហោចណាស់ ឱ្យនៅដដែល',
           option_text_english: 'If baseline ≥ 46%, maintain at least the same level',
           condition_type: 'greater_or_equal',
           baseline_percentage: 46.0,
@@ -93,10 +93,10 @@ async function main() {
     },
     {
       deliverable_number: 3,
-      deliverable_title_khmer: 'ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន ',
+      deliverable_title_khmer: 'ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន ',
       deliverable_title_english: 'Percentage of schools establishing school management committees',
       timeline: 'ខែតុលា ឆ្នាំ២០២៥- ខែមីនា ឆ្នាំ២០២៦',
-      activities_text_type5: '- បង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន តាមសេចក្តីណែនាំលេខ ៥៩ អយក.សណន ចុះថ្ងៃទី ១០.កញ្ញា.២០២១\n- ជំរុញលើកទឹកចិត្ត​ មូលដ្ឋានភូមិឃុំ ចូលរួមក្នុងគណៈកម្មាធិការដឹកនាំសាលា',
+      activities_text_type5: '- បង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន តាមសេចក្តីណែនាំលេខ ៥៩ អយក.សណន ចុះថ្ងៃទី ១០.កញ្ញា.២០២១\n- ជំរុញលើកទឹកចិត្ត​ មូលដ្ឋានភូមិឃុំ ចូលរួមក្នុងគណៈកម្មការដឹកនាំសាលា',
       options: [
         {
           option_number: 1,
@@ -116,7 +116,7 @@ async function main() {
         },
         {
           option_number: 3,
-          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៥០% ឬលើសត្រូវរក្សា យ៉ាងហោចណាស់ អោយនៅដដែល',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៥០% ឬលើសត្រូវរក្សា យ៉ាងហោចណាស់ ឱ្យនៅដដែល',
           option_text_english: 'If baseline ≥ 50%, maintain at least the same level',
           condition_type: 'greater_or_equal',
           baseline_percentage: 50.0,
@@ -149,7 +149,7 @@ async function main() {
         },
         {
           option_number: 3,
-          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៤៦% ឬតិចជាងនេះ ត្រូវរក្សា យ៉ាងហោចណាស់ អោយនៅដដែល',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៤៦% ឬតិចជាងនេះ ត្រូវរក្សា យ៉ាងហោចណាស់ ឱ្យនៅដដែល',
           option_text_english: 'If baseline ≤ 46%, maintain at least the same level',
           condition_type: 'less_than',
           baseline_percentage: 46.0,
@@ -182,7 +182,7 @@ async function main() {
         },
         {
           option_number: 3,
-          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៣២% ឬលើសត្រូវរក្សា យ៉ាងហោចណាស់ អោយនៅដដែល',
+          option_text_khmer: 'បើទិន្នន័យមូលដ្ឋាន ស្មើ ៣២% ឬលើសត្រូវរក្សា យ៉ាងហោចណាស់ ឱ្យនៅដដែល',
           option_text_english: 'If baseline ≥ 32%, maintain at least the same level',
           condition_type: 'greater_or_equal',
           baseline_percentage: 32.0,

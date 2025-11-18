@@ -30,7 +30,7 @@ export function generateContractHTML(contractData: any): string {
       </p>
 
       <!-- Parties Table -->
-      <h3 style="font-weight: bold; margin-top: 0.5cm;">អ្នកអនុវត្ត ឬអ្នកទទួលខុសត្រូវ និងគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន</h3>
+      <h3 style="font-weight: bold; margin-top: 0.5cm;">អ្នកអនុវត្ត ឬអ្នកទទួលខុសត្រូវ និងគណៈកម្មការគ្រប់គ្រងសាលារៀន</h3>
 
       <table style="width: 100%; border-collapse: collapse; margin: 0.5cm 0;" border="1">
         <thead>

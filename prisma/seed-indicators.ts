@@ -39,7 +39,7 @@ async function main() {
         {
           condition: 'baseline >= 95',
           target_increase: 0,
-          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 95% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 95% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់ឱ្យនៅដដែល',
           description_en: 'If baseline >= 95%, maintain current level'
         }
       ],
@@ -78,7 +78,7 @@ async function main() {
         {
           condition: 'baseline >= 46',
           target_increase: 0,
-          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 46% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 46% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់ឱ្យនៅដដែល',
           description_en: 'If baseline >= 46%, maintain current level'
         }
       ],
@@ -92,14 +92,14 @@ async function main() {
     data: {
       indicator_code: 'IND-003',
       indicator_number: 3,
-      indicator_name_km: 'ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន',
+      indicator_name_km: 'ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន',
       indicator_name_en: 'Percentage of schools establishing school management committees',
       target_percentage: 50,
       baseline_percentage: 30,
       is_reduction_target: false,
       implementation_start: '2025-10',
       implementation_end: '2026-03',
-      description_km: 'សូចនាករទី៣: ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មាធិការគ្រប់គ្រងសាលារៀន ',
+      description_km: 'សូចនាករទី៣: ភាគរយសាលារៀនរៀបចំបង្កើតគណៈកម្មការគ្រប់គ្រងសាលារៀន ',
       description_en: 'Indicator 3: Percentage of schools establishing school management committees (50%) in academic year 2025-2026 compared to baseline 30%',
       calculation_rules: [
         {
@@ -117,7 +117,7 @@ async function main() {
         {
           condition: 'baseline >= 50',
           target_increase: 0,
-          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 50% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 50% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់ឱ្យនៅដដែល',
           description_en: 'If baseline >= 50%, maintain current level'
         }
       ],
@@ -156,7 +156,7 @@ async function main() {
         {
           condition: 'baseline <= 46',
           target_decrease: 0,
-          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 46% ឬតិចជាងនេះ ត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 46% ឬតិចជាងនេះ ត្រូវរក្សាយ៉ាងហោចណាស់ឱ្យនៅដដែល',
           description_en: 'If baseline <= 46%, maintain current level'
         }
       ],
@@ -195,7 +195,7 @@ async function main() {
         {
           condition: 'baseline >= 32',
           target_increase: 0,
-          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 32% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់អោយនៅដដែល',
+          description_km: 'បើទិន្នន័យមូលដ្ឋានស្មើ 32% ឬលើសត្រូវរក្សាយ៉ាងហោចណាស់ឱ្យនៅដដែល',
           description_en: 'If baseline >= 32%, maintain current level'
         }
       ],

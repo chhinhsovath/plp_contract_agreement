@@ -12,7 +12,7 @@ export const contractTemplates = [
     partyASignatory: defaultPartyAInfo.party_a_name,
     partyAPosition: defaultPartyAInfo.party_a_position,
     partyASignature: defaultPartyAInfo.party_a_signature,
-    partyB: 'គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (គបក)',
+    partyB: 'គណៈកម្មការគ្រប់គ្រងគម្រោងថ្នាក់ក្រោមជាតិ (គបក)',
     responsibilities: [
       'ផ្តល់ការណែនាំគោលនយោបាយ និងយុទ្ធសាស្ត្រ',
       'អនុម័តផែនការការងារ និងថវិកាប្រចាំឆ្នាំ',
@@ -21,7 +21,7 @@ export const contractTemplates = [
       'ធានាការអនុវត្តតាមបទដ្ឋានគតិយុត្តិ'
     ],
     content: `
-      <p>កិច្ចព្រមព្រៀងនេះមានគោលបំណងកំណត់ការទទួលខុសត្រូវ និងកាតព្វកិច្ចរបស់គណៈកម្មាធិការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ និងថ្នាក់ក្រោមជាតិ។</p>
+      <p>កិច្ចព្រមព្រៀងនេះមានគោលបំណងកំណត់ការទទួលខុសត្រូវ និងកាតព្វកិច្ចរបស់គណៈកម្មការគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ និងថ្នាក់ក្រោមជាតិ។</p>
       <h5>លក្ខខណ្ឌទូទៅ:</h5>
       <ul>
         <li>រយៈពេលកិច្ចព្រមព្រៀង: ១ឆ្នាំ</li>
@@ -82,7 +82,7 @@ export const contractTemplates = [
   },
   {
     id: 4,
-    title: 'កិច្ចព្រមព្រៀងរវាងមន្ទីរអប់រំ និងការិយាល័យអប់រំស្រុក',
+    title: 'កិច្ចព្រមព្រៀងរនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក',
     partyA: defaultPartyAInfo.party_a_organization,
     partyASignatory: defaultPartyAInfo.party_a_name,
     partyAPosition: defaultPartyAInfo.party_a_position,
