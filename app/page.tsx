@@ -164,13 +164,24 @@ export default function HomePage() {
                 កែសមិទ្ធកម្ម
               </Button>
             </>
-          ) : (
+          ) : user ? (
             <Button
               type="primary"
               icon={<FileTextOutlined />}
               onClick={() => router.push(`/contract/${record.id}`)}
             >
               បង្កើតកិច្ចព្រមព្រៀង
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              icon={<UserOutlined />}
+              onClick={() => {
+                message.info('សូមចូលប្រើប្រាស់ ឬចុះឈ្មោះជាមុនសិន')
+                router.push('/login')
+              }}
+            >
+              ចូលប្រើប្រាស់ដើម្បីបង្កើត
             </Button>
           )}
         </Space>
