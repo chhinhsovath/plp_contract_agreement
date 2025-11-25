@@ -1,45 +1,28 @@
 'use client'
 
 import { useState } from 'react'
-import { Form, Input, Button, Typography, message, Select, Space, Divider, Card, Row, Col } from 'antd'
+import { Form, Input, Button, Typography, message, Radio, Space, Divider, Card, Row, Col } from 'antd'
 import { UserOutlined, PhoneOutlined, MailOutlined, BankOutlined, SolutionOutlined, LoginOutlined, FileTextOutlined, TeamOutlined, BookOutlined, HomeOutlined, SafetyOutlined, CheckCircleOutlined, RocketOutlined, ThunderboltOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const { Title, Text, Paragraph } = Typography
-const { Option } = Select
 
-// Contract types matching the main page
+// Only show agreement types 4 and 5 for public registration
 const CONTRACT_TYPES = [
-  {
-    id: 1,
-    icon: <BankOutlined />,
-    title: 'កិច្ចព្រមព្រៀង PMU-PCU',
-    description: 'គណៈគ្រប់គ្រងគម្រោងថ្នាក់ជាតិ និង គណៈគ្រប់គ្រងគម្រោងតាមខេត្ត',
-  },
-  {
-    id: 2,
-    icon: <SolutionOutlined />,
-    title: 'កិច្ចព្រមព្រៀង PCU-Project Manager',
-    description: 'ប្រធាន គបក និងប្រធានគម្រោង',
-  },
-  {
-    id: 3,
-    icon: <TeamOutlined />,
-    title: 'កិច្ចព្រមព្រៀង Project Manager-Regional',
-    description: 'ប្រធានគម្រោង និងមន្រ្តីគម្រោងតាមតំបន់',
-  },
   {
     id: 4,
     icon: <BookOutlined />,
-    title: 'កិច្ចព្រមព្រៀង DoE-District Office',
-    description: 'នាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក',
+    title: 'កិច្ចព្រមព្រៀង Provincial-District',
+    subtitle: 'នាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក',
+    description: 'សម្រាប់ការិយាល័យអប់រំស្រុក/ក្រុង/ខណ្ឌ',
   },
   {
     id: 5,
     icon: <HomeOutlined />,
-    title: 'កិច្ចព្រមព្រៀង DoE-School',
-    description: 'នាយកដ្ឋានបឋមសិក្សា និងសាលាបឋមសិក្សា',
+    title: 'កិច្ចព្រមព្រៀង Provincial-School',
+    subtitle: 'នាយកដ្ឋានបឋមសិក្សា និងសាលារៀន',
+    description: 'សម្រាប់សាលាបឋមសិក្សា',
   },
 ]
 
@@ -326,28 +309,47 @@ export default function RegisterPage() {
 
                 <Form.Item
                   name="contract_type"
-                  label="ប្រភេទកិច្ចព្រមព្រៀង"
                   rules={[{ required: true, message: 'សូមជ្រើសរើសប្រភេទកិច្ចព្រមព្រៀង' }]}
                 >
-                  <Select
-                    placeholder="ជ្រើសរើសប្រភេទកិច្ចព្រមព្រៀង"
-                    allowClear
-                    showSearch={false}
-                  >
-                    {CONTRACT_TYPES.map(type => (
-                      <Option key={type.id} value={type.id}>
-                        <div style={{ padding: '8px 0' }}>
-                          <Space>
-                            {type.icon}
-                            <div>
-                              <div style={{ fontWeight: 600 }}>{type.title}</div>
-                              <div style={{ fontSize: 12, color: '#8c8c8c' }}>{type.description}</div>
-                            </div>
-                          </Space>
-                        </div>
-                      </Option>
-                    ))}
-                  </Select>
+                  <Radio.Group style={{ width: '100%' }}>
+                    <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                      {CONTRACT_TYPES.map(type => (
+                        <Card
+                          key={type.id}
+                          hoverable
+                          style={{
+                            cursor: 'pointer',
+                            border: '2px solid #d9d9d9',
+                            transition: 'all 0.3s'
+                          }}
+                          bodyStyle={{ padding: '16px' }}
+                        >
+                          <Radio value={type.id} style={{ width: '100%' }}>
+                            <Space align="start" size="middle" style={{ width: '100%' }}>
+                              <div style={{
+                                fontSize: 32,
+                                color: type.id === 4 ? '#52c41a' : '#1890ff',
+                                marginTop: 4
+                              }}>
+                                {type.icon}
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 4 }}>
+                                  {type.title}
+                                </div>
+                                <div style={{ fontSize: 14, color: '#595959', marginBottom: 4 }}>
+                                  {type.subtitle}
+                                </div>
+                                <div style={{ fontSize: 13, color: '#8c8c8c' }}>
+                                  {type.description}
+                                </div>
+                              </div>
+                            </Space>
+                          </Radio>
+                        </Card>
+                      ))}
+                    </Space>
+                  </Radio.Group>
                 </Form.Item>
 
                 <Card
