@@ -82,7 +82,7 @@ export const contractTemplates = [
   },
   {
     id: 4,
-    title: 'កិច្ចព្រមព្រៀងរនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក',
+    title: 'កិច្ចព្រមព្រៀងរវាង នាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក',
     partyA: defaultPartyAInfo.party_a_organization,
     partyASignatory: defaultPartyAInfo.party_a_name,
     partyAPosition: defaultPartyAInfo.party_a_position,
@@ -107,7 +107,7 @@ export const contractTemplates = [
   },
   {
     id: 5,
-    title: 'កិច្ចព្រមព្រៀងរវាងមន្ទីរអប់រំ និងសាលារៀន',
+    title: 'កិច្ចព្រមព្រៀងរវាង នាយកដ្ឋានបឋមសិក្សា និងសាលារៀន',
     partyA: defaultPartyAInfo.party_a_organization,
     partyASignatory: defaultPartyAInfo.party_a_name,
     partyAPosition: defaultPartyAInfo.party_a_position,

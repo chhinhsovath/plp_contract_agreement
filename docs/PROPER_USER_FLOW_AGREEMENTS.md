@@ -228,7 +228,7 @@ curl -X POST https://agreements.openplp.com/api/demo/reset \
 - [ ] Login and mark as signed WITHOUT creating contract (manually in DB)
 - [ ] Navigate to `/me-dashboard`
 - [ ] **Expected:** Shows "គ្មានសូចនាករ" (No indicators)
-- [ ] **Expected:** Shows "សូមកំណត់រចនាសម្ព័ន្ធកិច្ចសន្យារបស់អ្នក" message
+- [ ] **Expected:** Shows "សូមកំណត់រចនាសម្ព័ន្ធកិច្ចព្រមព្រៀងរបស់អ្នក" message
 
 ---
 

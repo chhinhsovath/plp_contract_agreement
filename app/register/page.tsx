@@ -33,13 +33,13 @@ const CONTRACT_TYPES = [
     id: 4,
     icon: <BookOutlined />,
     title: 'កិច្ចព្រមព្រៀង DoE-District Office',
-    description: 'នាយកដ្ឋានអប់រំបឋមសិក្សា និងការិយាល័យអប់រំស្រុក',
+    description: 'នាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក',
   },
   {
     id: 5,
     icon: <HomeOutlined />,
     title: 'កិច្ចព្រមព្រៀង DoE-School',
-    description: 'នាយកដ្ឋានអប់រំបឋមសិក្សា និងសាលាបឋមសិក្សា',
+    description: 'នាយកដ្ឋានបឋមសិក្សា និងសាលាបឋមសិក្សា',
   },
 ]
 

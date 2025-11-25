@@ -106,7 +106,7 @@ export async function getContractTemplate(contractType: number, partyAInfo: any)
       }),
       4: async () => ({
         id: 4,
-        title: await getContent('contract_4_title', 'កិច្ចព្រមព្រៀងរនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក'),
+        title: await getContent('contract_4_title', 'កិច្ចព្រមព្រៀងរវាង នាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក'),
         partyA: partyAInfo.party_a_organization,
         partyASignatory: partyAInfo.party_a_name,
         partyAPosition: partyAInfo.party_a_position,
@@ -131,7 +131,7 @@ export async function getContractTemplate(contractType: number, partyAInfo: any)
       }),
       5: async () => ({
         id: 5,
-        title: await getContent('contract_5_title', 'កិច្ចព្រមព្រៀងរវាងមន្ទីរអប់រំ និងសាលារៀន'),
+        title: await getContent('contract_5_title', 'កិច្ចព្រមព្រៀងរវាង នាយកដ្ឋានបឋមសិក្សា និងសាលារៀន'),
         partyA: partyAInfo.party_a_organization,
         partyASignatory: partyAInfo.party_a_name,
         partyAPosition: partyAInfo.party_a_position,

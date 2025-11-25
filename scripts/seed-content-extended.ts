@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 // Extended content with all remaining static text from all pages
 const extendedContent = [
   // Contract Sign - Messages and Errors
-  { key: 'sign_already_signed_message', text_khmer: 'អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យារួចហើយ', text_english: 'You have already signed the contract', category: 'contract_sign', description: 'Message when user already signed' },
+  { key: 'sign_already_signed_message', text_khmer: 'អ្នកបានចុះហត្ថលេខាលើកិច្ចព្រមព្រៀងរួចហើយ', text_english: 'You have already signed the contract', category: 'contract_sign', description: 'Message when user already signed' },
   { key: 'sign_already_read_message', text_khmer: 'អ្នកបានអានកិច្ចសន្យារួចហើយ', text_english: 'You have already read the contract', category: 'contract_sign', description: 'Message when user already read' },
   { key: 'sign_no_contract_type_error', text_khmer: 'អ្នកមិនមានប្រភេទកិច្ចសន្យា', text_english: 'You do not have a contract type', category: 'contract_sign', description: 'Error when no contract type' },
   { key: 'sign_agree_warning', text_khmer: 'សូមយល់ព្រមលើកិច្ចសន្យា', text_english: 'Please agree to the contract', category: 'contract_sign', description: 'Warning to agree first' },
@@ -49,7 +49,7 @@ const extendedContent = [
   { key: 'configure_connection_error', text_khmer: 'មានបញ្ហាក្នុងការតភ្ជាប់', text_english: 'Connection problem', category: 'contract_configure', description: 'Connection error' },
 
   // Contract Submit - All Messages
-  { key: 'submit_already_signed', text_khmer: 'អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យារួចហើយ', text_english: 'Already signed', category: 'contract_submit', description: 'Already signed message' },
+  { key: 'submit_already_signed', text_khmer: 'អ្នកបានចុះហត្ថលេខាលើកិច្ចព្រមព្រៀងរួចហើយ', text_english: 'Already signed', category: 'contract_submit', description: 'Already signed message' },
   { key: 'submit_config_required', text_khmer: 'សូមបំពេញការកំណត់រចនាសម្ព័ន្ធជាមុនសិន', text_english: 'Complete configuration first', category: 'contract_submit', description: 'Config required warning' },
   { key: 'submit_read_required', text_khmer: 'សូមអានកិច្ចសន្យាជាមុនសិន', text_english: 'Read contract first', category: 'contract_submit', description: 'Read required warning' },
   { key: 'submit_selections_lost', text_khmer: 'ការជ្រើសរើសរបស់អ្នកបាត់បង់ សូមធ្វើការកំណត់រចនាសម្ព័ន្ធឡើងវិញ', text_english: 'Selections lost, reconfigure', category: 'contract_submit', description: 'Selections lost error' },
@@ -125,7 +125,7 @@ const extendedContent = [
   { key: 'dashboard_table_actions', text_khmer: 'សកម្មភាព', text_english: 'Actions', category: 'dashboard', description: 'Table: Actions' },
   { key: 'dashboard_input_data', text_khmer: 'បញ្ចូល', text_english: 'Input', category: 'dashboard', description: 'Input data button' },
   { key: 'dashboard_edit_coming_soon', text_khmer: 'មុខងារកែសម្រួលនឹងមានឆាប់ៗនេះ', text_english: 'Edit coming soon', category: 'dashboard', description: 'Edit placeholder' },
-  { key: 'dashboard_contract_warning', text_khmer: 'សូមចុះហត្ថលេខាលើកិច្ចសន្យាមុនសិន', text_english: 'Sign contract first', category: 'dashboard', description: 'Sign warning' },
+  { key: 'dashboard_contract_warning', text_khmer: 'សូមចុះហត្ថលេខាលើកិច្ចព្រមព្រៀងមុនសិន', text_english: 'Sign contract first', category: 'dashboard', description: 'Sign warning' },
   { key: 'dashboard_confirm_yes', text_khmer: 'បាទ/ចាស', text_english: 'Yes', category: 'dashboard', description: 'Yes button' },
   { key: 'dashboard_confirm_no', text_khmer: 'ទេ', text_english: 'No', category: 'dashboard', description: 'No button' }
 ]

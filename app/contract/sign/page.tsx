@@ -160,7 +160,7 @@ export default function ContractSignPage() {
           <div className="text-center p-4">
             <Title level={2} className="font-hanuman text-blue-800 mb-3">
               <FileTextOutlined className="mr-3" />
-              {t('contract_sign_page_title')} {contract.title}
+              {contract.title}
             </Title>
             <Text className="font-hanuman text-gray-600 text-base">
               {t('contract_sign_subtitle')}

@@ -71,8 +71,7 @@ const contentTexts = [
   // Contract Configure Page
   {
     key: 'contract_configure_page_title',
-    text_khmer: 'កំណត់រចនាសម្ព័ន្ធកិច្ចសន្យា',
-    text_english: 'Configure Contract',
+            text_khmer: 'កំណត់រចនាសម្ព័ន្ធកិច្ចព្រមព្រៀង',    text_english: 'Configure Contract',
     category: 'contract_configure',
     description: 'Main page title for configuration'
   },
@@ -199,7 +198,7 @@ const contentTexts = [
   // Contract Submit Page
   {
     key: 'contract_submit_page_title',
-    text_khmer: 'ចុះហត្ថលេខាលើកិច្ចសន្យា',
+    text_khmer: 'ចុះហត្ថលេខាលើកិច្ចព្រមព្រៀង',
     text_english: 'Sign Contract',
     category: 'contract_submit',
     description: 'Main page title for signature submission'
@@ -262,14 +261,14 @@ const contentTexts = [
   },
   {
     key: 'contract_submit_button',
-    text_khmer: 'បញ្ជូនកិច្ចសន្យា',
+    text_khmer: 'បញ្ជូនកិច្ចព្រមព្រៀង',
     text_english: 'Submit Contract',
     category: 'contract_submit',
     description: 'Final submit button'
   },
   {
     key: 'contract_submit_success_message',
-    text_khmer: 'អ្នកបានចុះហត្ថលេខាលើកិច្ចសន្យាដោយជោគជ័យ!',
+    text_khmer: 'អ្នកបានចុះហត្ថលេខាលើកិច្ចព្រមព្រៀងដោយជោគជ័យ!',
     text_english: 'You have successfully signed the contract!',
     category: 'contract_submit',
     description: 'Success message after submission'

@@ -46,7 +46,7 @@ const contractTemplateContent = [
   { key: 'contract_3_coverage_students', text_khmer: 'គោលដៅសិស្ស: តាមផែនការ', text_english: 'Student target: As planned', category: 'contract_templates', description: 'Contract 3 students' },
 
   // Contract Type 4: Provincial-District
-  { key: 'contract_4_title', text_khmer: 'កិច្ចព្រមព្រៀងរនាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក', text_english: 'Agreement between Provincial and District Education Office', category: 'contract_templates', description: 'Contract 4 title' },
+  { key: 'contract_4_title', text_khmer: 'កិច្ចព្រមព្រៀងរវាង នាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក', text_english: 'Agreement between Provincial and District Education Office', category: 'contract_templates', description: 'Contract 4 title' },
   { key: 'contract_4_party_b', text_khmer: 'ការិយាល័យអប់រំ យុវជន និងកីឡាស្រុក', text_english: 'District Office of Education, Youth and Sports', category: 'contract_templates', description: 'Contract 4 Party B' },
   { key: 'contract_4_responsibility_1', text_khmer: 'អនុវត្តគោលនយោបាយអប់រំថ្នាក់ជាតិ', text_english: 'Implement national education policy', category: 'contract_templates', description: 'Contract 4 responsibility 1' },
   { key: 'contract_4_responsibility_2', text_khmer: 'គ្រប់គ្រងគ្រូបង្រៀន និងសាលារៀន', text_english: 'Manage teachers and schools', category: 'contract_templates', description: 'Contract 4 responsibility 2' },
@@ -60,7 +60,7 @@ const contractTemplateContent = [
   { key: 'contract_4_goal_pass_rate', text_khmer: 'អត្រាប្រឡងជាប់: ≥85%', text_english: 'Pass rate: ≥85%', category: 'contract_templates', description: 'Contract 4 pass rate' },
 
   // Contract Type 5: Provincial-School
-  { key: 'contract_5_title', text_khmer: 'កិច្ចព្រមព្រៀងរវាងមន្ទីរអប់រំ និងសាលារៀន', text_english: 'Agreement between Provincial Education and School', category: 'contract_templates', description: 'Contract 5 title' },
+  { key: 'contract_5_title', text_khmer: 'កិច្ចព្រមព្រៀងរវាង នាយកដ្ឋានបឋមសិក្សា និងសាលារៀន', text_english: 'Agreement between Provincial Education and School', category: 'contract_templates', description: 'Contract 5 title' },
   { key: 'contract_5_party_b', text_khmer: 'សាលាបឋមសិក្សា', text_english: 'Primary School', category: 'contract_templates', description: 'Contract 5 Party B' },
   { key: 'contract_5_responsibility_1', text_khmer: 'ធានាគុណភាពអប់រំ', text_english: 'Ensure education quality', category: 'contract_templates', description: 'Contract 5 responsibility 1' },
   { key: 'contract_5_responsibility_2', text_khmer: 'គ្រប់គ្រងធនធានមនុស្ស', text_english: 'Manage human resources', category: 'contract_templates', description: 'Contract 5 responsibility 2' },
