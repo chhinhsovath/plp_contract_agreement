@@ -413,7 +413,6 @@ export default function ContractPrintPage() {
   }
 
   const isContractType4 = contractData.contract_type_id === 4
-  const isContractType5 = contractData.contract_type_id === 5
   const partyBTitle = isContractType4 ? 'ប្រធានការិយាល័យអប់រំក្រុងស្រុកខណ្ឌ' : 'នាយកសាលា/នាយករង/នាយកស្រ្តីទី'
 
   return (
@@ -1059,19 +1058,6 @@ export default function ContractPrintPage() {
                         )}
                       </div>
                     </div>
-
-                    {/* Bottom centered text for Contract Type 5 */}
-                    {isContractType5 && (
-                      <div className="centered-text">
-                        <div className="large-khmer">មូលនិធិសាលាមុត្តុនា</div>
-                        <div className="large-khmer">ខ ហូលដាលសាលាមុត្តុនា</div>
-                        <div>បក្សុលសខីងលុណៈ</div>
-                        <div style={{ marginTop: '0.5cm' }}>
-                          ស្ថិទី............ ខែ................ឆ្នាំ............<br />
-                          បក្សុលសខីងលុណៈ : (ប្រធានការិយាល័យអប់រំ)
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )
               }
