@@ -141,7 +141,7 @@ echo ""
 # Test direct database connection
 if command -v psql &> /dev/null; then
   echo "Testing direct PostgreSQL connection..."
-  PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin -d plp_contract_agreement -c "SELECT version();" > /dev/null 2>&1
+  PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -c "SELECT version();" > /dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Direct database connection successful${NC}"
   else

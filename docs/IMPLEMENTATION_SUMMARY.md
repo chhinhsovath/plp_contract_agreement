@@ -354,7 +354,7 @@ const fetchActivities = async () => {
 
 **Production URL:** https://agreements.openplp.com
 **Platform:** Vercel
-**Database:** PostgreSQL at 157.10.73.52:5432
+**Database:** PostgreSQL at 157.10.73.82:5432
 **Environment:** Production
 
 ### Key Routes:

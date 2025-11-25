@@ -65,12 +65,12 @@ export async function getConnectionMetrics()
 
 **Before**:
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public"
 ```
 
 **After**:
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
 ```
 
 **Parameters**:
@@ -197,7 +197,7 @@ npm run check:connections
                              │
                     ┌────────▼─────────┐
                     │   PostgreSQL     │
-                    │  157.10.73.52    │
+                    │  157.10.73.82    │
                     │                  │
                     │  max_connections │
                     │  = 100           │
@@ -228,7 +228,7 @@ Calculation: 100 max / 10 per function = ~10 concurrent functions
 # In Vercel Dashboard → Project Settings → Environment Variables
 # Update DATABASE_URL to:
 
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
 ```
 
 #### 2. Deploy to Production

@@ -19,7 +19,7 @@
 6. Update value to:
 
 ```
-postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10
+postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10
 ```
 
 7. Select environments: Production, Preview, Development
@@ -236,7 +236,7 @@ npm run check:connections
 ### Test 5: Database Query (Direct)
 
 ```bash
-PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin -d plp_contract_agreement \
+PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement \
   -c "SELECT count(*) FROM pg_stat_activity WHERE datname = 'plp_contract_agreement';"
 ```
 
@@ -267,7 +267,7 @@ vercel rollback
 3. Remove connection parameters:
 
 ```
-postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public
+postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public
 ```
 
 4. Redeploy

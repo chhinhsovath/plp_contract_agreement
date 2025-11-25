@@ -269,7 +269,7 @@ SELECT
 ### Required in Vercel Environment Variables:
 
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
 ```
 
 ### To Update in Vercel:

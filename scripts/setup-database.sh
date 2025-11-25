@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Database connection details
-DB_HOST="157.10.73.52"
+DB_HOST="157.10.73.82"
 DB_PORT="5432"
 DB_USER="admin"
 DB_PASSWORD="P@ssw0rd"

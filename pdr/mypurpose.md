@@ -11,12 +11,12 @@ tech stack:
 fully Khmer
 
 Server user name and password for Development
-#server= ssh ubuntu@157.10.73.52
+#server= ssh ubuntu@157.10.73.82
 #password= en_&xdX#!N(^OqCQzc3RE0B)m6ogU!
 
 
 # Database Configuration for Development
-DB_HOST=157.10.73.52
+DB_HOST=157.10.73.82
 DB_PORT=5432
 DB_NAME= plp_contract_agreement
 DB_USER=admin

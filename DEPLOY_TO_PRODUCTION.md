@@ -36,7 +36,7 @@ vercel
 vercel env add DATABASE_URL production
 
 # When prompted, enter:
-postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement
+postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement
 
 # Add NextAuth secret
 vercel env add NEXTAUTH_SECRET production
@@ -99,7 +99,7 @@ npm install
 **Step 3: Configure Environment Variables**
 Create `.env.production` file:
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement"
 NEXTAUTH_URL="https://agreements.openplp.com"
 NEXTAUTH_SECRET="your-production-secret-here"
 NODE_ENV="production"
@@ -293,7 +293,7 @@ time_total:  %{time_total}\n
 #!/bin/bash
 DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/backups/plp-contracts"
-PGPASSWORD='P@ssw0rd' pg_dump -h 157.10.73.52 -U admin plp_contract_agreement > "$BACKUP_DIR/plp_$DATE.sql"
+PGPASSWORD='P@ssw0rd' pg_dump -h 157.10.73.82 -U admin plp_contract_agreement > "$BACKUP_DIR/plp_$DATE.sql"
 
 # Keep only last 30 days
 find $BACKUP_DIR -name "plp_*.sql" -mtime +30 -delete
@@ -306,7 +306,7 @@ find $BACKUP_DIR -name "plp_*.sql" -mtime +30 -delete
 
 ### Restore from Backup
 ```bash
-PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin plp_contract_agreement < backup_file.sql
+PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin plp_contract_agreement < backup_file.sql
 ```
 
 ---
@@ -340,10 +340,10 @@ journalctl -u plp-contracts -f
 ### Database Monitoring
 ```bash
 # Check active connections
-PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin plp_contract_agreement -c "SELECT count(*) FROM pg_stat_activity;"
+PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin plp_contract_agreement -c "SELECT count(*) FROM pg_stat_activity;"
 
 # Check database size
-PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin plp_contract_agreement -c "SELECT pg_size_pretty(pg_database_size('plp_contract_agreement'));"
+PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin plp_contract_agreement -c "SELECT pg_size_pretty(pg_database_size('plp_contract_agreement'));"
 ```
 
 ---
@@ -354,7 +354,7 @@ PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin plp_contract_agreement -c "S
 **Solution:**
 1. Check DATABASE_URL environment variable
 2. Verify database server is running
-3. Test connection: `PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin plp_contract_agreement -c "SELECT 1;"`
+3. Test connection: `PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin plp_contract_agreement -c "SELECT 1;"`
 
 ### Issue: "Template not found" when generating documents
 **Solution:**

@@ -152,7 +152,7 @@ Geographic data integration:
 
 **GitHub:** https://github.com/chhinhsovath/plp_contract_agreement
 
-**Database Server:** 157.10.73.52:5432 (PostgreSQL)
+**Database Server:** 157.10.73.82:5432 (PostgreSQL)
 
 ---
 

@@ -255,7 +255,7 @@ All expected components are in place and functioning correctly.
 2. **Production Database Update**
    ```bash
    # Run migrations on production database:
-   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin -d plp_contract_agreement -f migration_deliverable_options_types_1_2_3.sql
+   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -f migration_deliverable_options_types_1_2_3.sql
    ```
 
 3. **Verification on mobile.openplp.com**

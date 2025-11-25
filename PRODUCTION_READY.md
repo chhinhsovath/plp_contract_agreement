@@ -15,7 +15,7 @@
 ### 2. System Testing Status ✅
 **Development Server**: Running on http://localhost:3002
 
-**Database**: PostgreSQL at 157.10.73.52
+**Database**: PostgreSQL at 157.10.73.82
 - All 7 new tables created and synced
 - 5 performance indicators seeded
 - Foreign key constraints active
@@ -120,7 +120,7 @@
 Ensure the following are set in production:
 
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement"
 NEXTAUTH_URL="https://agreements.openplp.com"
 NEXTAUTH_SECRET="your-production-secret-here"
 NODE_ENV="production"

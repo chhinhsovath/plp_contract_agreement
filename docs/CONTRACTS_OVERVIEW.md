@@ -317,7 +317,7 @@ me_data_collection (
 
 **GitHub Repository:** https://github.com/chhinhsovath/plp_contract_agreement
 
-**Development Server:** 157.10.73.52:5432 (PostgreSQL)
+**Development Server:** 157.10.73.82:5432 (PostgreSQL)
 
 ---
 

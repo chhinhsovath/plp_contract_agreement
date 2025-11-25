@@ -51,7 +51,7 @@
 
 ```bash
 # Connect to production database
-PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin -d plp_contract_agreement
+PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement
 
 # Execute migration file (already created and tested on staging)
 \i migration_deliverable_options_types_1_2_3.sql
@@ -104,7 +104,7 @@ deliverables | options | indicators
 5. **Backend Verification**
    ```bash
    # Check newly created contract in database
-   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin -d plp_contract_agreement -c \
+   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -c \
    "SELECT contract_number, contract_type_id, status FROM contracts WHERE contract_type_id = 1 ORDER BY id DESC LIMIT 1;"
    ```
 
@@ -173,14 +173,14 @@ dc5f1a3 feat: Add deliverable options for agreement types 1, 2, and 3
 2. **Database Rollback**
    ```bash
    # Delete newly inserted options (keep deliverables and indicators)
-   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin -d plp_contract_agreement -c \
+   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -c \
    "DELETE FROM deliverable_options WHERE deliverable_id IN (
      SELECT id FROM contract_deliverables WHERE contract_type IN (1, 2, 3)
    );"
 
    # Keep deliverables - they're backward compatible
    # Delete indicators if needed (less likely)
-   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin -d plp_contract_agreement -c \
+   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -c \
    "DELETE FROM indicators WHERE indicator_number BETWEEN 101 AND 305;"
    ```
 

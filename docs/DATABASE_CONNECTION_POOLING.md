@@ -29,7 +29,7 @@ This document explains the comprehensive connection pooling optimizations implem
 **File**: `.env`
 
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
 ```
 
 #### Parameters Explained:
@@ -423,7 +423,7 @@ Before deploying to production:
 ### Development (Localhost)
 
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public&connection_limit=5&pool_timeout=10&connect_timeout=5"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public&connection_limit=5&pool_timeout=10&connect_timeout=5"
 ```
 
 - Lower limits OK (single developer)
@@ -432,7 +432,7 @@ DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreeme
 ### Production (Vercel)
 
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=10"
 ```
 
 - Higher limits to handle concurrent requests
@@ -441,7 +441,7 @@ DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreeme
 ### Load Testing Environment
 
 ```env
-DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.52:5432/plp_contract_agreement?schema=public&connection_limit=15&pool_timeout=30&connect_timeout=15"
+DATABASE_URL="postgresql://admin:P@ssw0rd@157.10.73.82:5432/plp_contract_agreement?schema=public&connection_limit=15&pool_timeout=30&connect_timeout=15"
 ```
 
 - Higher limits to test maximum capacity

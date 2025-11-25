@@ -414,7 +414,7 @@ All expected functionality is complete and tested.
 2. **Database Update**
    ```bash
    # Run migration file on production database
-   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.52 -U admin -d plp_contract_agreement \
+   PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement \
    -f migration_deliverable_options_types_1_2_3.sql
    ```
 
