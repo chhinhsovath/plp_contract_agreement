@@ -911,3 +911,27 @@ For Cambodia geographic data:
 - Communes: ~1,650
 - Villages: ~13,000+
 - Schools: Variable by district
+
+
+{
+  "permissions": {
+    "allow": [
+      "Bash(PGPASSWORD='P@ssw0rd' psql:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -c \"DELETE FROM reconfiguration_requests WHERE request_reason = ''sdfsdf''; SELECT ''Deleted test request'' as result;\")",
+      "Bash(curl:*)",
+      "Bash(npm run build:*)",
+      "Bash(find:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -c \"SELECT table_name FROM information_schema.tables WHERE table_schema = ''public'' ORDER BY table_name;\")",
+      "Bash(PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -c \"\nSELECT c.id, c.contract_number, c.contract_html FROM contracts WHERE id = 59 LIMIT 1;\n\")",
+      "Bash(npx tsx:*)",
+      "Bash(PGPASSWORD='P@ssw0rd' psql -h 157.10.73.82 -U admin -d plp_contract_agreement -c \"UPDATE content_texts SET text_khmer = ''កិច្ចព្រមព្រៀងរវាង នាយកដ្ឋានបឋមសិក្សា និងសាលារៀន'' WHERE key = ''contract_5_title''; SELECT key, text_khmer FROM content_texts WHERE key = ''contract_5_title'';\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

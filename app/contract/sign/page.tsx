@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation'
 import { contractTemplates } from '@/lib/contractTemplates'
 import { useContent } from '@/lib/hooks/useContent'
 import { WorkflowProgress } from '@/components/WorkflowProgress'
+import { EditableContent } from '@/components/EditableContent'
+import { UserRole } from '@/lib/roles'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -21,6 +23,7 @@ export default function ContractSignPage() {
   const [agreed, setAgreed] = useState(false)
   const [proceeding, setProceeding] = useState(false)
   const [readStartTime] = useState(Date.now())
+  const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN
 
   const contractRef = useRef<HTMLDivElement>(null)
 
@@ -200,63 +203,123 @@ export default function ContractSignPage() {
               <h3 className="text-center text-lg font-bold mb-4">{contract.title}</h3>
 
               <div className="mb-4">
-                <strong>{t('sign_party_a_label')}</strong>
+                <strong>
+                  <EditableContent contentKey="sign_party_a_label" isAdmin={isSuperAdmin} label="Party A Label">
+                    {t('sign_party_a_label')}
+                  </EditableContent>
+                </strong>
                 <div className="ml-4">
                   <p>{contract.partyA}</p>
                   {contract.partyASignatory && (
                     <>
-                      <p className="text-sm text-gray-600">{t('sign_representative_label')} {contract.partyASignatory}</p>
-                      <p className="text-sm text-gray-600">{t('sign_position_label')} {contract.partyAPosition}</p>
+                      <p className="text-sm text-gray-600">
+                        <EditableContent contentKey="sign_representative_label" isAdmin={isSuperAdmin} label="Representative">
+                          {t('sign_representative_label')}
+                        </EditableContent> {contract.partyASignatory}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        <EditableContent contentKey="sign_position_label" isAdmin={isSuperAdmin} label="Position">
+                          {t('sign_position_label')}
+                        </EditableContent> {contract.partyAPosition}
+                      </p>
                     </>
                   )}
                 </div>
               </div>
               <div className="mb-4">
-                <strong>{t('sign_party_b_label')}</strong> {contract.partyB} ({user?.full_name})
+                <strong>
+                  <EditableContent contentKey="sign_party_b_label" isAdmin={isSuperAdmin} label="Party B Label">
+                    {t('sign_party_b_label')}
+                  </EditableContent>
+                </strong> {contract.partyB} ({user?.full_name})
               </div>
 
               <Divider />
 
-              <h4 className="font-bold">{t('sign_article_1_title')}</h4>
+              <h4 className="font-bold">
+                <EditableContent contentKey="sign_article_1_title" isAdmin={isSuperAdmin} label="Article 1 Title">
+                  {t('sign_article_1_title')}
+                </EditableContent>
+              </h4>
               <p className="mb-4">
-                {t('sign_article_1_content')}
+                <EditableContent contentKey="sign_article_1_content" isAdmin={isSuperAdmin} label="Article 1 Content" multiline>
+                  {t('sign_article_1_content')}
+                </EditableContent>
               </p>
 
-              <h4 className="font-bold">{t('sign_article_2_title')}</h4>
+              <h4 className="font-bold">
+                <EditableContent contentKey="sign_article_2_title" isAdmin={isSuperAdmin} label="Article 2 Title">
+                  {t('sign_article_2_title')}
+                </EditableContent>
+              </h4>
               <ul className="mb-6">
                 {contract.responsibilities?.map((resp: string, idx: number) => (
                   <li key={idx} className="mb-2">{resp}</li>
                 ))}
               </ul>
 
-              <h4 className="font-bold">{t('sign_article_3_title')}</h4>
+              <h4 className="font-bold">
+                <EditableContent contentKey="sign_article_3_title" isAdmin={isSuperAdmin} label="Article 3 Title">
+                  {t('sign_article_3_title')}
+                </EditableContent>
+              </h4>
               <div dangerouslySetInnerHTML={{ __html: contract.content }} className="mb-6" />
 
-              <h4 className="font-bold">{t('sign_article_4_title')}</h4>
+              <h4 className="font-bold">
+                <EditableContent contentKey="sign_article_4_title" isAdmin={isSuperAdmin} label="Article 4 Title">
+                  {t('sign_article_4_title')}
+                </EditableContent>
+              </h4>
               <p className="mb-4">
-                {t('sign_article_4_content')}
+                <EditableContent contentKey="sign_article_4_content" isAdmin={isSuperAdmin} label="Article 4 Content" multiline>
+                  {t('sign_article_4_content')}
+                </EditableContent>
               </p>
 
-              <h4 className="font-bold">{t('sign_article_5_title')}</h4>
+              <h4 className="font-bold">
+                <EditableContent contentKey="sign_article_5_title" isAdmin={isSuperAdmin} label="Article 5 Title">
+                  {t('sign_article_5_title')}
+                </EditableContent>
+              </h4>
               <p className="mb-4">
-                {t('sign_article_5_content')}
+                <EditableContent contentKey="sign_article_5_content" isAdmin={isSuperAdmin} label="Article 5 Content" multiline>
+                  {t('sign_article_5_content')}
+                </EditableContent>
               </p>
 
-              <h4 className="font-bold">{t('sign_article_6_title')}</h4>
+              <h4 className="font-bold">
+                <EditableContent contentKey="sign_article_6_title" isAdmin={isSuperAdmin} label="Article 6 Title">
+                  {t('sign_article_6_title')}
+                </EditableContent>
+              </h4>
               <p className="mb-4">
-                {t('sign_article_6_content')}
+                <EditableContent contentKey="sign_article_6_content" isAdmin={isSuperAdmin} label="Article 6 Content" multiline>
+                  {t('sign_article_6_content')}
+                </EditableContent>
               </p>
 
-              <h4 className="font-bold">{t('sign_article_7_title')}</h4>
+              <h4 className="font-bold">
+                <EditableContent contentKey="sign_article_7_title" isAdmin={isSuperAdmin} label="Article 7 Title">
+                  {t('sign_article_7_title')}
+                </EditableContent>
+              </h4>
               <p className="mb-8">
-                {t('sign_article_7_content')}
+                <EditableContent contentKey="sign_article_7_content" isAdmin={isSuperAdmin} label="Article 7 Content" multiline>
+                  {t('sign_article_7_content')}
+                </EditableContent>
               </p>
 
               <Divider />
 
-              <h4 className="font-bold">{t('sign_article_8_title')}</h4>
+              <h4 className="font-bold">
+                <EditableContent contentKey="sign_article_8_title" isAdmin={isSuperAdmin} label="Article 8 Title">
+                  {t('sign_article_8_title')}
+                </EditableContent>
+              </h4>
               <p className="mb-8">
-                {t('sign_article_8_content')}
+                <EditableContent contentKey="sign_article_8_content" isAdmin={isSuperAdmin} label="Article 8 Content" multiline>
+                  {t('sign_article_8_content')}
+                </EditableContent>
               </p>
 
               <div className="grid grid-cols-2 gap-8 mt-12">
@@ -269,22 +332,38 @@ export default function ContractSignPage() {
                     </>
                   )}
                   <div className="mt-4 h-20 border-b-2 border-gray-400"></div>
-                  <p className="text-sm mt-2">{t('sign_signature_seal_label')}</p>
+                  <p className="text-sm mt-2">
+                    <EditableContent contentKey="sign_signature_seal_label" isAdmin={isSuperAdmin} label="Signature Label">
+                      {t('sign_signature_seal_label')}
+                    </EditableContent>
+                  </p>
                 </div>
                 <div className="text-center">
                   <p className="font-bold mb-2">{t('sign_party_b_label').replace(':', '')}</p>
                   <p className="text-sm">{user?.full_name}</p>
                   <p className="text-sm text-gray-600">{user?.position || contract.partyB}</p>
                   <div className="mt-4 h-20 border-b-2 border-gray-400"></div>
-                  <p className="text-sm mt-2">{t('sign_signature_seal_label')}</p>
+                  <p className="text-sm mt-2">
+                    <EditableContent contentKey="sign_signature_seal_label" isAdmin={isSuperAdmin} label="Signature Label">
+                      {t('sign_signature_seal_label')}
+                    </EditableContent>
+                  </p>
                 </div>
               </div>
 
               <Divider />
 
               <div className="mt-8 text-center text-gray-500">
-                <p className="font-bold">{t('sign_end_of_contract')}</p>
-                <p className="text-sm mt-4">{t('contract_sign_subtitle')}</p>
+                <p className="font-bold">
+                  <EditableContent contentKey="sign_end_of_contract" isAdmin={isSuperAdmin} label="End of Contract">
+                    {t('sign_end_of_contract')}
+                  </EditableContent>
+                </p>
+                <p className="text-sm mt-4">
+                  <EditableContent contentKey="contract_sign_subtitle" isAdmin={isSuperAdmin} label="Subtitle">
+                    {t('contract_sign_subtitle')}
+                  </EditableContent>
+                </p>
               </div>
             </div>
           </div>
