@@ -163,6 +163,16 @@ export default function HomePage() {
               >
                 កែសមិទ្ធកម្ម
               </Button>
+              {user?.role === 'SUPER_ADMIN' && (record.id === 4 || record.id === 5) && (
+                <Button
+                  size="small"
+                  icon={<EditOutlined />}
+                  style={{ color: '#52c41a', borderColor: '#52c41a' }}
+                  onClick={() => router.push(`/admin/agreement/${record.id}`)}
+                >
+                  កែកិច្ចព្រមព្រៀង
+                </Button>
+              )}
             </>
           ) : user ? (
             <Button
@@ -262,6 +272,24 @@ export default function HomePage() {
                 <Button icon={<BellOutlined />} onClick={() => router.push('/admin/reconfiguration-requests')}>
                   សំណើ
                 </Button>
+              )}
+              {user?.role === 'SUPER_ADMIN' && (
+                <>
+                  <Button
+                    icon={<EditOutlined />}
+                    style={{ color: '#52c41a', borderColor: '#52c41a' }}
+                    onClick={() => router.push('/admin/agreement/4')}
+                  >
+                    កែកិច្ចព្រមព្រៀង ៤
+                  </Button>
+                  <Button
+                    icon={<EditOutlined />}
+                    style={{ color: '#52c41a', borderColor: '#52c41a' }}
+                    onClick={() => router.push('/admin/agreement/5')}
+                  >
+                    កែកិច្ចព្រមព្រៀង ៥
+                  </Button>
+                </>
               )}
             </Space>
           </Card>
