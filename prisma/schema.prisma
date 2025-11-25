@@ -29,6 +29,11 @@ model users {
   ip_address_signed             String?
   signature_data                String?
   last_reset_at                 DateTime?
+  province_name                 String?
+  district_name                 String?
+  commune_name                  String?
+  village_name                  String?
+  school_name                   String?
   contracts_created             contracts[]                      @relation("UserContracts")
   reconfiguration_requests      reconfiguration_requests[]       @relation("UserRequests")
   reviewed_requests             reconfiguration_requests[]       @relation("ReviewerRequests")

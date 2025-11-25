@@ -5,7 +5,20 @@ import { UserRole } from '@/lib/roles'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { full_name, phone_number, passcode, contract_type, organization, position, email } = body
+    const {
+      full_name,
+      phone_number,
+      passcode,
+      contract_type,
+      organization,
+      position,
+      email,
+      province_name,
+      district_name,
+      commune_name,
+      village_name,
+      school_name
+    } = body
 
     // Check if phone number already exists
     const existingUser = await prisma.users.findUnique({
@@ -37,6 +50,11 @@ export async function POST(request: Request) {
         organization,
         position,
         email,
+        province_name,
+        district_name,
+        commune_name,
+        village_name,
+        school_name,
       },
       select: {
         id: true,
