@@ -858,7 +858,16 @@ export default function ContractPrintPage() {
                     <div className="header-line centered">ជាតិ  សាសនា  ព្រះមហាក្សត្រ</div>
                     <div className="header-divider">3</div>
                     <div className="header-line">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
-                    <div className="header-line">នាយកដ្ឋានបឋមសិក្សា</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div className="header-line">នាយកដ្ឋានបឋមសិក្សា</div>
+                      <div className="header-line" style={{ fontSize: '11pt', marginTop: '5px' }}>
+                        បានលើកៈ {new Date(contractData.created_at).toLocaleDateString('km-KH', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </div>
+                    </div>
                   </div>
                 ),
                 title: (
