@@ -5,6 +5,7 @@ import { Button, Card, Typography, Space, Dropdown, Avatar, message, Table, Tag 
 import { FileTextOutlined, UserOutlined, LogoutOutlined, TeamOutlined, DashboardOutlined, FormOutlined, BellOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { UserRole, getRoleLabel } from '@/lib/roles'
+import api from '@/lib/api-client'
 
 const { Title, Text } = Typography
 
@@ -26,7 +27,7 @@ export default function HomePage() {
 
   const checkSession = async () => {
     try {
-      const response = await fetch('/api/auth/session')
+      const response = await api('/api/auth/session')
       if (response.ok) {
         const data = await response.json()
         const userData = data.user
@@ -50,7 +51,7 @@ export default function HomePage() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', { method: 'POST' })
+      const response = await api('/api/auth/logout', { method: 'POST' })
       if (response.ok) {
         message.success('ចាកចេញបានជោគជ័យ')
         router.push('/login')
@@ -113,6 +114,10 @@ export default function HomePage() {
       onClick: handleLogout,
     },
   ]
+
+  const displayedContractTypes = user?.role === UserRole.SUPER_ADMIN
+    ? CONTRACT_TYPES.filter(c => c.id === 4 || c.id === 5)
+    : CONTRACT_TYPES;
 
   const columns = [
     {
@@ -208,7 +213,7 @@ export default function HomePage() {
         <Card>
           <Table
             columns={columns}
-            dataSource={CONTRACT_TYPES}
+            dataSource={displayedContractTypes}
             rowKey="id"
             pagination={false}
             size="middle"
