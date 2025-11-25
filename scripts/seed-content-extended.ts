@@ -33,7 +33,7 @@ const extendedContent = [
   { key: 'sign_article_7_content', text_khmer: 'ភាគីទាំងពីរយល់ព្រមគោរពតាមច្បាប់ និងបទប្បញ្ញត្តិជាធរមានទាំងអស់។ ក្នុងករណីមានវិវាទកើតឡើង ភាគីទាំងពីរនឹងដោះស្រាយតាមការចរចា និងការសម្របសម្រួល។', text_english: 'Both parties agree to comply with all laws.', category: 'contract_sign', description: 'Article 7 content' },
   { key: 'sign_article_8_title', text_khmer: 'មាត្រា ៨: ហត្ថលេខា និងការបញ្ជាក់', text_english: 'Article 8: Signature and Confirmation', category: 'contract_sign', description: 'Article 8 title' },
   { key: 'sign_article_8_content', text_khmer: 'កិច្ចព្រមព្រៀងនេះធ្វើឡើងជាពីរច្បាប់ដូចគ្នា ដែលមានសុពលភាពស្មើគ្នា។ ភាគីនីមួយៗរក្សាទុកមួយច្បាប់។', text_english: 'Agreement made in two identical copies.', category: 'contract_sign', description: 'Article 8 content' },
-  { key: 'sign_signature_seal_label', text_khmer: 'ហត្ថលេខា និងត្រា', text_english: 'Signature and Seal', category: 'contract_sign', description: 'Signature and seal label' },
+  { key: 'sign_signature_seal_label', text_khmer: 'ហត្ថលេខា', text_english: 'Signature', category: 'contract_sign', description: 'Signature label' },
   { key: 'sign_end_of_contract', text_khmer: '*** ចុងបញ្ចប់នៃកិច្ចសន្យា ***', text_english: '*** End of Contract ***', category: 'contract_sign', description: 'End marker' },
 
   // Contract Configure - More Messages
