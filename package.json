@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3012",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
@@ -14,7 +14,7 @@
     "prisma:seed": "npx ts-node --compiler-options '{\"module\":\"commonjs\"}' prisma/seed.ts",
     "seed:demo-users": "npx ts-node --compiler-options '{\"module\":\"commonjs\"}' prisma/seed-demo-users.ts",
     "postinstall": "prisma generate",
-    "db:check-health": "curl -s http://localhost:3000/api/health/database | npx json",
+    "db:check-health": "curl -s http://localhost:3012/api/health/database | npx json",
     "db:check-health:prod": "curl -s https://mobile.openplp.com/api/health/database | npx json",
     "check:connections": "node scripts/check-connection-patterns.js",
     "precommit": "npm run check:connections"
