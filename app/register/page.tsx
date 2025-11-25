@@ -14,14 +14,14 @@ const CONTRACT_TYPES = [
   {
     id: 4,
     icon: <BookOutlined />,
-    title: 'កិច្ចព្រមព្រៀង Provincial-District',
+    title: 'កិច្ចព្រមព្រៀងនាយកដ្ឋាន-ស្រុក',
     subtitle: 'នាយកដ្ឋានបឋមសិក្សា និងការិយាល័យអប់រំស្រុក',
     description: 'សម្រាប់ការិយាល័យអប់រំស្រុក/ក្រុង/ខណ្ឌ',
   },
   {
     id: 5,
     icon: <HomeOutlined />,
-    title: 'កិច្ចព្រមព្រៀង Provincial-School',
+    title: 'កិច្ចព្រមព្រៀងនាយកដ្ឋាន-សាលា',
     subtitle: 'នាយកដ្ឋានបឋមសិក្សា និងសាលារៀន',
     description: 'សម្រាប់សាលាបឋមសិក្សា',
   },
