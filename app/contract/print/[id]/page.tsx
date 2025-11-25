@@ -996,10 +996,16 @@ export default function ContractPrintPage() {
                         <div className="signature-label-moul">ជ.ប្រធានគម្រោង</div>
                         <div className="signature-label-moul">ប្រធាននាយកដ្ឋាន</div>
 
-                        {/* Party A Signature Image */}
-                        {contractData.party_a_signature && contractData.party_a_signature !== 'data:image/png;base64,PLACEHOLDER' && (
+                        {/* Party A Signature Image - Show default signature if PLACEHOLDER */}
+                        {contractData.party_a_signature && contractData.party_a_signature !== 'data:image/png;base64,PLACEHOLDER' ? (
                           <img
                             src={contractData.party_a_signature}
+                            alt="Party A Signature"
+                            className="signature-image"
+                          />
+                        ) : (
+                          <img
+                            src="/signatures/image.png"
                             alt="Party A Signature"
                             className="signature-image"
                           />
