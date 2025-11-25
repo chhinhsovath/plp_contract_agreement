@@ -109,8 +109,10 @@ echo -e "\033[0;32m✓ Build completed\033[0m"
 
 echo -e "\033[1;34m🔥 Ensuring port 5050 is open in firewall...\033[0m"
 if command -v ufw &> /dev/null; then
-  sudo ufw allow 5050/tcp 2>/dev/null || echo "Firewall already configured"
-  echo -e "\033[0;32m✓ Port 5050 is open\033[0m"
+  echo "testing-123" | sudo -S ufw allow 5050/tcp 2>/dev/null || echo "Firewall rule already exists"
+  echo -e "\033[0;32m✓ Port 5050 is open in firewall\033[0m"
+else
+  echo -e "\033[0;33m⚠ UFW not found, skipping firewall configuration\033[0m"
 fi
 
 echo -e "\033[1;34m🚀 Starting application...\033[0m"
