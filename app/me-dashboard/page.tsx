@@ -973,6 +973,18 @@ export default function MEDashboardPage() {
                       label: 'សំណើផ្លាស់ប្តូរសមិទ្ធកម្ម',
                       onClick: () => router.push('/admin/reconfiguration-requests')
                     }] : []),
+                    ...(user?.role === 'SUPER_ADMIN' ? [{
+                      key: 'edit-agreement-4',
+                      icon: <EditOutlined />,
+                      label: 'កែកិច្ចព្រមព្រៀង ៤',
+                      onClick: () => router.push('/admin/agreement/4')
+                    }] : []),
+                    ...(user?.role === 'SUPER_ADMIN' ? [{
+                      key: 'edit-agreement-5',
+                      icon: <EditOutlined />,
+                      label: 'កែកិច្ចព្រមព្រៀង ៥',
+                      onClick: () => router.push('/admin/agreement/5')
+                    }] : []),
                     ...(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR' ? [{ type: 'divider' as const }] : []),
                     {
                       key: 'logout',
