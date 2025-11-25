@@ -1,10 +1,25 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { handleApiError, createSuccessResponse, validationError } from '@/lib/api-error-handler'
+import { getSession } from '@/lib/auth'
+import { UserRole } from '@/lib/roles'
 
 export async function GET() {
   try {
+    const session = await getSession()
+    const userRole = session?.role as UserRole
+
+    let whereClause = {}
+    if (userRole === UserRole.SUPER_ADMIN) {
+      whereClause = {
+        contract_type_id: {
+          in: [4, 5],
+        },
+      }
+    }
+
     const contracts = await prisma.contracts.findMany({
+      where: whereClause,
       include: {
         contract_type: true,
         contract_fields: true,

@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import ContractPreview from '@/components/ContractPreview'
 import { CONTRACT_TYPES } from '@/types/contract'
 import { UserRole } from '@/lib/roles'
+import api from '@/lib/api-client'
 
 const { Title } = Typography
 const { Search } = Input
@@ -28,7 +29,7 @@ export default function ContractsPage() {
 
   const checkAuthorization = async () => {
     try {
-      const response = await fetch('/api/auth/session')
+      const response = await api('/api/auth/session')
       if (response.ok) {
         const data = await response.json()
         const role = data.user?.role
@@ -53,7 +54,7 @@ export default function ContractsPage() {
   const fetchContracts = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/contracts')
+      const response = await api('/api/contracts')
       if (response.ok) {
         const data = await response.json()
         setContracts(data)
@@ -82,7 +83,7 @@ export default function ContractsPage() {
       okType: 'danger',
       onOk: async () => {
         try {
-          const response = await fetch(`/api/contracts/${id}`, {
+          const response = await api(`/api/contracts/${id}`, {
             method: 'DELETE',
           })
           if (response.ok) {
@@ -101,7 +102,7 @@ export default function ContractsPage() {
   const handleDownload = async (record: any) => {
     try {
       message.loading('កំពុងបង្កើតឯកសារ...', 0)
-      const response = await fetch(`/api/contracts/${record.id}/generate-document`)
+      const response = await api(`/api/contracts/${record.id}/generate-document`)
 
       if (response.ok) {
         const blob = await response.blob()
@@ -124,6 +125,7 @@ export default function ContractsPage() {
       message.error('កំហុសក្នុងការទាញយក')
     }
   }
+
 
   const getStatusColor = (status: string) => {
     const colors: any = {
