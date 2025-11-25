@@ -115,7 +115,9 @@ export default function HomePage() {
     },
   ]
 
-  const displayedContractTypes = user?.role === UserRole.SUPER_ADMIN
+  // For guests (no authentication), show only types 4 and 5
+  // For authenticated users (SUPER_ADMIN, ADMIN, etc.), show all types
+  const displayedContractTypes = !user
     ? CONTRACT_TYPES.filter(c => c.id === 4 || c.id === 5)
     : CONTRACT_TYPES;
 
@@ -184,7 +186,7 @@ export default function HomePage() {
           <Title level={4} style={{ margin: 0, color: '#0047AB' }}>
             ប្រព័ន្ធកិច្ចព្រមព្រៀងសមិទ្ធកម្ម PLP
           </Title>
-          {user && (
+          {user ? (
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
               <Button type="text" size="large">
                 <Space>
@@ -193,6 +195,15 @@ export default function HomePage() {
                 </Space>
               </Button>
             </Dropdown>
+          ) : (
+            <Space>
+              <Button onClick={() => router.push('/login')}>
+                ចូលប្រើប្រាស់
+              </Button>
+              <Button type="primary" onClick={() => router.push('/register')}>
+                ចុះឈ្មោះ
+              </Button>
+            </Space>
           )}
         </div>
       </div>
@@ -205,7 +216,7 @@ export default function HomePage() {
             កិច្ចព្រមព្រៀងសមិទ្ធកម្ម
           </Title>
           <Text type="secondary" style={{ fontSize: 16 }}>
-            {isAdmin ? 'មើល និងកែប្រែកិច្ចសន្យាទាំង ៥ ប្រភេទ' : 'ជ្រើសរើសប្រភេទកិច្ចសន្យា'}
+            {!user ? 'កិច្ចសន្យាសម្រាប់ដៃគូអប់រំ (Provincial-District និង Provincial-School)' : isAdmin ? 'មើល និងកែប្រែកិច្ចសន្យាទាំង ៥ ប្រភេទ' : 'ជ្រើសរើសប្រភេទកិច្ចសន្យា'}
           </Text>
         </div>
 
