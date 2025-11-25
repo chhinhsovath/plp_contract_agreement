@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { Form, Input, Button, Typography, message, Radio, Space, Divider, Card, Row, Col } from 'antd'
-import { UserOutlined, PhoneOutlined, MailOutlined, BankOutlined, SolutionOutlined, LoginOutlined, FileTextOutlined, TeamOutlined, BookOutlined, HomeOutlined, SafetyOutlined, CheckCircleOutlined, RocketOutlined, ThunderboltOutlined } from '@ant-design/icons'
+import { useState, useEffect } from 'react'
+import { Form, Input, Button, Typography, message, Radio, Space, Divider, Card, Row, Col, Select } from 'antd'
+import { UserOutlined, PhoneOutlined, MailOutlined, BankOutlined, SolutionOutlined, LoginOutlined, FileTextOutlined, TeamOutlined, BookOutlined, HomeOutlined, SafetyOutlined, CheckCircleOutlined, RocketOutlined, ThunderboltOutlined, EnvironmentOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import geoService, { Province, District, Commune, Village, School } from '@/lib/services/geoService'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -31,6 +32,116 @@ export default function RegisterPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
+  // Geographic location states
+  const [provinces, setProvinces] = useState<Province[]>([])
+  const [districts, setDistricts] = useState<District[]>([])
+  const [communes, setCommunes] = useState<Commune[]>([])
+  const [villages, setVillages] = useState<Village[]>([])
+  const [schools, setSchools] = useState<School[]>([])
+
+  // Loading states
+  const [loadingProvinces, setLoadingProvinces] = useState(false)
+  const [loadingDistricts, setLoadingDistricts] = useState(false)
+  const [loadingCommunes, setLoadingCommunes] = useState(false)
+  const [loadingVillages, setLoadingVillages] = useState(false)
+  const [loadingSchools, setLoadingSchools] = useState(false)
+
+  // Selected IDs (for cascading)
+  const [selectedProvinceId, setSelectedProvinceId] = useState<number | null>(null)
+  const [selectedDistrictId, setSelectedDistrictId] = useState<number | null>(null)
+  const [selectedCommuneId, setSelectedCommuneId] = useState<number | null>(null)
+
+  // Load provinces on mount
+  useEffect(() => {
+    loadProvinces()
+  }, [])
+
+  // Load functions for cascading selection
+  const loadProvinces = async () => {
+    try {
+      setLoadingProvinces(true)
+      const data = await geoService.getProvinces()
+      setProvinces(data)
+    } catch (error) {
+      console.error('Failed to load provinces:', error)
+      message.error('មានបញ្ហាក្នុងការទាញយកខេត្ត')
+    } finally {
+      setLoadingProvinces(false)
+    }
+  }
+
+  const loadDistricts = async (provinceId: number) => {
+    try {
+      setLoadingDistricts(true)
+      setDistricts([])
+      setCommunes([])
+      setVillages([])
+      setSchools([])
+      form.setFieldValue('districtId', null)
+      form.setFieldValue('communeId', null)
+      form.setFieldValue('villageId', null)
+      form.setFieldValue('schoolId', null)
+
+      const data = await geoService.getDistricts(provinceId)
+      setDistricts(data)
+    } catch (error) {
+      console.error('Failed to load districts:', error)
+      message.error('មានបញ្ហាក្នុងការទាញយកស្រុក/ខណ្ឌ')
+    } finally {
+      setLoadingDistricts(false)
+    }
+  }
+
+  const loadCommunes = async (districtId: number) => {
+    try {
+      setLoadingCommunes(true)
+      setCommunes([])
+      setVillages([])
+      form.setFieldValue('communeId', null)
+      form.setFieldValue('villageId', null)
+
+      const data = await geoService.getCommunes(districtId)
+      setCommunes(data)
+    } catch (error) {
+      console.error('Failed to load communes:', error)
+      message.error('មានបញ្ហាក្នុងការទាញយកឃុំ/សង្កាត់')
+    } finally {
+      setLoadingCommunes(false)
+    }
+  }
+
+  const loadVillages = async (communeId: number) => {
+    try {
+      setLoadingVillages(true)
+      setVillages([])
+      form.setFieldValue('villageId', null)
+
+      const data = await geoService.getVillages(communeId)
+      setVillages(data)
+    } catch (error) {
+      console.error('Failed to load villages:', error)
+      message.error('មានបញ្ហាក្នុងការទាញយកភូមិ')
+    } finally {
+      setLoadingVillages(false)
+    }
+  }
+
+  const loadSchools = async (districtId: number) => {
+    try {
+      setLoadingSchools(true)
+      setSchools([])
+      form.setFieldValue('schoolId', null)
+
+      const data = await geoService.getSchoolsByDistrict(districtId)
+      setSchools(data)
+    } catch (error) {
+      console.error('Failed to load schools:', error)
+      message.error('មានបញ្ហាក្នុងការទាញយកសាលា')
+    } finally {
+      setLoadingSchools(false)
+    }
+  }
+
   const handleSubmit = async (values: any) => {
     // Extract last 4 digits of phone number as passcode
     const phoneNumber = values.phone_number.replace(/\D/g, '') // Remove non-digits
@@ -39,6 +150,34 @@ export default function RegisterPage() {
     if (phoneNumber.length < 9) {
       message.error('លេខទូរស័ព្ទមិនត្រឹមត្រូវ')
       return
+    }
+
+    // Get selected location names from IDs
+    let provinceName = ''
+    let districtName = ''
+    let communeName = ''
+    let villageName = ''
+    let schoolName = ''
+
+    if (values.provinceId) {
+      const province = provinces.find(p => p.id === values.provinceId)
+      if (province) provinceName = province.province_name_kh
+    }
+    if (values.districtId) {
+      const district = districts.find(d => d.id === values.districtId)
+      if (district) districtName = district.district_name_kh
+    }
+    if (values.communeId) {
+      const commune = communes.find(c => c.id === values.communeId)
+      if (commune) communeName = commune.commune_name_kh
+    }
+    if (values.villageId) {
+      const village = villages.find(v => v.id === values.villageId)
+      if (village) villageName = village.village_name_kh
+    }
+    if (values.schoolId) {
+      const school = schools.find(s => s.schoolId === values.schoolId)
+      if (school) schoolName = school.name
     }
 
     setLoading(true)
@@ -54,6 +193,12 @@ export default function RegisterPage() {
           organization: values.organization,
           position: values.position,
           email: values.email,
+          // Geographic location names
+          province_name: provinceName,
+          district_name: districtName,
+          commune_name: communeName,
+          village_name: villageName,
+          school_name: schoolName,
         }),
       })
 
@@ -399,6 +544,155 @@ export default function RegisterPage() {
                     placeholder="example@email.com"
                   />
                 </Form.Item>
+              </div>
+
+              {/* Geographic Information */}
+              <div style={{ marginBottom: 24 }}>
+                <Title level={5} style={{ marginBottom: 16 }}>
+                  <EnvironmentOutlined /> ព័ត៌មានភូមិសាស្ត្រ
+                </Title>
+
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      name="provinceId"
+                      label="ខេត្ត/រាជធានី"
+                      rules={[{ required: true, message: 'សូមជ្រើសរើសខេត្ត' }]}
+                    >
+                      <Select
+                        placeholder="ជ្រើសរើសខេត្ត"
+                        loading={loadingProvinces}
+                        showSearch
+                        optionFilterProp="label"
+                        onChange={(value) => {
+                          setSelectedProvinceId(value)
+                          loadDistricts(value)
+                        }}
+                        options={provinces.map(province => ({
+                          value: province.id,
+                          label: province.province_name_kh
+                        }))}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item
+                      name="districtId"
+                      label="ស្រុក/ខណ្ឌ"
+                      rules={[{ required: true, message: 'សូមជ្រើសរើសស្រុក/ខណ្ឌ' }]}
+                    >
+                      <Select
+                        placeholder="ជ្រើសរើសស្រុក/ខណ្ឌ"
+                        loading={loadingDistricts}
+                        disabled={!selectedProvinceId}
+                        showSearch
+                        optionFilterProp="label"
+                        allowClear
+                        onChange={(value) => {
+                          setSelectedDistrictId(value)
+                          if (value) {
+                            loadCommunes(value)
+                            loadSchools(value)
+                          } else {
+                            setCommunes([])
+                            setSchools([])
+                            setVillages([])
+                            form.setFieldValue('communeId', null)
+                            form.setFieldValue('schoolId', null)
+                            form.setFieldValue('villageId', null)
+                          }
+                        }}
+                        options={districts.map(district => ({
+                          value: district.id,
+                          label: district.district_name_kh
+                        }))}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      name="communeId"
+                      label="ឃុំ/សង្កាត់"
+                    >
+                      <Select
+                        placeholder="ជ្រើសរើសឃុំ/សង្កាត់"
+                        loading={loadingCommunes}
+                        disabled={!selectedDistrictId}
+                        showSearch
+                        optionFilterProp="label"
+                        allowClear
+                        onChange={(value) => {
+                          setSelectedCommuneId(value)
+                          if (value) {
+                            loadVillages(value)
+                          } else {
+                            setVillages([])
+                            form.setFieldValue('villageId', null)
+                          }
+                        }}
+                        options={communes.map(commune => ({
+                          value: commune.id,
+                          label: commune.commune_name_kh
+                        }))}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item
+                      name="villageId"
+                      label="ភូមិ"
+                    >
+                      <Select
+                        placeholder="ជ្រើសរើសភូមិ"
+                        loading={loadingVillages}
+                        disabled={!selectedCommuneId}
+                        showSearch
+                        optionFilterProp="label"
+                        allowClear
+                        options={villages.map(village => ({
+                          value: village.id,
+                          label: village.village_name_kh
+                        }))}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Form.Item
+                  name="schoolId"
+                  label="សាលារៀន"
+                  rules={[{ required: true, message: 'សូមជ្រើសរើសសាលារៀន' }]}
+                >
+                  <Select
+                    placeholder="ជ្រើសរើសសាលារៀន"
+                    loading={loadingSchools}
+                    disabled={!selectedDistrictId}
+                    showSearch
+                    optionFilterProp="label"
+                    allowClear
+                    notFoundContent={
+                      loadingSchools ? null : <Text>មិនមានសាលារៀន</Text>
+                    }
+                    options={schools.map(school => ({
+                      value: school.schoolId,
+                      label: school.name
+                    }))}
+                  />
+                </Form.Item>
+
+                <Card
+                  size="small"
+                  style={{ background: '#fffbe6', border: '1px solid #ffe58f', marginBottom: 0 }}
+                >
+                  <Text style={{ fontSize: 14 }}>
+                    <strong>សំខាន់:</strong> សូមជ្រើសរើសខេត្ត ស្រុក/ខណ្ឌ និងសាលារៀនរបស់អ្នក
+                  </Text>
+                </Card>
               </div>
 
               {/* Submit Button */}
