@@ -92,7 +92,7 @@ const contentTexts = [
   },
   {
     key: 'contract_configure_alert_message',
-    text_khmer: 'សូមអានជម្រើសទាំង ៣ យ៉ាងត្រឹមត្រូវ ហើយជ្រើសរើសជម្រើសដែលត្រូវនឹងស្ថានភាពសាលារៀនរបស់អ្នក',
+    text_khmer: 'សូមអានជម្រើសទាំង ៣ ឱ្យបានច្បាស់ហើយជ្រើសរើសជម្រើសដែលត្រូវនឹងស្ថានភាពសាលារៀនក្នុងក្រុងស្រុកខណ្ឌរបស់អ្នក',
     text_english: 'Please read all 3 options carefully and select the one that matches your school situation',
     category: 'contract_configure',
     description: 'Alert message at top of configuration'
