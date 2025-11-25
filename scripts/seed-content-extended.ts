@@ -22,6 +22,21 @@ const extendedContent = [
   { key: 'sign_article_1_title', text_khmer: 'មាត្រា ១: គោលបំណង', text_english: 'Article 1: Purpose', category: 'contract_sign', description: 'Article 1 title' },
   { key: 'sign_article_1_content', text_khmer: 'កិច្ចព្រមព្រៀងនេះមានគោលបំណងកំណត់ការទទួលខុសត្រូវ និងកាតព្វកិច្ចរបស់ភាគីទាំងពីរក្នុងការអនុវត្តគម្រោងកម្មវិធីអប់រំ។ ភាគីទាំងពីរយល់ព្រមអនុវត្តតាមលក្ខខណ្ឌ និងកាតព្វកិច្ចដែលបានកំណត់ក្នុងកិច្ចព្រមព្រៀងនេះ។', text_english: 'This agreement defines responsibilities and obligations of both parties in implementing the education program.', category: 'contract_sign', description: 'Article 1 content' },
   { key: 'sign_article_2_title', text_khmer: 'មាត្រា ២: មុខងារនិងទំនួលខុសត្រូវ:', text_english: 'Article 2: Duties and Responsibilities:', category: 'contract_sign', description: 'Article 2 title' },
+
+  // Contract 4 Responsibilities (Provincial-District)
+  { key: 'contract_4_responsibility_1', text_khmer: 'អនុវត្តគោលនយោបាយអប់រំថ្នាក់ជាតិ', text_english: 'Implement national education policy', category: 'contract_responsibilities', description: 'Contract 4 - Responsibility 1' },
+  { key: 'contract_4_responsibility_2', text_khmer: 'គ្រប់គ្រងគ្រូបង្រៀន និងសាលារៀន', text_english: 'Manage teachers and schools', category: 'contract_responsibilities', description: 'Contract 4 - Responsibility 2' },
+  { key: 'contract_4_responsibility_3', text_khmer: 'ចែកចាយសម្ភារៈសិក្សា', text_english: 'Distribute learning materials', category: 'contract_responsibilities', description: 'Contract 4 - Responsibility 3' },
+  { key: 'contract_4_responsibility_4', text_khmer: 'ធ្វើអធិការកិច្ចសាលារៀន', text_english: 'Conduct school inspections', category: 'contract_responsibilities', description: 'Contract 4 - Responsibility 4' },
+  { key: 'contract_4_responsibility_5', text_khmer: 'រាយការណ៍លទ្ធផលសិក្សា', text_english: 'Report learning outcomes', category: 'contract_responsibilities', description: 'Contract 4 - Responsibility 5' },
+
+  // Contract 5 Responsibilities (Provincial-School)
+  { key: 'contract_5_responsibility_1', text_khmer: 'ធានាគុណភាពអប់រំ', text_english: 'Ensure education quality', category: 'contract_responsibilities', description: 'Contract 5 - Responsibility 1' },
+  { key: 'contract_5_responsibility_2', text_khmer: 'គ្រប់គ្រងធនធានមនុស្ស', text_english: 'Manage human resources', category: 'contract_responsibilities', description: 'Contract 5 - Responsibility 2' },
+  { key: 'contract_5_responsibility_3', text_khmer: 'ថែរក្សាហេដ្ឋារចនាសម្ព័ន្ធ', text_english: 'Maintain infrastructure', category: 'contract_responsibilities', description: 'Contract 5 - Responsibility 3' },
+  { key: 'contract_5_responsibility_4', text_khmer: 'អនុវត្តកម្មវិធីសិក្សា', text_english: 'Implement curriculum', category: 'contract_responsibilities', description: 'Contract 5 - Responsibility 4' },
+  { key: 'contract_5_responsibility_5', text_khmer: 'វាយតម្លៃលទ្ធផលសិស្ស', text_english: 'Evaluate student outcomes', category: 'contract_responsibilities', description: 'Contract 5 - Responsibility 5' },
+
   { key: 'sign_article_3_title', text_khmer: 'មាត្រា ៣: លក្ខខណ្ឌនៃកិច្ចព្រមព្រៀង:', text_english: 'Article 3: Terms of Agreement:', category: 'contract_sign', description: 'Article 3 title' },
   { key: 'sign_article_4_title', text_khmer: 'មាត្រា ៤: រយៈពេលនៃកិច្ចព្រមព្រៀង', text_english: 'Article 4: Duration of Agreement', category: 'contract_sign', description: 'Article 4 title' },
   { key: 'sign_article_4_content', text_khmer: 'កិច្ចព្រមព្រៀងនេះមានសុពលភាពរយៈពេល ១ឆ្នាំ ចាប់ពីថ្ងៃចុះហត្ថលេខា។ ការបន្តកិច្ចព្រមព្រៀងត្រូវធ្វើឡើងដោយការព្រមព្រៀងរវាងភាគីទាំងពីរ។', text_english: 'This agreement is valid for 1 year from signing date.', category: 'contract_sign', description: 'Article 4 content' },

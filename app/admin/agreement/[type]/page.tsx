@@ -262,8 +262,17 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
                 </EditableContent>
               </h4>
               <ul className="mb-6">
-                {contract.responsibilities?.map((resp: string, idx: number) => (
-                  <li key={idx} className="mb-2">{resp}</li>
+                {[1, 2, 3, 4, 5].map((idx) => (
+                  <li key={idx} className="mb-2">
+                    <EditableContent
+                      contentKey={`contract_${contractType}_responsibility_${idx}`}
+                      isAdmin={isSuperAdmin}
+                      label={`ទំនួលខុសត្រូវទី ${idx}`}
+                      onUpdate={handleContentUpdate}
+                    >
+                      {t(`contract_${contractType}_responsibility_${idx}`)}
+                    </EditableContent>
+                  </li>
                 ))}
               </ul>
 
