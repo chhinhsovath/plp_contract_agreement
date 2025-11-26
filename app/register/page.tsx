@@ -50,6 +50,7 @@ export default function RegisterPage() {
   const [selectedProvinceId, setSelectedProvinceId] = useState<number | null>(null)
   const [selectedDistrictId, setSelectedDistrictId] = useState<number | null>(null)
   const [selectedCommuneId, setSelectedCommuneId] = useState<number | null>(null)
+  const [selectedContractType, setSelectedContractType] = useState<number | null>(null)
 
   // Load provinces on mount
   useEffect(() => {
@@ -456,7 +457,20 @@ export default function RegisterPage() {
                   name="contract_type"
                   rules={[{ required: true, message: 'សូមជ្រើសរើសប្រភេទកិច្ចព្រមព្រៀង' }]}
                 >
-                  <Radio.Group style={{ width: '100%' }}>
+                  <Radio.Group
+                    style={{ width: '100%' }}
+                    onChange={(e) => {
+                      setSelectedContractType(e.target.value)
+                      // Clear school selection if switching to contract type 4
+                      if (e.target.value === 4) {
+                        form.setFieldValue('schoolId', null)
+                      }
+                      // Load schools if switching to contract type 5 and district is already selected
+                      if (e.target.value === 5 && selectedDistrictId) {
+                        loadSchools(selectedDistrictId)
+                      }
+                    }}
+                  >
                     <Space direction="vertical" style={{ width: '100%' }} size="middle">
                       {CONTRACT_TYPES.map(type => (
                         <Card
@@ -593,7 +607,10 @@ export default function RegisterPage() {
                           setSelectedDistrictId(value)
                           if (value) {
                             loadCommunes(value)
-                            loadSchools(value)
+                            // Only load schools for contract type 5
+                            if (selectedContractType === 5) {
+                              loadSchools(value)
+                            }
                           } else {
                             setCommunes([])
                             setSchools([])
@@ -663,34 +680,38 @@ export default function RegisterPage() {
                   </Col>
                 </Row>
 
-                <Form.Item
-                  name="schoolId"
-                  label="សាលារៀន"
-                  rules={[{ required: true, message: 'សូមជ្រើសរើសសាលារៀន' }]}
-                >
-                  <Select
-                    placeholder="ជ្រើសរើសសាលារៀន"
-                    loading={loadingSchools}
-                    disabled={!selectedDistrictId}
-                    showSearch
-                    optionFilterProp="label"
-                    allowClear
-                    notFoundContent={
-                      loadingSchools ? null : <Text>មិនមានសាលារៀន</Text>
-                    }
-                    options={schools.map(school => ({
-                      value: school.schoolId,
-                      label: school.name
-                    }))}
-                  />
-                </Form.Item>
+                {/* School field - Only show for contract type 5 */}
+                {selectedContractType === 5 && (
+                  <Form.Item
+                    name="schoolId"
+                    label="សាលារៀន"
+                    rules={[{ required: true, message: 'សូមជ្រើសរើសសាលារៀន' }]}
+                  >
+                    <Select
+                      placeholder="ជ្រើសរើសសាលារៀន"
+                      loading={loadingSchools}
+                      disabled={!selectedDistrictId}
+                      showSearch
+                      optionFilterProp="label"
+                      allowClear
+                      notFoundContent={
+                        loadingSchools ? null : <Text>មិនមានសាលារៀន</Text>
+                      }
+                      options={schools.map(school => ({
+                        value: school.schoolId,
+                        label: school.name
+                      }))}
+                    />
+                  </Form.Item>
+                )}
 
                 <Card
                   size="small"
                   style={{ background: '#fffbe6', border: '1px solid #ffe58f', marginBottom: 0 }}
                 >
                   <Text style={{ fontSize: 14 }}>
-                    <strong>សំខាន់:</strong> សូមជ្រើសរើសខេត្ត ស្រុក/ខណ្ឌ និងសាលារៀនរបស់អ្នក
+                    <strong>សំខាន់:</strong> សូមជ្រើសរើសខេត្ត ស្រុក/ខណ្ឌ
+                    {selectedContractType === 5 && ' និងសាលារៀនរបស់អ្នក'}
                   </Text>
                 </Card>
               </div>
