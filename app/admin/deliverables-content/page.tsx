@@ -356,6 +356,7 @@ export default function DeliverablesContentPage() {
           theme="light"
           mode="inline"
           selectedKeys={['deliverables-content']}
+          defaultOpenKeys={['admin']}
           items={getSidebarMenuItems()}
           onClick={handleMenuClick}
           style={{

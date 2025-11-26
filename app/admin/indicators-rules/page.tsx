@@ -388,6 +388,7 @@ export default function IndicatorsRulesPage() {
           <Menu
             theme="light"
             selectedKeys={['indicators-rules']}
+            defaultOpenKeys={['admin']}
             mode="inline"
             items={getSidebarMenuItems()}
             onClick={handleMenuClick}

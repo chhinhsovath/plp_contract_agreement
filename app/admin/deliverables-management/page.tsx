@@ -360,6 +360,7 @@ export default function DeliverablesManagementPage() {
         <Menu
           theme="light"
           selectedKeys={['deliverables-management']}
+          defaultOpenKeys={['admin']}
           mode="inline"
           items={getSidebarMenuItems()}
           style={{

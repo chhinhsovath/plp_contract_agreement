@@ -485,6 +485,7 @@ export default function ContentManagementPage() {
         <Menu
           theme="light"
           selectedKeys={['content-management']}
+          defaultOpenKeys={['admin']}
           mode="inline"
           items={getSidebarMenuItems()}
           onClick={handleMenuClick}

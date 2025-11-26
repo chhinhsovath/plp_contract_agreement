@@ -483,6 +483,7 @@ export default function ReconfigurationRequestsPage() {
         <Menu
           theme="light"
           selectedKeys={['reconfig-requests']}
+          defaultOpenKeys={['admin']}
           mode="inline"
           items={getSidebarMenuItems()}
           onClick={handleMenuClick}
