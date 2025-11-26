@@ -996,12 +996,13 @@ export default function MEDashboardPage() {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Sidebar */}
+      {/* Minimalist Light Sidebar */}
       <Sider
         collapsible
         collapsed={collapsed}
         onCollapse={setCollapsed}
-        width={260}
+        width={220}
+        collapsedWidth={64}
         style={{
           overflow: 'auto',
           height: '100vh',
@@ -1009,64 +1010,57 @@ export default function MEDashboardPage() {
           left: 0,
           top: 0,
           bottom: 0,
+          background: '#fff',
+          borderRight: '1px solid #f0f0f0',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.02)'
         }}
       >
         <div style={{
           height: 64,
-          margin: 16,
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: 8,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#fff',
-          fontSize: collapsed ? 18 : 20,
-          fontWeight: 'bold'
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 16px'
         }}>
-          {collapsed ? 'PLP' : 'PLP M&E'}
+          {collapsed ? (
+            <div style={{ fontSize: 20, fontWeight: 'bold', color: '#1890ff' }}>P</div>
+          ) : (
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#262626' }}>PLP M&E</div>
+          )}
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           selectedKeys={[selectedMenuKey]}
           mode="inline"
           items={getSidebarMenuItems()}
           onClick={handleMenuClick}
+          style={{
+            border: 'none',
+            fontSize: 14
+          }}
         />
       </Sider>
 
       {/* Main Layout */}
-      <Layout style={{ marginLeft: collapsed ? 80 : 260, transition: 'margin-left 0.2s' }}>
-        {/* Modern Header with Ant Design styling */}
+      <Layout style={{ marginLeft: collapsed ? 64 : 220, transition: 'all 0.2s', background: '#f5f5f5' }}>
+        {/* Compact Light Header */}
         <Header style={{
-          background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          padding: '16px 48px',
+          background: '#fff',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 24px',
+          height: 64,
+          lineHeight: '64px',
           position: 'sticky',
           top: 0,
-          zIndex: 1,
-          width: '100%',
-          height: 'auto'
+          zIndex: 100,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
         }}>
-          <Row justify="space-between" align="middle">
+          <Row justify="space-between" align="middle" style={{ height: '100%' }}>
             <Col>
-              <Space size="large">
-                <Avatar
-                  size={48}
-                  icon={<DashboardOutlined />}
-                  style={{
-                    background: 'rgba(255,255,255,0.25)',
-                    border: '2px solid rgba(255,255,255,0.3)'
-                  }}
-                />
-                <div>
-                  <Title level={3} style={{ color: '#fff', marginBottom: 4, fontFamily: 'Hanuman' }}>
-                    {t('dashboard_title')}
-                  </Title>
-                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman' }}>
-                    {t('dashboard_subtitle')}
-                  </Text>
-                </div>
-              </Space>
+              <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman', color: '#262626' }}>
+                {t('dashboard_title')}
+              </Title>
             </Col>
 
             {/* User Profile Dropdown */}
@@ -1143,41 +1137,47 @@ export default function MEDashboardPage() {
                 }}
                 placement="bottomRight"
               >
-                <Card
-                  hoverable
-                  size="small"
+                <Button
+                  type="text"
                   style={{
-                    background: 'rgba(255,255,255,0.15)',
-                    border: 'none',
-                    cursor: 'pointer'
+                    height: 48,
+                    padding: '0 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
                   }}
-                  styles={{ body: { padding: '12px 16px' } }}
                 >
-                  <Space>
-                    <Avatar icon={<UserOutlined />} size={48} style={{ background: '#fff', color: '#1890ff' }} />
-                    <div style={{ textAlign: 'left' }}>
-                      <div style={{ color: '#fff', fontWeight: 600, fontSize: 15, fontFamily: 'Hanuman' }}>
-                        {user?.full_name}
-                      </div>
-                      <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, fontFamily: 'Hanuman' }}>
-                        {user?.role}
-                      </div>
+                  <Avatar icon={<UserOutlined />} size={32} style={{ background: '#1890ff' }} />
+                  <div style={{ textAlign: 'left', display: collapsed ? 'none' : 'block' }}>
+                    <div style={{ fontSize: 14, fontWeight: 500, color: '#262626', fontFamily: 'Hanuman' }}>
+                      {user?.full_name}
                     </div>
-                  </Space>
-                </Card>
+                    <div style={{ fontSize: 12, color: '#8c8c8c', fontFamily: 'Hanuman' }}>
+                      {user?.role}
+                    </div>
+                  </div>
+                </Button>
               </Dropdown>
             </Col>
           </Row>
         </Header>
 
         {/* Main Content */}
-        <Content style={{ margin: '24px', background: '#f0f2f5' }}>
+        <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
 
-      {/* Filters - Ant Design Style */}
-      <Card style={{ marginBottom: 24, borderRadius: 8 }} styles={{ body: { padding: 24 } }}>
-        <Row gutter={[24, 16]} align="bottom">
-          <Col flex="1" style={{ minWidth: 240 }}>
-            <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 15, fontFamily: 'Hanuman' }}>
+      {/* Filters - Compact Style */}
+      <Card
+        style={{
+          marginBottom: 16,
+          borderRadius: 8,
+          border: '1px solid #f0f0f0',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+        }}
+        styles={{ body: { padding: 16 } }}
+      >
+        <Row gutter={[16, 12]} align="bottom">
+          <Col flex="1" style={{ minWidth: 200 }}>
+            <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 14, fontFamily: 'Hanuman' }}>
               {t('dashboard_contract_type_filter')}
             </Text>
             <Select
@@ -1241,136 +1241,128 @@ export default function MEDashboardPage() {
         </Row>
       </Card>
 
-      {/* Statistics Cards - Ant Design with Beautiful Colors */}
-      <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
-        <Col xs={24} md={12} lg={6}>
-          <Badge.Ribbon text={<span style={{ fontFamily: 'Hanuman' }}>សរុប</span>} color="blue">
-            <Card
-              hoverable
-              style={{
-                background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
-                border: 'none',
-                borderRadius: 12,
-                minHeight: 160
-              }}
-              styles={{ body: { padding: 24, height: '100%' } }}
-            >
-              <Row justify="space-between" align="middle" style={{ height: '100%' }}>
-                <Col>
-                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                    {hasDeliverables ? t('dashboard_total_indicators') : t('dashboard_total_activities')}
-                  </Text>
-                  <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
-                    {dashboardData.totalDeliverables}
-                  </Title>
-                </Col>
-                <Col>
-                  <Avatar
-                    size={64}
-                    icon={<ProjectOutlined />}
-                    style={{ background: 'rgba(255,255,255,0.25)', color: '#fff' }}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          </Badge.Ribbon>
-        </Col>
-
-        <Col xs={24} md={12} lg={6}>
-          <Badge.Ribbon text={<span style={{ fontFamily: 'Hanuman' }}>បញ្ចប់</span>} color="green">
-            <Card
-              hoverable
-              style={{
-                background: 'linear-gradient(135deg, #52c41a 0%, #389e0d 100%)',
-                border: 'none',
-                borderRadius: 12,
-                minHeight: 160
-              }}
-              styles={{ body: { padding: 24, height: '100%' } }}
-            >
-              <Row justify="space-between" align="middle" style={{ height: '100%' }}>
-                <Col>
-                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                    {hasDeliverables ? t('dashboard_achieved') : t('dashboard_completed')}
-                  </Text>
-                  <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
-                    {dashboardData.completedDeliverables}
-                  </Title>
-                </Col>
-                <Col>
-                  <Avatar
-                    size={64}
-                    icon={<CheckCircleOutlined />}
-                    style={{ background: 'rgba(255,255,255,0.25)', color: '#fff' }}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          </Badge.Ribbon>
-        </Col>
-
-        <Col xs={24} md={12} lg={6}>
-          <Badge.Ribbon text={<span style={{ fontFamily: 'Hanuman' }}>កំពុងដំណើរការ</span>} color="orange">
-            <Card
-              hoverable
-              style={{
-                background: 'linear-gradient(135deg, #faad14 0%, #d48806 100%)',
-                border: 'none',
-                borderRadius: 12,
-                minHeight: 160
-              }}
-              styles={{ body: { padding: 24, height: '100%' } }}
-            >
-              <Row justify="space-between" align="middle" style={{ height: '100%' }}>
-                <Col>
-                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                    {hasDeliverables ? t('dashboard_on_track') : t('dashboard_in_progress')}
-                  </Text>
-                  <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36 }}>
-                    {dashboardData.inProgressDeliverables}
-                  </Title>
-                </Col>
-                <Col>
-                  <Avatar
-                    size={64}
-                    icon={<SyncOutlined spin />}
-                    style={{ background: 'rgba(255,255,255,0.25)', color: '#fff' }}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          </Badge.Ribbon>
-        </Col>
-
-        <Col xs={24} md={12} lg={6}>
-          <Badge.Ribbon text={<span style={{ fontFamily: 'Hanuman' }}>វឌ្ឍនភាព</span>} color="purple">
-            <Card
-              hoverable
-              style={{
-                background: 'linear-gradient(135deg, #722ed1 0%, #531dab 100%)',
-                border: 'none',
-                borderRadius: 12,
-                minHeight: 160
-              }}
-              styles={{ body: { padding: 24, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' } }}
-            >
-              <div>
-                <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman', display: 'block', marginBottom: 8 }}>
-                  {t('dashboard_overall_progress')}
+      {/* Statistics Cards - Minimalist Light Design */}
+      <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
+        <Col xs={24} sm={12} lg={6}>
+          <Card
+            hoverable
+            style={{
+              borderRadius: 8,
+              border: '1px solid #f0f0f0',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+              height: '100%'
+            }}
+            styles={{ body: { padding: 16 } }}
+          >
+            <Row justify="space-between" align="middle">
+              <Col>
+                <Text type="secondary" style={{ fontSize: 12, fontFamily: 'Hanuman', display: 'block', marginBottom: 4 }}>
+                  {hasDeliverables ? t('dashboard_total_indicators') : t('dashboard_total_activities')}
                 </Text>
-                <Title level={2} style={{ color: '#fff', margin: 0, fontSize: 36, marginBottom: 16 }}>
-                  {dashboardData.overallProgress}%
+                <Title level={3} style={{ margin: 0, fontSize: 28, color: '#1890ff' }}>
+                  {dashboardData.totalDeliverables}
                 </Title>
-              </div>
+              </Col>
+              <Col>
+                <Avatar
+                  size={40}
+                  icon={<ProjectOutlined />}
+                  style={{ background: '#e6f7ff', color: '#1890ff' }}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        <Col xs={24} sm={12} lg={6}>
+          <Card
+            hoverable
+            style={{
+              borderRadius: 8,
+              border: '1px solid #f0f0f0',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+              height: '100%'
+            }}
+            styles={{ body: { padding: 16 } }}
+          >
+            <Row justify="space-between" align="middle">
+              <Col>
+                <Text type="secondary" style={{ fontSize: 12, fontFamily: 'Hanuman', display: 'block', marginBottom: 4 }}>
+                  {hasDeliverables ? t('dashboard_achieved') : t('dashboard_completed')}
+                </Text>
+                <Title level={3} style={{ margin: 0, fontSize: 28, color: '#52c41a' }}>
+                  {dashboardData.completedDeliverables}
+                </Title>
+              </Col>
+              <Col>
+                <Avatar
+                  size={40}
+                  icon={<CheckCircleOutlined />}
+                  style={{ background: '#f6ffed', color: '#52c41a' }}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        <Col xs={24} sm={12} lg={6}>
+          <Card
+            hoverable
+            style={{
+              borderRadius: 8,
+              border: '1px solid #f0f0f0',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+              height: '100%'
+            }}
+            styles={{ body: { padding: 16 } }}
+          >
+            <Row justify="space-between" align="middle">
+              <Col>
+                <Text type="secondary" style={{ fontSize: 12, fontFamily: 'Hanuman', display: 'block', marginBottom: 4 }}>
+                  {hasDeliverables ? t('dashboard_on_track') : t('dashboard_in_progress')}
+                </Text>
+                <Title level={3} style={{ margin: 0, fontSize: 28, color: '#faad14' }}>
+                  {dashboardData.inProgressDeliverables}
+                </Title>
+              </Col>
+              <Col>
+                <Avatar
+                  size={40}
+                  icon={<SyncOutlined spin />}
+                  style={{ background: '#fffbe6', color: '#faad14' }}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        <Col xs={24} sm={12} lg={6}>
+          <Card
+            hoverable
+            style={{
+              borderRadius: 8,
+              border: '1px solid #f0f0f0',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+              height: '100%'
+            }}
+            styles={{ body: { padding: 16 } }}
+          >
+            <div>
+              <Text type="secondary" style={{ fontSize: 12, fontFamily: 'Hanuman', display: 'block', marginBottom: 4 }}>
+                {t('dashboard_overall_progress')}
+              </Text>
+              <Title level={3} style={{ margin: '0 0 8px 0', fontSize: 28, color: '#722ed1' }}>
+                {dashboardData.overallProgress}%
+              </Title>
               <Progress
                 percent={dashboardData.overallProgress}
                 showInfo={false}
-                strokeColor="#fff"
-                trailColor="rgba(255, 255, 255, 0.25)"
-                size={['100%', 8]}
+                strokeColor="#722ed1"
+                trailColor="#f0f0f0"
+                size="small"
               />
-            </Card>
-          </Badge.Ribbon>
+            </div>
+          </Card>
         </Col>
       </Row>
 
@@ -1399,9 +1391,16 @@ export default function MEDashboardPage() {
 
       {/* Overview Tab */}
       {selectedMenuKey === 'overview' && (
-        <Card style={{ borderRadius: 8 }}>
-          <Title level={4} className="font-hanuman mb-4">
-            <DashboardOutlined className="mr-2" />
+        <Card
+          style={{
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}
+          styles={{ body: { padding: 16 } }}
+        >
+          <Title level={5} style={{ margin: '0 0 12px 0', fontFamily: 'Hanuman' }}>
+            <DashboardOutlined style={{ marginRight: 8 }} />
             ទិដ្ឋភាពទូទៅ
           </Title>
           <Empty description="ទិដ្ឋភាពទូទៅនឹងត្រូវបានអភិវឌ្ឍនាពេលខាងមុខ" />
@@ -1410,9 +1409,16 @@ export default function MEDashboardPage() {
 
       {/* Indicators Tab */}
       {selectedMenuKey === 'indicators' && (
-        <Card style={{ borderRadius: 8 }}>
-          <Title level={4} className="font-hanuman mb-4">
-            <FundProjectionScreenOutlined className="mr-2" />
+        <Card
+          style={{
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}
+          styles={{ body: { padding: 16 } }}
+        >
+          <Title level={5} style={{ margin: '0 0 12px 0', fontFamily: 'Hanuman' }}>
+            <FundProjectionScreenOutlined style={{ marginRight: 8 }} />
             {t('dashboard_tab_indicators')}
           </Title>
           <div>
@@ -1465,9 +1471,16 @@ export default function MEDashboardPage() {
 
       {/* Deliverables Tab */}
       {selectedMenuKey === 'deliverables' && (
-        <Card style={{ borderRadius: 8 }}>
-          <Title level={4} className="font-hanuman mb-4">
-            <TrophyOutlined className="mr-2" />
+        <Card
+          style={{
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}
+          styles={{ body: { padding: 16 } }}
+        >
+          <Title level={5} style={{ margin: '0 0 12px 0', fontFamily: 'Hanuman' }}>
+            <TrophyOutlined style={{ marginRight: 8 }} />
             {t('dashboard_tab_deliverables')}
           </Title>
           <div>
@@ -1627,9 +1640,16 @@ export default function MEDashboardPage() {
 
       {/* Milestones Tab */}
       {selectedMenuKey === 'milestones' && (
-        <Card style={{ borderRadius: 8 }}>
-          <Title level={4} className="font-hanuman mb-4">
-            <CheckCircleOutlined className="mr-2" />
+        <Card
+          style={{
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}
+          styles={{ body: { padding: 16 } }}
+        >
+          <Title level={5} style={{ margin: '0 0 12px 0', fontFamily: 'Hanuman' }}>
+            <CheckCircleOutlined style={{ marginRight: 8 }} />
             {t('dashboard_tab_milestones')}
           </Title>
           <div>
@@ -1799,9 +1819,16 @@ export default function MEDashboardPage() {
 
       {/* Contracts Tab - Only for SUPER_ADMIN/ADMIN */}
       {selectedMenuKey === 'contracts' && (user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN) && (
-        <Card style={{ borderRadius: 8 }}>
-          <Title level={4} className="font-hanuman mb-4">
-            <FileTextOutlined className="mr-2" />
+        <Card
+          style={{
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}
+          styles={{ body: { padding: 16 } }}
+        >
+          <Title level={5} style={{ margin: '0 0 12px 0', fontFamily: 'Hanuman' }}>
+            <FileTextOutlined style={{ marginRight: 8 }} />
             {t('dashboard_tab_contracts')}
           </Title>
           <div>
