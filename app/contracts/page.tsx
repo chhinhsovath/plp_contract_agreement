@@ -1,24 +1,34 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Layout, Menu, Typography, Dropdown, Avatar, Row, Col, Empty, Spin, Button } from 'antd'
-import { ArrowLeftOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, FileTextOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined, EditOutlined } from '@ant-design/icons'
+import { Card, Layout, Menu, Typography, Dropdown, Avatar, Row, Col, Empty, Spin, Button, Table, Tag, message } from 'antd'
+import { ArrowLeftOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, FileTextOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined, EditOutlined, EyeOutlined, DownloadOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { UserRole } from '@/lib/roles'
 import { useContent } from '@/lib/hooks/useContent'
 
 const { Sider, Content, Header } = Layout
-const { Title } = Typography
+const { Title, Text } = Typography
 
 export default function ContractsPage() {
   const router = useRouter()
   const { t, loading: contentLoading } = useContent()
   const [user, setUser] = useState<any>(null)
   const [collapsed, setCollapsed] = useState(false)
+  const [contracts, setContracts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     checkSession()
   }, [])
+
+  useEffect(() => {
+    if (user && (user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN)) {
+      fetchContracts()
+    } else {
+      setLoading(false)
+    }
+  }, [user])
 
   const checkSession = async () => {
     try {
@@ -32,6 +42,24 @@ export default function ContractsPage() {
     } catch (error) {
       console.error('Session check failed:', error)
       router.push('/login')
+    }
+  }
+
+  const fetchContracts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/contracts/all')
+      if (response.ok) {
+        const data = await response.json()
+        setContracts(data.contracts || [])
+      } else {
+        message.error('Failed to fetch contracts')
+      }
+    } catch (error) {
+      console.error('Failed to fetch contracts:', error)
+      message.error('Failed to fetch contracts')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -356,9 +384,125 @@ export default function ContractsPage() {
             </Button>
             <Title level={5} style={{ margin: '0 0 24px 0', fontFamily: 'Hanuman' }}>
               <FileTextOutlined style={{ marginRight: 8 }} />
-              កិច្ចសន្យារបស់ខ្ញុំ
+              {user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN ? 'គ្រប់គ្រងកិច្ចសន្យា / Manage Contracts' : 'កិច្ចសន្យារបស់ខ្ញុំ'}
             </Title>
-            <Empty description="ទំព័រនេះកំពុងរៀបចំ / This page is under development" />
+
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                <Spin size="large" />
+              </div>
+            ) : user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN ? (
+              <Table
+                dataSource={contracts}
+                rowKey="id"
+                columns={[
+                  {
+                    title: 'ID',
+                    dataIndex: 'id',
+                    key: 'id',
+                    width: 80,
+                  },
+                  {
+                    title: 'Contract Number',
+                    dataIndex: 'contract_number',
+                    key: 'contract_number',
+                    render: (text: string) => <Text code>{text || 'N/A'}</Text>
+                  },
+                  {
+                    title: 'Type',
+                    dataIndex: 'contract_type_id',
+                    key: 'contract_type_id',
+                    width: 100,
+                    render: (type: number) => (
+                      <Tag color={type === 4 ? 'blue' : type === 5 ? 'green' : 'default'}>
+                        Type {type}
+                      </Tag>
+                    )
+                  },
+                  {
+                    title: 'Created By',
+                    dataIndex: 'created_by_user',
+                    key: 'created_by',
+                    render: (user: any) => (
+                      <div>
+                        <div style={{ fontFamily: 'Hanuman', fontWeight: 500 }}>{user?.full_name || 'N/A'}</div>
+                        <div style={{ fontSize: 12, color: '#8c8c8c' }}>{user?.phone_number || user?.email || ''}</div>
+                      </div>
+                    )
+                  },
+                  {
+                    title: 'Party B',
+                    dataIndex: 'party_b_name',
+                    key: 'party_b_name',
+                    ellipsis: true,
+                  },
+                  {
+                    title: 'Status',
+                    dataIndex: 'status',
+                    key: 'status',
+                    width: 120,
+                    render: (status: string) => {
+                      const statusColors: Record<string, string> = {
+                        'draft': 'default',
+                        'pending': 'processing',
+                        'signed': 'success',
+                        'rejected': 'error',
+                        'completed': 'success'
+                      }
+                      return <Tag color={statusColors[status] || 'default'}>{status?.toUpperCase()}</Tag>
+                    }
+                  },
+                  {
+                    title: 'Created',
+                    dataIndex: 'created_at',
+                    key: 'created_at',
+                    width: 180,
+                    render: (date: string) => new Date(date).toLocaleString('km-KH', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  },
+                  {
+                    title: 'Actions',
+                    key: 'actions',
+                    width: 150,
+                    render: (_: any, record: any) => (
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <Button
+                          type="link"
+                          size="small"
+                          icon={<EyeOutlined />}
+                          onClick={() => router.push(`/contract/${record.id}`)}
+                        >
+                          View
+                        </Button>
+                        {record.contract_html && (
+                          <Button
+                            type="link"
+                            size="small"
+                            icon={<DownloadOutlined />}
+                            onClick={() => window.open(`/contract/print/${record.id}`, '_blank')}
+                          >
+                            Print
+                          </Button>
+                        )}
+                      </div>
+                    )
+                  }
+                ]}
+                pagination={{
+                  pageSize: 20,
+                  showTotal: (total) => `Total: ${total} contracts`,
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '20', '50', '100']
+                }}
+              />
+            ) : (
+              <Empty description="ទំព័រនេះកំពុងរៀបចំ / This page is under development" />
+            )}
           </Card>
         </Content>
       </Layout>
