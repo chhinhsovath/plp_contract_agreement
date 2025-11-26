@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, App, Dropdown, Avatar, Modal, Form, Input, Spin } from 'antd'
+import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, App, Dropdown, Avatar, Modal, Form, Input, Spin, Layout, Menu } from 'antd'
 import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined, CloseCircleOutlined, SettingOutlined, BellOutlined, FormOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
@@ -15,6 +15,7 @@ import { useContent } from '@/lib/hooks/useContent'
 
 const { Title, Text, Paragraph } = Typography
 const { RangePicker } = DatePicker
+const { Sider, Content, Header } = Layout
 
 // Contract type mapping
 const CONTRACT_TYPES = {
@@ -62,6 +63,8 @@ export default function MEDashboardPage() {
   const [indicatorsPageSize, setIndicatorsPageSize] = useState(10)
   const [milestonesPageSize, setMilestonesPageSize] = useState(10)
   const [contractsPageSize, setContractsPageSize] = useState(10)
+  const [collapsed, setCollapsed] = useState(false)
+  const [selectedMenuKey, setSelectedMenuKey] = useState('overview')
 
   useEffect(() => {
     checkSession()
@@ -897,6 +900,99 @@ export default function MEDashboardPage() {
     }
   }
 
+  // Sidebar menu items
+  const getSidebarMenuItems = () => {
+    const baseItems = [
+      {
+        key: 'overview',
+        icon: <DashboardOutlined />,
+        label: 'ទិដ្ឋភាពទូទៅ',
+      },
+      {
+        key: 'indicators',
+        icon: <FundProjectionScreenOutlined />,
+        label: t('dashboard_tab_indicators') || 'សូចនាករ',
+      },
+      {
+        key: 'milestones',
+        icon: <CalendarOutlined />,
+        label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
+      },
+      {
+        key: 'contracts',
+        icon: <FileTextOutlined />,
+        label: t('dashboard_tab_contracts') || 'កិច្ចសន្យារបស់ខ្ញុំ',
+      },
+    ];
+
+    const adminItems: any[] = [];
+
+    if (user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR') {
+      adminItems.push({
+        type: 'divider',
+      });
+      adminItems.push({
+        key: 'admin',
+        icon: <SettingOutlined />,
+        label: 'ការគ្រប់គ្រង',
+        children: [
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'manage-users',
+            icon: <TeamOutlined />,
+            label: 'អ្នកប្រើប្រាស់',
+          }] : []),
+          {
+            key: 'content-management',
+            icon: <FileTextOutlined />,
+            label: 'ខ្លឹមសារ',
+          },
+          {
+            key: 'deliverables-management',
+            icon: <FormOutlined />,
+            label: 'សមិទ្ធកម្ម',
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'reconfig-requests',
+            icon: <BellOutlined />,
+            label: 'សំណើផ្លាស់ប្តូរ',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-4',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-5',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៥',
+          }] : []),
+        ],
+      });
+    }
+
+    return [...baseItems, ...adminItems];
+  };
+
+  // Handle menu click
+  const handleMenuClick = ({ key }: { key: string }) => {
+    // Navigation items
+    if (key === 'manage-users') {
+      router.push('/admin/users');
+    } else if (key === 'content-management') {
+      router.push('/admin/content-management');
+    } else if (key === 'deliverables-management') {
+      router.push('/admin/deliverables-management');
+    } else if (key === 'reconfig-requests') {
+      router.push('/admin/reconfiguration-requests');
+    } else if (key === 'edit-agreement-4') {
+      router.push('/admin/agreement/4');
+    } else if (key === 'edit-agreement-5') {
+      router.push('/admin/agreement/5');
+    } else {
+      // For main sections, just update the selected key
+      setSelectedMenuKey(key);
+    }
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: '#f0f2f5' }}>
