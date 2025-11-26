@@ -239,7 +239,7 @@ export default function ContractsPage() {
   if (!isAuthorized && userRole) {
     return (
       <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto">
           <Result
             status="403"
             icon={<LockOutlined className="text-6xl text-red-500" />}
@@ -269,7 +269,7 @@ export default function ContractsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 lg:p-10">
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto">
         <div className="mb-8 flex flex-row justify-between items-center gap-4">
           <Title level={2} className="mb-0 font-hanuman">បញ្ជីកិច្ចព្រមព្រៀង</Title>
           <Link href="/">

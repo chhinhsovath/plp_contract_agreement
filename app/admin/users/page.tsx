@@ -236,7 +236,7 @@ export default function UsersManagementPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '40px' }}>
-      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+      <div style={{ margin: '0 auto' }}>
         <AdminNav />
 
         <Card style={{ marginBottom: 24 }}>

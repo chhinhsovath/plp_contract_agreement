@@ -40,7 +40,7 @@ export async function setAuthCookie(token: string) {
   cookieStore.set('auth-token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax', // Changed from 'strict' to 'lax' to fix back button navigation
     maxAge: 60 * 60 * 24, // 24 hours
     path: '/',
   })

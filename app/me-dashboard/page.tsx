@@ -900,7 +900,7 @@ export default function MEDashboardPage() {
         boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
         marginBottom: 24
       }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 48px' }}>
+        <div style={{ margin: '0 auto', padding: '32px 48px' }}>
           <Row justify="space-between" align="middle">
             <Col>
               <Space size="large">
@@ -1026,7 +1026,7 @@ export default function MEDashboardPage() {
       </div>
 
       {/* Main Content */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 48px 48px' }}>
+      <div style={{ margin: '0 auto', padding: '0 48px 48px' }}>
 
       {/* Filters - Ant Design Style */}
       <Card style={{ marginBottom: 24, borderRadius: 8 }} styles={{ body: { padding: 24 } }}>
