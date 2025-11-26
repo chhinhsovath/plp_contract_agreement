@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Layout, Menu, Table, Button, Tag, Space, Typography, Input, message, Modal, Select, Card, Row, Col, Dropdown, Avatar } from 'antd'
-import { SearchOutlined, EditOutlined, UserOutlined, TeamOutlined, DashboardOutlined, FileTextOutlined, LogoutOutlined, SettingOutlined, FundProjectionScreenOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import { SearchOutlined, EditOutlined, UserOutlined, TeamOutlined, DashboardOutlined, FileTextOutlined, LogoutOutlined, SettingOutlined, FundProjectionScreenOutlined, MenuFoldOutlined, MenuUnfoldOutlined, FormOutlined, BellOutlined } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { UserRole, ROLE_DEFINITIONS, getRoleLabel, hasPermission } from '@/lib/roles'
 import { useRouter } from 'next/navigation'
@@ -159,67 +159,109 @@ export default function UsersManagementPage() {
   }
 
   const getSidebarMenuItems = () => {
-    const items: MenuProps['items'] = [
+    const baseItems = [
       {
-        key: 'dashboard',
+        key: 'overview',
         icon: <DashboardOutlined />,
-        label: 'ទំព័រដើម',
+        label: 'ទិដ្ឋភាពទូទៅ',
+        onClick: () => router.push('/dashboard')
       },
+      {
+        key: 'indicators',
+        icon: <FundProjectionScreenOutlined />,
+        label: 'សូចនាករ',
+        onClick: () => router.push('/indicators')
+      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: 'ចំណុចសំខាន់',
+      // },
       {
         key: 'contracts',
         icon: <FileTextOutlined />,
-        label: 'កិច្ចសន្យា',
+        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
+        onClick: () => router.push('/contracts')
       },
-    ]
+    ];
 
-    if (currentUser?.role === UserRole.SUPER_ADMIN) {
-      items.push({
+    const adminItems: any[] = [];
+
+    if (currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'ADMIN' || currentUser?.role === 'COORDINATOR') {
+      adminItems.push({
+        type: 'divider',
+      });
+      adminItems.push({
         key: 'admin',
         icon: <SettingOutlined />,
-        label: 'គ្រប់គ្រងប្រព័ន្ធ',
+        label: 'ការគ្រប់គ្រង',
         children: [
-          {
-            key: 'users',
+          ...(currentUser?.role === 'SUPER_ADMIN' ? [{
+            key: 'manage-users',
             icon: <TeamOutlined />,
             label: 'អ្នកប្រើប្រាស់',
-          },
+            onClick: () => router.push('/admin/users')
+          }] : []),
           {
             key: 'content-management',
             icon: <FileTextOutlined />,
-            label: 'ខ្លឹមសារអត្ថបទ',
+            label: 'ខ្លឹមសារ',
+            onClick: () => router.push('/admin/content-management')
           },
-          {
+          ...(currentUser?.role === 'SUPER_ADMIN' ? [{
             key: 'deliverables-content',
-            icon: <FundProjectionScreenOutlined />,
-            label: 'ខ្លឹមសារការងារ',
+            icon: <EditOutlined />,
+            label: 'កែខ្លឹមសារសមិទ្ធកម្ម',
+            onClick: () => router.push('/admin/deliverables-content')
+          }] : []),
+          {
+            key: 'deliverables-management',
+            icon: <FormOutlined />,
+            label: 'សមិទ្ធកម្ម',
+            onClick: () => router.push('/admin/deliverables-management')
           },
+          ...(currentUser?.role === 'SUPER_ADMIN' ? [{
+            key: 'reconfig-requests',
+            icon: <BellOutlined />,
+            label: 'សំណើផ្លាស់ប្តូរ',
+            onClick: () => router.push('/admin/reconfiguration-requests')
+          }] : []),
+          ...(currentUser?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-4',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៤',
+            onClick: () => router.push('/admin/agreement/4')
+          }] : []),
+          ...(currentUser?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-5',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៥',
+            onClick: () => router.push('/admin/agreement/5')
+          }] : []),
+          ...(currentUser?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-4',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៤',
+            onClick: () => router.push('/admin/configure-contract/4')
+          }] : []),
+          ...(currentUser?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-5',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៥',
+            onClick: () => router.push('/admin/configure-contract/5')
+          }] : []),
         ],
-      })
+      });
     }
 
-    return items
-  }
-
-  const handleMenuClick = (key: string) => {
-    switch (key) {
-      case 'dashboard':
-        router.push('/dashboard')
-        break
-      case 'contracts':
-        router.push('/contracts')
-        break
-      case 'users':
-        router.push('/admin/users')
-        break
-      case 'content-management':
-        router.push('/admin/content-management')
-        break
-      case 'deliverables-content':
-        router.push('/admin/deliverables-content')
-        break
-      default:
-        break
-    }
+    return [...baseItems, ...adminItems];
   }
 
   const columns = [
@@ -381,7 +423,6 @@ export default function UsersManagementPage() {
           selectedKeys={['users']}
           mode="inline"
           items={getSidebarMenuItems()}
-          onClick={({ key }) => handleMenuClick(key)}
           style={{
             border: 'none',
             fontSize: 14
