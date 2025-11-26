@@ -475,7 +475,7 @@ export default function ContractsPage() {
                           type="link"
                           size="small"
                           icon={<EyeOutlined />}
-                          onClick={() => router.push(`/contract/${record.id}`)}
+                          onClick={() => router.push(`/contract/print/${record.id}`)}
                         >
                           View
                         </Button>
