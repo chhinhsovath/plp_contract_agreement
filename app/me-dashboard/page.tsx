@@ -1294,7 +1294,12 @@ export default function MEDashboardPage() {
                       <Table
                         columns={indicatorColumns}
                         dataSource={indicatorsData}
-                        pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
+                        pagination={{
+                          pageSize: 10,
+                          showSizeChanger: true,
+                          pageSizeOptions: ['10', '20', '50', '100'],
+                          showTotal: (total) => `សរុប ${total} ធាតុ`
+                        }}
                         loading={loadingIndicators}
                         scroll={{ x: 1400 }}
                         size="middle"
@@ -1566,7 +1571,12 @@ export default function MEDashboardPage() {
                           }
                         ]}
                         dataSource={contractMilestones}
-                        pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `សរុប ${total} ធាតុ` }}
+                        pagination={{
+                          pageSize: 10,
+                          showSizeChanger: true,
+                          pageSizeOptions: ['10', '20', '50', '100'],
+                          showTotal: (total) => `សរុប ${total} ធាតុ`
+                        }}
                         rowKey="id"
                         scroll={{ x: 1200 }}
                         size="middle"
@@ -1724,7 +1734,12 @@ export default function MEDashboardPage() {
                           }
                         ]}
                         dataSource={allContracts}
-                        pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `សរុប ${total} កិច្ចសន្យា` }}
+                        pagination={{
+                          pageSize: 10,
+                          showSizeChanger: true,
+                          pageSizeOptions: ['10', '20', '50', '100'],
+                          showTotal: (total) => `សរុប ${total} កិច្ចសន្យា`
+                        }}
                         rowKey="id"
                         scroll={{ x: 1200 }}
                         size="middle"
