@@ -55,7 +55,9 @@ echo ""
 echo -e "${BLUE}Step 3: Checking if /agreement configuration already exists...${NC}"
 if grep -q "location /agreement" "$CONFIG_FILE"; then
     echo -e "${YELLOW}⚠ /agreement location block already exists!${NC}"
-    echo "Please review manually: $CONFIG_FILE"
+    echo "Current /agreement configuration:"
+    grep -A 15 "location /agreement" "$CONFIG_FILE"
+    echo ""
     echo "Backup is available at: $BACKUP_FILE"
     exit 0
 fi
@@ -75,28 +77,66 @@ echo -e "${BLUE}Step 5: Adding /agreement location block...${NC}"
 # Create temporary file with new configuration
 TEMP_CONFIG="/tmp/nginx-plp-tms-new.conf"
 
-# Read the existing config and add /agreement location before the last closing brace
+# Strategy: Insert /agreement location BEFORE the first "location /" block
+# This ensures /agreement takes priority over the catch-all location
 sudo awk '
-/^}$/ && !added {
+/location \/ \{/ && !added {
+    # Insert /agreement block BEFORE the catch-all location /
     print "    # Agreement app (port 5050) - /agreement path"
     print "    # Note: Next.js handles /agreement prefix with basePath config"
-    print "    location /agreement {
-        proxy_pass http://192.168.155.122:5050;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection '\''upgrade'\'';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Port $server_port;
-        proxy_cache_bypass $http_upgrade;
-        proxy_redirect off;
-    }
+    print "    # This location must come BEFORE location / to take priority"
+    print "    location /agreement {"
+    print "        proxy_pass http://192.168.155.122:5050;"
+    print "        proxy_http_version 1.1;"
+    print "        proxy_set_header Upgrade $http_upgrade;"
+    print "        proxy_set_header Connection '\''upgrade'\'';"
+    print "        proxy_set_header Host $host;"
+    print "        proxy_set_header X-Real-IP $remote_addr;"
+    print "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
+    print "        proxy_set_header X-Forwarded-Proto $scheme;"
+    print "        proxy_set_header X-Forwarded-Host $host;"
+    print "        proxy_set_header X-Forwarded-Port $server_port;"
+    print "        proxy_cache_bypass $http_upgrade;"
+    print "        proxy_redirect off;"
+    print "    }"
+    print ""
+    added = 1
 }
 { print }
+END {
+    if (!added) {
+        print "" > "/dev/stderr"
+        print "WARNING: Could not find \"location /\" block to insert before." > "/dev/stderr"
+        print "The /agreement location was not added." > "/dev/stderr"
+        print "You may need to add it manually." > "/dev/stderr"
+        exit 1
+    }
+}
 ' "$CONFIG_FILE" | sudo tee "$TEMP_CONFIG" > /dev/null
+
+if [ $? -ne 0 ]; then
+    echo -e "${RED}✗ Failed to create new configuration${NC}"
+    echo ""
+    echo "Your Nginx config might not have a standard 'location /' block."
+    echo "Please add the /agreement location manually before any catch-all location."
+    echo ""
+    echo "Add this block:"
+    echo "    location /agreement {"
+    echo "        proxy_pass http://192.168.155.122:5050;"
+    echo "        proxy_http_version 1.1;"
+    echo "        proxy_set_header Upgrade \$http_upgrade;"
+    echo "        proxy_set_header Connection 'upgrade';"
+    echo "        proxy_set_header Host \$host;"
+    echo "        proxy_set_header X-Real-IP \$remote_addr;"
+    echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;"
+    echo "        proxy_set_header X-Forwarded-Proto \$scheme;"
+    echo "        proxy_set_header X-Forwarded-Host \$host;"
+    echo "        proxy_set_header X-Forwarded-Port \$server_port;"
+    echo "        proxy_cache_bypass \$http_upgrade;"
+    echo "        proxy_redirect off;"
+    echo "    }"
+    exit 1
+fi
 
 echo -e "${GREEN}✓ New configuration prepared${NC}"
 echo ""
@@ -146,9 +186,9 @@ if sudo nginx -t; then
     echo "  - https://plp-tms.moeys.gov.kh/agreement (new agreement app - port 5050)"
     echo ""
     echo -e "${YELLOW}Next steps:${NC}"
-    echo "  1. Ensure port 5050 app is running (pm2 status)"
-    echo "  2. Test: curl http://localhost:5050"
-    echo "  3. Visit: https://plp-tms.moeys.gov.kh/agreement"
+    echo "  1. Test existing app: https://plp-tms.moeys.gov.kh"
+    echo "  2. Test agreement app: https://plp-tms.moeys.gov.kh/agreement"
+    echo "  3. Check PM2 status: pm2 status"
     echo ""
     echo -e "${BLUE}Backup location: $BACKUP_FILE${NC}"
 
