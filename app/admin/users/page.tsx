@@ -349,73 +349,115 @@ export default function UsersManagementPage() {
         collapsed={collapsed}
         onCollapse={setCollapsed}
         width={220}
+        collapsedWidth={64}
         style={{
-          position: 'fixed',
+          overflow: 'auto',
           height: '100vh',
+          position: 'fixed',
           left: 0,
           top: 0,
           bottom: 0,
+          background: '#fff',
+          borderRight: '1px solid #f0f0f0',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.02)'
         }}
       >
-        <div
-          style={{
-            height: 64,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: 18,
-            fontWeight: 'bold',
-            fontFamily: 'Hanuman',
-          }}
-        >
-          {collapsed ? 'PLP' : 'PLP គ្រប់គ្រង'}
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 16px'
+        }}>
+          {collapsed ? (
+            <div style={{ fontSize: 20, fontWeight: 'bold', color: '#1890ff' }}>P</div>
+          ) : (
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#262626' }}>PLP M&E</div>
+          )}
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           selectedKeys={['users']}
           mode="inline"
           items={getSidebarMenuItems()}
           onClick={({ key }) => handleMenuClick(key)}
+          style={{
+            border: 'none',
+            fontSize: 14
+          }}
         />
       </Sider>
 
-      <Layout style={{ marginLeft: collapsed ? 80 : 220, transition: 'margin-left 0.2s' }}>
-        <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Row justify="space-between" style={{ width: '100%' }}>
+      <Layout style={{ marginLeft: collapsed ? 64 : 220, transition: 'all 0.2s', background: '#f5f5f5' }}>
+        <Header style={{
+          background: '#fff',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 24px',
+          height: 64,
+          lineHeight: '64px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+        }}>
+          <Row justify="space-between" align="middle" style={{ height: '100%' }}>
             <Col>
-              <Button
-                type="text"
-                onClick={() => router.push('/dashboard')}
-                style={{ fontFamily: 'Hanuman' }}
-              >
-                ត្រឡប់ទៅ Dashboard
-              </Button>
+              <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman', color: '#262626' }}>
+                គ្រប់គ្រងអ្នកប្រើប្រាស់
+              </Title>
             </Col>
             <Col>
               <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }} placement="bottomRight">
-                <Space style={{ cursor: 'pointer' }}>
-                  <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
-                  <Text style={{ fontFamily: 'Hanuman' }}>{currentUser?.full_name || 'អ្នកប្រើប្រាស់'}</Text>
-                </Space>
+                <Button
+                  type="text"
+                  style={{
+                    height: 48,
+                    padding: '0 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}
+                >
+                  <Avatar icon={<UserOutlined />} size={32} style={{ background: '#1890ff' }} />
+                  <div style={{ textAlign: 'left', display: collapsed ? 'none' : 'block' }}>
+                    <div style={{ fontSize: 14, fontWeight: 500, color: '#262626', fontFamily: 'Hanuman' }}>
+                      {currentUser?.full_name || 'អ្នកប្រើប្រាស់'}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#8c8c8c', fontFamily: 'Hanuman' }}>
+                      {currentUser?.role}
+                    </div>
+                  </div>
+                </Button>
               </Dropdown>
             </Col>
           </Row>
         </Header>
 
-        <Content style={{ margin: '24px', background: '#f0f2f5' }}>
-          <Card style={{ marginBottom: 24 }}>
-            <Title level={2} style={{ margin: 0 }}>
+        <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
+          <Card style={{
+            marginBottom: 16,
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}>
+            <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman' }}>
               <TeamOutlined style={{ marginRight: 8 }} />
               គ្រប់គ្រងអ្នកប្រើប្រាស់
             </Title>
           </Card>
 
         {/* Role Statistics - Optimized for Tablet/Desktop */}
-        <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
+        <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
           {roleStats.map(({ role, count }) => (
             <Col xs={24} md={8} lg={6} xl={4} key={role}>
-              <Card style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', transition: 'all 0.3s' }}>
+              <Card hoverable style={{
+                borderRadius: 8,
+                border: '1px solid #f0f0f0',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                height: '100%'
+              }}
+              styles={{ body: { padding: 16 } }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 32, fontWeight: 'bold', color: '#1890ff' }}>{count}</div>
                   <div style={{ fontSize: 15, marginTop: 8 }}>{getRoleLabel(role)}</div>

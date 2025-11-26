@@ -924,16 +924,18 @@ export default function MEDashboardPage() {
         icon: <FundProjectionScreenOutlined />,
         label: t('dashboard_tab_indicators') || 'សូចនាករ',
       },
-      {
-        key: 'activities',
-        icon: <ProjectOutlined />,
-        label: 'សកម្មភាព',
-      },
-      {
-        key: 'milestones',
-        icon: <CalendarOutlined />,
-        label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
-      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
+      // },
       {
         key: 'contracts',
         icon: <FileTextOutlined />,
@@ -1009,10 +1011,12 @@ export default function MEDashboardPage() {
     // Dedicated page navigation
     if (key === 'indicators') {
       router.push('/indicators');
-    } else if (key === 'activities') {
-      router.push('/activities');
-    } else if (key === 'milestones') {
-      router.push('/milestones');
+    // Hidden: Activities page navigation
+    // } else if (key === 'activities') {
+    //   router.push('/activities');
+    // Hidden: Milestones page navigation
+    // } else if (key === 'milestones') {
+    //   router.push('/milestones');
     } else if (key === 'contracts') {
       router.push('/contracts');
     } else if (key === 'manage-users') {

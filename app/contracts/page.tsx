@@ -99,11 +99,11 @@ export default function ContractsPage() {
         setContracts(data.contracts || [])
         setTotalContracts(data.pagination?.total || 0)
       } else {
-        message.error('មានបញ្ហាក្នុងការទាញកិច្ចសន្យា / Failed to fetch contracts')
+        message.error('មានបញ្ហាក្នុងការទាញកិច្ចសន្យា')
       }
     } catch (error) {
       console.error('Failed to fetch contracts:', error)
-      message.error('មានបញ្ហាក្នុងការទាញកិច្ចសន្យា / Failed to fetch contracts')
+      message.error('មានបញ្ហាក្នុងការទាញកិច្ចសន្យា')
     } finally {
       setLoading(false)
     }
@@ -399,7 +399,7 @@ export default function ContractsPage() {
                     ...(['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user?.role) ? [{
                       key: 'content-management',
                       icon: <FileTextOutlined />,
-                      label: 'គ្រប់គ្រងខ្លឹមសារ (CMS)',
+                      label: 'គ្រប់គ្រងខ្លឹមសារ',
                       onClick: () => router.push('/admin/content-management')
                     }] : []),
                     ...(['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user?.role) ? [{
@@ -492,13 +492,13 @@ export default function ContractsPage() {
                 title={
                   <Space>
                     <FilterOutlined />
-                    <span style={{ fontFamily: 'Hanuman' }}>ស្វែងរក / Filter</span>
+                    <span style={{ fontFamily: 'Hanuman' }}>ស្វែងរក</span>
                   </Space>
                 }
               >
                 <Row gutter={[16, 16]}>
                   <Col xs={24} sm={12} md={8} lg={4}>
-                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ប្រភេទ / Type</div>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ប្រភេទ</div>
                     <Select
                       placeholder="ជ្រើសរើសប្រភេទ"
                       style={{ width: '100%' }}
@@ -519,7 +519,7 @@ export default function ContractsPage() {
                   </Col>
 
                   <Col xs={24} sm={12} md={8} lg={5}>
-                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ខេត្ត / Province</div>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ខេត្ត</div>
                     <Select
                       placeholder="ជ្រើសរើសខេត្ត"
                       style={{ width: '100%' }}
@@ -535,7 +535,7 @@ export default function ContractsPage() {
                   </Col>
 
                   <Col xs={24} sm={12} md={8} lg={5}>
-                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ស្រុក/ខណ្ឌ / District</div>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ស្រុក/ខណ្ឌ</div>
                     <Select
                       placeholder="ជ្រើសរើសស្រុក/ខណ្ឌ"
                       style={{ width: '100%' }}
@@ -552,7 +552,7 @@ export default function ContractsPage() {
                   </Col>
 
                   <Col xs={24} sm={12} md={8} lg={5}>
-                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ឃុំ/សង្កាត់ / Commune</div>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ឃុំ/សង្កាត់</div>
                     <Select
                       placeholder="ជ្រើសរើសឃុំ/សង្កាត់"
                       style={{ width: '100%' }}
@@ -569,7 +569,7 @@ export default function ContractsPage() {
                   </Col>
 
                   <Col xs={24} sm={12} md={8} lg={5}>
-                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>សាលារៀន / School</div>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>សាលារៀន</div>
                     <Select
                       placeholder="ជ្រើសរើសសាលារៀន"
                       style={{ width: '100%' }}
@@ -618,20 +618,20 @@ export default function ContractsPage() {
                 rowKey="id"
                 columns={[
                   {
-                    title: 'លេខ / ID',
+                    title: 'លេខ',
                     dataIndex: 'id',
                     key: 'id',
                     width: 70,
                   },
                   {
-                    title: 'លេខកិច្ចសន្យា / Contract #',
+                    title: 'លេខកិច្ចសន្យា',
                     dataIndex: 'contract_number',
                     key: 'contract_number',
                     width: 180,
                     render: (text: string) => <Text code style={{ fontFamily: 'Hanuman' }}>{text || 'N/A'}</Text>
                   },
                   {
-                    title: 'ប្រភេទ / Type',
+                    title: 'ប្រភេទ',
                     dataIndex: 'contract_type_id',
                     key: 'contract_type_id',
                     width: 80,
@@ -642,7 +642,7 @@ export default function ContractsPage() {
                     )
                   },
                   {
-                    title: 'បង្កើតដោយ / Created By',
+                    title: 'បង្កើតដោយ',
                     dataIndex: 'created_by_user',
                     key: 'created_by',
                     width: 180,
@@ -656,7 +656,7 @@ export default function ContractsPage() {
                     )
                   },
                   {
-                    title: 'ខេត្ត / Province',
+                    title: 'ខេត្ត',
                     dataIndex: ['created_by_user', 'province_name'],
                     key: 'province',
                     width: 120,
@@ -664,7 +664,7 @@ export default function ContractsPage() {
                     render: (text: string) => <span style={{ fontFamily: 'Hanuman', fontSize: 12 }}>{text || '-'}</span>
                   },
                   {
-                    title: 'ស្រុក/ខណ្ឌ / District',
+                    title: 'ស្រុក/ខណ្ឌ',
                     dataIndex: ['created_by_user', 'district_name'],
                     key: 'district',
                     width: 120,
@@ -672,7 +672,7 @@ export default function ContractsPage() {
                     render: (text: string) => <span style={{ fontFamily: 'Hanuman', fontSize: 12 }}>{text || '-'}</span>
                   },
                   {
-                    title: 'ឃុំ/សង្កាត់ / Commune',
+                    title: 'ឃុំ/សង្កាត់',
                     dataIndex: ['created_by_user', 'commune_name'],
                     key: 'commune',
                     width: 120,
@@ -680,7 +680,7 @@ export default function ContractsPage() {
                     render: (text: string) => <span style={{ fontFamily: 'Hanuman', fontSize: 12 }}>{text || '-'}</span>
                   },
                   {
-                    title: 'ស្ថានភាព / Status',
+                    title: 'ស្ថានភាព',
                     dataIndex: 'status',
                     key: 'status',
                     width: 100,
@@ -707,7 +707,7 @@ export default function ContractsPage() {
                     }
                   },
                   {
-                    title: 'កាលបរិច្ឆេទ / Date',
+                    title: 'កាលបរិច្ឆេទ',
                     dataIndex: 'created_at',
                     key: 'created_at',
                     width: 100,
@@ -722,7 +722,7 @@ export default function ContractsPage() {
                     )
                   },
                   {
-                    title: 'សកម្មភាព / Actions',
+                    title: 'សកម្មភាព',
                     key: 'actions',
                     width: 120,
                     fixed: 'right' as const,
@@ -771,7 +771,7 @@ export default function ContractsPage() {
                 scroll={{ x: 1400 }}
               />
             ) : (
-              <Empty description="ទំព័រនេះកំពុងរៀបចំ / This page is under development" />
+              <Empty description="ទំព័រនេះកំពុងរៀបចំ" />
             )}
           </Card>
         </Content>

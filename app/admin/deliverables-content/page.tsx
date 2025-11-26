@@ -266,46 +266,56 @@ export default function DeliverablesContentPage() {
           position: 'fixed',
           left: 0,
           top: 0,
-          bottom: 0
+          bottom: 0,
+          background: '#fff',
+          borderRight: '1px solid #f0f0f0',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.02)'
         }}
       >
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <div
-            style={{
-              height: 64,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-              fontSize: collapsed ? 20 : 24,
-              fontWeight: 'bold',
-              fontFamily: 'Hanuman'
-            }}
-          >
-            {collapsed ? 'PLP' : 'PLP គ្រប់គ្រង'}
-          </div>
-          <Menu
-            theme="dark"
-            mode="inline"
-            selectedKeys={['deliverables-content']}
-            items={getSidebarMenuItems()}
-            onClick={({ key }) => handleMenuClick(key)}
-            style={{ fontFamily: 'Hanuman' }}
-          />
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 16px'
+        }}>
+          {collapsed ? (
+            <div style={{ fontSize: 20, fontWeight: 'bold', color: '#1890ff' }}>P</div>
+          ) : (
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#262626' }}>PLP M&E</div>
+          )}
         </div>
+        <Menu
+          theme="light"
+          mode="inline"
+          selectedKeys={['deliverables-content']}
+          items={getSidebarMenuItems()}
+          onClick={({ key }) => handleMenuClick(key)}
+          style={{
+            border: 'none',
+            fontSize: 14
+          }}
+        />
       </Sider>
 
-      <Layout style={{ marginLeft: collapsed ? 64 : 220 }}>
-        <Header style={{ background: '#fff', padding: '0 16px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+      <Layout style={{ marginLeft: collapsed ? 64 : 220, transition: 'all 0.2s', background: '#f5f5f5' }}>
+        <Header style={{
+          background: '#fff',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 24px',
+          height: 64,
+          lineHeight: '64px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+        }}>
           <Row justify="space-between" align="middle" style={{ height: '100%' }}>
             <Col>
-              <Button
-                icon={<ArrowLeftOutlined />}
-                onClick={() => router.push('/dashboard')}
-                type="text"
-              >
-                ត្រឡប់ទៅ Dashboard
-              </Button>
+              <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman', color: '#262626' }}>
+                គ្រប់គ្រងខ្លឹមសារសមិទ្ធកម្ម
+              </Title>
             </Col>
             <Col>
               <Dropdown
@@ -315,11 +325,6 @@ export default function DeliverablesContentPage() {
                       key: 'profile',
                       icon: <UserOutlined />,
                       label: 'ប្រវត្តិរូប',
-                    },
-                    {
-                      key: 'settings',
-                      icon: <SettingOutlined />,
-                      label: 'ការកំណត់',
                     },
                     {
                       key: 'change-password',
@@ -343,7 +348,8 @@ export default function DeliverablesContentPage() {
                 <Button
                   type="text"
                   style={{
-                    height: '100%',
+                    height: 48,
+                    padding: '0 12px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8
@@ -365,13 +371,18 @@ export default function DeliverablesContentPage() {
         </Header>
 
         <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
-          <Card style={{ marginBottom: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <Title level={2} style={{ marginBottom: 8 }}>
-              <FileTextOutlined style={{ marginRight: 12 }} />
-              គ្រប់គ្រងខ្លឹមសារសមិទ្ធកម្ម (Deliverables Content Management)
+          <Card style={{
+            marginBottom: 16,
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}>
+            <Title level={4} style={{ margin: '0 0 8px 0', fontFamily: 'Hanuman' }}>
+              <FileTextOutlined style={{ marginRight: 8 }} />
+              គ្រប់គ្រងខ្លឹមសារសមិទ្ធកម្ម
             </Title>
-            <Text type="secondary">
-              កែប្រែចំណងជើង និងជម្រើសរបស់សមិទ្ធកម្មទាំងអស់ - ប្រភេទកិច្ចសន្យា {selectedType}
+            <Text type="secondary" style={{ fontFamily: 'Hanuman' }}>
+              កែប្រែចំណងជើង និងជម្រើសរបស់សមិទ្ធកម្មទាំងអស់ - ប្រភេទ {selectedType}
             </Text>
           </Card>
 
@@ -380,10 +391,15 @@ export default function DeliverablesContentPage() {
         description="ប្រើទំព័រនេះដើម្បីកែប្រែចំណងជើងសមិទ្ធកម្ម និងអត្ថបទជម្រើសនីមួយៗ។ ការផ្លាស់ប្តូរនឹងមានផលភ្លាមៗលើទំព័រកំណត់រចនាសម្ព័ន្ធ។"
         type="info"
         showIcon
-        style={{ marginBottom: 24 }}
+        style={{ marginBottom: 16, borderRadius: 8 }}
       />
 
-      <Card style={{ marginBottom: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+      <Card style={{
+        marginBottom: 16,
+        borderRadius: 8,
+        border: '1px solid #f0f0f0',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+      }}>
         <Space size="middle">
           <Text strong>ជ្រើសរើសប្រភេទកិច្ចសន្យា:</Text>
           <Select

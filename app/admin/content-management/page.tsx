@@ -397,68 +397,104 @@ export default function ContentManagementPage() {
         collapsed={collapsed}
         onCollapse={setCollapsed}
         width={220}
+        collapsedWidth={64}
         style={{
-          position: 'fixed',
+          overflow: 'auto',
           height: '100vh',
+          position: 'fixed',
           left: 0,
           top: 0,
           bottom: 0,
+          background: '#fff',
+          borderRight: '1px solid #f0f0f0',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.02)'
         }}
       >
-        <div
-          style={{
-            height: 64,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: 18,
-            fontWeight: 'bold',
-            fontFamily: 'Hanuman',
-          }}
-        >
-          {collapsed ? 'PLP' : 'PLP គ្រប់គ្រង'}
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 16px'
+        }}>
+          {collapsed ? (
+            <div style={{ fontSize: 20, fontWeight: 'bold', color: '#1890ff' }}>P</div>
+          ) : (
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#262626' }}>PLP M&E</div>
+          )}
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           selectedKeys={['content-management']}
           mode="inline"
           items={getSidebarMenuItems()}
           onClick={({ key }) => handleMenuClick(key)}
+          style={{
+            border: 'none',
+            fontSize: 14
+          }}
         />
       </Sider>
 
-      <Layout style={{ marginLeft: collapsed ? 80 : 220, transition: 'margin-left 0.2s' }}>
-        <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Row justify="space-between" style={{ width: '100%' }}>
+      <Layout style={{ marginLeft: collapsed ? 64 : 220, transition: 'all 0.2s', background: '#f5f5f5' }}>
+        <Header style={{
+          background: '#fff',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 24px',
+          height: 64,
+          lineHeight: '64px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+        }}>
+          <Row justify="space-between" align="middle" style={{ height: '100%' }}>
             <Col>
-              <Button
-                type="text"
-                onClick={() => router.push('/dashboard')}
-                style={{ fontFamily: 'Hanuman' }}
-              >
-                ត្រឡប់ទៅ Dashboard
-              </Button>
+              <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman', color: '#262626' }}>
+                គ្រប់គ្រងខ្លឹមសារអត្ថបទ
+              </Title>
             </Col>
             <Col>
               <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }} placement="bottomRight">
-                <Space style={{ cursor: 'pointer' }}>
-                  <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
-                  <Text style={{ fontFamily: 'Hanuman' }}>{user?.full_name || 'អ្នកប្រើប្រាស់'}</Text>
-                </Space>
+                <Button
+                  type="text"
+                  style={{
+                    height: 48,
+                    padding: '0 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}
+                >
+                  <Avatar icon={<UserOutlined />} size={32} style={{ background: '#1890ff' }} />
+                  <div style={{ textAlign: 'left', display: collapsed ? 'none' : 'block' }}>
+                    <div style={{ fontSize: 14, fontWeight: 500, color: '#262626', fontFamily: 'Hanuman' }}>
+                      {user?.full_name || 'អ្នកប្រើប្រាស់'}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#8c8c8c', fontFamily: 'Hanuman' }}>
+                      {user?.role}
+                    </div>
+                  </div>
+                </Button>
               </Dropdown>
             </Col>
           </Row>
         </Header>
 
-        <Content style={{ margin: '24px', background: '#f0f2f5' }}>
-          <Card style={{ marginBottom: 24 }}>
-            <Title level={2}>
-              <FileTextOutlined style={{ marginRight: 12 }} />
-              គ្រប់គ្រងខ្លឹមសារអត្ថបទ (Content Management)
+        <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
+          <Card style={{
+            marginBottom: 16,
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}>
+            <Title level={4} style={{ margin: '0 0 8px 0', fontFamily: 'Hanuman' }}>
+              <FileTextOutlined style={{ marginRight: 8 }} />
+              គ្រប់គ្រងខ្លឹមសារអត្ថបទ
             </Title>
-            <Text type="secondary">
-              គ្រប់គ្រងអត្ថបទទាំងអស់នៅក្នុងប្រព័ន្ធ - សរុប {texts.length} ខ្លឹមសារ
+            <Text type="secondary" style={{ fontFamily: 'Hanuman' }}>
+              សរុប {texts.length} ខ្លឹមសារ
             </Text>
           </Card>
 
@@ -467,10 +503,14 @@ export default function ContentManagementPage() {
         description="ប្រើទំព័រនេះដើម្បីកែប្រែអត្ថបទខ្មែរ និងអង្គ្លេសទាំងអស់ដែលបង្ហាញនៅក្នុងប្រព័ន្ធ។ ការផ្លាស់ប្តូរនឹងត្រូវបានអនុវត្តភ្លាមៗនៅលើគេហទំព័រ។"
         type="info"
         showIcon
-        style={{ marginBottom: 24 }}
+        style={{ marginBottom: 16, borderRadius: 8 }}
       />
 
-      <Card>
+      <Card style={{
+        borderRadius: 8,
+        border: '1px solid #f0f0f0',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+      }}>
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
           {/* Filters and Actions */}
           <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>

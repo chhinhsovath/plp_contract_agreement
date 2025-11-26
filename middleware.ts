@@ -36,6 +36,8 @@ export async function middleware(request: NextRequest) {
 
   // Define restricted paths and their allowed roles
   const restrictedPaths: Record<string, string[]> = {
+    '/activities': [], // HIDDEN: Activities page - blocked for all roles
+    '/milestones': [], // HIDDEN: Milestones page - blocked for all roles
     '/contracts': ['SUPER_ADMIN', 'ADMIN'], // Contract list view
     '/admin/users': ['SUPER_ADMIN'], // User management - SUPER_ADMIN only
     '/admin/reconfiguration-requests': ['SUPER_ADMIN'], // Reconfiguration requests - SUPER_ADMIN only
@@ -70,8 +72,8 @@ export async function middleware(request: NextRequest) {
       '/contract/submit',      // Step 3: Sign and submit
       '/dashboard',         // Dashboard after completion
       '/indicators',        // Dedicated indicators page
-      '/activities',        // Dedicated activities page
-      '/milestones',        // Dedicated milestones page
+      // '/activities',        // HIDDEN: Activities page
+      // '/milestones',        // HIDDEN: Milestones page
       '/contracts',         // Dedicated contracts page
       '/profile',
       '/api/contracts',
@@ -92,10 +94,10 @@ export async function middleware(request: NextRequest) {
 
   // Restrict other roles as needed
   const roleHierarchy: Record<string, string[]> = {
-    'VIEWER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/activities', '/milestones', '/contracts', '/profile', '/api/contracts', '/api/auth'],
-    'OFFICER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/activities', '/milestones', '/contracts', '/profile', '/api/contracts', '/api/auth'],
-    'COORDINATOR': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/activities', '/milestones', '/contracts', '/profile', '/api/contracts', '/api/auth'],
-    'MANAGER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/activities', '/milestones', '/contracts', '/profile', '/api/contracts', '/api/auth'],
+    'VIEWER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/contracts', '/profile', '/api/contracts', '/api/auth'],
+    'OFFICER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/contracts', '/profile', '/api/contracts', '/api/auth'],
+    'COORDINATOR': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/contracts', '/profile', '/api/contracts', '/api/auth'],
+    'MANAGER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/contracts', '/profile', '/api/contracts', '/api/auth'],
   }
 
   if (userRole in roleHierarchy) {
