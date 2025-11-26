@@ -237,7 +237,7 @@ export default function HomePage() {
             កិច្ចព្រមព្រៀងសមិទ្ធកម្ម
           </Title>
           <Text type="secondary" style={{ fontSize: 16 }}>
-            {!user ? 'កិច្ចសន្យាសម្រាប់ដៃគូអប់រំ (Provincial-District និង Provincial-School)' : isAdmin ? 'មើល និងកែប្រែកិច្ចសន្យាទាំង ៥ ប្រភេទ' : 'ជ្រើសរើសប្រភេទកិច្ចសន្យា'}
+            {!user ? 'កិច្ចសន្យាសម្រាប់ដៃគូអប់រំ' : isAdmin ? 'មើល និងកែប្រែកិច្ចសន្យាទាំង ៥ ប្រភេទ' : 'ជ្រើសរើសប្រភេទកិច្ចសន្យា'}
           </Text>
         </div>
 
