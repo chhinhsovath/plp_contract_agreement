@@ -1,13 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Table, Button, Select, Space, Modal, Form, Input, InputNumber, message, Spin, Tag, Typography, Collapse, Badge, Popconfirm } from 'antd'
-import { EditOutlined, DeleteOutlined, PlusOutlined, FileTextOutlined, ReloadOutlined } from '@ant-design/icons'
-import { AdminNav } from '@/components/admin/AdminNav'
+import { Card, Table, Button, Select, Space, Modal, Form, Input, InputNumber, message, Spin, Tag, Typography, Collapse, Badge, Popconfirm, Layout, Menu, Dropdown, Avatar, Row, Col, App } from 'antd'
+import { EditOutlined, DeleteOutlined, PlusOutlined, FileTextOutlined, ReloadOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined } from '@ant-design/icons'
+import { useRouter } from 'next/navigation'
+import { UserRole } from '@/lib/roles'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
 const { Panel } = Collapse
+const { Sider, Content, Header } = Layout
 
 interface DeliverableOption {
   id: number
@@ -31,7 +33,11 @@ interface Deliverable {
 }
 
 export default function DeliverablesManagementPage() {
+  const router = useRouter()
+  const { message: antMessage } = App.useApp()
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<any>(null)
+  const [collapsed, setCollapsed] = useState(false)
   const [deliverables, setDeliverables] = useState<Deliverable[]>([])
   const [filteredDeliverables, setFilteredDeliverables] = useState<Deliverable[]>([])
   const [selectedContractType, setSelectedContractType] = useState<number | 'all'>('all')
@@ -44,8 +50,14 @@ export default function DeliverablesManagementPage() {
   const [optionForm] = Form.useForm()
 
   useEffect(() => {
-    fetchDeliverables()
+    checkAuth()
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      fetchDeliverables()
+    }
+  }, [user])
 
   useEffect(() => {
     if (selectedContractType === 'all') {
@@ -55,6 +67,147 @@ export default function DeliverablesManagementPage() {
     }
   }, [deliverables, selectedContractType])
 
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/auth/session')
+      if (response.ok) {
+        const data = await response.json()
+        setUser(data.user)
+        if (data.user?.role !== 'SUPER_ADMIN' && data.user?.role !== 'ADMIN' && data.user?.role !== 'COORDINATOR') {
+          antMessage.error('អ្នកមិនមានសិទ្ធិចូលប្រើទំព័រនេះ')
+          router.push('/dashboard')
+          return
+        }
+      } else {
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error)
+      router.push('/login')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' })
+      if (response.ok) {
+        antMessage.success('ចាកចេញដោយជោគជ័យ')
+        router.push('/login')
+      }
+    } catch (error) {
+      antMessage.error('មានបញ្ហាក្នុងការចាកចេញ')
+    }
+  }
+
+  // Sidebar menu items
+  const getSidebarMenuItems = () => {
+    const baseItems = [
+      {
+        key: 'overview',
+        icon: <DashboardOutlined />,
+        label: 'ទិដ្ឋភាពទូទៅ',
+        onClick: () => router.push('/dashboard')
+      },
+      {
+        key: 'indicators',
+        icon: <FundProjectionScreenOutlined />,
+        label: 'សូចនាករ',
+        onClick: () => router.push('/indicators')
+      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: 'ចំណុចសំខាន់',
+      // },
+      {
+        key: 'contracts',
+        icon: <FileTextOutlined />,
+        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
+        onClick: () => router.push('/contracts')
+      },
+    ];
+
+    const adminItems: any[] = [];
+
+    if (user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR') {
+      adminItems.push({
+        type: 'divider',
+      });
+      adminItems.push({
+        key: 'admin',
+        icon: <SettingOutlined />,
+        label: 'ការគ្រប់គ្រង',
+        children: [
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'manage-users',
+            icon: <TeamOutlined />,
+            label: 'អ្នកប្រើប្រាស់',
+            onClick: () => router.push('/admin/users')
+          }] : []),
+          {
+            key: 'content-management',
+            icon: <FileTextOutlined />,
+            label: 'ខ្លឹមសារ',
+            onClick: () => router.push('/admin/content-management')
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'deliverables-content',
+            icon: <EditOutlined />,
+            label: 'កែខ្លឹមសារសមិទ្ធកម្ម',
+            onClick: () => router.push('/admin/deliverables-content')
+          }] : []),
+          {
+            key: 'deliverables-management',
+            icon: <FormOutlined />,
+            label: 'សមិទ្ធកម្ម',
+            onClick: () => router.push('/admin/deliverables-management')
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'reconfig-requests',
+            icon: <BellOutlined />,
+            label: 'សំណើផ្លាស់ប្តូរ',
+            onClick: () => router.push('/admin/reconfiguration-requests')
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-4',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៤',
+            onClick: () => router.push('/admin/agreement/4')
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-5',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៥',
+            onClick: () => router.push('/admin/agreement/5')
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-4',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៤',
+            onClick: () => router.push('/admin/configure-contract/4')
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-5',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៥',
+            onClick: () => router.push('/admin/configure-contract/5')
+          }] : []),
+        ],
+      });
+    }
+
+    return [...baseItems, ...adminItems];
+  };
+
   const fetchDeliverables = async () => {
     setLoading(true)
     try {
@@ -63,11 +216,11 @@ export default function DeliverablesManagementPage() {
         const data = await response.json()
         setDeliverables(data.deliverables)
       } else {
-        message.error('មិនអាចទាញយកទិន្នន័យបាន')
+        antMessage.error('មិនអាចទាញយកទិន្នន័យបាន')
       }
     } catch (error) {
       console.error('Failed to fetch deliverables:', error)
-      message.error('មានបញ្ហាក្នុងការទាញយកទិន្នន័យ')
+      antMessage.error('មានបញ្ហាក្នុងការទាញយកទិន្នន័យ')
     } finally {
       setLoading(false)
     }
@@ -109,18 +262,18 @@ export default function DeliverablesManagementPage() {
       })
 
       if (response.ok) {
-        message.success('បានកែប្រែសមិទ្ធកម្មដោយជោគជ័យ')
+        antMessage.success('បានកែប្រែសមិទ្ធកម្មដោយជោគជ័យ')
         setShowEditDeliverableModal(false)
         setEditingDeliverable(null)
         deliverableForm.resetFields()
         fetchDeliverables()
       } else {
         const data = await response.json()
-        message.error(data.error || 'មានបញ្ហាក្នុងការកែប្រែ')
+        antMessage.error(data.error || 'មានបញ្ហាក្នុងការកែប្រែ')
       }
     } catch (error) {
       console.error('Update error:', error)
-      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+      antMessage.error('មានបញ្ហាក្នុងការតភ្ជាប់')
     } finally {
       setProcessing(false)
     }
@@ -138,18 +291,18 @@ export default function DeliverablesManagementPage() {
       })
 
       if (response.ok) {
-        message.success('បានកែប្រែជម្រើសដោយជោគជ័យ')
+        antMessage.success('បានកែប្រែជម្រើសដោយជោគជ័យ')
         setShowEditOptionModal(false)
         setEditingOption(null)
         optionForm.resetFields()
         fetchDeliverables()
       } else {
         const data = await response.json()
-        message.error(data.error || 'មានបញ្ហាក្នុងការកែប្រែ')
+        antMessage.error(data.error || 'មានបញ្ហាក្នុងការកែប្រែ')
       }
     } catch (error) {
       console.error('Update option error:', error)
-      message.error('មានបញ្ហាក្នុងការតភ្ជាប់')
+      antMessage.error('មានបញ្ហាក្នុងការតភ្ជាប់')
     } finally {
       setProcessing(false)
     }
@@ -164,127 +317,256 @@ export default function DeliverablesManagementPage() {
   }
 
   return (
-    <div style={{ padding: 24 }}>
-      <AdminNav />
+    <Layout style={{ minHeight: '100vh' }}>
+      {/* Light Sidebar */}
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={220}
+        collapsedWidth={64}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          background: '#fff',
+          borderRight: '1px solid #f0f0f0',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.02)'
+        }}
+      >
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 16px'
+        }}>
+          {collapsed ? (
+            <div style={{ fontSize: 20, fontWeight: 'bold', color: '#1890ff' }}>P</div>
+          ) : (
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#262626' }}>PLP M&E</div>
+          )}
+        </div>
+        <Menu
+          theme="light"
+          selectedKeys={['deliverables-management']}
+          mode="inline"
+          items={getSidebarMenuItems()}
+          style={{
+            border: 'none',
+            fontSize: 14
+          }}
+        />
+      </Sider>
 
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={2}>
-          <FileTextOutlined style={{ marginRight: 12 }} />
-          គ្រប់គ្រងសមិទ្ធកម្ម និងជម្រើស (Deliverables & Options)
-        </Title>
-        <Text type="secondary">
-          គ្រប់គ្រងសមិទ្ធកម្ម និងជម្រើសសម្រាប់កិច្ចសន្យាទាំង ៥ ប្រភេទ - សរុប {deliverables.length} សមិទ្ធកម្ម
-        </Text>
-      </Card>
+      {/* Main Layout */}
+      <Layout style={{ marginLeft: collapsed ? 64 : 220, transition: 'all 0.2s', background: '#f5f5f5' }}>
+        {/* Header */}
+        <Header style={{
+          background: '#fff',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 24px',
+          height: 64,
+          lineHeight: '64px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+        }}>
+          <Row justify="space-between" align="middle" style={{ height: '100%' }}>
+            <Col>
+              <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman', color: '#262626' }}>
+                គ្រប់គ្រងសមិទ្ធកម្ម និងជម្រើស
+              </Title>
+            </Col>
 
-      <Card>
-        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-          {/* Filters */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-            <Space>
-              <Text strong>ប្រភេទកិច្ចសន្យា:</Text>
-              <Select
-                value={selectedContractType}
-                onChange={setSelectedContractType}
-                style={{ width: 200 }}
-                options={[
-                  { label: 'ទាំងអស់', value: 'all' },
-                  { label: 'ប្រភេទ 1 (PMU-PCU)', value: 1 },
-                  { label: 'ប្រភេទ 2 (PCU-PM)', value: 2 },
-                  { label: 'ប្រភេទ 3 (PM-Regional)', value: 3 },
-                  { label: 'ប្រភេទ 4 (Provincial-District)', value: 4 },
-                  { label: 'ប្រភេទ 5 (Provincial-School)', value: 5 }
-                ]}
-              />
-              <Button icon={<ReloadOutlined />} onClick={fetchDeliverables}>
-                ផ្ទុកឡើងវិញ
-              </Button>
-            </Space>
-          </div>
-
-          {/* Deliverables List with Nested Options */}
-          <Collapse accordion>
-            {filteredDeliverables.map((deliverable) => (
-              <Panel
-                key={deliverable.id}
-                header={
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                    <Space>
-                      <Tag color="blue">ប្រភេទ {deliverable.contract_type}</Tag>
-                      <Badge count={deliverable.deliverable_number} style={{ backgroundColor: '#52c41a' }} />
-                      <Text strong className="font-hanuman">{deliverable.deliverable_title_khmer}</Text>
-                    </Space>
-                    <Button
-                      type="link"
-                      icon={<EditOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleEditDeliverable(deliverable)
-                      }}
-                    >
-                      កែប្រែ
-                    </Button>
-                  </div>
-                }
+            {/* User Profile Dropdown */}
+            <Col>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'profile',
+                      icon: <UserOutlined />,
+                      label: <span className="font-hanuman">ព័ត៌មានផ្ទាល់ខ្លួន</span>,
+                    },
+                    {
+                      key: 'change-password',
+                      icon: <KeyOutlined />,
+                      label: <span className="font-hanuman">ផ្លាស់ប្តូរពាក្យសម្ងាត់</span>,
+                    },
+                    { type: 'divider' },
+                    {
+                      key: 'logout',
+                      icon: <LogoutOutlined />,
+                      label: <span className="font-hanuman">ចាកចេញ</span>,
+                      onClick: handleLogout,
+                      danger: true
+                    }
+                  ]
+                }}
+                placement="bottomRight"
               >
-                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                  {/* Deliverable Details */}
-                  <div>
-                    <Text type="secondary">ពេលវេលា: {deliverable.timeline}</Text>
-                    {deliverable.activities_text && (
-                      <>
-                        <br />
-                        <Text type="secondary">សកម្មភាព: {deliverable.activities_text}</Text>
-                      </>
-                    )}
+                <Button
+                  type="text"
+                  style={{
+                    height: 48,
+                    padding: '0 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}
+                >
+                  <Avatar icon={<UserOutlined />} size={32} style={{ background: '#1890ff' }} />
+                  <div style={{ textAlign: 'left', display: collapsed ? 'none' : 'block' }}>
+                    <div style={{ fontSize: 14, fontWeight: 500, color: '#262626', fontFamily: 'Hanuman' }}>
+                      {user?.full_name}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#8c8c8c', fontFamily: 'Hanuman' }}>
+                      {user?.role}
+                    </div>
                   </div>
+                </Button>
+              </Dropdown>
+            </Col>
+          </Row>
+        </Header>
 
-                  {/* Options Table */}
-                  <Card type="inner" title={`ជម្រើស (${deliverable.options.length})`}>
-                    <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                      {deliverable.options.map((option) => (
-                        <Card
-                          key={option.id}
-                          size="small"
-                          style={{ background: '#fafafa' }}
-                          extra={
-                            <Button
-                              type="link"
-                              size="small"
-                              icon={<EditOutlined />}
-                              onClick={() => handleEditOption(option, deliverable)}
-                            >
-                              កែប្រែ
-                            </Button>
-                          }
-                        >
-                          <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                            <div>
-                              <Tag color="purple">ជម្រើស {option.option_number}</Tag>
-                              <Text className="font-hanuman">{option.option_text_khmer}</Text>
-                            </div>
-                            {option.option_text_english && (
-                              <Text type="secondary" italic>{option.option_text_english}</Text>
-                            )}
-                            {option.baseline_percentage !== null && option.target_percentage !== null && (
-                              <Text type="success">
-                                មូលដ្ឋាន: {option.baseline_percentage}% → គោលដៅ: {option.target_percentage}%
-                              </Text>
-                            )}
-                            <Text type="secondary" style={{ fontSize: 12 }}>
-                              លក្ខណៈ: {option.condition_type}
-                            </Text>
-                          </Space>
-                        </Card>
-                      ))}
-                    </Space>
-                  </Card>
+        {/* Main Content */}
+        <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
+          <Card style={{
+            marginBottom: 16,
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}>
+            <Title level={4} style={{ margin: '0 0 8px 0', fontFamily: 'Hanuman' }}>
+              <FileTextOutlined style={{ marginRight: 8 }} />
+              គ្រប់គ្រងសមិទ្ធកម្ម និងជម្រើស
+            </Title>
+            <Text type="secondary" style={{ fontFamily: 'Hanuman' }}>
+              សរុប {deliverables.length} សមិទ្ធកម្ម
+            </Text>
+          </Card>
+
+          <Card style={{
+            borderRadius: 8,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+          }}>
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              {/* Filters */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+                <Space>
+                  <Text strong>ប្រភេទកិច្ចសន្យា:</Text>
+                  <Select
+                    value={selectedContractType}
+                    onChange={setSelectedContractType}
+                    style={{ width: 200 }}
+                    options={[
+                      { label: 'ទាំងអស់', value: 'all' },
+                      { label: 'ប្រភេទ 1 (PMU-PCU)', value: 1 },
+                      { label: 'ប្រភេទ 2 (PCU-PM)', value: 2 },
+                      { label: 'ប្រភេទ 3 (PM-Regional)', value: 3 },
+                      { label: 'ប្រភេទ 4 (Provincial-District)', value: 4 },
+                      { label: 'ប្រភេទ 5 (Provincial-School)', value: 5 }
+                    ]}
+                  />
+                  <Button icon={<ReloadOutlined />} onClick={fetchDeliverables}>
+                    ផ្ទុកឡើងវិញ
+                  </Button>
                 </Space>
-              </Panel>
-            ))}
-          </Collapse>
-        </Space>
-      </Card>
+              </div>
+
+              {/* Deliverables List with Nested Options */}
+              <Collapse accordion>
+                {filteredDeliverables.map((deliverable) => (
+                  <Panel
+                    key={deliverable.id}
+                    header={
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                        <Space>
+                          <Tag color="blue">ប្រភេទ {deliverable.contract_type}</Tag>
+                          <Badge count={deliverable.deliverable_number} style={{ backgroundColor: '#52c41a' }} />
+                          <Text strong className="font-hanuman">{deliverable.deliverable_title_khmer}</Text>
+                        </Space>
+                        <Button
+                          type="link"
+                          icon={<EditOutlined />}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleEditDeliverable(deliverable)
+                          }}
+                        >
+                          កែប្រែ
+                        </Button>
+                      </div>
+                    }
+                  >
+                    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                      {/* Deliverable Details */}
+                      <div>
+                        <Text type="secondary">ពេលវេលា: {deliverable.timeline}</Text>
+                        {deliverable.activities_text && (
+                          <>
+                            <br />
+                            <Text type="secondary">សកម្មភាព: {deliverable.activities_text}</Text>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Options Table */}
+                      <Card type="inner" title={`ជម្រើស (${deliverable.options.length})`}>
+                        <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                          {deliverable.options.map((option) => (
+                            <Card
+                              key={option.id}
+                              size="small"
+                              style={{ background: '#fafafa' }}
+                              extra={
+                                <Button
+                                  type="link"
+                                  size="small"
+                                  icon={<EditOutlined />}
+                                  onClick={() => handleEditOption(option, deliverable)}
+                                >
+                                  កែប្រែ
+                                </Button>
+                              }
+                            >
+                              <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                                <div>
+                                  <Tag color="purple">ជម្រើស {option.option_number}</Tag>
+                                  <Text className="font-hanuman">{option.option_text_khmer}</Text>
+                                </div>
+                                {option.option_text_english && (
+                                  <Text type="secondary" italic>{option.option_text_english}</Text>
+                                )}
+                                {option.baseline_percentage !== null && option.target_percentage !== null && (
+                                  <Text type="success">
+                                    មូលដ្ឋាន: {option.baseline_percentage}% → គោលដៅ: {option.target_percentage}%
+                                  </Text>
+                                )}
+                                <Text type="secondary" style={{ fontSize: 12 }}>
+                                  លក្ខណៈ: {option.condition_type}
+                                </Text>
+                              </Space>
+                            </Card>
+                          ))}
+                        </Space>
+                      </Card>
+                    </Space>
+                  </Panel>
+                ))}
+              </Collapse>
+            </Space>
+          </Card>
+        </Content>
+      </Layout>
 
       {/* Edit Deliverable Modal */}
       <Modal
@@ -425,6 +707,6 @@ export default function DeliverablesManagementPage() {
           </Form>
         )}
       </Modal>
-    </div>
+    </Layout>
   )
 }
