@@ -8,36 +8,36 @@ datasource db {
 }
 
 model users {
-  id                            Int                              @id @default(autoincrement())
-  full_name                     String
-  phone_number                  String                           @unique
-  passcode                      String
-  organization                  String?
-  position                      String?
-  email                         String?
-  created_at                    DateTime                         @default(now())
-  updated_at                    DateTime                         @updatedAt
-  last_login                    DateTime?
-  is_active                     Boolean                          @default(true)
-  role                          String                           @default("PARTNER")
-  contract_type                 Int?
-  contract_read                 Boolean                          @default(false)
-  contract_read_time            Int?
-  configuration_complete        Boolean                          @default(false)
-  contract_signed               Boolean                          @default(false)
-  contract_signed_date          DateTime?
-  ip_address_signed             String?
-  signature_data                String?
-  last_reset_at                 DateTime?
-  province_name                 String?
-  district_name                 String?
-  commune_name                  String?
-  village_name                  String?
-  school_name                   String?
-  contracts_created             contracts[]                      @relation("UserContracts")
-  reconfiguration_requests      reconfiguration_requests[]       @relation("UserRequests")
-  reviewed_requests             reconfiguration_requests[]       @relation("ReviewerRequests")
-  downloads                     contract_downloads[]
+  id                       Int                        @id @default(autoincrement())
+  full_name                String
+  phone_number             String                     @unique
+  passcode                 String
+  organization             String?
+  position                 String?
+  email                    String?
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt
+  last_login               DateTime?
+  is_active                Boolean                    @default(true)
+  role                     String                     @default("PARTNER")
+  contract_type            Int?
+  contract_read_time       Int?
+  contract_signed          Boolean                    @default(false)
+  contract_signed_date     DateTime?
+  ip_address_signed        String?
+  signature_data           String?
+  last_reset_at            DateTime?
+  contract_read            Boolean?                   @default(false)
+  configuration_complete   Boolean?                   @default(false)
+  province_name            String?
+  district_name            String?
+  commune_name             String?
+  village_name             String?
+  school_name              String?
+  downloads                contract_downloads[]
+  contracts_created        contracts[]                @relation("UserContracts")
+  reviewed_requests        reconfiguration_requests[] @relation("ReviewerRequests")
+  reconfiguration_requests reconfiguration_requests[] @relation("UserRequests")
 
   @@index([phone_number])
   @@index([role])
@@ -79,10 +79,10 @@ model contracts {
   created_by_id          Int?
   section_order          Json?
   contract_html          String?
-  download_count         Int                               @default(0)
+  download_count         Int?                              @default(0)
   attachments            attachments[]
-  downloads              contract_downloads[]
   deliverable_selections contract_deliverable_selections[]
+  downloads              contract_downloads[]
   contract_fields        contract_fields[]
   contract_indicators    contract_indicators[]
   contract_type          contract_types                    @relation(fields: [contract_type_id], references: [id])
@@ -301,22 +301,22 @@ model deliverable_options {
 }
 
 model contract_deliverable_selections {
-  id                     Int                   @id @default(autoincrement())
-  contract_id            Int
-  deliverable_id         Int
-  selected_option_id     Int
-  baseline_percentage    Float?
-  baseline_source        String?
-  baseline_date          DateTime?
-  baseline_notes         String?
-  selected_at            DateTime              @default(now())
-  selected_by            String?
-  notes                  String?
-  created_at             DateTime              @default(now())
-  updated_at             DateTime              @updatedAt
-  contract               contracts             @relation(fields: [contract_id], references: [id], onDelete: Cascade)
-  deliverable            contract_deliverables @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
-  selected_option        deliverable_options   @relation(fields: [selected_option_id], references: [id], onDelete: Cascade)
+  id                  Int                   @id @default(autoincrement())
+  contract_id         Int
+  deliverable_id      Int
+  selected_option_id  Int
+  selected_at         DateTime              @default(now())
+  selected_by         String?
+  notes               String?
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  baseline_percentage Float?
+  baseline_source     String?
+  baseline_date       DateTime?
+  baseline_notes      String?
+  contract            contracts             @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  deliverable         contract_deliverables @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
+  selected_option     deliverable_options   @relation(fields: [selected_option_id], references: [id], onDelete: Cascade)
 
   @@unique([contract_id, deliverable_id])
   @@index([contract_id])
@@ -523,53 +523,53 @@ model monitoring_visits {
 }
 
 model reconfiguration_requests {
-  id                      Int       @id @default(autoincrement())
-  user_id                 Int
-  contract_type           Int
-  request_reason          String
-  current_selections      Json
-  requested_changes       String?
-  status                  String    @default("pending")
-  reviewed_by_id          Int?
-  reviewed_at             DateTime?
-  reviewer_notes          String?
-  created_at              DateTime  @default(now())
-  updated_at              DateTime  @updatedAt
-  user                    users     @relation("UserRequests", fields: [user_id], references: [id], onDelete: Cascade)
-  reviewed_by             users?    @relation("ReviewerRequests", fields: [reviewed_by_id], references: [id])
+  id                 Int       @id @default(autoincrement())
+  user_id            Int
+  contract_type      Int
+  request_reason     String
+  current_selections Json
+  requested_changes  String?
+  status             String?   @default("pending") @db.VarChar(50)
+  reviewed_by_id     Int?
+  reviewed_at        DateTime? @db.Timestamp(6)
+  reviewer_notes     String?
+  created_at         DateTime? @default(now()) @db.Timestamp(6)
+  updated_at         DateTime? @default(now()) @updatedAt @db.Timestamp(6)
+  reviewed_by        users?    @relation("ReviewerRequests", fields: [reviewed_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user               users     @relation("UserRequests", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([user_id])
-  @@index([status])
-  @@index([created_at])
+  @@index([created_at], map: "idx_reconfig_created_at")
+  @@index([status], map: "idx_reconfig_status")
+  @@index([user_id], map: "idx_reconfig_user_id")
 }
 
 model content_texts {
-  id           Int      @id @default(autoincrement())
-  key          String   @unique
+  id           Int       @id @default(autoincrement())
+  key          String    @unique @db.VarChar(255)
   text_khmer   String
   text_english String?
-  category     String
+  category     String    @db.VarChar(100)
   description  String?
-  is_active    Boolean  @default(true)
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  is_active    Boolean?  @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamp(6)
 
-  @@index([category])
-  @@index([key])
-  @@index([is_active])
+  @@index([category], map: "idx_content_category")
+  @@index([is_active], map: "idx_content_is_active")
+  @@index([key], map: "idx_content_key")
 }
 
 model contract_downloads {
   id            Int       @id @default(autoincrement())
   contract_id   Int
   user_id       Int?
-  downloaded_at DateTime  @default(now())
-  ip_address    String?
+  downloaded_at DateTime? @default(now()) @db.Timestamp(6)
+  ip_address    String?   @db.VarChar(45)
   user_agent    String?
-  contract      contracts @relation(fields: [contract_id], references: [id], onDelete: Cascade)
-  user          users?    @relation(fields: [user_id], references: [id])
+  contract      contracts @relation(fields: [contract_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user          users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([contract_id])
-  @@index([user_id])
-  @@index([downloaded_at])
+  @@index([contract_id], map: "idx_downloads_contract")
+  @@index([downloaded_at], map: "idx_downloads_date")
+  @@index([user_id], map: "idx_downloads_user")
 }
