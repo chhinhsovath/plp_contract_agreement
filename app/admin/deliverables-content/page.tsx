@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Select, Button, Input, Space, Modal, Form, message, Spin, Tag, Typography, Alert, Collapse, Divider } from 'antd'
-import { EditOutlined, FileTextOutlined, ReloadOutlined, SaveOutlined, CheckCircleOutlined } from '@ant-design/icons'
+import { Card, Select, Button, Input, Space, Modal, Form, message, Spin, Tag, Typography, Alert, Collapse, Divider, Layout, Menu, Dropdown, Avatar, Row, Col } from 'antd'
+import { EditOutlined, FileTextOutlined, ReloadOutlined, SaveOutlined, CheckCircleOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
-import { AdminNav } from '@/components/admin/AdminNav'
+import { UserRole } from '@/lib/roles'
 
+const { Sider, Content, Header } = Layout
 const { Title, Text, Paragraph } = Typography
 const { TextArea } = Input
 const { Panel } = Collapse
@@ -32,6 +33,8 @@ interface Deliverable {
 
 export default function DeliverablesContentPage() {
   const router = useRouter()
+  const [user, setUser] = useState<any>(null)
+  const [collapsed, setCollapsed] = useState(false)
   const [loading, setLoading] = useState(true)
   const [deliverables, setDeliverables] = useState<Deliverable[]>([])
   const [selectedType, setSelectedType] = useState(4) // Default to Type 4
@@ -58,9 +61,10 @@ export default function DeliverablesContentPage() {
       const response = await fetch('/api/auth/session')
       if (response.ok) {
         const data = await response.json()
+        setUser(data.user)
         if (data.user?.role !== 'SUPER_ADMIN') {
           message.error('អ្នកមិនមានសិទ្ធិចូលប្រើទំព័រនេះ')
-          router.push('/')
+          router.push('/dashboard')
           return
         }
       } else {
@@ -73,6 +77,73 @@ export default function DeliverablesContentPage() {
       return
     }
     setLoading(false)
+  }
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' })
+      if (response.ok) {
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
+  const getSidebarMenuItems = () => {
+    const items = [
+      {
+        key: 'overview',
+        icon: <DashboardOutlined />,
+        label: 'ទិដ្ឋភាពទូទៅ',
+      },
+      {
+        key: 'indicators',
+        icon: <FundProjectionScreenOutlined />,
+        label: 'សូចនាករ',
+      },
+      {
+        key: 'activities',
+        icon: <FileTextOutlined />,
+        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
+      },
+      {
+        key: 'milestones',
+        icon: <CalendarOutlined />,
+        label: 'ចំណុចសំខាន់',
+      },
+      {
+        key: 'contracts',
+        icon: <ProjectOutlined />,
+        label: 'គ្រប់គ្រងកិច្ចសន្យា',
+      },
+    ]
+
+    if (user?.role === UserRole.SUPER_ADMIN) {
+      items.push({
+        key: 'admin',
+        icon: <SettingOutlined />,
+        label: 'គ្រប់គ្រងប្រព័ន្ធ',
+      })
+    }
+
+    return items
+  }
+
+  const handleMenuClick = (key: string) => {
+    if (key === 'overview') {
+      router.push('/dashboard')
+    } else if (key === 'indicators') {
+      router.push('/indicators')
+    } else if (key === 'activities') {
+      router.push('/activities')
+    } else if (key === 'milestones') {
+      router.push('/milestones')
+    } else if (key === 'contracts') {
+      router.push('/contracts')
+    } else if (key === 'admin') {
+      router.push('/admin/users')
+    }
   }
 
   const fetchDeliverables = async () => {
@@ -182,18 +253,127 @@ export default function DeliverablesContentPage() {
   }
 
   return (
-    <div style={{ padding: 24, background: '#f0f2f5', minHeight: '100vh' }}>
-      <AdminNav />
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={220}
+        collapsedWidth={64}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0
+        }}
+      >
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <div
+            style={{
+              height: 64,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontSize: collapsed ? 20 : 24,
+              fontWeight: 'bold',
+              fontFamily: 'Hanuman'
+            }}
+          >
+            {collapsed ? 'PLP' : 'PLP គ្រប់គ្រង'}
+          </div>
+          <Menu
+            theme="dark"
+            mode="inline"
+            selectedKeys={['deliverables-content']}
+            items={getSidebarMenuItems()}
+            onClick={({ key }) => handleMenuClick(key)}
+            style={{ fontFamily: 'Hanuman' }}
+          />
+        </div>
+      </Sider>
 
-      <Card style={{ marginBottom: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-        <Title level={2} style={{ marginBottom: 8 }}>
-          <FileTextOutlined style={{ marginRight: 12 }} />
-          គ្រប់គ្រងខ្លឹមសារសមិទ្ធកម្ម (Deliverables Content Management)
-        </Title>
-        <Text type="secondary">
-          កែប្រែចំណងជើង និងជម្រើសរបស់សមិទ្ធកម្មទាំងអស់ - ប្រភេទកិច្ចសន្យា {selectedType}
-        </Text>
-      </Card>
+      <Layout style={{ marginLeft: collapsed ? 64 : 220 }}>
+        <Header style={{ background: '#fff', padding: '0 16px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+          <Row justify="space-between" align="middle" style={{ height: '100%' }}>
+            <Col>
+              <Button
+                icon={<ArrowLeftOutlined />}
+                onClick={() => router.push('/dashboard')}
+                type="text"
+              >
+                ត្រឡប់ទៅ Dashboard
+              </Button>
+            </Col>
+            <Col>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'profile',
+                      icon: <UserOutlined />,
+                      label: 'ប្រវត្តិរូប',
+                    },
+                    {
+                      key: 'settings',
+                      icon: <SettingOutlined />,
+                      label: 'ការកំណត់',
+                    },
+                    {
+                      key: 'change-password',
+                      icon: <KeyOutlined />,
+                      label: 'ផ្លាស់ប្តូរលេខសម្ងាត់',
+                    },
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: 'logout',
+                      icon: <LogoutOutlined />,
+                      label: 'ចាកចេញ',
+                      danger: true,
+                      onClick: handleLogout,
+                    },
+                  ],
+                }}
+                placement="bottomRight"
+              >
+                <Button
+                  type="text"
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}
+                >
+                  <Avatar icon={<UserOutlined />} size={32} style={{ background: '#1890ff' }} />
+                  <div style={{ textAlign: 'left', display: collapsed ? 'none' : 'block' }}>
+                    <div style={{ fontSize: 14, fontWeight: 500, color: '#262626', fontFamily: 'Hanuman' }}>
+                      {user?.full_name}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#8c8c8c', fontFamily: 'Hanuman' }}>
+                      {user?.role}
+                    </div>
+                  </div>
+                </Button>
+              </Dropdown>
+            </Col>
+          </Row>
+        </Header>
+
+        <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
+          <Card style={{ marginBottom: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+            <Title level={2} style={{ marginBottom: 8 }}>
+              <FileTextOutlined style={{ marginRight: 12 }} />
+              គ្រប់គ្រងខ្លឹមសារសមិទ្ធកម្ម (Deliverables Content Management)
+            </Title>
+            <Text type="secondary">
+              កែប្រែចំណងជើង និងជម្រើសរបស់សមិទ្ធកម្មទាំងអស់ - ប្រភេទកិច្ចសន្យា {selectedType}
+            </Text>
+          </Card>
 
       <Alert
         message="ការណែនាំ"
@@ -544,6 +724,8 @@ export default function DeliverablesContentPage() {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   )
 }
