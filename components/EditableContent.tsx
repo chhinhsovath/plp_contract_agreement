@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Modal, Input, Button, message, Tooltip } from 'antd'
-import { EditOutlined } from '@ant-design/icons'
+import { Modal, Input, Button, message, Tooltip, Popconfirm } from 'antd'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 
 const { TextArea } = Input
 
@@ -76,6 +76,38 @@ export function EditableContent({
     }
   }
 
+  const handleDelete = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/content-texts/${contentKey}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text_khmer: '' // Set to empty string to delete
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete content')
+      }
+
+      message.success('បានលុបខ្លឹមសារ')
+      setIsModalOpen(false)
+
+      // Reload the page to show changes
+      if (onUpdate) {
+        onUpdate()
+      } else {
+        window.location.reload()
+      }
+    } catch (error) {
+      console.error('Delete error:', error)
+      message.error('មានបញ្ហាក្នុងការលុប')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   if (!isAdmin) {
     return <>{children}</>
   }
@@ -120,6 +152,23 @@ export function EditableContent({
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={[
+          <Popconfirm
+            key="delete"
+            title="លុបខ្លឹមសារ"
+            description="តើអ្នកប្រាកដថាចង់លុបខ្លឹមសារនេះមែនទេ?"
+            onConfirm={handleDelete}
+            okText="លុប"
+            cancelText="បោះបង់"
+            okButtonProps={{ danger: true }}
+          >
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              loading={loading}
+            >
+              លុប
+            </Button>
+          </Popconfirm>,
           <Button key="cancel" onClick={() => setIsModalOpen(false)}>
             បោះបង់
           </Button>,

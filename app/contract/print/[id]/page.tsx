@@ -77,11 +77,11 @@ export default function ContractPrintPage() {
         const data = await response.json()
         setContractData(data)
       } else {
-        router.push('/me-dashboard')
+        router.push('/dashboard')
       }
     } catch (error) {
       console.error('Failed to fetch contract:', error)
-      router.push('/me-dashboard')
+      router.push('/dashboard')
     } finally {
       setLoading(false)
     }

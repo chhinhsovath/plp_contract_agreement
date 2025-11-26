@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Modal, Form, Input, Select, InputNumber, Button, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
@@ -22,6 +22,34 @@ export default function IndicatorForm({
 }: IndicatorFormProps) {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
+
+  // Pre-populate form when editing an existing indicator
+  useEffect(() => {
+    if (visible) {
+      if (indicator) {
+        // Editing mode - populate with existing values
+        form.setFieldsValue({
+          indicator_code: indicator.indicator_code,
+          indicator_name_khmer: indicator.indicator_name_khmer,
+          indicator_name_english: indicator.indicator_name_english,
+          contract_type: indicator.contract_type,
+          indicator_type: indicator.indicator_type || 'output',
+          measurement_unit: indicator.measurement_unit,
+          baseline_value: indicator.baseline_value,
+          target_value: indicator.target_value,
+          frequency: indicator.frequency || 'monthly',
+          description: indicator.description
+        })
+      } else {
+        // Creating mode - reset to default values
+        form.setFieldsValue({
+          indicator_type: 'output',
+          frequency: 'monthly',
+          baseline_value: 0
+        })
+      }
+    }
+  }, [visible, indicator, form])
 
   const handleSubmit = async (values: any) => {
     setLoading(true)

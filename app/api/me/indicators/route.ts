@@ -33,80 +33,30 @@ export async function GET(request: Request) {
       effectiveContractType = parseInt(contractType)
     }
 
-    // Define indicator_number ranges for each contract type
-    const indicatorRanges: any = {
-      1: { min: 101, max: 105 },  // AGR1-IND-001 to AGR1-IND-005
-      2: { min: 201, max: 205 },  // AGR2-IND-001 to AGR2-IND-005
-      3: { min: 301, max: 305 },  // AGR3-IND-001 to AGR3-IND-005
-      4: { min: 1, max: 5 },      // IND-001 to IND-005
-      5: { min: 1, max: 5 }       // IND-001 to IND-005
+    // Build where clause for me_indicators
+    let meIndicatorsWhere: any = {}
+
+    // Filter by contract type if specified
+    if (effectiveContractType) {
+      meIndicatorsWhere.contract_type = effectiveContractType
     }
 
-    // Build where clause for indicators query
-    let indicatorsWhere: any = { is_active: true }
-
-    // Filter by indicator_number range if contract type is specified
-    if (effectiveContractType && indicatorRanges[effectiveContractType]) {
-      const range = indicatorRanges[effectiveContractType]
-      indicatorsWhere.indicator_number = {
-        gte: range.min,
-        lte: range.max
-      }
-    }
-
-    // Fetch indicators filtered by contract type range
-    const indicators = await prisma.indicators.findMany({
-      where: indicatorsWhere,
-      orderBy: { indicator_number: 'asc' }
+    // Fetch indicators from me_indicators table
+    const meIndicators = await prisma.me_indicators.findMany({
+      where: meIndicatorsWhere,
+      orderBy: { indicator_code: 'asc' }
     })
 
-    // Get user's contract to see their baseline/target values
-    const userContract = await prisma.contracts.findFirst({
-      where: {
-        contract_type_id: user.contract_type || 4,
-        created_by_id: user.id  // Fixed: use created_by_id (Int) instead of created_by (String)
-      },
-      include: {
-        contract_indicators: {
-          include: {
-            indicator: true
-          }
-        }
-      },
-      orderBy: { created_at: 'desc' }
-    })
-
-    // CRITICAL: For ALL Contract Types 1-5, return empty if no contract exists
-    // This prevents showing indicators to users who haven't configured deliverables
-    if (!userContract && effectiveContractType && effectiveContractType >= 1 && effectiveContractType <= 5) {
-      return NextResponse.json({
-        indicators: [],
-        total: 0,
-        message: 'Please configure your contract deliverables first'
-      })
-    }
-
-    // Map indicators with user's contract data
-    const indicatorsWithProgress = indicators.map(indicator => {
-      // Find if user has this indicator in their contract
-      const contractIndicator = userContract?.contract_indicators.find(
-        ci => ci.indicator_id === indicator.id
-      )
-
-      const baseline = contractIndicator?.baseline_percentage || indicator.baseline_percentage
-      const target = contractIndicator?.target_percentage || indicator.target_percentage
+    // Map indicators with progress calculation
+    const indicatorsWithProgress = meIndicators.map(indicator => {
+      const baseline = indicator.baseline_value || 0
+      const target = indicator.target_value || 100
       const current = baseline // For now, use baseline (later connect to actual progress)
 
-      // Calculate progress
+      // Calculate progress (assuming higher is better for now)
       let progress = 0
-      if (baseline && target) {
-        if (indicator.is_reduction_target) {
-          // For reduction targets (lower is better)
-          progress = Math.round(((baseline - current) / (baseline - target)) * 100)
-        } else {
-          // For increase targets (higher is better)
-          progress = Math.round(((current - baseline) / (target - baseline)) * 100)
-        }
+      if (baseline !== null && target !== null && target > baseline) {
+        progress = Math.round(((current - baseline) / (target - baseline)) * 100)
       }
 
       // Clamp progress between 0-100
@@ -125,17 +75,18 @@ export async function GET(request: Request) {
       return {
         id: indicator.id,
         indicator_code: indicator.indicator_code,
-        indicator_name_khmer: indicator.indicator_name_km,
-        indicator_name_english: indicator.indicator_name_en,
-        indicator_type: indicator.is_reduction_target ? 'កាត់បន្ថយ' : 'លទ្ធផល',
-        indicator_number: indicator.indicator_number,
-        measurement_unit: 'ភាគរយ',
+        indicator_name_khmer: indicator.indicator_name_khmer,
+        indicator_name_english: indicator.indicator_name_english,
+        indicator_type: indicator.indicator_type || 'output',
+        measurement_unit: indicator.measurement_unit || 'ភាគរយ',
         baseline_value: baseline,
         target_value: target,
         current_value: current,
         progress,
         status,
-        selected_rule: contractIndicator?.selected_rule || null
+        frequency: indicator.frequency,
+        contract_type: indicator.contract_type,
+        description: indicator.description
       }
     })
 
@@ -152,4 +103,87 @@ export async function GET(request: Request) {
   }
 }
 
-// POST endpoint removed - indicators are FIXED from PRD, not user-creatable
+/**
+ * POST /api/me/indicators
+ * Create a new indicator
+ * SUPER_ADMIN only
+ */
+export async function POST(request: Request) {
+  try {
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
+    // Get user details
+    const user = await prisma.users.findUnique({
+      where: { id: Number(session.userId) }
+    })
+
+    if (!user || user.role !== UserRole.SUPER_ADMIN) {
+      return NextResponse.json(
+        { error: 'Unauthorized. SUPER_ADMIN access required.' },
+        { status: 403 }
+      )
+    }
+
+    // Parse request body
+    const body = await request.json()
+    const {
+      indicator_code,
+      indicator_name_khmer,
+      indicator_name_english,
+      indicator_type,
+      measurement_unit,
+      baseline_value,
+      target_value,
+      frequency,
+      contract_type,
+      description
+    } = body
+
+    // Validate required fields
+    if (!indicator_code || !indicator_name_khmer || !contract_type) {
+      return NextResponse.json(
+        { error: 'Missing required fields: indicator_code, indicator_name_khmer, contract_type' },
+        { status: 400 }
+      )
+    }
+
+    // Create new indicator
+    const newIndicator = await prisma.me_indicators.create({
+      data: {
+        indicator_code,
+        indicator_name_khmer,
+        indicator_name_english,
+        indicator_type: indicator_type || 'output',
+        measurement_unit: measurement_unit || 'ភាគរយ',
+        baseline_value: baseline_value !== undefined && baseline_value !== null && baseline_value !== ''
+          ? parseFloat(baseline_value)
+          : 0,
+        target_value: target_value !== undefined && target_value !== null && target_value !== ''
+          ? parseFloat(target_value)
+          : 100,
+        frequency: frequency || 'monthly',
+        contract_type: parseInt(contract_type),
+        description
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Indicator created successfully',
+      indicator: newIndicator
+    })
+  } catch (error: any) {
+    console.error('Error creating indicator:', error)
+    return NextResponse.json(
+      {
+        error: 'Failed to create indicator',
+        message: error.message,
+        details: error
+      },
+      { status: 500 }
+    )
+  }
+}

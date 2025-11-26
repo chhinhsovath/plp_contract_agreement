@@ -39,10 +39,12 @@ export async function middleware(request: NextRequest) {
     '/contracts': ['SUPER_ADMIN', 'ADMIN'], // Contract list view
     '/admin/users': ['SUPER_ADMIN'], // User management - SUPER_ADMIN only
     '/admin/reconfiguration-requests': ['SUPER_ADMIN'], // Reconfiguration requests - SUPER_ADMIN only
+    '/admin/indicators-rules': ['SUPER_ADMIN'], // Indicator calculation rules - SUPER_ADMIN only
     '/admin/content-management': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Content management - COORDINATOR can access
     '/admin/deliverables-management': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Deliverables management - COORDINATOR can access
     '/api/admin/users': ['SUPER_ADMIN'], // User API - SUPER_ADMIN only
     '/api/admin/reconfiguration-requests': ['SUPER_ADMIN'], // Reconfig API - SUPER_ADMIN only
+    '/api/admin/indicators': ['SUPER_ADMIN'], // Indicators API - SUPER_ADMIN only
     '/api/admin/deliverables': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Deliverables API - COORDINATOR can access
     '/api/admin/deliverable-options': ['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'], // Options API - COORDINATOR can access
   }
@@ -66,7 +68,11 @@ export async function middleware(request: NextRequest) {
       '/contract/sign',        // Step 1: Read contract
       '/contract/configure',   // Step 2: Configure indicators
       '/contract/submit',      // Step 3: Sign and submit
-      '/me-dashboard',         // Dashboard after completion
+      '/dashboard',         // Dashboard after completion
+      '/indicators',        // Dedicated indicators page
+      '/activities',        // Dedicated activities page
+      '/milestones',        // Dedicated milestones page
+      '/contracts',         // Dedicated contracts page
       '/profile',
       '/api/contracts',
       '/api/contract-deliverables',
@@ -86,10 +92,10 @@ export async function middleware(request: NextRequest) {
 
   // Restrict other roles as needed
   const roleHierarchy: Record<string, string[]> = {
-    'VIEWER': ['/', '/contracts/new', '/contract/edit', '/profile', '/api/contracts', '/api/auth'],
-    'OFFICER': ['/', '/contracts/new', '/contract/edit', '/profile', '/api/contracts', '/api/auth'],
-    'COORDINATOR': ['/', '/contracts/new', '/contract/edit', '/profile', '/api/contracts', '/api/auth'],
-    'MANAGER': ['/', '/contracts/new', '/contract/edit', '/profile', '/api/contracts', '/api/auth'],
+    'VIEWER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/activities', '/milestones', '/contracts', '/profile', '/api/contracts', '/api/auth'],
+    'OFFICER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/activities', '/milestones', '/contracts', '/profile', '/api/contracts', '/api/auth'],
+    'COORDINATOR': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/activities', '/milestones', '/contracts', '/profile', '/api/contracts', '/api/auth'],
+    'MANAGER': ['/', '/contracts/new', '/contract/edit', '/dashboard', '/indicators', '/activities', '/milestones', '/contracts', '/profile', '/api/contracts', '/api/auth'],
   }
 
   if (userRole in roleHierarchy) {

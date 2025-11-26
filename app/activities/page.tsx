@@ -10,7 +10,7 @@ import { useContent } from '@/lib/hooks/useContent'
 const { Sider, Content, Header } = Layout
 const { Title } = Typography
 
-export default function ContractsPage() {
+export default function ActivitiesPage() {
   const router = useRouter()
   const { t, loading: contentLoading } = useContent()
   const [user, setUser] = useState<any>(null)
@@ -60,8 +60,8 @@ export default function ContractsPage() {
       },
       {
         key: 'activities',
-        icon: <FileTextOutlined />,
-        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
+        icon: <ProjectOutlined />,
+        label: 'សកម្មភាព',
       },
       {
         key: 'milestones',
@@ -240,7 +240,7 @@ export default function ContractsPage() {
           <Row justify="space-between" align="middle" style={{ height: '100%' }}>
             <Col>
               <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman', color: '#262626' }}>
-                កិច្ចសន្យារបស់ខ្ញុំ
+                សកម្មភាព
               </Title>
             </Col>
 
@@ -355,8 +355,8 @@ export default function ContractsPage() {
               {t('dashboard_back')}
             </Button>
             <Title level={5} style={{ margin: '0 0 24px 0', fontFamily: 'Hanuman' }}>
-              <FileTextOutlined style={{ marginRight: 8 }} />
-              កិច្ចសន្យារបស់ខ្ញុំ
+              <ProjectOutlined style={{ marginRight: 8 }} />
+              សកម្មភាព
             </Title>
             <Empty description="ទំព័រនេះកំពុងរៀបចំ / This page is under development" />
           </Card>

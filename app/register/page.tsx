@@ -239,7 +239,7 @@ export default function RegisterPage() {
                 }
               } else {
                 // If already signed, go to dashboard
-                router.push('/me-dashboard')
+                router.push('/dashboard')
               }
             } else {
               message.error(loginData.error || 'ការចូលប្រើប្រាស់មិនជោគជ័យ')

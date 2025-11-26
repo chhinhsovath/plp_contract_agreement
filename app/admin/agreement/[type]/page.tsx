@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import { Card, Button, Typography, Divider, Spin, Alert, Space, Tag, Breadcrumb } from 'antd'
-import { ArrowLeftOutlined, FileTextOutlined, HomeOutlined } from '@ant-design/icons'
+import { Card, Button, Typography, Divider, Spin, Alert, Space, Tag, Breadcrumb, Layout, Menu, Dropdown, Avatar, Row, Col } from 'antd'
+import { ArrowLeftOutlined, FileTextOutlined, HomeOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined, EditOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { contractTemplates } from '@/lib/contractTemplates'
 import { useContent } from '@/lib/hooks/useContent'
@@ -10,6 +10,7 @@ import { EditableContent } from '@/components/EditableContent'
 import { UserRole } from '@/lib/roles'
 
 const { Title, Text } = Typography
+const { Sider, Content, Header } = Layout
 
 export default function AdminAgreementPage({ params }: { params: Promise<{ type: string }> }) {
   const resolvedParams = use(params)
@@ -18,6 +19,7 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [contract, setContract] = useState<any>(null)
+  const [collapsed, setCollapsed] = useState(false)
 
   const contractType = parseInt(resolvedParams.type)
   const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN
@@ -68,6 +70,148 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
     refresh() // Reload content from hook
   }
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' })
+      if (response.ok) {
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
+  const getSidebarMenuItems = () => {
+    const baseItems = [
+      {
+        key: 'overview',
+        icon: <DashboardOutlined />,
+        label: 'ទិដ្ឋភាពទូទៅ',
+      },
+      {
+        key: 'indicators',
+        icon: <FundProjectionScreenOutlined />,
+        label: t('dashboard_tab_indicators') || 'សូចនាករ',
+      },
+      {
+        key: 'activities',
+        icon: <ProjectOutlined />,
+        label: 'សកម្មភាព',
+      },
+      {
+        key: 'milestones',
+        icon: <CalendarOutlined />,
+        label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
+      },
+      {
+        key: 'contracts',
+        icon: <FileTextOutlined />,
+        label: t('dashboard_tab_contracts') || 'កិច្ចសន្យារបស់ខ្ញុំ',
+      },
+    ]
+
+    const adminItems: any[] = []
+
+    if (user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR') {
+      adminItems.push({
+        type: 'divider',
+      })
+      adminItems.push({
+        key: 'admin',
+        icon: <SettingOutlined />,
+        label: 'ការគ្រប់គ្រង',
+        children: [
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'manage-users',
+            icon: <TeamOutlined />,
+            label: 'អ្នកប្រើប្រាស់',
+          }] : []),
+          {
+            key: 'content-management',
+            icon: <FileTextOutlined />,
+            label: 'ខ្លឹមសារ',
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'deliverables-content',
+            icon: <EditOutlined />,
+            label: 'កែខ្លឹមសារសមិទ្ធកម្ម',
+          }] : []),
+          {
+            key: 'deliverables-management',
+            icon: <FormOutlined />,
+            label: 'សមិទ្ធកម្ម',
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'reconfig-requests',
+            icon: <BellOutlined />,
+            label: 'សំណើផ្លាស់ប្តូរ',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'indicators-rules',
+            icon: <EditOutlined />,
+            label: 'កែវិធីគណនាសូចនាករ',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-4',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-5',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៥',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-4',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-5',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៥',
+          }] : []),
+        ],
+      })
+    }
+
+    return [...baseItems, ...adminItems]
+  }
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    if (key === 'overview') {
+      router.push('/dashboard')
+    } else if (key === 'indicators') {
+      router.push('/indicators')
+    } else if (key === 'activities') {
+      router.push('/activities')
+    } else if (key === 'milestones') {
+      router.push('/milestones')
+    } else if (key === 'contracts') {
+      router.push('/contracts')
+    } else if (key === 'manage-users') {
+      router.push('/admin/users')
+    } else if (key === 'content-management') {
+      router.push('/admin/content-management')
+    } else if (key === 'deliverables-content') {
+      router.push('/admin/deliverables-content')
+    } else if (key === 'deliverables-management') {
+      router.push('/admin/deliverables-management')
+    } else if (key === 'reconfig-requests') {
+      router.push('/admin/reconfiguration-requests')
+    } else if (key === 'indicators-rules') {
+      router.push('/admin/indicators-rules')
+    } else if (key === 'edit-agreement-4') {
+      router.push('/admin/agreement/4')
+    } else if (key === 'edit-agreement-5') {
+      router.push('/admin/agreement/5')
+    } else if (key === 'edit-configure-4') {
+      router.push('/admin/configure-contract/4')
+    } else if (key === 'edit-configure-5') {
+      router.push('/admin/configure-contract/5')
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -102,73 +246,188 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
     )
   }
 
+  const selectedKey = contractType === 4 ? 'edit-agreement-4' : contractType === 5 ? 'edit-agreement-5' : ''
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Breadcrumb */}
-        <Breadcrumb
-          className="mb-6"
-          items={[
-            {
-              title: (
-                <a onClick={() => router.push('/')}>
-                  <HomeOutlined /> ទំព័រដើម
-                </a>
-              )
-            },
-            {
-              title: 'កែសម្រួលកិច្ចព្រមព្រៀង'
-            },
-            {
-              title: `ប្រភេទ ${contractType}`
-            }
-          ]}
-        />
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={220}
+        collapsedWidth={64}
+        style={{
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          background: '#fff',
+          borderRight: '1px solid #f0f0f0',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.02)',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 16px',
+          flexShrink: 0
+        }}>
+          {collapsed ? (
+            <div style={{ fontSize: 20, fontWeight: 'bold', color: '#1890ff' }}>P</div>
+          ) : (
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#262626' }}>PLP M&E</div>
+          )}
+        </div>
+        <div style={{ flex: 1, overflow: 'auto' }}>
+          <Menu
+            theme="light"
+            selectedKeys={[selectedKey]}
+            mode="inline"
+            items={getSidebarMenuItems()}
+            onClick={handleMenuClick}
+            style={{
+              border: 'none',
+              fontSize: 14
+            }}
+          />
+        </div>
+      </Sider>
 
-        {/* Header */}
-        <Card className="mb-6 shadow-md">
-          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <div className="flex items-center justify-between">
-              <Button
-                icon={<ArrowLeftOutlined />}
-                onClick={() => router.push('/')}
-              >
-                ត្រលប់ក្រោយ
-              </Button>
-              <Tag color="blue">SUPER ADMIN - កែសម្រួលបាន</Tag>
-            </div>
-
-            <div className="text-center">
-              <Title level={2} className="font-hanuman text-blue-800 mb-3">
-                <FileTextOutlined className="mr-3" />
-                {contract.title}
+      <Layout style={{ marginLeft: collapsed ? 64 : 220, transition: 'all 0.2s', background: '#f5f5f5' }}>
+        <Header style={{
+          background: '#fff',
+          borderBottom: '1px solid #f0f0f0',
+          padding: '0 24px',
+          height: 64,
+          lineHeight: '64px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+        }}>
+          <Row justify="space-between" align="middle" style={{ height: '100%' }}>
+            <Col>
+              <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman', color: '#262626' }}>
+                កែសម្រួលកិច្ចព្រមព្រៀង {contractType}
               </Title>
-              <Text className="font-hanuman text-gray-600">
-                ចុចលើខ្លឹមសារណាមួយដើម្បីកែសម្រួល (សូមរង់ចាំ hover ឃើញពណ៌លឿង)
-              </Text>
-            </div>
+            </Col>
 
-            <Alert
-              message="របៀបប្រើប្រាស់"
-              description={
-                <ul className="font-hanuman list-disc ml-5 mt-2">
-                  <li>ចង្អុលទៅលើខ្លឹមសារ → ឃើញពណ៌លឿង និងរូបតារ ✏️</li>
-                  <li>ចុចលើខ្លឹមសារ → បើកផ្ទាំងកែសម្រួល</li>
-                  <li>កែខ្លឹមសារ → ចុច "រក្សាទុក"</li>
-                  <li>ទំព័រនឹងផ្ទុកឡើងវិញដោយស្វ័យប្រវត្តិដើម្បីបង្ហាញការផ្លាស់ប្តូរ</li>
-                </ul>
-              }
-              type="info"
-              showIcon
-            />
-          </Space>
-        </Card>
+            <Col>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'profile',
+                      icon: <UserOutlined />,
+                      label: <span className="font-hanuman">{t('dashboard_menu_profile')}</span>,
+                    },
+                    {
+                      key: 'change-password',
+                      icon: <KeyOutlined />,
+                      label: <span className="font-hanuman">{t('dashboard_menu_password')}</span>,
+                    },
+                    { type: 'divider' },
+                    {
+                      key: 'manage-users',
+                      icon: <TeamOutlined />,
+                      label: 'គ្រប់គ្រងអ្នកប្រើប្រាស់',
+                      onClick: () => router.push('/admin/users')
+                    },
+                    {
+                      key: 'content-management',
+                      icon: <FileTextOutlined />,
+                      label: 'គ្រប់គ្រងខ្លឹមសារ (CMS)',
+                      onClick: () => router.push('/admin/content-management')
+                    },
+                    { type: 'divider' as const },
+                    {
+                      key: 'logout',
+                      icon: <LogoutOutlined />,
+                      label: <span className="font-hanuman">{t('dashboard_menu_logout')}</span>,
+                      onClick: handleLogout,
+                      danger: true
+                    }
+                  ]
+                }}
+                placement="bottomRight"
+              >
+                <Button
+                  type="text"
+                  style={{
+                    height: 48,
+                    padding: '0 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}
+                >
+                  <Avatar icon={<UserOutlined />} size={32} style={{ background: '#1890ff' }} />
+                  <div style={{ textAlign: 'left', display: collapsed ? 'none' : 'block' }}>
+                    <div style={{ fontSize: 14, fontWeight: 500, color: '#262626', fontFamily: 'Hanuman' }}>
+                      {user?.full_name}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#8c8c8c', fontFamily: 'Hanuman' }}>
+                      {user?.role}
+                    </div>
+                  </div>
+                </Button>
+              </Dropdown>
+            </Col>
+          </Row>
+        </Header>
 
-        {/* Contract Content with Inline Editing */}
-        <Card className="shadow-md">
-          <div className="p-6 lg:p-8 bg-white">
-            <div className="prose max-w-none font-hanuman">
-              <h3 className="text-center text-lg font-bold mb-6">{contract.title}</h3>
+        <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            {/* Header */}
+            <Card className="mb-6 shadow-md" style={{ borderRadius: 8 }}>
+              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <div className="flex items-center justify-between">
+                  <Button
+                    icon={<ArrowLeftOutlined />}
+                    onClick={() => router.push('/')}
+              >
+                  ត្រលប់ក្រោយ
+                  </Button>
+                  <Tag color="blue">SUPER ADMIN - កែសម្រួលបាន</Tag>
+                </div>
+
+                <div className="text-center">
+                  <Title level={2} className="font-hanuman text-blue-800 mb-3">
+                    <FileTextOutlined className="mr-3" />
+                    {contract.title}
+                  </Title>
+                  <Text className="font-hanuman text-gray-600">
+                    ចុចលើខ្លឹមសារណាមួយដើម្បីកែសម្រួល (សូមរង់ចាំ hover ឃើញពណ៌លឿង)
+                  </Text>
+                </div>
+
+                <Alert
+                  message="របៀបប្រើប្រាស់"
+                  description={
+                    <ul className="font-hanuman list-disc ml-5 mt-2">
+                      <li>ចង្អុលទៅលើខ្លឹមសារ → ឃើញពណ៌លឿង និងរូបតារ ✏️</li>
+                      <li>ចុចលើខ្លឹមសារ → បើកផ្ទាំងកែសម្រួល</li>
+                      <li>កែខ្លឹមសារ → ចុច "រក្សាទុក"</li>
+                      <li>ទំព័រនឹងផ្ទុកឡើងវិញដោយស្វ័យប្រវត្តិដើម្បីបង្ហាញការផ្លាស់ប្តូរ</li>
+                    </ul>
+                  }
+                  type="info"
+                  showIcon
+                />
+              </Space>
+            </Card>
+
+            {/* Contract Content with Inline Editing */}
+            <Card className="shadow-md">
+              <div className="p-6 lg:p-8 bg-white">
+                <div className="prose max-w-none font-hanuman">
+                  <h3 className="text-center text-lg font-bold mb-6">{contract.title}</h3>
 
               {/* Party A */}
               <div className="mb-6">
@@ -463,7 +722,9 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
             </div>
           </div>
         </Card>
-      </div>
-    </div>
+          </div>
+        </Content>
+      </Layout>
+    </Layout>
   )
 }

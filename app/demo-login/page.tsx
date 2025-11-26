@@ -175,7 +175,7 @@ export default function DemoLoginPage() {
         } else if (user.roleEn === 'COORDINATOR') {
           router.push('/admin/content-management')
         } else {
-          router.push('/me-dashboard')
+          router.push('/dashboard')
         }
       } else {
         message.error('មានបញ្ហាក្នុងការចូលប្រព័ន្ធ')

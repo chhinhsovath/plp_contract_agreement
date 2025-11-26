@@ -42,7 +42,7 @@ export default function ContractSignPage() {
         // Check if user already completed the workflow
         if (userData.contract_signed) {
           message.info(t('sign_already_signed_message'))
-          router.push('/me-dashboard')
+          router.push('/dashboard')
           return
         }
 

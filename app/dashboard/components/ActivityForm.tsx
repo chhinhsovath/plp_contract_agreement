@@ -28,8 +28,32 @@ export default function ActivityForm({
   useEffect(() => {
     if (visible) {
       fetchIndicators()
+      // Pre-populate form when editing
+      if (activity) {
+        form.setFieldsValue({
+          activity_code: activity.activity_code,
+          indicator_id: activity.indicator_id,
+          activity_name_khmer: activity.activity_name_khmer,
+          activity_name_english: activity.activity_name_english,
+          planned_start: activity.planned_start ? dayjs(activity.planned_start) : null,
+          planned_end: activity.planned_end ? dayjs(activity.planned_end) : null,
+          actual_start: activity.actual_start ? dayjs(activity.actual_start) : null,
+          actual_end: activity.actual_end ? dayjs(activity.actual_end) : null,
+          status: activity.status || 'planned',
+          budget_allocated: activity.budget_allocated,
+          budget_spent: activity.budget_spent || 0,
+          responsible_person: activity.responsible_person,
+          location: activity.location
+        })
+      } else {
+        // Creating mode - reset to defaults
+        form.setFieldsValue({
+          status: 'planned',
+          budget_spent: 0
+        })
+      }
     }
-  }, [visible])
+  }, [visible, activity, form])
 
   const fetchIndicators = async () => {
     try {
@@ -82,17 +106,6 @@ export default function ActivityForm({
     }
   }
 
-  const initialValues = activity ? {
-    ...activity,
-    planned_start: activity.planned_start ? dayjs(activity.planned_start) : null,
-    planned_end: activity.planned_end ? dayjs(activity.planned_end) : null,
-    actual_start: activity.actual_start ? dayjs(activity.actual_start) : null,
-    actual_end: activity.actual_end ? dayjs(activity.actual_end) : null
-  } : {
-    status: 'planned',
-    budget_spent: 0
-  }
-
   return (
     <Modal
       title={activity ? 'កែប្រែសកម្មភាព' : 'បង្កើតសកម្មភាពថ្មី'}
@@ -104,7 +117,6 @@ export default function ActivityForm({
       <Form
         form={form}
         layout="vertical"
-        initialValues={initialValues}
         onFinish={handleSubmit}
       >
         <div className="grid grid-cols-2 gap-4">

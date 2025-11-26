@@ -337,7 +337,18 @@ export default function MEDashboardPage() {
     frequency: ind.frequency,
     progress: ind.progress,
     status: ind.status,
-    activities: ind.activities
+    activities: ind.activities,
+    // Include all original fields for editing
+    id: ind.id,
+    indicator_code: ind.indicator_code,
+    indicator_name_khmer: ind.indicator_name_khmer,
+    indicator_name_english: ind.indicator_name_english,
+    indicator_type: ind.indicator_type,
+    measurement_unit: ind.measurement_unit,
+    baseline_value: ind.baseline_value,
+    target_value: ind.target_value,
+    contract_type: ind.contract_type,
+    description: ind.description
   }))
 
   // Format activities data for table
@@ -402,13 +413,13 @@ export default function MEDashboardPage() {
       key: 'type',
       width: 100,
       render: (type: string) => {
-        const colors: any = {
-          'លទ្ធផល': 'blue',       // OUTPUT
-          'កាត់បន្ថយ': 'orange',   // REDUCTION
+        const colorMap: Record<string, string> = {
+          'output': 'blue',
           'outcome': 'green',
-          'impact': 'purple'
+          'impact': 'purple',
+          'process': 'orange'
         }
-        return <Tag color={colors[type] || 'blue'}>{type}</Tag>
+        return <Tag color={colorMap[type] || 'blue'}>{t(`indicator_type_${type}`, type)}</Tag>
       }
     },
     {
@@ -451,13 +462,13 @@ export default function MEDashboardPage() {
       width: 100,
       render: (record: any) => {
         const statusConfig = {
-          'on-track': { color: 'green', text: t('dashboard_on_track') },
-          'delayed': { color: 'orange', text: 'យឺត' },
-          'at-risk': { color: 'red', text: 'មានហានិភ័យ' },
-          'achieved': { color: 'blue', text: t('dashboard_achieved') }
+          'on-track': { color: 'green' },
+          'delayed': { color: 'orange' },
+          'at-risk': { color: 'red' },
+          'achieved': { color: 'blue' }
         }
-        const config = statusConfig[record.status as keyof typeof statusConfig] || { color: 'default', text: record.status }
-        return <Tag color={config.color}>{config.text}</Tag>
+        const config = statusConfig[record.status as keyof typeof statusConfig] || { color: 'default' }
+        return <Tag color={config.color}>{t(`status_${record.status.replace('-', '_')}`, record.status)}</Tag>
       }
     },
     {
@@ -914,6 +925,11 @@ export default function MEDashboardPage() {
         label: t('dashboard_tab_indicators') || 'សូចនាករ',
       },
       {
+        key: 'activities',
+        icon: <ProjectOutlined />,
+        label: 'សកម្មភាព',
+      },
+      {
         key: 'milestones',
         icon: <CalendarOutlined />,
         label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
@@ -946,6 +962,11 @@ export default function MEDashboardPage() {
             icon: <FileTextOutlined />,
             label: 'ខ្លឹមសារ',
           },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'deliverables-content',
+            icon: <EditOutlined />,
+            label: 'កែខ្លឹមសារសមិទ្ធកម្ម',
+          }] : []),
           {
             key: 'deliverables-management',
             icon: <FormOutlined />,
@@ -966,6 +987,16 @@ export default function MEDashboardPage() {
             icon: <EditOutlined />,
             label: 'កែកិច្ចព្រមព្រៀង ៥',
           }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-4',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-5',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៥',
+          }] : []),
         ],
       });
     }
@@ -975,11 +1006,21 @@ export default function MEDashboardPage() {
 
   // Handle menu click
   const handleMenuClick = ({ key }: { key: string }) => {
-    // Navigation items
-    if (key === 'manage-users') {
+    // Dedicated page navigation
+    if (key === 'indicators') {
+      router.push('/indicators');
+    } else if (key === 'activities') {
+      router.push('/activities');
+    } else if (key === 'milestones') {
+      router.push('/milestones');
+    } else if (key === 'contracts') {
+      router.push('/contracts');
+    } else if (key === 'manage-users') {
       router.push('/admin/users');
     } else if (key === 'content-management') {
       router.push('/admin/content-management');
+    } else if (key === 'deliverables-content') {
+      router.push('/admin/deliverables-content');
     } else if (key === 'deliverables-management') {
       router.push('/admin/deliverables-management');
     } else if (key === 'reconfig-requests') {
@@ -988,8 +1029,12 @@ export default function MEDashboardPage() {
       router.push('/admin/agreement/4');
     } else if (key === 'edit-agreement-5') {
       router.push('/admin/agreement/5');
+    } else if (key === 'edit-configure-4') {
+      router.push('/admin/configure-contract/4');
+    } else if (key === 'edit-configure-5') {
+      router.push('/admin/configure-contract/5');
     } else {
-      // For main sections, just update the selected key
+      // For overview, just update the selected key
       setSelectedMenuKey(key);
     }
   };

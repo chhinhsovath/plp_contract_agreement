@@ -44,7 +44,7 @@ export default function ContractSubmitPage() {
         if (userData.contract_signed) {
           setLoading(false)
           message.info(t('submit_already_signed'))
-          router.push('/me-dashboard')
+          router.push('/dashboard')
           return
         }
 
@@ -252,7 +252,7 @@ export default function ContractSubmitPage() {
         message.success(t('contract_submit_success_message'))
 
         setTimeout(() => {
-          router.push('/me-dashboard')
+          router.push('/dashboard')
         }, 1500)
       } else {
         const data = await response.json()

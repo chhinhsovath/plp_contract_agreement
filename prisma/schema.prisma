@@ -127,6 +127,7 @@ model me_indicators {
   frequency              String
   contract_type          Int?
   description            String?
+  calculation_rules      Json?                @default("[]")
   created_at             DateTime             @default(now())
   updated_at             DateTime             @updatedAt
   activities             me_activities[]

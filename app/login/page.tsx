@@ -44,7 +44,7 @@ export default function LoginPage() {
             router.push('/contract/sign')
           }
         } else {
-          router.push('/me-dashboard')
+          router.push('/dashboard')
         }
       } else {
         message.error(data.error || 'លេខទូរស័ព្ទ ឬលេខសម្ងាត់មិនត្រឹមត្រូវ')

@@ -38,7 +38,7 @@ export default function HomePage() {
             router.push('/contract/sign')
             return
           }
-          router.push('/me-dashboard')
+          router.push('/dashboard')
           return
         }
 
@@ -80,7 +80,7 @@ export default function HomePage() {
       key: 'me-dashboard',
       label: 'ផ្ទាំងគ្រប់គ្រង M&E',
       icon: <DashboardOutlined />,
-      onClick: () => router.push('/me-dashboard'),
+      onClick: () => router.push('/dashboard'),
     }] : []),
     ...(user?.role === 'SUPER_ADMIN' ? [{
       key: 'manage-users',
@@ -94,6 +94,12 @@ export default function HomePage() {
       icon: <FileTextOutlined />,
       onClick: () => router.push('/admin/content-management'),
     }] : []),
+    ...(user?.role === 'SUPER_ADMIN' ? [{
+      key: 'deliverables-content',
+      label: 'កែខ្លឹមសារសមិទ្ធកម្ម',
+      icon: <EditOutlined />,
+      onClick: () => router.push('/admin/deliverables-content'),
+    }] : []),
     ...(['SUPER_ADMIN', 'ADMIN', 'COORDINATOR'].includes(user?.role) ? [{
       key: 'deliverables-management',
       label: 'គ្រប់គ្រងសមិទ្ធកម្ម',
@@ -105,6 +111,18 @@ export default function HomePage() {
       label: 'សំណើផ្លាស់ប្តូរ',
       icon: <BellOutlined />,
       onClick: () => router.push('/admin/reconfiguration-requests'),
+    }] : []),
+    ...(user?.role === 'SUPER_ADMIN' ? [{
+      key: 'configure-contract-4',
+      label: 'កែទំព័រកំណត់រចនាសម្ព័ន្ធ ៤',
+      icon: <FileTextOutlined />,
+      onClick: () => router.push('/admin/configure-contract/4'),
+    }] : []),
+    ...(user?.role === 'SUPER_ADMIN' ? [{
+      key: 'configure-contract-5',
+      label: 'កែទំព័រកំណត់រចនាសម្ព័ន្ធ ៥',
+      icon: <FileTextOutlined />,
+      onClick: () => router.push('/admin/configure-contract/5'),
     }] : []),
     { type: 'divider' as const },
     {
@@ -265,6 +283,11 @@ export default function HomePage() {
               <Button icon={<FileTextOutlined />} onClick={() => router.push('/admin/content-management')}>
                 ខ្លឹមសារ
               </Button>
+              {user?.role === 'SUPER_ADMIN' && (
+                <Button icon={<EditOutlined />} onClick={() => router.push('/admin/deliverables-content')}>
+                  កែខ្លឹមសារសមិទ្ធកម្ម
+                </Button>
+              )}
               <Button icon={<FormOutlined />} onClick={() => router.push('/admin/deliverables-management')}>
                 សមិទ្ធកម្ម
               </Button>
@@ -288,6 +311,20 @@ export default function HomePage() {
                     onClick={() => router.push('/admin/agreement/5')}
                   >
                     កែកិច្ចព្រមព្រៀង ៥
+                  </Button>
+                  <Button
+                    icon={<FileTextOutlined />}
+                    style={{ color: '#1890ff', borderColor: '#1890ff' }}
+                    onClick={() => router.push('/admin/configure-contract/4')}
+                  >
+                    កែទំព័រកំណត់រចនាសម្ព័ន្ធ ៤
+                  </Button>
+                  <Button
+                    icon={<FileTextOutlined />}
+                    style={{ color: '#1890ff', borderColor: '#1890ff' }}
+                    onClick={() => router.push('/admin/configure-contract/5')}
+                  >
+                    កែទំព័រកំណត់រចនាសម្ព័ន្ធ ៥
                   </Button>
                 </>
               )}

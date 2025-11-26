@@ -453,30 +453,30 @@ export default function ContractConfigurePage() {
                         {deliverable.baseline_percentage !== undefined && (
                           <div style={{ background: '#fafafa', padding: 12, borderRadius: 6, marginTop: 12 }}>
                             <Text strong style={{ display: 'block', marginBottom: 8, color: '#0047AB' }}>
-                              ព័ត៌មាននៃតម្លៃមូលដ្ឋាន / Baseline Information
+                              {t('configure_baseline_info_title')}
                             </Text>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                               <div>
-                                <Text type="secondary" style={{ fontSize: 12 }}>តម្លៃមូលដ្ឋាន / Baseline %</Text>
+                                <Text type="secondary" style={{ fontSize: 12 }}>{t('configure_baseline_percentage_display')}</Text>
                                 <Paragraph style={{ marginBottom: 0, fontWeight: 500 }}>
                                   {deliverable.baseline_percentage}%
                                 </Paragraph>
                               </div>
                               <div>
-                                <Text type="secondary" style={{ fontSize: 12 }}>ប្រភព / Source</Text>
+                                <Text type="secondary" style={{ fontSize: 12 }}>{t('configure_baseline_source_display')}</Text>
                                 <Paragraph style={{ marginBottom: 0, fontWeight: 500 }}>
                                   {deliverable.baseline_source}
                                 </Paragraph>
                               </div>
                               <div>
-                                <Text type="secondary" style={{ fontSize: 12 }}>កាលបរិច្ឆេទ / Date</Text>
+                                <Text type="secondary" style={{ fontSize: 12 }}>{t('configure_baseline_date_display')}</Text>
                                 <Paragraph style={{ marginBottom: 0, fontWeight: 500 }}>
                                   {deliverable.baseline_date ? new Date(deliverable.baseline_date).toLocaleDateString('km-KH') : '-'}
                                 </Paragraph>
                               </div>
                               {deliverable.baseline_notes && (
                                 <div style={{ gridColumn: '1 / -1' }}>
-                                  <Text type="secondary" style={{ fontSize: 12 }}>ចំណាំ / Notes</Text>
+                                  <Text type="secondary" style={{ fontSize: 12 }}>{t('configure_baseline_notes_display')}</Text>
                                   <Paragraph style={{ marginBottom: 0, fontWeight: 500 }}>
                                     {deliverable.baseline_notes}
                                   </Paragraph>
@@ -520,7 +520,7 @@ export default function ContractConfigurePage() {
               <div style={{ marginTop: 16 }}>
                 <Button
                   size="large"
-                  onClick={() => router.push('/me-dashboard')}
+                  onClick={() => router.push('/dashboard')}
                   style={{ padding: '0 32px', height: 48 }}
                 >
                   {t('contract_configure_return_dashboard_button')}
@@ -721,7 +721,7 @@ export default function ContractConfigurePage() {
                     {user?.contract_type === 5 && (currentDeliverable.deliverable_number === 2 || currentDeliverable.deliverable_number === 3) ? (
                       <div>
                         <Text strong style={{ display: 'block', marginBottom: 16 }}>
-                          តើលទ្ធផលនេះមានឬទេ? *
+                          {t('configure_yesno_question')} *
                         </Text>
                         <Radio.Group
                           value={currentSelection?.yes_no_answer || ''}
@@ -730,10 +730,10 @@ export default function ContractConfigurePage() {
                         >
                           <Space direction="vertical">
                             <Radio value="yes">
-                              <Text style={{ fontSize: 16 }}>បាទ/ចាស</Text>
+                              <Text style={{ fontSize: 16 }}>{t('configure_yes_option')}</Text>
                             </Radio>
                             <Radio value="no">
-                              <Text style={{ fontSize: 16 }}>ទេ</Text>
+                              <Text style={{ fontSize: 16 }}>{t('configure_no_option')}</Text>
                             </Radio>
                           </Space>
                         </Radio.Group>
@@ -743,14 +743,14 @@ export default function ContractConfigurePage() {
                         {/* Baseline Percentage */}
                         <div>
                           <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                            តម្លៃមូលដ្ឋាននៃលទ្ធផលនៅឆ្នាំសិក្សា២០២៤-២០២៥ (%) *
+                            {t('configure_baseline_percentage_label')} *
                           </Text>
                           <Input
                             type="number"
                             min="0"
                             max="100"
                             step="0.1"
-                            placeholder="ឧ. 85.5"
+                            placeholder={t('configure_baseline_percentage_placeholder')}
                             value={currentSelection?.baseline_percentage || ''}
                             onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_percentage', e.target.value ? parseFloat(e.target.value) : undefined)}
                             style={{ width: '100%' }}
@@ -760,10 +760,10 @@ export default function ContractConfigurePage() {
                         {/* Baseline Source */}
                         <div>
                           <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                            ប្រភពទិន្នន័យមូលដ្ឋាន (ជម្រើស)
+                            {t('configure_baseline_source_label')}
                           </Text>
                           <Input
-                            placeholder="ឧ. របាយការណ៍ឆ្នាំ 2024"
+                            placeholder={t('configure_baseline_source_placeholder')}
                             value={currentSelection?.baseline_source || ''}
                             onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_source', e.target.value)}
                             style={{ width: '100%' }}
@@ -773,7 +773,7 @@ export default function ContractConfigurePage() {
                         {/* Baseline Date */}
                         <div>
                           <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                            កាលបរិច្ឆេទដែលបានវាស់វែងតម្លៃមូលដ្ឋាន (ជម្រើស)
+                            {t('configure_baseline_date_label')}
                           </Text>
                           <Input
                             type="date"
@@ -786,10 +786,10 @@ export default function ContractConfigurePage() {
                         {/* Baseline Notes (Optional) */}
                         <div>
                           <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                            ចំណាំលម្អិតបន្ថែម (ជម្រើស)
+                            {t('configure_baseline_notes_label')}
                           </Text>
                           <Input.TextArea
-                            placeholder="ពន្យល់លម្អិតបន្ថែមពីលើតម្លៃមូលដ្ឋាននេះ..."
+                            placeholder={t('configure_baseline_notes_placeholder')}
                             value={currentSelection?.baseline_notes || ''}
                             onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_notes', e.target.value)}
                             rows={3}
