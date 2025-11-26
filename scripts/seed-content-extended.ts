@@ -158,7 +158,7 @@ async function main() {
       create: content
     })
 
-    if (result.created_at.getTime() === result.updated_at.getTime()) {
+    if (result.created_at && result.updated_at && result.created_at.getTime() === result.updated_at.getTime()) {
       created++
     } else {
       updated++
