@@ -88,18 +88,20 @@ export default function AdminConfigureContractPage({ params }: { params: Promise
         label: 'សូចនាករ',
         onClick: () => router.push('/indicators')
       },
-      {
-        key: 'activities',
-        icon: <ProjectOutlined />,
-        label: 'សកម្មភាព',
-        onClick: () => router.push('/activities')
-      },
-      {
-        key: 'milestones',
-        icon: <CalendarOutlined />,
-        label: 'ចំណុចសំខាន់',
-        onClick: () => router.push('/milestones')
-      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      //   onClick: () => router.push('/activities')
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: 'ចំណុចសំខាន់',
+      //   onClick: () => router.push('/milestones')
+      // },
       {
         key: 'contracts',
         icon: <FileTextOutlined />,

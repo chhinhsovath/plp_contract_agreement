@@ -102,20 +102,22 @@ export default function DeliverablesContentPage() {
         icon: <FundProjectionScreenOutlined />,
         label: 'សូចនាករ',
       },
-      {
-        key: 'activities',
-        icon: <FileTextOutlined />,
-        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
-      },
-      {
-        key: 'milestones',
-        icon: <CalendarOutlined />,
-        label: 'ចំណុចសំខាន់',
-      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: 'ចំណុចសំខាន់',
+      // },
       {
         key: 'contracts',
-        icon: <ProjectOutlined />,
-        label: 'គ្រប់គ្រងកិច្ចសន្យា',
+        icon: <FileTextOutlined />,
+        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
       },
     ]
 

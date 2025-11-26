@@ -93,16 +93,18 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
         icon: <FundProjectionScreenOutlined />,
         label: t('dashboard_tab_indicators') || 'សូចនាករ',
       },
-      {
-        key: 'activities',
-        icon: <ProjectOutlined />,
-        label: 'សកម្មភាព',
-      },
-      {
-        key: 'milestones',
-        icon: <CalendarOutlined />,
-        label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
-      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
+      // },
       {
         key: 'contracts',
         icon: <FileTextOutlined />,

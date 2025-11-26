@@ -183,16 +183,18 @@ export default function ContractsPage() {
         icon: <FundProjectionScreenOutlined />,
         label: t('dashboard_tab_indicators') || 'សូចនាករ',
       },
-      {
-        key: 'activities',
-        icon: <FileTextOutlined />,
-        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
-      },
-      {
-        key: 'milestones',
-        icon: <CalendarOutlined />,
-        label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
-      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: t('dashboard_tab_milestones') || 'ចំណុចសំខាន់',
+      // },
       {
         key: 'contracts',
         icon: <FileTextOutlined />,
