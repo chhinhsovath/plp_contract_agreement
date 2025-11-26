@@ -438,21 +438,6 @@ export default function DeliverablesContentPage() {
         </Header>
 
         <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
-          <Card style={{
-            marginBottom: 16,
-            borderRadius: 8,
-            border: '1px solid #f0f0f0',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
-          }}>
-            <Title level={4} style={{ margin: '0 0 8px 0', fontFamily: 'Hanuman' }}>
-              <FileTextOutlined style={{ marginRight: 8 }} />
-              គ្រប់គ្រងខ្លឹមសារសមិទ្ធកម្ម
-            </Title>
-            <Text type="secondary" style={{ fontFamily: 'Hanuman' }}>
-              កែប្រែចំណងជើង និងជម្រើសរបស់សមិទ្ធកម្មទាំងអស់ - ប្រភេទ {selectedType}
-            </Text>
-          </Card>
-
       <Alert
         message="ការណែនាំ"
         description="ប្រើទំព័រនេះដើម្បីកែប្រែចំណងជើងសមិទ្ធកម្ម និងអត្ថបទជម្រើសនីមួយៗ។ ការផ្លាស់ប្តូរនឹងមានផលភ្លាមៗលើទំព័រកំណត់រចនាសម្ព័ន្ធ។"

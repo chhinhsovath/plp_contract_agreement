@@ -290,6 +290,7 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
           <Menu
             theme="light"
             selectedKeys={[selectedKey]}
+            defaultOpenKeys={['admin']}
             mode="inline"
             items={getSidebarMenuItems()}
             onClick={handleMenuClick}

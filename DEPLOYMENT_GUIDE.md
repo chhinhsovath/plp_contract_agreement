@@ -420,3 +420,8 @@ Once all steps are complete:
 ---
 
 **Next Steps**: Monitor for 24 hours, document any issues, schedule team training session.
+
+
+please check on the pages, which could showing duplicate titles headers like this https://mel.openplp.org/admin/content-management គ្រប់គ្រងខ្លឹមសារអត្ថបទ and 
+icon+គ្រប់គ្រងខ្លឹមសារអត្ថបទ and this https://mel.openplp.org/admin/deliverables-content and https://mel.openplp.org/admin/deliverables-management and this page 
+https://mel.openplp.org/admin/agreement/4 and https://mel.openplp.org/admin/agreement/5 active item not working, 

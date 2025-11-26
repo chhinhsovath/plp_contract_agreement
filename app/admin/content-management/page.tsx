@@ -542,21 +542,6 @@ export default function ContentManagementPage() {
         </Header>
 
         <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
-          <Card style={{
-            marginBottom: 16,
-            borderRadius: 8,
-            border: '1px solid #f0f0f0',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
-          }}>
-            <Title level={4} style={{ margin: '0 0 8px 0', fontFamily: 'Hanuman' }}>
-              <FileTextOutlined style={{ marginRight: 8 }} />
-              គ្រប់គ្រងខ្លឹមសារអត្ថបទ
-            </Title>
-            <Text type="secondary" style={{ fontFamily: 'Hanuman' }}>
-              សរុប {texts.length} ខ្លឹមសារ
-            </Text>
-          </Card>
-
       <Alert
         message="ការណែនាំ"
         description="ប្រើទំព័រនេះដើម្បីកែប្រែអត្ថបទខ្មែរ និងអង្គ្លេសទាំងអស់ដែលបង្ហាញនៅក្នុងប្រព័ន្ធ។ ការផ្លាស់ប្តូរនឹងត្រូវបានអនុវត្តភ្លាមៗនៅលើគេហទំព័រ។"
