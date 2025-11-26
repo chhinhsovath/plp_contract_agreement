@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Table, Button, Input, Select, Space, Modal, Form, message, Spin, Tag, Typography, Alert, Popconfirm } from 'antd'
-import { EditOutlined, DeleteOutlined, PlusOutlined, FileTextOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons'
+import { Layout, Menu, Card, Table, Button, Input, Select, Space, Modal, Form, message, Spin, Tag, Typography, Alert, Popconfirm, Dropdown, Avatar, Row, Col } from 'antd'
+import { EditOutlined, DeleteOutlined, PlusOutlined, FileTextOutlined, SearchOutlined, ReloadOutlined, DashboardOutlined, FundProjectionScreenOutlined, UserOutlined, LogoutOutlined, SettingOutlined, TeamOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import type { MenuProps } from 'antd'
 import { useRouter } from 'next/navigation'
-import { AdminNav } from '@/components/admin/AdminNav'
+import { UserRole } from '@/lib/roles'
 
+const { Header, Sider, Content } = Layout
 const { Title, Text } = Typography
 const { TextArea } = Input
 
@@ -22,6 +24,8 @@ interface ContentText {
 
 export default function ContentManagementPage() {
   const router = useRouter()
+  const [user, setUser] = useState<any>(null)
+  const [collapsed, setCollapsed] = useState(false)
   const [loading, setLoading] = useState(true)
   const [texts, setTexts] = useState<ContentText[]>([])
   const [filteredTexts, setFilteredTexts] = useState<ContentText[]>([])
@@ -37,8 +41,24 @@ export default function ContentManagementPage() {
   const [createForm] = Form.useForm()
 
   useEffect(() => {
+    checkAuth()
     fetchTexts()
   }, [])
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/auth/session')
+      if (response.ok) {
+        const data = await response.json()
+        setUser(data.user)
+      } else {
+        router.push('/dashboard')
+      }
+    } catch (error) {
+      console.error('Session check failed:', error)
+      router.push('/dashboard')
+    }
+  }
 
   useEffect(() => {
     filterTexts()
@@ -54,7 +74,7 @@ export default function ContentManagementPage() {
         setCategories(data.categories)
       } else if (response.status === 403) {
         message.error('អ្នកមិនមានសិទ្ធិចូលប្រើទំព័រនេះ')
-        router.push('/')
+        router.push('/dashboard')
       } else {
         message.error('មិនអាចទាញយកទិន្នន័យបាន')
       }
@@ -176,6 +196,80 @@ export default function ContentManagementPage() {
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout failed:', error)
+      message.error('មានបញ្ហាក្នុងការចាកចេញ')
+    }
+  }
+
+  const getSidebarMenuItems = () => {
+    const items: MenuProps['items'] = [
+      {
+        key: 'dashboard',
+        icon: <DashboardOutlined />,
+        label: 'ទំព័រដើម',
+      },
+      {
+        key: 'contracts',
+        icon: <FileTextOutlined />,
+        label: 'កិច្ចសន្យា',
+      },
+    ]
+
+    if (user?.role === UserRole.SUPER_ADMIN) {
+      items.push({
+        key: 'admin',
+        icon: <SettingOutlined />,
+        label: 'គ្រប់គ្រងប្រព័ន្ធ',
+        children: [
+          {
+            key: 'users',
+            icon: <TeamOutlined />,
+            label: 'អ្នកប្រើប្រាស់',
+          },
+          {
+            key: 'content-management',
+            icon: <FileTextOutlined />,
+            label: 'ខ្លឹមសារអត្ថបទ',
+          },
+          {
+            key: 'deliverables-content',
+            icon: <FundProjectionScreenOutlined />,
+            label: 'ខ្លឹមសារការងារ',
+          },
+        ],
+      })
+    }
+
+    return items
+  }
+
+  const handleMenuClick = (key: string) => {
+    switch (key) {
+      case 'dashboard':
+        router.push('/dashboard')
+        break
+      case 'contracts':
+        router.push('/contracts')
+        break
+      case 'users':
+        router.push('/admin/users')
+        break
+      case 'content-management':
+        router.push('/admin/content-management')
+        break
+      case 'deliverables-content':
+        router.push('/admin/deliverables-content')
+        break
+      default:
+        break
+    }
+  }
+
   const getCategoryTag = (category: string) => {
     const colors: Record<string, string> = {
       'contract_sign': 'blue',
@@ -266,19 +360,107 @@ export default function ContentManagementPage() {
     )
   }
 
-  return (
-    <div style={{ padding: 24 }}>
-      <AdminNav />
+  const userMenuItems: MenuProps['items'] = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'ប្រវត្តិរូប',
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: 'ការកំណត់',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'ចាកចេញ',
+      danger: true,
+    },
+  ]
 
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={2}>
-          <FileTextOutlined style={{ marginRight: 12 }} />
-          គ្រប់គ្រងខ្លឹមសារអត្ថបទ (Content Management)
-        </Title>
-        <Text type="secondary">
-          គ្រប់គ្រងអត្ថបទទាំងអស់នៅក្នុងប្រព័ន្ធ - សរុប {texts.length} ខ្លឹមសារ
-        </Text>
-      </Card>
+  const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
+    if (key === 'logout') {
+      handleLogout()
+    } else if (key === 'profile') {
+      router.push('/me-dashboard')
+    }
+  }
+
+  return (
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={220}
+        style={{
+          position: 'fixed',
+          height: '100vh',
+          left: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      >
+        <div
+          style={{
+            height: 64,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: 18,
+            fontWeight: 'bold',
+            fontFamily: 'Hanuman',
+          }}
+        >
+          {collapsed ? 'PLP' : 'PLP គ្រប់គ្រង'}
+        </div>
+        <Menu
+          theme="dark"
+          selectedKeys={['content-management']}
+          mode="inline"
+          items={getSidebarMenuItems()}
+          onClick={({ key }) => handleMenuClick(key)}
+        />
+      </Sider>
+
+      <Layout style={{ marginLeft: collapsed ? 80 : 220, transition: 'margin-left 0.2s' }}>
+        <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Row justify="space-between" style={{ width: '100%' }}>
+            <Col>
+              <Button
+                type="text"
+                onClick={() => router.push('/dashboard')}
+                style={{ fontFamily: 'Hanuman' }}
+              >
+                ត្រឡប់ទៅ Dashboard
+              </Button>
+            </Col>
+            <Col>
+              <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }} placement="bottomRight">
+                <Space style={{ cursor: 'pointer' }}>
+                  <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
+                  <Text style={{ fontFamily: 'Hanuman' }}>{user?.full_name || 'អ្នកប្រើប្រាស់'}</Text>
+                </Space>
+              </Dropdown>
+            </Col>
+          </Row>
+        </Header>
+
+        <Content style={{ margin: '24px', background: '#f0f2f5' }}>
+          <Card style={{ marginBottom: 24 }}>
+            <Title level={2}>
+              <FileTextOutlined style={{ marginRight: 12 }} />
+              គ្រប់គ្រងខ្លឹមសារអត្ថបទ (Content Management)
+            </Title>
+            <Text type="secondary">
+              គ្រប់គ្រងអត្ថបទទាំងអស់នៅក្នុងប្រព័ន្ធ - សរុប {texts.length} ខ្លឹមសារ
+            </Text>
+          </Card>
 
       <Alert
         message="ការណែនាំ"
@@ -495,6 +677,8 @@ export default function ContentManagementPage() {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   )
 }

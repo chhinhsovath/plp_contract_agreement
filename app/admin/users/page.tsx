@@ -1,16 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Table, Button, Tag, Space, Typography, Input, message, Modal, Select, Card, Row, Col } from 'antd'
-import { SearchOutlined, EditOutlined, UserOutlined, HomeOutlined, TeamOutlined } from '@ant-design/icons'
-import Link from 'next/link'
+import { Layout, Menu, Table, Button, Tag, Space, Typography, Input, message, Modal, Select, Card, Row, Col, Dropdown, Avatar } from 'antd'
+import { SearchOutlined, EditOutlined, UserOutlined, TeamOutlined, DashboardOutlined, FileTextOutlined, LogoutOutlined, SettingOutlined, FundProjectionScreenOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import type { MenuProps } from 'antd'
 import { UserRole, ROLE_DEFINITIONS, getRoleLabel, hasPermission } from '@/lib/roles'
-import { AdminNav } from '@/components/admin/AdminNav'
+import { useRouter } from 'next/navigation'
 
+const { Header, Sider, Content } = Layout
 const { Title, Text } = Typography
 const { Search } = Input
 
 export default function UsersManagementPage() {
+  const router = useRouter()
+  const [collapsed, setCollapsed] = useState(false)
   const [users, setUsers] = useState([])
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [loading, setLoading] = useState(false)
@@ -34,7 +37,7 @@ export default function UsersManagementPage() {
         // Check if user has permission to manage users
         if (!hasPermission(data.user.role as UserRole, 'users.read')) {
           message.error('អ្នកមិនមានសិទ្ធិចូលមើលទំព័រនេះ')
-          window.location.href = '/'
+          router.push('/dashboard')
         }
       }
     } catch (error) {
@@ -145,6 +148,80 @@ export default function UsersManagementPage() {
       }))
   }
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout failed:', error)
+      message.error('មានបញ្ហាក្នុងការចាកចេញ')
+    }
+  }
+
+  const getSidebarMenuItems = () => {
+    const items: MenuProps['items'] = [
+      {
+        key: 'dashboard',
+        icon: <DashboardOutlined />,
+        label: 'ទំព័រដើម',
+      },
+      {
+        key: 'contracts',
+        icon: <FileTextOutlined />,
+        label: 'កិច្ចសន្យា',
+      },
+    ]
+
+    if (currentUser?.role === UserRole.SUPER_ADMIN) {
+      items.push({
+        key: 'admin',
+        icon: <SettingOutlined />,
+        label: 'គ្រប់គ្រងប្រព័ន្ធ',
+        children: [
+          {
+            key: 'users',
+            icon: <TeamOutlined />,
+            label: 'អ្នកប្រើប្រាស់',
+          },
+          {
+            key: 'content-management',
+            icon: <FileTextOutlined />,
+            label: 'ខ្លឹមសារអត្ថបទ',
+          },
+          {
+            key: 'deliverables-content',
+            icon: <FundProjectionScreenOutlined />,
+            label: 'ខ្លឹមសារការងារ',
+          },
+        ],
+      })
+    }
+
+    return items
+  }
+
+  const handleMenuClick = (key: string) => {
+    switch (key) {
+      case 'dashboard':
+        router.push('/dashboard')
+        break
+      case 'contracts':
+        router.push('/contracts')
+        break
+      case 'users':
+        router.push('/admin/users')
+        break
+      case 'content-management':
+        router.push('/admin/content-management')
+        break
+      case 'deliverables-content':
+        router.push('/admin/deliverables-content')
+        break
+      default:
+        break
+    }
+  }
+
   const columns = [
     {
       title: 'ឈ្មោះពេញ',
@@ -235,17 +312,104 @@ export default function UsersManagementPage() {
     count: users.filter((u: any) => u.role === role).length,
   }))
 
-  return (
-    <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '40px' }}>
-      <div style={{ margin: '0 auto' }}>
-        <AdminNav />
+  const userMenuItems: MenuProps['items'] = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'ប្រវត្តិរូប',
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: 'ការកំណត់',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'ចាកចេញ',
+      danger: true,
+    },
+  ]
 
-        <Card style={{ marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>
-            <TeamOutlined style={{ marginRight: 8 }} />
-            គ្រប់គ្រងអ្នកប្រើប្រាស់
-          </Title>
-        </Card>
+  const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
+    if (key === 'logout') {
+      handleLogout()
+    } else if (key === 'profile') {
+      router.push('/me-dashboard')
+    }
+  }
+
+  return (
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={220}
+        style={{
+          position: 'fixed',
+          height: '100vh',
+          left: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      >
+        <div
+          style={{
+            height: 64,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: 18,
+            fontWeight: 'bold',
+            fontFamily: 'Hanuman',
+          }}
+        >
+          {collapsed ? 'PLP' : 'PLP គ្រប់គ្រង'}
+        </div>
+        <Menu
+          theme="dark"
+          selectedKeys={['users']}
+          mode="inline"
+          items={getSidebarMenuItems()}
+          onClick={({ key }) => handleMenuClick(key)}
+        />
+      </Sider>
+
+      <Layout style={{ marginLeft: collapsed ? 80 : 220, transition: 'margin-left 0.2s' }}>
+        <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Row justify="space-between" style={{ width: '100%' }}>
+            <Col>
+              <Button
+                type="text"
+                onClick={() => router.push('/dashboard')}
+                style={{ fontFamily: 'Hanuman' }}
+              >
+                ត្រឡប់ទៅ Dashboard
+              </Button>
+            </Col>
+            <Col>
+              <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }} placement="bottomRight">
+                <Space style={{ cursor: 'pointer' }}>
+                  <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
+                  <Text style={{ fontFamily: 'Hanuman' }}>{currentUser?.full_name || 'អ្នកប្រើប្រាស់'}</Text>
+                </Space>
+              </Dropdown>
+            </Col>
+          </Row>
+        </Header>
+
+        <Content style={{ margin: '24px', background: '#f0f2f5' }}>
+          <Card style={{ marginBottom: 24 }}>
+            <Title level={2} style={{ margin: 0 }}>
+              <TeamOutlined style={{ marginRight: 8 }} />
+              គ្រប់គ្រងអ្នកប្រើប្រាស់
+            </Title>
+          </Card>
 
         {/* Role Statistics - Optimized for Tablet/Desktop */}
         <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
@@ -290,7 +454,6 @@ export default function UsersManagementPage() {
             size="middle"
           />
         </div>
-      </div>
 
       {/* Edit User Modal */}
       <Modal
@@ -327,6 +490,8 @@ export default function UsersManagementPage() {
           </div>
         )}
       </Modal>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   )
 }
