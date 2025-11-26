@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { handleApiError, createSuccessResponse, notFoundError, validationError } from '@/lib/api-error-handler'
+import { getSession } from '@/lib/auth'
+import { UserRole } from '@/lib/roles'
 
 // GET single contract
 export async function GET(
@@ -100,11 +102,50 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Check authentication and authorization
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      )
+    }
+
+    // Get user data to check role
+    const user = await prisma.users.findUnique({
+      where: { id: Number(session.userId) },
+      select: { role: true, is_active: true },
+    })
+
+    if (!user || !user.is_active) {
+      return NextResponse.json(
+        { error: 'User not found or inactive' },
+        { status: 401 }
+      )
+    }
+
+    // Only SUPER_ADMIN can delete contracts
+    if (user.role !== UserRole.SUPER_ADMIN) {
+      return NextResponse.json(
+        { error: 'Unauthorized. Only SUPER_ADMIN can delete contracts.' },
+        { status: 403 }
+      )
+    }
+
     const params = await context.params
     const id = parseInt(params.id)
 
     if (isNaN(id)) {
       return validationError('Invalid contract ID', { id: 'Must be a valid number' })
+    }
+
+    // Check if contract exists
+    const contract = await prisma.contracts.findUnique({
+      where: { id },
+    })
+
+    if (!contract) {
+      return notFoundError('Contract')
     }
 
     // Delete related fields first

@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Layout, Menu, Typography, Dropdown, Avatar, Row, Col, Empty, Spin, Button, Table, Tag, message, Select, Space } from 'antd'
-import { ArrowLeftOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, FileTextOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined, EditOutlined, EyeOutlined, DownloadOutlined, FilterOutlined, ReloadOutlined } from '@ant-design/icons'
+import { Card, Layout, Menu, Typography, Dropdown, Avatar, Row, Col, Empty, Spin, Button, Table, Tag, message, Select, Space, Popconfirm } from 'antd'
+import { ArrowLeftOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, FileTextOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined, EditOutlined, EyeOutlined, DownloadOutlined, FilterOutlined, ReloadOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { UserRole } from '@/lib/roles'
 import { useContent } from '@/lib/hooks/useContent'
@@ -137,6 +137,25 @@ export default function ContractsPage() {
     setCommune(undefined)
     setSchool(undefined)
     setCurrentPage(1)
+  }
+
+  const handleDelete = async (contractId: number) => {
+    try {
+      const response = await fetch(`/api/contracts/${contractId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        message.success('កិច្ចសន្យាត្រូវបានលុបដោយជោគជ័យ')
+        fetchContracts() // Refresh the list
+      } else {
+        const error = await response.json()
+        message.error(error.error || 'មានបញ្ហាក្នុងការលុបកិច្ចសន្យា')
+      }
+    } catch (error) {
+      console.error('Failed to delete contract:', error)
+      message.error('មានបញ្ហាក្នុងការលុបកិច្ចសន្យា')
+    }
   }
 
   const handleProvinceChange = (value: string | undefined) => {
@@ -726,10 +745,10 @@ export default function ContractsPage() {
                   {
                     title: 'សកម្មភាព',
                     key: 'actions',
-                    width: 120,
+                    width: user?.role === UserRole.SUPER_ADMIN ? 180 : 120,
                     fixed: 'right' as const,
                     render: (_: any, record: any) => (
-                      <div style={{ display: 'flex', gap: 4 }}>
+                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                         <Button
                           type="link"
                           size="small"
@@ -749,6 +768,33 @@ export default function ContractsPage() {
                           >
                             បោះពុម្ព
                           </Button>
+                        )}
+                        {user?.role === UserRole.SUPER_ADMIN && (
+                          <Popconfirm
+                            title="លុបកិច្ចសន្យា"
+                            description={
+                              <div style={{ fontFamily: 'Hanuman' }}>
+                                តើអ្នកប្រាកដជាចង់លុបកិច្ចសន្យានេះមែនទេ?<br />
+                                <Text type="secondary" style={{ fontSize: 12 }}>
+                                  លេខ: {record.contract_number || record.id}
+                                </Text>
+                              </div>
+                            }
+                            onConfirm={() => handleDelete(record.id)}
+                            okText="លុប"
+                            cancelText="បោះបង់"
+                            okButtonProps={{ danger: true }}
+                          >
+                            <Button
+                              type="link"
+                              size="small"
+                              danger
+                              icon={<DeleteOutlined />}
+                              style={{ fontFamily: 'Hanuman', padding: '0 4px' }}
+                            >
+                              លុប
+                            </Button>
+                          </Popconfirm>
                         )}
                       </div>
                     )
