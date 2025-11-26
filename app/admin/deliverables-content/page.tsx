@@ -91,7 +91,7 @@ export default function DeliverablesContentPage() {
   }
 
   const getSidebarMenuItems = () => {
-    const items = [
+    const baseItems = [
       {
         key: 'overview',
         icon: <DashboardOutlined />,
@@ -121,30 +121,94 @@ export default function DeliverablesContentPage() {
       },
     ]
 
-    if (user?.role === UserRole.SUPER_ADMIN) {
-      items.push({
+    const adminItems: any[] = []
+
+    if (user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR') {
+      adminItems.push({
+        type: 'divider',
+      })
+      adminItems.push({
         key: 'admin',
         icon: <SettingOutlined />,
-        label: 'គ្រប់គ្រងប្រព័ន្ធ',
+        label: 'ការគ្រប់គ្រង',
+        children: [
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'manage-users',
+            icon: <TeamOutlined />,
+            label: 'អ្នកប្រើប្រាស់',
+          }] : []),
+          {
+            key: 'content-management',
+            icon: <FileTextOutlined />,
+            label: 'ខ្លឹមសារ',
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'deliverables-content',
+            icon: <EditOutlined />,
+            label: 'កែខ្លឹមសារសមិទ្ធកម្ម',
+          }] : []),
+          {
+            key: 'deliverables-management',
+            icon: <FormOutlined />,
+            label: 'សមិទ្ធកម្ម',
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'reconfig-requests',
+            icon: <BellOutlined />,
+            label: 'សំណើផ្លាស់ប្តូរ',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-4',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-5',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៥',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-4',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-5',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៥',
+          }] : []),
+        ],
       })
     }
 
-    return items
+    return [...baseItems, ...adminItems]
   }
 
-  const handleMenuClick = (key: string) => {
+  const handleMenuClick = ({ key }: { key: string }) => {
     if (key === 'overview') {
       router.push('/dashboard')
     } else if (key === 'indicators') {
       router.push('/indicators')
-    } else if (key === 'activities') {
-      router.push('/activities')
-    } else if (key === 'milestones') {
-      router.push('/milestones')
     } else if (key === 'contracts') {
       router.push('/contracts')
-    } else if (key === 'admin') {
+    } else if (key === 'manage-users') {
       router.push('/admin/users')
+    } else if (key === 'content-management') {
+      router.push('/admin/content-management')
+    } else if (key === 'deliverables-content') {
+      router.push('/admin/deliverables-content')
+    } else if (key === 'deliverables-management') {
+      router.push('/admin/deliverables-management')
+    } else if (key === 'reconfig-requests') {
+      router.push('/admin/reconfiguration-requests')
+    } else if (key === 'edit-agreement-4') {
+      router.push('/admin/agreement/4')
+    } else if (key === 'edit-agreement-5') {
+      router.push('/admin/agreement/5')
+    } else if (key === 'edit-configure-4') {
+      router.push('/admin/configure-contract/4')
+    } else if (key === 'edit-configure-5') {
+      router.push('/admin/configure-contract/5')
     }
   }
 
@@ -293,7 +357,7 @@ export default function DeliverablesContentPage() {
           mode="inline"
           selectedKeys={['deliverables-content']}
           items={getSidebarMenuItems()}
-          onClick={({ key }) => handleMenuClick(key)}
+          onClick={handleMenuClick}
           style={{
             border: 'none',
             fontSize: 14

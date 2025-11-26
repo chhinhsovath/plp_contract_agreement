@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Layout, Menu, Card, Table, Button, Input, Select, Space, Modal, Form, message, Spin, Tag, Typography, Alert, Popconfirm, Dropdown, Avatar, Row, Col } from 'antd'
-import { EditOutlined, DeleteOutlined, PlusOutlined, FileTextOutlined, SearchOutlined, ReloadOutlined, DashboardOutlined, FundProjectionScreenOutlined, UserOutlined, LogoutOutlined, SettingOutlined, TeamOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import { EditOutlined, DeleteOutlined, PlusOutlined, FileTextOutlined, SearchOutlined, ReloadOutlined, DashboardOutlined, FundProjectionScreenOutlined, UserOutlined, LogoutOutlined, SettingOutlined, TeamOutlined, MenuFoldOutlined, MenuUnfoldOutlined, ProjectOutlined, CalendarOutlined } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { useRouter } from 'next/navigation'
 import { UserRole } from '@/lib/roles'
@@ -207,66 +207,124 @@ export default function ContentManagementPage() {
   }
 
   const getSidebarMenuItems = () => {
-    const items: MenuProps['items'] = [
+    const baseItems = [
       {
-        key: 'dashboard',
+        key: 'overview',
         icon: <DashboardOutlined />,
-        label: 'ទំព័រដើម',
+        label: 'ទិដ្ឋភាពទូទៅ',
       },
+      {
+        key: 'indicators',
+        icon: <FundProjectionScreenOutlined />,
+        label: 'សូចនាករ',
+      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: 'ចំណុចសំខាន់',
+      // },
       {
         key: 'contracts',
         icon: <FileTextOutlined />,
-        label: 'កិច្ចសន្យា',
+        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
       },
     ]
 
-    if (user?.role === UserRole.SUPER_ADMIN) {
-      items.push({
+    const adminItems: any[] = []
+
+    if (user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR') {
+      adminItems.push({
+        type: 'divider',
+      })
+      adminItems.push({
         key: 'admin',
         icon: <SettingOutlined />,
-        label: 'គ្រប់គ្រងប្រព័ន្ធ',
+        label: 'ការគ្រប់គ្រង',
         children: [
-          {
-            key: 'users',
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'manage-users',
             icon: <TeamOutlined />,
             label: 'អ្នកប្រើប្រាស់',
-          },
+          }] : []),
           {
             key: 'content-management',
             icon: <FileTextOutlined />,
-            label: 'ខ្លឹមសារអត្ថបទ',
+            label: 'ខ្លឹមសារ',
           },
-          {
+          ...(user?.role === 'SUPER_ADMIN' ? [{
             key: 'deliverables-content',
+            icon: <EditOutlined />,
+            label: 'កែខ្លឹមសារសមិទ្ធកម្ម',
+          }] : []),
+          {
+            key: 'deliverables-management',
             icon: <FundProjectionScreenOutlined />,
-            label: 'ខ្លឹមសារការងារ',
+            label: 'សមិទ្ធកម្ម',
           },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'reconfig-requests',
+            icon: <UserOutlined />,
+            label: 'សំណើផ្លាស់ប្តូរ',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-4',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-5',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៥',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-4',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-5',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៥',
+          }] : []),
         ],
       })
     }
 
-    return items
+    return [...baseItems, ...adminItems]
   }
 
-  const handleMenuClick = (key: string) => {
-    switch (key) {
-      case 'dashboard':
-        router.push('/dashboard')
-        break
-      case 'contracts':
-        router.push('/contracts')
-        break
-      case 'users':
-        router.push('/admin/users')
-        break
-      case 'content-management':
-        router.push('/admin/content-management')
-        break
-      case 'deliverables-content':
-        router.push('/admin/deliverables-content')
-        break
-      default:
-        break
+  const handleMenuClick = ({ key }: { key: string }) => {
+    if (key === 'overview') {
+      router.push('/dashboard')
+    } else if (key === 'indicators') {
+      router.push('/indicators')
+    } else if (key === 'contracts') {
+      router.push('/contracts')
+    } else if (key === 'manage-users') {
+      router.push('/admin/users')
+    } else if (key === 'content-management') {
+      router.push('/admin/content-management')
+    } else if (key === 'deliverables-content') {
+      router.push('/admin/deliverables-content')
+    } else if (key === 'deliverables-management') {
+      router.push('/admin/deliverables-management')
+    } else if (key === 'reconfig-requests') {
+      router.push('/admin/reconfiguration-requests')
+    } else if (key === 'edit-agreement-4') {
+      router.push('/admin/agreement/4')
+    } else if (key === 'edit-agreement-5') {
+      router.push('/admin/agreement/5')
+    } else if (key === 'edit-configure-4') {
+      router.push('/admin/configure-contract/4')
+    } else if (key === 'edit-configure-5') {
+      router.push('/admin/configure-contract/5')
     }
   }
 
@@ -429,7 +487,7 @@ export default function ContentManagementPage() {
           selectedKeys={['content-management']}
           mode="inline"
           items={getSidebarMenuItems()}
-          onClick={({ key }) => handleMenuClick(key)}
+          onClick={handleMenuClick}
           style={{
             border: 'none',
             fontSize: 14
