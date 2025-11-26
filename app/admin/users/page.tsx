@@ -420,7 +420,8 @@ export default function UsersManagementPage() {
         </div>
         <Menu
           theme="light"
-          selectedKeys={['users']}
+          selectedKeys={['manage-users']}
+          defaultOpenKeys={['admin']}
           mode="inline"
           items={getSidebarMenuItems()}
           style={{
