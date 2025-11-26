@@ -300,6 +300,7 @@ export default function ContractsPage() {
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '50', '100'],
               showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
             }}
             scroll={{ x: 1200 }}

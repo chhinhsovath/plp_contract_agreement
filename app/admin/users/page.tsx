@@ -281,6 +281,7 @@ export default function UsersManagementPage() {
             pagination={{
               pageSize: 15,
               showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '50', '100'],
               showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} អ្នកប្រើប្រាស់`,
             }}
             scroll={{ x: 1200 }}
