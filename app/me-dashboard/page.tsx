@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, message, Dropdown, Avatar, Modal, Form, Input, Spin } from 'antd'
+import { Card, Row, Col, Statistic, Typography, Tabs, Table, Progress, Tag, Space, Button, DatePicker, Select, Timeline, Alert, Badge, Tooltip, Empty, Checkbox, Popconfirm, App, Dropdown, Avatar, Modal, Form, Input, Spin } from 'antd'
 import { DashboardOutlined, RiseOutlined, TeamOutlined, FundProjectionScreenOutlined, CheckCircleOutlined, ClockCircleOutlined, FileTextOutlined, CalendarOutlined, ProjectOutlined, AlertOutlined, SyncOutlined, FieldTimeOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined, UserOutlined, LogoutOutlined, KeyOutlined, ReloadOutlined, DownloadOutlined, TrophyOutlined, CloseCircleOutlined, SettingOutlined, BellOutlined, FormOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
@@ -28,6 +28,7 @@ const CONTRACT_TYPES = {
 export default function MEDashboardPage() {
   const router = useRouter()
   const { t } = useContent()
+  const { message } = App.useApp()
   const [loading, setLoading] = useState(false)
   const [dateRange, setDateRange] = useState([dayjs().subtract(30, 'days'), dayjs()])
   const [selectedContract, setSelectedContract] = useState<number | null>(null)
@@ -56,6 +57,11 @@ export default function MEDashboardPage() {
   const [allContracts, setAllContracts] = useState<any[]>([])
   const [loadingContracts, setLoadingContracts] = useState(false)
   const [showPersonalInfoForm, setShowPersonalInfoForm] = useState(false)
+
+  // Pagination state for all tables
+  const [indicatorsPageSize, setIndicatorsPageSize] = useState(10)
+  const [milestonesPageSize, setMilestonesPageSize] = useState(10)
+  const [contractsPageSize, setContractsPageSize] = useState(10)
 
   useEffect(() => {
     checkSession()
@@ -1295,10 +1301,11 @@ export default function MEDashboardPage() {
                         columns={indicatorColumns}
                         dataSource={indicatorsData}
                         pagination={{
-                          pageSize: 10,
+                          pageSize: indicatorsPageSize,
                           showSizeChanger: true,
                           pageSizeOptions: ['10', '20', '50', '100'],
-                          showTotal: (total) => `សរុប ${total} ធាតុ`
+                          showTotal: (total) => `សរុប ${total} ធាតុ`,
+                          onShowSizeChange: (current, size) => setIndicatorsPageSize(size)
                         }}
                         loading={loadingIndicators}
                         scroll={{ x: 1400 }}
@@ -1572,10 +1579,11 @@ export default function MEDashboardPage() {
                         ]}
                         dataSource={contractMilestones}
                         pagination={{
-                          pageSize: 10,
+                          pageSize: milestonesPageSize,
                           showSizeChanger: true,
                           pageSizeOptions: ['10', '20', '50', '100'],
-                          showTotal: (total) => `សរុប ${total} ធាតុ`
+                          showTotal: (total) => `សរុប ${total} ធាតុ`,
+                          onShowSizeChange: (current, size) => setMilestonesPageSize(size)
                         }}
                         rowKey="id"
                         scroll={{ x: 1200 }}
@@ -1722,8 +1730,7 @@ export default function MEDashboardPage() {
                                     size="small"
                                     icon={<EditOutlined />}
                                     onClick={() => {
-                                      // TODO: Implement edit functionality
-                                      message.info(t('dashboard_edit_coming_soon'))
+                                      router.push(`/admin/agreement/${record.contract_type_id}`)
                                     }}
                                   >
                                     {t('common_edit')}
@@ -1735,10 +1742,11 @@ export default function MEDashboardPage() {
                         ]}
                         dataSource={allContracts}
                         pagination={{
-                          pageSize: 10,
+                          pageSize: contractsPageSize,
                           showSizeChanger: true,
                           pageSizeOptions: ['10', '20', '50', '100'],
-                          showTotal: (total) => `សរុប ${total} កិច្ចសន្យា`
+                          showTotal: (total) => `សរុប ${total} កិច្ចសន្យា`,
+                          onShowSizeChange: (current, size) => setContractsPageSize(size)
                         }}
                         rowKey="id"
                         scroll={{ x: 1200 }}
