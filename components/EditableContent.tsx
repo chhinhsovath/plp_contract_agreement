@@ -80,15 +80,12 @@ export function EditableContent({
     try {
       setLoading(true)
       const response = await fetch(`/api/content-texts/${contentKey}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text_khmer: '' // Set to empty string to delete
-        })
+        method: 'DELETE'
       })
 
       if (!response.ok) {
-        throw new Error('Failed to delete content')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to delete content')
       }
 
       message.success('បានលុបខ្លឹមសារ')
@@ -102,7 +99,7 @@ export function EditableContent({
       }
     } catch (error) {
       console.error('Delete error:', error)
-      message.error('មានបញ្ហាក្នុងការលុប')
+      message.error(error instanceof Error ? error.message : 'មានបញ្ហាក្នុងការលុប')
     } finally {
       setLoading(false)
     }
