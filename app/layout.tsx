@@ -7,6 +7,26 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'ប្រព័ន្ធកិច្ចព្រមព្រៀងសមិទ្ធកម្ម PLP',
   description: 'ប្រព័ន្ធគ្រប់គ្រងកិច្ចព្រមព្រៀងសមិទ្ធកម្មសម្រាប់គម្រោង PLP',
+  manifest: '/favicon/site.webmanifest',
+  icons: {
+    icon: [
+      { url: '/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon/favicon.ico', sizes: 'any' },
+    ],
+    apple: [
+      { url: '/favicon/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'PLP Agreement',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  themeColor: '#1890ff',
 }
 
 export default function RootLayout({
