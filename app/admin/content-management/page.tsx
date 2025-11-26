@@ -32,6 +32,7 @@ export default function ContentManagementPage() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [editingText, setEditingText] = useState<ContentText | null>(null)
   const [processing, setProcessing] = useState(false)
+  const [pageSize, setPageSize] = useState(20)
   const [form] = Form.useForm()
   const [createForm] = Form.useForm()
 
@@ -333,10 +334,11 @@ export default function ContentManagementPage() {
             rowKey="id"
             scroll={{ x: 1200 }}
             pagination={{
-              pageSize: 20,
+              pageSize: pageSize,
               showSizeChanger: true,
               pageSizeOptions: ['10', '20', '50', '100'],
-              showTotal: (total) => `សរុប ${total} ខ្លឹមសារ`
+              showTotal: (total) => `សរុប ${total} ខ្លឹមសារ`,
+              onShowSizeChange: (current, size) => setPageSize(size)
             }}
           />
         </Space>

@@ -21,6 +21,7 @@ export default function ContractsPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [userRole, setUserRole] = useState<string>('')
   const [isAuthorized, setIsAuthorized] = useState(false)
+  const [pageSize, setPageSize] = useState(10)
   const router = useRouter()
 
   useEffect(() => {
@@ -298,10 +299,11 @@ export default function ContractsPage() {
             loading={loading}
             rowKey="id"
             pagination={{
-              pageSize: 10,
+              pageSize: pageSize,
               showSizeChanger: true,
               pageSizeOptions: ['10', '20', '50', '100'],
               showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} កិច្ចព្រមព្រៀង`,
+              onShowSizeChange: (current, size) => setPageSize(size)
             }}
             scroll={{ x: 1200 }}
             size="middle"

@@ -17,6 +17,7 @@ export default function UsersManagementPage() {
   const [searchText, setSearchText] = useState('')
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [pageSize, setPageSize] = useState(15)
 
   useEffect(() => {
     checkCurrentUser()
@@ -279,10 +280,11 @@ export default function UsersManagementPage() {
             loading={loading}
             rowKey="id"
             pagination={{
-              pageSize: 15,
+              pageSize: pageSize,
               showSizeChanger: true,
               pageSizeOptions: ['10', '20', '50', '100'],
               showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} អ្នកប្រើប្រាស់`,
+              onShowSizeChange: (current, size) => setPageSize(size)
             }}
             scroll={{ x: 1200 }}
             size="middle"

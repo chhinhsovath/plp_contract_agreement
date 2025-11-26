@@ -47,6 +47,7 @@ export default function ReconfigurationRequestsPage() {
   const [reviewerNotes, setReviewerNotes] = useState('')
   const [processing, setProcessing] = useState(false)
   const [filterStatus, setFilterStatus] = useState<'pending' | 'approved' | 'rejected' | 'all'>('pending')
+  const [pageSize, setPageSize] = useState(10)
 
   useEffect(() => {
     fetchRequests()
@@ -305,10 +306,11 @@ export default function ReconfigurationRequestsPage() {
           dataSource={requests}
           rowKey="id"
           pagination={{
-            pageSize: 10,
+            pageSize: pageSize,
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '50', '100'],
-            showTotal: (total) => `សរុប ${total} សំណើ`
+            showTotal: (total) => `សរុប ${total} សំណើ`,
+            onShowSizeChange: (current, size) => setPageSize(size)
           }}
         />
       </Card>
