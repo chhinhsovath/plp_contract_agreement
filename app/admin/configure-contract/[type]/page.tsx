@@ -152,6 +152,12 @@ export default function AdminConfigureContractPage({ params }: { params: Promise
             onClick: () => router.push('/admin/reconfiguration-requests')
           }] : []),
           ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'indicators-rules',
+            icon: <EditOutlined />,
+            label: 'កែវិធីគណនាសូចនាករ',
+            onClick: () => router.push('/admin/indicators-rules')
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
             key: 'edit-agreement-4',
             icon: <EditOutlined />,
             label: 'កែកិច្ចព្រមព្រៀង ៤',
