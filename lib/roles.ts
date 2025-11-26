@@ -62,7 +62,7 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleDefinition> = {
   },
   [UserRole.MANAGER]: {
     name: 'Manager',
-    nameKhmer: 'អ្នកគ្រប់គ្រង',
+    nameKhmer: 'អ្នកគ្រប់គ្រងគម្រោង',
     description: 'Project Manager or Unit Manager with contract creation and management',
     descriptionKhmer: 'អ្នកគ្រប់គ្រងគម្រោង ឬអង្គភាព អាចបង្កើត និងគ្រប់គ្រងកិច្ចព្រមព្រៀង',
     level: 60,

@@ -349,10 +349,12 @@ export default function UsersManagementPage() {
     user.organization?.toLowerCase().includes(searchText.toLowerCase())
   )
 
-  const roleStats = Object.values(UserRole).map(role => ({
-    role,
-    count: users.filter((u: any) => u.role === role).length,
-  }))
+  const roleStats = Object.values(UserRole)
+    .map(role => ({
+      role,
+      count: users.filter((u: any) => u.role === role).length,
+    }))
+    .filter(stat => stat.count > 0) // Only show roles with users
 
   const userMenuItems: MenuProps['items'] = [
     {
@@ -477,18 +479,6 @@ export default function UsersManagementPage() {
         </Header>
 
         <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
-          <Card style={{
-            marginBottom: 16,
-            borderRadius: 8,
-            border: '1px solid #f0f0f0',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
-          }}>
-            <Title level={4} style={{ margin: 0, fontFamily: 'Hanuman' }}>
-              <TeamOutlined style={{ marginRight: 8 }} />
-              គ្រប់គ្រងអ្នកប្រើប្រាស់
-            </Title>
-          </Card>
-
         {/* Role Statistics - Optimized for Tablet/Desktop */}
         <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
           {roleStats.map(({ role, count }) => (
