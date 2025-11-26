@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Layout, Menu, Typography, Dropdown, Avatar, Row, Col, Empty, Spin, Button, Table, Tag, message } from 'antd'
-import { ArrowLeftOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, FileTextOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined, EditOutlined, EyeOutlined, DownloadOutlined } from '@ant-design/icons'
+import { Card, Layout, Menu, Typography, Dropdown, Avatar, Row, Col, Empty, Spin, Button, Table, Tag, message, Select, Space } from 'antd'
+import { ArrowLeftOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, FileTextOutlined, SettingOutlined, UserOutlined, LogoutOutlined, KeyOutlined, TeamOutlined, BellOutlined, FormOutlined, EditOutlined, EyeOutlined, DownloadOutlined, FilterOutlined, ReloadOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/navigation'
 import { UserRole } from '@/lib/roles'
 import { useContent } from '@/lib/hooks/useContent'
@@ -18,6 +18,24 @@ export default function ContractsPage() {
   const [contracts, setContracts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Filter state
+  const [contractType, setContractType] = useState<string | undefined>(undefined)
+  const [province, setProvince] = useState<string | undefined>(undefined)
+  const [district, setDistrict] = useState<string | undefined>(undefined)
+  const [commune, setCommune] = useState<string | undefined>(undefined)
+  const [school, setSchool] = useState<string | undefined>(undefined)
+
+  // Filter options
+  const [provinces, setProvinces] = useState<string[]>([])
+  const [districts, setDistricts] = useState<string[]>([])
+  const [communes, setCommunes] = useState<string[]>([])
+  const [schools, setSchools] = useState<string[]>([])
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
+  const [totalContracts, setTotalContracts] = useState(0)
+
   useEffect(() => {
     checkSession()
   }, [])
@@ -25,10 +43,25 @@ export default function ContractsPage() {
   useEffect(() => {
     if (user && (user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN)) {
       fetchContracts()
+      fetchFilterOptions()
     } else {
       setLoading(false)
     }
   }, [user])
+
+  // Refetch when filters or pagination change
+  useEffect(() => {
+    if (user && (user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN)) {
+      fetchContracts()
+    }
+  }, [currentPage, pageSize, contractType, province, district, commune, school])
+
+  // Load cascading filter options when parent filter changes
+  useEffect(() => {
+    if (province || district || commune) {
+      fetchFilterOptions()
+    }
+  }, [province, district, commune])
 
   const checkSession = async () => {
     try {
@@ -48,19 +81,83 @@ export default function ContractsPage() {
   const fetchContracts = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/contracts/all')
+
+      // Build query parameters
+      const params = new URLSearchParams()
+      params.append('page', currentPage.toString())
+      params.append('pageSize', pageSize.toString())
+
+      if (contractType) params.append('contractType', contractType)
+      if (province) params.append('province', province)
+      if (district) params.append('district', district)
+      if (commune) params.append('commune', commune)
+      if (school) params.append('school', school)
+
+      const response = await fetch(`/api/contracts/all?${params.toString()}`)
       if (response.ok) {
         const data = await response.json()
         setContracts(data.contracts || [])
+        setTotalContracts(data.pagination?.total || 0)
       } else {
-        message.error('Failed to fetch contracts')
+        message.error('មានបញ្ហាក្នុងការទាញកិច្ចសន្យា / Failed to fetch contracts')
       }
     } catch (error) {
       console.error('Failed to fetch contracts:', error)
-      message.error('Failed to fetch contracts')
+      message.error('មានបញ្ហាក្នុងការទាញកិច្ចសន្យា / Failed to fetch contracts')
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchFilterOptions = async () => {
+    try {
+      // Build query for cascading filters
+      const params = new URLSearchParams()
+      if (province) params.append('province', province)
+      if (district) params.append('district', district)
+      if (commune) params.append('commune', commune)
+
+      const response = await fetch(`/api/contracts/filter-options?${params.toString()}`)
+      if (response.ok) {
+        const data = await response.json()
+        setProvinces(data.provinces || [])
+        setDistricts(data.districts || [])
+        setCommunes(data.communes || [])
+        setSchools(data.schools || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch filter options:', error)
+    }
+  }
+
+  const handleResetFilters = () => {
+    setContractType(undefined)
+    setProvince(undefined)
+    setDistrict(undefined)
+    setCommune(undefined)
+    setSchool(undefined)
+    setCurrentPage(1)
+  }
+
+  const handleProvinceChange = (value: string | undefined) => {
+    setProvince(value)
+    setDistrict(undefined)
+    setCommune(undefined)
+    setSchool(undefined)
+    setCurrentPage(1)
+  }
+
+  const handleDistrictChange = (value: string | undefined) => {
+    setDistrict(value)
+    setCommune(undefined)
+    setSchool(undefined)
+    setCurrentPage(1)
+  }
+
+  const handleCommuneChange = (value: string | undefined) => {
+    setCommune(value)
+    setSchool(undefined)
+    setCurrentPage(1)
   }
 
   const handleLogout = async () => {
@@ -382,10 +479,134 @@ export default function ContractsPage() {
             >
               {t('dashboard_back')}
             </Button>
-            <Title level={5} style={{ margin: '0 0 24px 0', fontFamily: 'Hanuman' }}>
+            <Title level={5} style={{ margin: '0 0 16px 0', fontFamily: 'Hanuman' }}>
               <FileTextOutlined style={{ marginRight: 8 }} />
-              {user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN ? 'គ្រប់គ្រងកិច្ចសន្យា / Manage Contracts' : 'កិច្ចសន្យារបស់ខ្ញុំ'}
+              {user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN ? 'គ្រប់គ្រងកិច្ចសន្យា' : 'កិច្ចសន្យារបស់ខ្ញុំ'}
             </Title>
+
+            {/* Filter Section */}
+            {(user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN) && (
+              <Card
+                size="small"
+                style={{ marginBottom: 16, background: '#fafafa' }}
+                title={
+                  <Space>
+                    <FilterOutlined />
+                    <span style={{ fontFamily: 'Hanuman' }}>ស្វែងរក / Filter</span>
+                  </Space>
+                }
+              >
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} sm={12} md={8} lg={4}>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ប្រភេទ / Type</div>
+                    <Select
+                      placeholder="ជ្រើសរើសប្រភេទ"
+                      style={{ width: '100%' }}
+                      value={contractType}
+                      onChange={(value) => {
+                        setContractType(value)
+                        setCurrentPage(1)
+                      }}
+                      allowClear
+                      options={[
+                        { label: 'ប្រភេទ 1', value: '1' },
+                        { label: 'ប្រភេទ 2', value: '2' },
+                        { label: 'ប្រភេទ 3', value: '3' },
+                        { label: 'ប្រភេទ 4', value: '4' },
+                        { label: 'ប្រភេទ 5', value: '5' },
+                      ]}
+                    />
+                  </Col>
+
+                  <Col xs={24} sm={12} md={8} lg={5}>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ខេត្ត / Province</div>
+                    <Select
+                      placeholder="ជ្រើសរើសខេត្ត"
+                      style={{ width: '100%' }}
+                      value={province}
+                      onChange={handleProvinceChange}
+                      allowClear
+                      showSearch
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      options={provinces.map(p => ({ label: p, value: p }))}
+                    />
+                  </Col>
+
+                  <Col xs={24} sm={12} md={8} lg={5}>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ស្រុក/ខណ្ឌ / District</div>
+                    <Select
+                      placeholder="ជ្រើសរើសស្រុក/ខណ្ឌ"
+                      style={{ width: '100%' }}
+                      value={district}
+                      onChange={handleDistrictChange}
+                      allowClear
+                      showSearch
+                      disabled={!province}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      options={districts.map(d => ({ label: d, value: d }))}
+                    />
+                  </Col>
+
+                  <Col xs={24} sm={12} md={8} lg={5}>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>ឃុំ/សង្កាត់ / Commune</div>
+                    <Select
+                      placeholder="ជ្រើសរើសឃុំ/សង្កាត់"
+                      style={{ width: '100%' }}
+                      value={commune}
+                      onChange={handleCommuneChange}
+                      allowClear
+                      showSearch
+                      disabled={!district}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      options={communes.map(c => ({ label: c, value: c }))}
+                    />
+                  </Col>
+
+                  <Col xs={24} sm={12} md={8} lg={5}>
+                    <div style={{ marginBottom: 4, fontFamily: 'Hanuman', fontSize: 13 }}>សាលារៀន / School</div>
+                    <Select
+                      placeholder="ជ្រើសរើសសាលារៀន"
+                      style={{ width: '100%' }}
+                      value={school}
+                      onChange={(value) => {
+                        setSchool(value)
+                        setCurrentPage(1)
+                      }}
+                      allowClear
+                      showSearch
+                      disabled={!commune}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      options={schools.map(s => ({ label: s, value: s }))}
+                    />
+                  </Col>
+                </Row>
+
+                <Row style={{ marginTop: 12 }}>
+                  <Col>
+                    <Space>
+                      <Button
+                        icon={<ReloadOutlined />}
+                        onClick={handleResetFilters}
+                        style={{ fontFamily: 'Hanuman' }}
+                      >
+                        កំណត់ឡើងវិញ
+                      </Button>
+                      <Text type="secondary" style={{ fontFamily: 'Hanuman', fontSize: 13 }}>
+                        ចំនួនសរុប: {totalContracts.toLocaleString()} កិច្ចសន្យា
+                      </Text>
+                    </Space>
+                  </Col>
+                </Row>
+              </Card>
+            )}
 
             {loading ? (
               <div style={{ textAlign: 'center', padding: '48px 0' }}>
@@ -397,50 +618,72 @@ export default function ContractsPage() {
                 rowKey="id"
                 columns={[
                   {
-                    title: 'ID',
+                    title: 'លេខ / ID',
                     dataIndex: 'id',
                     key: 'id',
-                    width: 80,
+                    width: 70,
                   },
                   {
-                    title: 'Contract Number',
+                    title: 'លេខកិច្ចសន្យា / Contract #',
                     dataIndex: 'contract_number',
                     key: 'contract_number',
-                    render: (text: string) => <Text code>{text || 'N/A'}</Text>
+                    width: 180,
+                    render: (text: string) => <Text code style={{ fontFamily: 'Hanuman' }}>{text || 'N/A'}</Text>
                   },
                   {
-                    title: 'Type',
+                    title: 'ប្រភេទ / Type',
                     dataIndex: 'contract_type_id',
                     key: 'contract_type_id',
-                    width: 100,
+                    width: 80,
                     render: (type: number) => (
-                      <Tag color={type === 4 ? 'blue' : type === 5 ? 'green' : 'default'}>
-                        Type {type}
+                      <Tag color={type === 4 ? 'blue' : type === 5 ? 'green' : 'default'} style={{ fontFamily: 'Hanuman' }}>
+                        ប្រភេទ {type}
                       </Tag>
                     )
                   },
                   {
-                    title: 'Created By',
+                    title: 'បង្កើតដោយ / Created By',
                     dataIndex: 'created_by_user',
                     key: 'created_by',
+                    width: 180,
                     render: (user: any) => (
                       <div>
                         <div style={{ fontFamily: 'Hanuman', fontWeight: 500 }}>{user?.full_name || 'N/A'}</div>
-                        <div style={{ fontSize: 12, color: '#8c8c8c' }}>{user?.phone_number || user?.email || ''}</div>
+                        <div style={{ fontSize: 11, color: '#8c8c8c', fontFamily: 'Hanuman' }}>
+                          {user?.school_name && <div>{user.school_name}</div>}
+                        </div>
                       </div>
                     )
                   },
                   {
-                    title: 'Party B',
-                    dataIndex: 'party_b_name',
-                    key: 'party_b_name',
+                    title: 'ខេត្ត / Province',
+                    dataIndex: ['created_by_user', 'province_name'],
+                    key: 'province',
+                    width: 120,
                     ellipsis: true,
+                    render: (text: string) => <span style={{ fontFamily: 'Hanuman', fontSize: 12 }}>{text || '-'}</span>
                   },
                   {
-                    title: 'Status',
+                    title: 'ស្រុក/ខណ្ឌ / District',
+                    dataIndex: ['created_by_user', 'district_name'],
+                    key: 'district',
+                    width: 120,
+                    ellipsis: true,
+                    render: (text: string) => <span style={{ fontFamily: 'Hanuman', fontSize: 12 }}>{text || '-'}</span>
+                  },
+                  {
+                    title: 'ឃុំ/សង្កាត់ / Commune',
+                    dataIndex: ['created_by_user', 'commune_name'],
+                    key: 'commune',
+                    width: 120,
+                    ellipsis: true,
+                    render: (text: string) => <span style={{ fontFamily: 'Hanuman', fontSize: 12 }}>{text || '-'}</span>
+                  },
+                  {
+                    title: 'ស្ថានភាព / Status',
                     dataIndex: 'status',
                     key: 'status',
-                    width: 120,
+                    width: 100,
                     render: (status: string) => {
                       const statusColors: Record<string, string> = {
                         'draft': 'default',
@@ -449,35 +692,50 @@ export default function ContractsPage() {
                         'rejected': 'error',
                         'completed': 'success'
                       }
-                      return <Tag color={statusColors[status] || 'default'}>{status?.toUpperCase()}</Tag>
+                      const statusLabels: Record<string, string> = {
+                        'draft': 'សេចក្តីព្រាង',
+                        'pending': 'រងចាំ',
+                        'signed': 'ចុះហត្ថលេខា',
+                        'rejected': 'បដិសេធ',
+                        'completed': 'បានបញ្ចប់'
+                      }
+                      return (
+                        <Tag color={statusColors[status] || 'default'} style={{ fontFamily: 'Hanuman', fontSize: 11 }}>
+                          {statusLabels[status] || status}
+                        </Tag>
+                      )
                     }
                   },
                   {
-                    title: 'Created',
+                    title: 'កាលបរិច្ឆេទ / Date',
                     dataIndex: 'created_at',
                     key: 'created_at',
-                    width: 180,
-                    render: (date: string) => new Date(date).toLocaleString('km-KH', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })
+                    width: 100,
+                    render: (date: string) => (
+                      <span style={{ fontFamily: 'Hanuman', fontSize: 11 }}>
+                        {new Date(date).toLocaleDateString('km-KH', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    )
                   },
                   {
-                    title: 'Actions',
+                    title: 'សកម្មភាព / Actions',
                     key: 'actions',
-                    width: 150,
+                    width: 120,
+                    fixed: 'right' as const,
                     render: (_: any, record: any) => (
-                      <div style={{ display: 'flex', gap: 8 }}>
+                      <div style={{ display: 'flex', gap: 4 }}>
                         <Button
                           type="link"
                           size="small"
                           icon={<EyeOutlined />}
                           onClick={() => router.push(`/contract/print/${record.id}`)}
+                          style={{ fontFamily: 'Hanuman', padding: '0 4px' }}
                         >
-                          View
+                          មើល
                         </Button>
                         {record.contract_html && (
                           <Button
@@ -485,8 +743,9 @@ export default function ContractsPage() {
                             size="small"
                             icon={<DownloadOutlined />}
                             onClick={() => window.open(`/contract/print/${record.id}`, '_blank')}
+                            style={{ fontFamily: 'Hanuman', padding: '0 4px' }}
                           >
-                            Print
+                            បោះពុម្ព
                           </Button>
                         )}
                       </div>
@@ -494,11 +753,22 @@ export default function ContractsPage() {
                   }
                 ]}
                 pagination={{
-                  pageSize: 20,
-                  showTotal: (total) => `Total: ${total} contracts`,
+                  current: currentPage,
+                  pageSize: pageSize,
+                  total: totalContracts,
+                  showTotal: (total) => (
+                    <span style={{ fontFamily: 'Hanuman' }}>
+                      ចំនួនសរុប: {total.toLocaleString()} កិច្ចសន្យា
+                    </span>
+                  ),
                   showSizeChanger: true,
-                  pageSizeOptions: ['10', '20', '50', '100']
+                  pageSizeOptions: ['10', '20', '50', '100'],
+                  onChange: (page, size) => {
+                    setCurrentPage(page)
+                    setPageSize(size)
+                  }
                 }}
+                scroll={{ x: 1400 }}
               />
             ) : (
               <Empty description="ទំព័រនេះកំពុងរៀបចំ / This page is under development" />
