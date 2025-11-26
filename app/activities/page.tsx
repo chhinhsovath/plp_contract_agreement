@@ -349,7 +349,7 @@ export default function ActivitiesPage() {
           >
             <Button
               icon={<ArrowLeftOutlined />}
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.back()}
               style={{ marginBottom: 16 }}
             >
               {t('dashboard_back')}

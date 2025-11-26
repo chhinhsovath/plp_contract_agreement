@@ -677,7 +677,7 @@ export default function IndicatorsPage() {
                 <div>
                   <Button
                     icon={<ArrowLeftOutlined />}
-                    onClick={() => router.push('/dashboard')}
+                    onClick={() => router.back()}
                     style={{ marginBottom: 8 }}
                   >
                     {t('dashboard_back')}

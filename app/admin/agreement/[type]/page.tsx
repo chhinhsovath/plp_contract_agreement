@@ -392,7 +392,7 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
                 <div className="flex items-center justify-between">
                   <Button
                     icon={<ArrowLeftOutlined />}
-                    onClick={() => router.push('/')}
+                    onClick={() => router.back()}
               >
                   ត្រលប់ក្រោយ
                   </Button>

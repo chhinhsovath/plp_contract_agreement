@@ -373,7 +373,7 @@ export default function AdminConfigureContractPage({ params }: { params: Promise
               <div className="flex items-center justify-between">
                 <Button
                   icon={<ArrowLeftOutlined />}
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.back()}
                 >
                   ត្រលប់ក្រោយ
                 </Button>

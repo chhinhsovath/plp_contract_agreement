@@ -358,7 +358,7 @@ export default function ContractPage() {
           <div className="flex items-center space-x-4">
             <Button
               icon={<ArrowLeftOutlined />}
-              onClick={() => router.push('/')}
+              onClick={() => router.back()}
               type="text"
               className="text-white hover:text-blue-200 font-hanuman"
             >

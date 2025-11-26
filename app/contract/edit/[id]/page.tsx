@@ -199,7 +199,7 @@ export default function EditContractPage() {
           <div className="flex items-center space-x-4">
             <Button
               icon={<ArrowLeftOutlined />}
-              onClick={() => router.push('/contracts')}
+              onClick={() => router.back()}
               type="text"
               className="text-white hover:text-blue-200 font-hanuman"
             >
