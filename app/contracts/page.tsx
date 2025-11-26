@@ -493,18 +493,6 @@ export default function ContractsPage() {
             }}
             styles={{ body: { padding: 16 } }}
           >
-            <Button
-              icon={<ArrowLeftOutlined />}
-              onClick={() => router.back()}
-              style={{ marginBottom: 16 }}
-            >
-              {t('dashboard_back')}
-            </Button>
-            <Title level={5} style={{ margin: '0 0 16px 0', fontFamily: 'Hanuman' }}>
-              <FileTextOutlined style={{ marginRight: 8 }} />
-              {user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN ? 'គ្រប់គ្រងកិច្ចសន្យា' : 'កិច្ចសន្យារបស់ខ្ញុំ'}
-            </Title>
-
             {/* Filter Section */}
             {(user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN) && (
               <Card
