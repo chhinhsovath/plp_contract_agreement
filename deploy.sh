@@ -91,6 +91,14 @@ git fetch origin main
 git reset --hard origin/main
 echo -e "\033[0;32m✓ Code pulled\033[0m"
 
+echo -e "\033[1;34m⚙️  Setting up production environment variables...\033[0m"
+if [ -f .env.production ]; then
+  cp .env.production .env
+  echo -e "\033[0;32m✓ Production .env configured\033[0m"
+else
+  echo -e "\033[0;33m⚠ No .env.production found, using existing .env\033[0m"
+fi
+
 echo -e "\033[1;34m🧹 Cleaning up Docker artifacts...\033[0m"
 rm -f docker-compose.yml Dockerfile .dockerignore 2>/dev/null || true
 echo -e "\033[0;32m✓ Cleanup done\033[0m"
