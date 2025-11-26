@@ -523,18 +523,28 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
                 </EditableContent>
               </h4>
               <ul className="mb-6">
-                {[1, 2, 3, 4, 5].map((idx) => (
-                  <li key={idx} className="mb-2">
-                    <EditableContent
-                      contentKey={`contract_${contractType}_responsibility_${idx}`}
-                      isAdmin={isSuperAdmin}
-                      label={`ទំនួលខុសត្រូវទី ${idx}`}
-                      onUpdate={handleContentUpdate}
-                    >
-                      {t(`contract_${contractType}_responsibility_${idx}`)}
-                    </EditableContent>
-                  </li>
-                ))}
+                {[1, 2, 3, 4, 5].map((idx) => {
+                  const contentKey = `contract_${contractType}_responsibility_${idx}`
+                  const contentText = t(contentKey)
+
+                  // Don't render if content doesn't exist or is just the key (fallback)
+                  if (!contentText || contentText === contentKey) {
+                    return null
+                  }
+
+                  return (
+                    <li key={idx} className="mb-2">
+                      <EditableContent
+                        contentKey={contentKey}
+                        isAdmin={isSuperAdmin}
+                        label={`ទំនួលខុសត្រូវទី ${idx}`}
+                        onUpdate={handleContentUpdate}
+                      >
+                        {contentText}
+                      </EditableContent>
+                    </li>
+                  )
+                })}
               </ul>
 
               {/* Article 3 */}
