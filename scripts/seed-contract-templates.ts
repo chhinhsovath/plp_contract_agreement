@@ -88,7 +88,7 @@ async function main() {
     })
 
     // Check if newly created by comparing timestamps
-    const isNew = result.created_at.getTime() === result.updated_at.getTime()
+    const isNew = result.created_at && result.updated_at && result.created_at.getTime() === result.updated_at.getTime()
     if (isNew) {
       created++
     } else {
