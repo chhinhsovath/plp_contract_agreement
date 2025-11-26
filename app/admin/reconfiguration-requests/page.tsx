@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Table, Button, Tag, Space, Modal, Input, message, Spin, Descriptions, Alert, Typography, Badge } from 'antd'
-import { CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons'
+import { Layout, Menu, Card, Table, Button, Tag, Space, Modal, Input, message, Spin, Descriptions, Alert, Typography, Badge, Dropdown, Avatar, Row, Col } from 'antd'
+import { CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, FileTextOutlined, DashboardOutlined, FundProjectionScreenOutlined, ProjectOutlined, CalendarOutlined, SettingOutlined, TeamOutlined, EditOutlined, UserOutlined, LogoutOutlined, KeyOutlined, BellOutlined, FormOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import type { MenuProps } from 'antd'
 import { useRouter } from 'next/navigation'
-import { AdminNav } from '@/components/admin/AdminNav'
+import { UserRole } from '@/lib/roles'
 
+const { Header, Sider, Content } = Layout
 const { Title, Text, Paragraph } = Typography
 const { TextArea } = Input
 
@@ -38,6 +40,8 @@ interface ReconfigRequest {
 
 export default function ReconfigurationRequestsPage() {
   const router = useRouter()
+  const [user, setUser] = useState<any>(null)
+  const [collapsed, setCollapsed] = useState(false)
   const [loading, setLoading] = useState(true)
   const [requests, setRequests] = useState<ReconfigRequest[]>([])
   const [selectedRequest, setSelectedRequest] = useState<ReconfigRequest | null>(null)
@@ -50,8 +54,29 @@ export default function ReconfigurationRequestsPage() {
   const [pageSize, setPageSize] = useState(10)
 
   useEffect(() => {
-    fetchRequests()
-  }, [filterStatus])
+    checkAuth()
+  }, [])
+
+  useEffect(() => {
+    if (user) {
+      fetchRequests()
+    }
+  }, [filterStatus, user])
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/auth/session')
+      if (response.ok) {
+        const data = await response.json()
+        setUser(data.user)
+      } else {
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error)
+      router.push('/login')
+    }
+  }
 
   const fetchRequests = async () => {
     setLoading(true)
@@ -158,6 +183,165 @@ export default function ReconfigurationRequestsPage() {
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
+  const getSidebarMenuItems = () => {
+    const baseItems = [
+      {
+        key: 'overview',
+        icon: <DashboardOutlined />,
+        label: 'ទិដ្ឋភាពទូទៅ',
+      },
+      {
+        key: 'indicators',
+        icon: <FundProjectionScreenOutlined />,
+        label: 'សូចនាករ',
+      },
+      // Hidden: Activities page
+      // {
+      //   key: 'activities',
+      //   icon: <ProjectOutlined />,
+      //   label: 'សកម្មភាព',
+      // },
+      // Hidden: Milestones page
+      // {
+      //   key: 'milestones',
+      //   icon: <CalendarOutlined />,
+      //   label: 'ចំណុចសំខាន់',
+      // },
+      {
+        key: 'contracts',
+        icon: <FileTextOutlined />,
+        label: 'កិច្ចសន្យារបស់ខ្ញុំ',
+      },
+    ]
+
+    const adminItems: any[] = []
+
+    if (user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role === 'COORDINATOR') {
+      adminItems.push({
+        type: 'divider',
+      })
+      adminItems.push({
+        key: 'admin',
+        icon: <SettingOutlined />,
+        label: 'ការគ្រប់គ្រង',
+        children: [
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'manage-users',
+            icon: <TeamOutlined />,
+            label: 'អ្នកប្រើប្រាស់',
+          }] : []),
+          {
+            key: 'content-management',
+            icon: <FileTextOutlined />,
+            label: 'ខ្លឹមសារ',
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'deliverables-content',
+            icon: <EditOutlined />,
+            label: 'កែខ្លឹមសារសមិទ្ធកម្ម',
+          }] : []),
+          {
+            key: 'deliverables-management',
+            icon: <FormOutlined />,
+            label: 'សមិទ្ធកម្ម',
+          },
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'reconfig-requests',
+            icon: <BellOutlined />,
+            label: 'សំណើផ្លាស់ប្តូរ',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-4',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-agreement-5',
+            icon: <EditOutlined />,
+            label: 'កែកិច្ចព្រមព្រៀង ៥',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-4',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៤',
+          }] : []),
+          ...(user?.role === 'SUPER_ADMIN' ? [{
+            key: 'edit-configure-5',
+            icon: <FileTextOutlined />,
+            label: 'កែទំព័រកំណត់រចនា ៥',
+          }] : []),
+        ],
+      })
+    }
+
+    return [...baseItems, ...adminItems]
+  }
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    if (key === 'overview') {
+      router.push('/dashboard')
+    } else if (key === 'indicators') {
+      router.push('/indicators')
+    } else if (key === 'contracts') {
+      router.push('/contracts')
+    } else if (key === 'manage-users') {
+      router.push('/admin/users')
+    } else if (key === 'content-management') {
+      router.push('/admin/content-management')
+    } else if (key === 'deliverables-content') {
+      router.push('/admin/deliverables-content')
+    } else if (key === 'deliverables-management') {
+      router.push('/admin/deliverables-management')
+    } else if (key === 'reconfig-requests') {
+      router.push('/admin/reconfiguration-requests')
+    } else if (key === 'edit-agreement-4') {
+      router.push('/admin/agreement/4')
+    } else if (key === 'edit-agreement-5') {
+      router.push('/admin/agreement/5')
+    } else if (key === 'edit-configure-4') {
+      router.push('/admin/configure-contract/4')
+    } else if (key === 'edit-configure-5') {
+      router.push('/admin/configure-contract/5')
+    }
+  }
+
+  const userMenuItems: MenuProps['items'] = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'ប្រវត្តិរូប',
+    },
+    {
+      key: 'change-password',
+      icon: <KeyOutlined />,
+      label: 'ប្តូរពាក្យសម្ងាត់',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'ចាកចេញ',
+      danger: true,
+    },
+  ]
+
+  const handleUserMenuClick = ({ key }: { key: string }) => {
+    if (key === 'logout') {
+      handleLogout()
+    }
+  }
+
   const getStatusTag = (status: string) => {
     const statusConfig: Record<string, { color: string; text: string }> = {
       pending: { color: 'gold', text: 'រង់ចាំ' },
@@ -253,7 +437,7 @@ export default function ReconfigurationRequestsPage() {
     }
   ]
 
-  if (loading) {
+  if (loading || !user) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Spin size="large" />
@@ -262,18 +446,96 @@ export default function ReconfigurationRequestsPage() {
   }
 
   return (
-    <div style={{ padding: 24 }}>
-      <AdminNav />
+    <Layout style={{ minHeight: '100vh' }}>
+      {/* Light Sidebar */}
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={220}
+        collapsedWidth={64}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          background: '#fff',
+          borderRight: '1px solid #f0f0f0',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.02)'
+        }}
+      >
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottom: '1px solid #f0f0f0',
+          padding: collapsed ? '0 16px' : '0 24px'
+        }}>
+          {!collapsed ? (
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#262626' }}>PLP M&E</div>
+          ) : (
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#262626' }}>PLP M&E</div>
+          )}
+        </div>
+        <Menu
+          theme="light"
+          selectedKeys={['reconfig-requests']}
+          mode="inline"
+          items={getSidebarMenuItems()}
+          onClick={handleMenuClick}
+          style={{
+            border: 'none',
+            fontSize: 14
+          }}
+        />
+      </Sider>
 
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={2}>
-          <FileTextOutlined style={{ marginRight: 12 }} />
-          សំណើផ្លាស់ប្តូរការជ្រើសរើសសមិទ្ធកម្ម
-        </Title>
-        <Text type="secondary">ពិនិត្យ និងគ្រប់គ្រងសំណើផ្លាស់ប្តូរការជ្រើសរើសពីអ្នកប្រើប្រាស់</Text>
-      </Card>
+      <Layout style={{ marginLeft: collapsed ? 64 : 220, transition: 'all 0.2s', background: '#f5f5f5' }}>
+        <Header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#fff',
+          padding: '0 24px',
+          borderBottom: '1px solid #f0f0f0',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+        }}>
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: '16px',
+              width: 48,
+              height: 48,
+            }}
+          />
 
-      <Card>
+          <Space size="middle">
+            <Text strong>{user?.full_name}</Text>
+            <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }} placement="bottomRight" trigger={['click']}>
+              <Avatar style={{ backgroundColor: '#1890ff', cursor: 'pointer' }} icon={<UserOutlined />} />
+            </Dropdown>
+          </Space>
+        </Header>
+
+        <Content style={{ margin: '24px', minHeight: 280 }}>
+          <Card style={{ marginBottom: 24 }}>
+            <Title level={2}>
+              <FileTextOutlined style={{ marginRight: 12 }} />
+              សំណើផ្លាស់ប្តូរការជ្រើសរើសសមិទ្ធកម្ម
+            </Title>
+            <Text type="secondary">ពិនិត្យ និងគ្រប់គ្រងសំណើផ្លាស់ប្តូរការជ្រើសរើសពីអ្នកប្រើប្រាស់</Text>
+          </Card>
+
+          <Card>
         <Space style={{ marginBottom: 16 }}>
           <Button
             type={filterStatus === 'pending' ? 'primary' : 'default'}
@@ -464,6 +726,8 @@ export default function ReconfigurationRequestsPage() {
           </div>
         </Space>
       </Modal>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   )
 }

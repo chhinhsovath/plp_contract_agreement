@@ -385,7 +385,6 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
         </Header>
 
         <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
-          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             {/* Header */}
             <Card className="mb-6 shadow-md" style={{ borderRadius: 8 }}>
               <Space direction="vertical" size="middle" style={{ width: '100%' }}>
@@ -734,7 +733,6 @@ export default function AdminAgreementPage({ params }: { params: Promise<{ type:
             </div>
           </div>
         </Card>
-          </div>
         </Content>
       </Layout>
     </Layout>
