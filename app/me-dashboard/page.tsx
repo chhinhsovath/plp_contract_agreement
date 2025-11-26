@@ -995,19 +995,63 @@ export default function MEDashboardPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f0f2f5' }}>
-      {/* Modern Header with Ant Design styling */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-        marginBottom: 24
-      }}>
-        <div style={{ margin: '0 auto', padding: '32px 48px' }}>
+    <Layout style={{ minHeight: '100vh' }}>
+      {/* Sidebar */}
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={260}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      >
+        <div style={{
+          height: 64,
+          margin: 16,
+          background: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: 8,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#fff',
+          fontSize: collapsed ? 18 : 20,
+          fontWeight: 'bold'
+        }}>
+          {collapsed ? 'PLP' : 'PLP M&E'}
+        </div>
+        <Menu
+          theme="dark"
+          selectedKeys={[selectedMenuKey]}
+          mode="inline"
+          items={getSidebarMenuItems()}
+          onClick={handleMenuClick}
+        />
+      </Sider>
+
+      {/* Main Layout */}
+      <Layout style={{ marginLeft: collapsed ? 80 : 260, transition: 'margin-left 0.2s' }}>
+        {/* Modern Header with Ant Design styling */}
+        <Header style={{
+          background: 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          padding: '16px 48px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          width: '100%',
+          height: 'auto'
+        }}>
           <Row justify="space-between" align="middle">
             <Col>
               <Space size="large">
                 <Avatar
-                  size={64}
+                  size={48}
                   icon={<DashboardOutlined />}
                   style={{
                     background: 'rgba(255,255,255,0.25)',
@@ -1015,10 +1059,10 @@ export default function MEDashboardPage() {
                   }}
                 />
                 <div>
-                  <Title level={2} style={{ color: '#fff', marginBottom: 4, fontFamily: 'Hanuman' }}>
+                  <Title level={3} style={{ color: '#fff', marginBottom: 4, fontFamily: 'Hanuman' }}>
                     {t('dashboard_title')}
                   </Title>
-                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, fontFamily: 'Hanuman' }}>
+                  <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontFamily: 'Hanuman' }}>
                     {t('dashboard_subtitle')}
                   </Text>
                 </div>
@@ -1124,11 +1168,10 @@ export default function MEDashboardPage() {
               </Dropdown>
             </Col>
           </Row>
-        </div>
-      </div>
+        </Header>
 
-      {/* Main Content */}
-      <div style={{ margin: '0 auto', padding: '0 48px 48px' }}>
+        {/* Main Content */}
+        <Content style={{ margin: '24px', background: '#f0f2f5' }}>
 
       {/* Filters - Ant Design Style */}
       <Card style={{ marginBottom: 24, borderRadius: 8 }} styles={{ body: { padding: 24 } }}>
@@ -1352,23 +1395,27 @@ export default function MEDashboardPage() {
         />
       )}
 
-      {/* Data Tabs - Ant Design Style - Simplified to 3 Tabs for ALL Users */}
-      <Card style={{ borderRadius: 8 }}>
-        <Tabs
-          defaultActiveKey="indicators"
-          size="large"
-          tabBarStyle={{ marginBottom: 0, paddingLeft: 0, paddingRight: 0 }}
-          items={[
-            // Tab 1: Indicators (ALWAYS visible for ALL contract types)
-            {
-              key: 'indicators',
-              label: (
-                <span className="font-hanuman text-base">
-                  <FundProjectionScreenOutlined className="mr-2" />
-                  {t('dashboard_tab_indicators')}
-                </span>
-              ),
-              children: (
+      {/* Content Area - Conditional Rendering Based on Selected Menu */}
+
+      {/* Overview Tab */}
+      {selectedMenuKey === 'overview' && (
+        <Card style={{ borderRadius: 8 }}>
+          <Title level={4} className="font-hanuman mb-4">
+            <DashboardOutlined className="mr-2" />
+            ទិដ្ឋភាពទូទៅ
+          </Title>
+          <Empty description="ទិដ្ឋភាពទូទៅនឹងត្រូវបានអភិវឌ្ឍនាពេលខាងមុខ" />
+        </Card>
+      )}
+
+      {/* Indicators Tab */}
+      {selectedMenuKey === 'indicators' && (
+        <Card style={{ borderRadius: 8 }}>
+          <Title level={4} className="font-hanuman mb-4">
+            <FundProjectionScreenOutlined className="mr-2" />
+            {t('dashboard_tab_indicators')}
+          </Title>
+          <div>
                 <div>
                   {(user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) && (
                     <div className="mb-6">
@@ -1412,18 +1459,18 @@ export default function MEDashboardPage() {
                     <Empty description={t('dashboard_no_indicators')} />
                   )}
                 </div>
-              )
-            },
-            // Tab 2: Deliverables (ALWAYS visible for ALL contract types)
-            {
-              key: 'deliverables',
-              label: (
-                <span className="font-hanuman text-base">
-                  <TrophyOutlined className="mr-2" />
-                  {t('dashboard_tab_deliverables')}
-                </span>
-              ),
-              children: (
+          </div>
+        </Card>
+      )}
+
+      {/* Deliverables Tab */}
+      {selectedMenuKey === 'deliverables' && (
+        <Card style={{ borderRadius: 8 }}>
+          <Title level={4} className="font-hanuman mb-4">
+            <TrophyOutlined className="mr-2" />
+            {t('dashboard_tab_deliverables')}
+          </Title>
+          <div>
                 <div>
                   {loadingDeliverables ? (
                     <div className="text-center py-8">
@@ -1574,18 +1621,18 @@ export default function MEDashboardPage() {
                     />
                   )}
                 </div>
-              )
-            },
-            // Tab 3: Milestone Tracking (ALWAYS visible for ALL contract types)
-            {
-              key: 'milestones',
-              label: (
-                <span className="font-hanuman text-base">
-                  <CheckCircleOutlined className="mr-2" />
-                  {t('dashboard_tab_milestones')}
-                </span>
-              ),
-              children: (
+          </div>
+        </Card>
+      )}
+
+      {/* Milestones Tab */}
+      {selectedMenuKey === 'milestones' && (
+        <Card style={{ borderRadius: 8 }}>
+          <Title level={4} className="font-hanuman mb-4">
+            <CheckCircleOutlined className="mr-2" />
+            {t('dashboard_tab_milestones')}
+          </Title>
+          <div>
                 <div>
                   <div className="mb-4 pb-2 border-b">
                     <Title level={4} className="font-hanuman mb-2">តារាងតាមដានសមិទ្ធកម្ម (Milestone Tracking)</Title>
@@ -1746,18 +1793,18 @@ export default function MEDashboardPage() {
                     />
                   )}
                 </div>
-              )
-            },
-            // Tab 4: Contracts List (ONLY visible for SUPER_ADMIN/ADMIN)
-            ...((user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN) ? [{
-              key: 'contracts',
-              label: (
-                <span className="font-hanuman text-base">
-                  <FileTextOutlined className="mr-2" />
-                  {t('dashboard_tab_contracts')}
-                </span>
-              ),
-              children: (
+          </div>
+        </Card>
+      )}
+
+      {/* Contracts Tab - Only for SUPER_ADMIN/ADMIN */}
+      {selectedMenuKey === 'contracts' && (user?.role === UserRole.SUPER_ADMIN || user?.role === UserRole.ADMIN) && (
+        <Card style={{ borderRadius: 8 }}>
+          <Title level={4} className="font-hanuman mb-4">
+            <FileTextOutlined className="mr-2" />
+            {t('dashboard_tab_contracts')}
+          </Title>
+          <div>
                 <div>
                   {loadingContracts ? (
                     <div className="text-center py-8">
@@ -1859,11 +1906,9 @@ export default function MEDashboardPage() {
                     />
                   )}
                 </div>
-              )
-            }] : [])
-          ]}
-        />
-      </Card>
+          </div>
+        </Card>
+      )}
 
       {/* Forms */}
       <IndicatorForm
@@ -1998,7 +2043,8 @@ export default function MEDashboardPage() {
           </Form.Item>
         </Form>
       </Modal>
-      </div>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   )
 }
