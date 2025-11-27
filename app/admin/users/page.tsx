@@ -287,6 +287,18 @@ export default function UsersManagementPage() {
       ),
     },
     {
+      title: 'លេខកិច្ចសន្យា',
+      dataIndex: 'contract_type',
+      key: 'contract_type',
+      render: (contractType: number | null) => (
+        contractType ? (
+          <Tag color="blue">កិច្ចសន្យាទី {contractType}</Tag>
+        ) : (
+          <span style={{ color: '#8c8c8c' }}>-</span>
+        )
+      ),
+    },
+    {
       title: 'ស្ថាប័ន',
       dataIndex: 'organization',
       key: 'organization',
@@ -522,7 +534,7 @@ export default function UsersManagementPage() {
               showSizeChanger: true,
               pageSizeOptions: ['10', '20', '50', '100'],
               showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} អ្នកប្រើប្រាស់`,
-              onShowSizeChange: (current, size) => setPageSize(size)
+              onShowSizeChange: (_current, size) => setPageSize(size)
             }}
             scroll={{ x: 1200 }}
             size="middle"
