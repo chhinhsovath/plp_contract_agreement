@@ -85,7 +85,7 @@ export async function POST(request: Request) {
     response.cookies.set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'none', // Changed to 'none' to support iframe/cross-site contexts
       maxAge: 60 * 60 * 24, // 24 hours
       path: '/',
     })
