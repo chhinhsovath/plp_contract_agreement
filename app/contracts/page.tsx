@@ -17,6 +17,8 @@ export default function ContractsPage() {
   const [collapsed, setCollapsed] = useState(false)
   const [contracts, setContracts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [deleting, setDeleting] = useState(false)
 
   // Filter state
   const [contractType, setContractType] = useState<string | undefined>(undefined)
@@ -156,6 +158,60 @@ export default function ContractsPage() {
       console.error('Failed to delete contract:', error)
       message.error('មានបញ្ហាក្នុងការលុបកិច្ចសន្យា')
     }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedRowKeys.length === 0) {
+      message.warning('សូមជ្រើសរើសកិច្ចសន្យាយ៉ាងហោចណាស់មួយ')
+      return
+    }
+
+    try {
+      setDeleting(true)
+      let successCount = 0
+      let failCount = 0
+
+      // Delete each selected contract
+      for (const id of selectedRowKeys) {
+        try {
+          const response = await fetch(`/api/contracts/${id}`, {
+            method: 'DELETE',
+          })
+
+          if (response.ok) {
+            successCount++
+          } else {
+            failCount++
+          }
+        } catch (error) {
+          failCount++
+        }
+      }
+
+      // Show results
+      if (successCount > 0) {
+        message.success(`លុបកិច្ចសន្យាបានជោគជ័យ ${successCount} ចំនួន`)
+      }
+      if (failCount > 0) {
+        message.error(`មិនអាចលុបកិច្ចសន្យា ${failCount} ចំនួន`)
+      }
+
+      // Clear selection and refresh
+      setSelectedRowKeys([])
+      fetchContracts()
+    } catch (error) {
+      console.error('Bulk delete failed:', error)
+      message.error('មានបញ្ហាក្នុងការលុបកិច្ចសន្យា')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedKeys: React.Key[]) => {
+      setSelectedRowKeys(selectedKeys)
+    },
   }
 
   const handleProvinceChange = (value: string | undefined) => {
@@ -617,6 +673,60 @@ export default function ContractsPage() {
               </Card>
             )}
 
+            {/* Bulk Actions Bar */}
+            {user?.role === UserRole.SUPER_ADMIN && selectedRowKeys.length > 0 && (
+              <Card
+                size="small"
+                style={{
+                  marginBottom: 16,
+                  background: '#e6f7ff',
+                  borderColor: '#1890ff'
+                }}
+              >
+                <Row justify="space-between" align="middle">
+                  <Col>
+                    <Text style={{ fontFamily: 'Hanuman' }}>
+                      បានជ្រើសរើស <strong>{selectedRowKeys.length}</strong> កិច្ចសន្យា
+                    </Text>
+                  </Col>
+                  <Col>
+                    <Space>
+                      <Button
+                        size="small"
+                        onClick={() => setSelectedRowKeys([])}
+                        style={{ fontFamily: 'Hanuman' }}
+                      >
+                        បោះបង់
+                      </Button>
+                      <Popconfirm
+                        title="លុបកិច្ចសន្យា"
+                        description={
+                          <div style={{ fontFamily: 'Hanuman' }}>
+                            តើអ្នកប្រាកដជាចង់លុបកិច្ចសន្យាទាំង {selectedRowKeys.length} នេះមែនទេ?
+                          </div>
+                        }
+                        onConfirm={handleBulkDelete}
+                        okText="លុប"
+                        cancelText="បោះបង់"
+                        okButtonProps={{ danger: true, loading: deleting }}
+                      >
+                        <Button
+                          type="primary"
+                          danger
+                          size="small"
+                          icon={<DeleteOutlined />}
+                          loading={deleting}
+                          style={{ fontFamily: 'Hanuman' }}
+                        >
+                          លុបទាំងអស់
+                        </Button>
+                      </Popconfirm>
+                    </Space>
+                  </Col>
+                </Row>
+              </Card>
+            )}
+
             {loading ? (
               <div style={{ textAlign: 'center', padding: '48px 0' }}>
                 <Spin size="large" />
@@ -625,6 +735,7 @@ export default function ContractsPage() {
               <Table
                 dataSource={contracts}
                 rowKey="id"
+                rowSelection={user?.role === UserRole.SUPER_ADMIN ? rowSelection : undefined}
                 columns={[
                   {
                     title: 'លេខ',

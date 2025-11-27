@@ -421,7 +421,6 @@ Once all steps are complete:
 
 **Next Steps**: Monitor for 24 hours, document any issues, schedule team training session.
 
-
 Tofix 1:
 duplicate header title:
 please check on the pages, which could showing duplicate titles headers like this https://mel.openplp.org/admin/content-management គ្រប់គ្រងខ្លឹមសារអត្ថបទ and 
@@ -431,4 +430,4 @@ Tofix 2:
 Active menu item not working for
 https://mel.openplp.org/admin/agreement/4 and https://mel.openplp.org/admin/agreement/5 active item not working, 
 
-Tofix 3: Add delete function to https://mel.openplp.org/contracts there are many tested contracts. i want to get delete option for admin to deleted those.
+Tofix 1: Add delete function to https://mel.openplp.org/contracts there are many tested contracts. i want to get delete option for admin to deleted those.
