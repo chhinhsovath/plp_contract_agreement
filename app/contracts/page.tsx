@@ -360,7 +360,7 @@ export default function ContractsPage() {
         </div>
         <Menu
           theme="light"
-          selectedKeys={['activities']}
+          selectedKeys={['contracts']}
           mode="inline"
           items={getSidebarMenuItems()}
           onClick={handleMenuClick}
