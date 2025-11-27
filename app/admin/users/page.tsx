@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { Layout, Menu, Table, Button, Tag, Space, Typography, Input, message, Modal, Select, Card, Row, Col, Dropdown, Avatar } from 'antd'
-import { SearchOutlined, EditOutlined, UserOutlined, TeamOutlined, DashboardOutlined, FileTextOutlined, LogoutOutlined, SettingOutlined, FundProjectionScreenOutlined, MenuFoldOutlined, MenuUnfoldOutlined, FormOutlined, BellOutlined } from '@ant-design/icons'
+import type { TableProps } from 'antd'
+import { SearchOutlined, EditOutlined, DeleteOutlined, UserOutlined, TeamOutlined, DashboardOutlined, FileTextOutlined, LogoutOutlined, SettingOutlined, FundProjectionScreenOutlined, MenuFoldOutlined, MenuUnfoldOutlined, FormOutlined, BellOutlined } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { UserRole, ROLE_DEFINITIONS, getRoleLabel, hasPermission } from '@/lib/roles'
 import { useRouter } from 'next/navigation'
@@ -21,6 +22,7 @@ export default function UsersManagementPage() {
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [pageSize, setPageSize] = useState(15)
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
   useEffect(() => {
     checkCurrentUser()
@@ -106,6 +108,84 @@ export default function UsersManagementPage() {
           }
         } catch (error) {
           message.error(`កំហុសក្នុងការ${action}`)
+        }
+      },
+    })
+  }
+
+  const handleDeleteUser = async (userId: number, userName: string) => {
+    Modal.confirm({
+      title: 'បញ្ជាក់ការលុបគណនី',
+      content: `តើអ្នកពិតជាចង់លុបគណនី "${userName}" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។`,
+      okText: 'លុប',
+      okType: 'danger',
+      cancelText: 'បោះបង់',
+      onOk: async () => {
+        try {
+          const response = await fetch(`/api/admin/users/${userId}`, {
+            method: 'DELETE',
+          })
+
+          const data = await response.json()
+
+          if (response.ok) {
+            message.success('គណនីត្រូវបានលុបដោយជោគជ័យ')
+            fetchUsers()
+          } else {
+            message.error(data.error || 'មានបញ្ហាក្នុងការលុបគណនី')
+          }
+        } catch (error) {
+          message.error('កំហុសក្នុងការលុប')
+        }
+      },
+    })
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedRowKeys.length === 0) {
+      message.warning('សូមជ្រើសរើសអ្នកប្រើប្រាស់យ៉ាងហោចណាស់មួយនាក់')
+      return
+    }
+
+    Modal.confirm({
+      title: 'បញ្ជាក់ការលុបជាក្រុម',
+      content: `តើអ្នកពិតជាចង់លុបអ្នកប្រើប្រាស់ចំនួន ${selectedRowKeys.length} នាក់មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។`,
+      okText: 'លុប',
+      okType: 'danger',
+      cancelText: 'បោះបង់',
+      onOk: async () => {
+        try {
+          const response = await fetch('/api/admin/users', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userIds: selectedRowKeys }),
+          })
+
+          const data = await response.json()
+
+          if (response.ok) {
+            message.success(data.message || `លុបអ្នកប្រើប្រាស់ចំនួន ${data.deletedCount} នាក់ដោយជោគជ័យ`)
+
+            if (data.undeletableUsers && data.undeletableUsers.length > 0) {
+              Modal.info({
+                title: 'អ្នកប្រើប្រាស់ដែលមិនអាចលុបបាន',
+                content: (
+                  <ul>
+                    {data.undeletableUsers.map((user: string, index: number) => (
+                      <li key={index}>{user}</li>
+                    ))}
+                  </ul>
+                ),
+              })
+            }
+
+            setSelectedRowKeys([])
+            fetchUsers()
+          } else {
+            message.error(data.error || 'មានបញ្ហាក្នុងការលុបអ្នកប្រើប្រាស់')
+          }
+        } catch (error) {
+          message.error('កំហុសក្នុងការលុប')
         }
       },
     })
@@ -350,6 +430,14 @@ export default function UsersManagementPage() {
               {record.is_active ? 'ផ្អាក' : 'ធ្វើឱ្យសកម្ម'}
             </Button>
           )}
+          {hasPermission(currentUser?.role as UserRole, 'users.delete') && canEditUser(record.role) && record.phone_number !== '077806680' && (
+            <Button
+              type="text"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => handleDeleteUser(record.id, record.full_name)}
+            />
+          )}
         </Space>
       ),
     },
@@ -396,6 +484,16 @@ export default function UsersManagementPage() {
     } else if (key === 'profile') {
       router.push('/me-dashboard')
     }
+  }
+
+  const rowSelection: TableProps<any>['rowSelection'] = {
+    selectedRowKeys,
+    onChange: (selectedKeys: React.Key[]) => {
+      setSelectedRowKeys(selectedKeys)
+    },
+    getCheckboxProps: (record: any) => ({
+      disabled: record.phone_number === '077806680' || !canEditUser(record.role), // Disable super admin and users with higher roles
+    }),
   }
 
   return (
@@ -511,7 +609,7 @@ export default function UsersManagementPage() {
           ))}
         </Row>
 
-        <div style={{ marginBottom: 24 }}>
+        <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
           <Search
             placeholder="ស្វែងរកតាមឈ្មោះ លេខទូរស័ព្ទ ឬស្ថាប័ន"
             allowClear
@@ -519,8 +617,19 @@ export default function UsersManagementPage() {
             size="large"
             onSearch={setSearchText}
             onChange={(e) => setSearchText(e.target.value)}
-            style={{ minWidth: 400 }}
+            style={{ minWidth: 400, flex: 1 }}
           />
+          {hasPermission(currentUser?.role as UserRole, 'users.delete') && selectedRowKeys.length > 0 && (
+            <Button
+              type="primary"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={handleBulkDelete}
+              size="large"
+            >
+              លុបដែលបានជ្រើសរើស ({selectedRowKeys.length})
+            </Button>
+          )}
         </div>
 
         <div style={{ overflowX: 'auto' }}>
@@ -529,6 +638,7 @@ export default function UsersManagementPage() {
             dataSource={filteredUsers}
             loading={loading}
             rowKey="id"
+            rowSelection={rowSelection}
             pagination={{
               pageSize: pageSize,
               showSizeChanger: true,
