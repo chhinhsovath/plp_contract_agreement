@@ -8,12 +8,34 @@ import Link from 'next/link'
 
 const { Title, Text, Paragraph } = Typography
 
+const LOGIN_TYPES = [
+  {
+    id: 'internal',
+    title: 'ការិយាល័យអប់រំស្រុក/ខណ្ឌ',
+    subtitle: 'ចូលប្រើប្រាស់សម្រាប់កិច្ចព្រមព្រៀងប្រភេទ 4',
+    description: 'ចូលប្រើដោយប្រើលេខទូរស័ព្ទ និងលេខសម្ងាត់',
+    icon: <TeamOutlined />,
+    color: '#52c41a'
+  },
+  {
+    id: 'external',
+    title: 'សាលារៀន',
+    subtitle: 'ចូលប្រើប្រាស់សម្រាប់កិច្ចព្រមព្រៀងប្រភេទ 5',
+    description: 'ចូលប្រើដោយប្រើឈ្មោះអ្នកប្រើ និងលេខសម្ងាត់ពីប្រព័ន្ធ PLP',
+    icon: <SafetyOutlined />,
+    color: '#1890ff'
+  }
+]
+
 export default function LoginPage() {
   const [form] = Form.useForm()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [selectedLoginType, setSelectedLoginType] = useState<string | null>(null)
+  const [hasSelectedLoginType, setHasSelectedLoginType] = useState(false)
 
-  const handleSubmit = async (values: any) => {
+  // Handle Internal Login (Phone + Passcode)
+  const handleInternalLogin = async (values: any) => {
     const phoneNumber = values.phone_number.replace(/\D/g, '') // Remove non-digits
 
     setLoading(true)
@@ -33,6 +55,7 @@ export default function LoginPage() {
         message.success('ចូលប្រើប្រាស់បានជោគជ័យ!')
         // Store user info in localStorage or context
         localStorage.setItem('user', JSON.stringify(data.user))
+        localStorage.setItem('user_contract_type', '4')
 
         // Check if user needs to sign contract (PARTNER role and not signed)
         if (data.requiresContractSigning) {
@@ -51,6 +74,43 @@ export default function LoginPage() {
       }
     } catch (error) {
       message.error('កំហុសក្នុងការតភ្ជាប់')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Handle External Login (Username + Password via Globe API)
+  const handleExternalLogin = async (values: any) => {
+    setLoading(true)
+    try {
+      const response = await fetch('https://plp-api.moeys.gov.kh/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: values.username,
+          password: values.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.accessToken) {
+        message.success('ចូលប្រើប្រាស់បានជោគជ័យ!')
+
+        // Store the external user data and token
+        localStorage.setItem('external_access_token', data.accessToken)
+        localStorage.setItem('external_user', JSON.stringify(data.user))
+        localStorage.setItem('user_contract_type', '5')
+
+        // TODO: Check if user needs to sign contract
+        // For now, always redirect to configure page
+        router.push('/contract/configure')
+      } else {
+        message.error(data.message || 'ឈ្មោះអ្នកប្រើ ឬលេខសម្ងាត់មិនត្រឹមត្រូវ')
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      message.error('កំហុសក្នុងការតភ្ជាប់ទៅម៉ាស៊ីនមេ PLP')
     } finally {
       setLoading(false)
     }
@@ -188,97 +248,262 @@ export default function LoginPage() {
           >
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
               <Title level={3} style={{ margin: 0, marginBottom: 8 }}>
-                ចូលប្រើប្រាស់
+                {!hasSelectedLoginType
+                  ? 'ជ្រើសរើសប្រភេទចូលប្រើ'
+                  : selectedLoginType === 'internal'
+                    ? 'ចូលប្រើប្រាស់ (ការិយាល័យអប់រំស្រុក/ខណ្ឌ)'
+                    : 'ចូលប្រើប្រាស់ (សាលារៀន)'}
               </Title>
               <Text type="secondary" style={{ fontSize: 15 }}>
-                សូមចូលប្រើគណនីរបស់អ្នក ដើម្បីបន្តទៅកាន់ប្រព័ន្ធ
+                {!hasSelectedLoginType
+                  ? 'សូមជ្រើសរើសប្រភេទគណនីរបស់អ្នក'
+                  : selectedLoginType === 'internal'
+                    ? 'ចូលប្រើដោយប្រើលេខទូរស័ព្ទ និងលេខសម្ងាត់'
+                    : 'ចូលប្រើដោយប្រើឈ្មោះអ្នកប្រើ និងលេខសម្ងាត់ពីប្រព័ន្ធ PLP'
+                }
               </Text>
             </div>
 
-            <Form
-              form={form}
-              layout="vertical"
-              onFinish={handleSubmit}
-              size="large"
-            >
-              <Form.Item
-                name="phone_number"
-                label="លេខទូរស័ព្ទ"
-                rules={[
-                  { required: true, message: 'សូមបំពេញលេខទូរស័ព្ទ' },
-                  { pattern: /^[0-9]{9,12}$/, message: 'លេខទូរស័ព្ទមិនត្រឹមត្រូវ' }
-                ]}
-              >
-                <Input
-                  prefix={<PhoneOutlined />}
-                  placeholder="0123456789"
-                  maxLength={12}
-                />
-              </Form.Item>
+            {/* Step 1: Login Type Selection */}
+            {!hasSelectedLoginType && (
+              <>
+                <div style={{ marginBottom: 24 }}>
+                  <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                    {LOGIN_TYPES.map(type => (
+                      <Card
+                        key={type.id}
+                        hoverable
+                        onClick={() => {
+                          setSelectedLoginType(type.id)
+                          setHasSelectedLoginType(true)
+                        }}
+                        style={{
+                          cursor: 'pointer',
+                          border: '2px solid #d9d9d9',
+                          transition: 'all 0.3s'
+                        }}
+                        bodyStyle={{ padding: '20px' }}
+                      >
+                        <Space align="start" size="large" style={{ width: '100%' }}>
+                          <div style={{
+                            fontSize: 48,
+                            color: type.color,
+                          }}>
+                            {type.icon}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 6 }}>
+                              {type.title}
+                            </div>
+                            <div style={{ fontSize: 15, color: '#595959', marginBottom: 6 }}>
+                              {type.subtitle}
+                            </div>
+                            <div style={{ fontSize: 14, color: '#8c8c8c' }}>
+                              {type.description}
+                            </div>
+                            <div style={{ marginTop: 12 }}>
+                              <Text style={{ fontSize: 13, color: type.color, fontWeight: 500 }}>
+                                ចុចដើម្បីចូលប្រើប្រាស់ →
+                              </Text>
+                            </div>
+                          </div>
+                        </Space>
+                      </Card>
+                    ))}
+                  </Space>
+                </div>
 
-              <Form.Item
-                name="passcode"
-                label="លេខសម្ងាត់ (4 ខ្ទង់)"
-                rules={[
-                  { required: true, message: 'សូមបំពេញលេខសម្ងាត់' },
-                  { pattern: /^[0-9]{4}$/, message: 'លេខសម្ងាត់ត្រូវតែមាន 4 ខ្ទង់' }
-                ]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined />}
-                  placeholder="លេខ 4 ខ្ទង់ចុងក្រោយនៃលេខទូរស័ព្ទ"
-                  maxLength={4}
-                />
-              </Form.Item>
-
-              <Card
-                size="small"
-                style={{ background: '#e6f7ff', border: '1px solid #91d5ff', marginBottom: 24 }}
-              >
-                <Text style={{ fontSize: 14 }}>
-                  <strong>ជំនួយ:</strong> លេខសម្ងាត់គឺជាលេខ 4 ខ្ទង់ចុងក្រោយនៃលេខទូរស័ព្ទរបស់អ្នក
-                </Text>
-              </Card>
-
-              <Form.Item style={{ marginBottom: 16 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  block
-                  icon={<LoginOutlined />}
-                  style={{ height: 48 }}
+                <Card
+                  size="small"
+                  style={{ background: '#e6f7ff', border: '1px solid #91d5ff', marginBottom: 24 }}
                 >
-                  ចូលប្រើប្រាស់
-                </Button>
-              </Form.Item>
+                  <Text style={{ fontSize: 14 }}>
+                    <strong>ជំនួយ:</strong> សូមជ្រើសរើសប្រភេទគណនីដែលត្រូវនឹងតួនាទីរបស់អ្នក
+                  </Text>
+                </Card>
+              </>
+            )}
 
-              <Divider plain>ឬ</Divider>
+            {/* Step 2a: Internal Login Form (Phone + Passcode) */}
+            {hasSelectedLoginType && selectedLoginType === 'internal' && (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleInternalLogin}
+                size="large"
+              >
+                <Form.Item
+                  name="phone_number"
+                  label="លេខទូរស័ព្ទ"
+                  rules={[
+                    { required: true, message: 'សូមបំពេញលេខទូរស័ព្ទ' },
+                    { pattern: /^[0-9]{9,12}$/, message: 'លេខទូរស័ព្ទមិនត្រឹមត្រូវ' }
+                  ]}
+                >
+                  <Input
+                    prefix={<PhoneOutlined />}
+                    placeholder="0123456789"
+                    maxLength={12}
+                    autoComplete="tel"
+                  />
+                </Form.Item>
 
-              <Space direction="vertical" size="middle" style={{ width: '100%', textAlign: 'center' }}>
-                <Text type="secondary">
-                  មិនទាន់មានគណនី?
-                </Text>
-                <Link href="/register" style={{ width: '100%', display: 'block' }}>
+                <Form.Item
+                  name="passcode"
+                  label="លេខសម្ងាត់ (4 ខ្ទង់)"
+                  rules={[
+                    { required: true, message: 'សូមបំពេញលេខសម្ងាត់' },
+                    { pattern: /^[0-9]{4}$/, message: 'លេខសម្ងាត់ត្រូវតែមាន 4 ខ្ទង់' }
+                  ]}
+                >
+                  <Input.Password
+                    prefix={<LockOutlined />}
+                    placeholder="លេខ 4 ខ្ទង់ចុងក្រោយនៃលេខទូរស័ព្ទ"
+                    maxLength={4}
+                    autoComplete="current-password"
+                  />
+                </Form.Item>
+
+                <Card
+                  size="small"
+                  style={{ background: '#e6f7ff', border: '1px solid #91d5ff', marginBottom: 24 }}
+                >
+                  <Text style={{ fontSize: 14 }}>
+                    <strong>ជំនួយ:</strong> លេខសម្ងាត់គឺជាលេខ 4 ខ្ទង់ចុងក្រោយនៃលេខទូរស័ព្ទរបស់អ្នក
+                  </Text>
+                </Card>
+
+                <Form.Item style={{ marginBottom: 16 }}>
                   <Button
-                    size="large"
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
                     block
-                    icon={<UserAddOutlined />}
+                    icon={<LoginOutlined />}
                     style={{ height: 48 }}
                   >
-                    ចុះឈ្មោះគណនីថ្មី
+                    ចូលប្រើប្រាស់
                   </Button>
-                </Link>
-              </Space>
+                </Form.Item>
 
-              <div style={{ textAlign: 'center', marginTop: 24 }}>
-                <Link href="/">
-                  <Text type="secondary">
-                    ← ត្រឡប់ទៅទំព័រដើម
+                {/* Back Button */}
+                <Form.Item style={{ marginBottom: 0 }}>
+                  <Button
+                    block
+                    onClick={() => {
+                      setHasSelectedLoginType(false)
+                      setSelectedLoginType(null)
+                      form.resetFields()
+                    }}
+                    style={{ height: 40 }}
+                  >
+                    ← ត្រឡប់ទៅជ្រើសរើសប្រភេទចូលប្រើ
+                  </Button>
+                </Form.Item>
+              </Form>
+            )}
+
+            {/* Step 2b: External Login Form (Username + Password) */}
+            {hasSelectedLoginType && selectedLoginType === 'external' && (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleExternalLogin}
+                size="large"
+              >
+                <Form.Item
+                  name="username"
+                  label="ឈ្មោះអ្នកប្រើ"
+                  rules={[{ required: true, message: 'សូមបំពេញឈ្មោះអ្នកប្រើ' }]}
+                >
+                  <Input
+                    prefix={<UserAddOutlined />}
+                    placeholder="បញ្ចូលឈ្មោះអ្នកប្រើ"
+                    autoComplete="username"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="password"
+                  label="លេខសម្ងាត់"
+                  rules={[{ required: true, message: 'សូមបំពេញលេខសម្ងាត់' }]}
+                >
+                  <Input.Password
+                    prefix={<LockOutlined />}
+                    placeholder="បញ្ចូលលេខសម្ងាត់"
+                    autoComplete="current-password"
+                  />
+                </Form.Item>
+
+                <Card
+                  size="small"
+                  style={{ background: '#fffbe6', border: '1px solid #ffe58f', marginBottom: 24 }}
+                >
+                  <Text style={{ fontSize: 14 }}>
+                    <strong>សំខាន់:</strong> សូមប្រើឈ្មោះអ្នកប្រើ និងលេខសម្ងាត់របស់អ្នកពីប្រព័ន្ធ PLP
                   </Text>
-                </Link>
-              </div>
-            </Form>
+                </Card>
+
+                <Form.Item style={{ marginBottom: 16 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                    block
+                    icon={<LoginOutlined />}
+                    style={{ height: 48 }}
+                  >
+                    ចូលប្រើប្រាស់
+                  </Button>
+                </Form.Item>
+
+                {/* Back Button */}
+                <Form.Item style={{ marginBottom: 0 }}>
+                  <Button
+                    block
+                    onClick={() => {
+                      setHasSelectedLoginType(false)
+                      setSelectedLoginType(null)
+                      form.resetFields()
+                    }}
+                    style={{ height: 40 }}
+                  >
+                    ← ត្រឡប់ទៅជ្រើសរើសប្រភេទចូលប្រើ
+                  </Button>
+                </Form.Item>
+              </Form>
+            )}
+
+            {/* Common Footer Links */}
+            {hasSelectedLoginType && (
+              <>
+                <Divider plain>ឬ</Divider>
+
+                <Space direction="vertical" size="middle" style={{ width: '100%', textAlign: 'center' }}>
+                  <Text type="secondary">
+                    មិនទាន់មានគណនី?
+                  </Text>
+                  <Link href="/register" style={{ width: '100%', display: 'block' }}>
+                    <Button
+                      size="large"
+                      block
+                      icon={<UserAddOutlined />}
+                      style={{ height: 48 }}
+                    >
+                      ចុះឈ្មោះគណនីថ្មី
+                    </Button>
+                  </Link>
+                </Space>
+
+                <div style={{ textAlign: 'center', marginTop: 24 }}>
+                  <Link href="/">
+                    <Text type="secondary">
+                      ← ត្រឡប់ទៅទំព័រដើម
+                    </Text>
+                  </Link>
+                </div>
+              </>
+            )}
           </Card>
         </Col>
       </Row>
