@@ -150,6 +150,7 @@ export default function RegisterPage() {
   const handleContract5Login = async (values: any) => {
     setLoading(true)
     try {
+      // Step 1: Login to Globe API
       const response = await fetch('https://plp-api.moeys.gov.kh/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -162,19 +163,37 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (response.ok && data.accessToken) {
-        message.success('ការចូលប្រើប្រាស់បានជោគជ័យ! កំពុងផ្ទេរទៅទំព័រកម្មវិធី...')
-
         // Store the external user data and token
         localStorage.setItem('external_access_token', data.accessToken)
         localStorage.setItem('external_user', JSON.stringify(data.user))
         localStorage.setItem('user_contract_type', '5')
 
-        // TODO: You may need to create a user record in your local database
-        // or sync with your system here
+        // Step 2: Create local session via bridge API
+        const bridgeResponse = await fetch('/api/auth/external-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            accessToken: data.accessToken,
+            externalUser: data.user,
+          }),
+        })
 
-        setTimeout(() => {
-          router.push('/contract/configure')
-        }, 1500)
+        const bridgeData = await bridgeResponse.json()
+
+        if (bridgeResponse.ok) {
+          message.success('ការចូលប្រើប្រាស់បានជោគជ័យ! កំពុងផ្ទេរទៅទំព័រកម្មវិធី...')
+
+          // Redirect based on contract signing requirements
+          setTimeout(() => {
+            if (bridgeData.requiresContractSigning) {
+              router.push('/contract/configure')
+            } else {
+              router.push('/dashboard')
+            }
+          }, 1500)
+        } else {
+          message.error(bridgeData.error || 'មានបញ្ហាក្នុងការបង្កើត session')
+        }
       } else {
         message.error(data.message || 'ឈ្មោះអ្នកប្រើ ឬលេខសម្ងាត់មិនត្រឹមត្រូវ')
       }
