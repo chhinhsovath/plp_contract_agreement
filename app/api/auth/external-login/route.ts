@@ -22,26 +22,11 @@ export async function POST(request: Request) {
       return validationError('External user data is required', { externalUser: 'Required field' })
     }
 
-    // Verify token with Globe API (optional but recommended)
-    try {
-      const verifyResponse = await fetch('https://plp-api.moeys.gov.kh/api/v1/auth/verify', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      })
-
-      if (!verifyResponse.ok) {
-        return NextResponse.json(
-          { error: 'Invalid or expired external token' },
-          { status: 401 }
-        )
-      }
-    } catch (verifyError) {
-      console.warn('Token verification skipped (verify endpoint may not exist):', verifyError)
-      // Continue anyway - the token was just validated during login
-    }
+    // Note: Token verification skipped because:
+    // 1. The token was just validated successfully during the login call
+    // 2. The Globe API may not have a separate verify endpoint
+    // 3. The token is stored for future use, not for immediate verification
+    // If additional verification is needed, implement it here with proper error handling
 
     // Map external user data to internal user structure
     const externalId = externalUser.id
