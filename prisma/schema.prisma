@@ -36,6 +36,12 @@ model users {
   school_name              String?
   external_user_id         String?                    // Globe API user ID
   external_access_token    String?                    // Globe API access token
+  username                 String?                    // Globe API username
+  gender                   String?                    // Globe API gender (MALE/FEMALE)
+  profile_picture          String?                    // Globe API profile picture URL
+  teacher_id               Int?                       // Globe API teacher ID
+  is_director              Boolean?                   @default(false) // Globe API isDirector flag
+  external_role_id         Int?                       // Globe API roleId
   downloads                contract_downloads[]
   contracts_created        contracts[]                @relation("UserContracts")
   reviewed_requests        reconfiguration_requests[] @relation("ReviewerRequests")
@@ -45,6 +51,8 @@ model users {
   @@index([role])
   @@index([contract_signed])
   @@index([external_user_id])
+  @@index([username])
+  @@index([teacher_id])
 }
 
 model contract_types {

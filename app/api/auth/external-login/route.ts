@@ -30,9 +30,14 @@ export async function POST(request: Request) {
 
     // Map external user data to internal user structure
     const externalId = externalUser.id
-    const teacherId = externalUser.teacherId?.toString() || externalId
+    const teacherId = externalUser.teacherId
     const phoneNumber = externalUser.phone || externalUser.username
     const fullName = `${externalUser.first_name || ''} ${externalUser.last_name || ''}`.trim() || externalUser.username
+    const username = externalUser.username
+    const gender = externalUser.gender
+    const profilePicture = externalUser.profile_picture
+    const isDirector = externalUser.isDirector || false
+    const externalRoleId = externalUser.roleId
 
     // Check if user already exists (by external ID or teacherId)
     let user = await prisma.users.findFirst({
@@ -59,6 +64,12 @@ export async function POST(request: Request) {
           is_active: true,
           external_user_id: externalId,
           external_access_token: accessToken, // Store for future API calls
+          username: username,
+          gender: gender,
+          profile_picture: profilePicture,
+          teacher_id: teacherId,
+          is_director: isDirector,
+          external_role_id: externalRoleId,
           last_login: new Date(),
         }
       })
@@ -75,6 +86,12 @@ export async function POST(request: Request) {
           email: externalUser.email,
           organization: externalUser.roleKh || externalUser.roleEn || user.organization,
           position: externalUser.roleKh || externalUser.roleEn || user.position,
+          username: username,
+          gender: gender,
+          profile_picture: profilePicture,
+          teacher_id: teacherId,
+          is_director: isDirector,
+          external_role_id: externalRoleId,
         }
       })
     }
