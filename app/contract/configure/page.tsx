@@ -226,6 +226,61 @@ export default function ContractConfigurePage() {
     )
   }
 
+  // Validate baseline percentage against selected option
+  const validateBaseline = (deliverable: Deliverable, selection: Selection): string | null => {
+    if (!selection.baseline_percentage) return null
+
+    const baseline = selection.baseline_percentage
+    const selectedOption = deliverable.options.find(opt => opt.id === selection.selected_option_id)
+
+    if (!selectedOption) return null
+
+    // Basic range validation (0-100%)
+    if (baseline < 0) {
+      return 'តម្លៃមូលដ្ឋានមិនអាចតូចជាង 0% បានទេ'
+    }
+    if (baseline > 100) {
+      return 'តម្លៃមូលដ្ឋានមិនអាចលើស 100% បានទេ'
+    }
+
+    // Validate against selected option's expected range
+    const optionBaseline = selectedOption.baseline_percentage
+    const optionTarget = selectedOption.target_percentage
+
+    if (optionBaseline !== null && optionTarget !== null) {
+      // Determine expected range based on option text patterns
+      const optionText = selectedOption.option_text_khmer.toLowerCase()
+
+      // Option 1: baseline < threshold
+      if (selectedOption.option_number === 1 && optionText.includes('ទាបជាង')) {
+        if (baseline >= optionBaseline) {
+          return `សម្រាប់ជម្រើសទី ១ តម្លៃមូលដ្ឋានត្រូវតែតូចជាង ${optionBaseline}%`
+        }
+      }
+
+      // Option 2: baseline = threshold
+      if (selectedOption.option_number === 2 && optionText.includes('ស្មើ')) {
+        const tolerance = 0.5 // Allow small variance
+        if (Math.abs(baseline - optionBaseline) > tolerance) {
+          return `សម្រាប់ជម្រើសទី ២ តម្លៃមូលដ្ឋានគួរតែប្រហាក់ប្រហែល ${optionBaseline}%`
+        }
+      }
+
+      // Option 3: baseline >= threshold or maintain
+      if (selectedOption.option_number === 3) {
+        if (optionText.includes('លើស') || optionText.includes('រក្សា')) {
+          // For options requiring baseline >= target
+          const minThreshold = Math.min(optionBaseline, optionTarget)
+          if (baseline < minThreshold) {
+            return `សម្រាប់ជម្រើសទី ៣ តម្លៃមូលដ្ឋានគួរតែធំជាង ឬស្មើ ${minThreshold}%`
+          }
+        }
+      }
+    }
+
+    return null // Valid
+  }
+
   const handleNext = () => {
     const currentSelection = selections[currentStep]
     if (!currentSelection || currentSelection.selected_option_id === 0) {
@@ -246,6 +301,13 @@ export default function ContractConfigurePage() {
         // For all other deliverables: only need baseline_percentage
         if (!currentSelection.baseline_percentage) {
           message.warning('សូមបំពេញតម្លៃមូលដ្ឋាន')
+          return
+        }
+
+        // Validate baseline value
+        const validationError = validateBaseline(deliverable, currentSelection)
+        if (validationError) {
+          message.error(validationError)
           return
         }
       }
@@ -288,6 +350,13 @@ export default function ContractConfigurePage() {
         // For all other deliverables: require only baseline percentage
         if (!s.baseline_percentage) {
           message.error(`សូមបំពេញតម្លៃមូលដ្ឋាននៃសមិទ្ធកម្មលេខ ${deliverable.deliverable_number}`)
+          return
+        }
+
+        // Validate baseline value
+        const validationError = validateBaseline(deliverable, s)
+        if (validationError) {
+          message.error(`សមិទ្ធកម្មលេខ ${deliverable.deliverable_number}: ${validationError}`)
           return
         }
       }
@@ -753,8 +822,21 @@ export default function ContractConfigurePage() {
                             placeholder={t('configure_baseline_percentage_placeholder')}
                             value={currentSelection?.baseline_percentage || ''}
                             onChange={(e) => handleBaselineChange(currentDeliverable.id, 'baseline_percentage', e.target.value ? parseFloat(e.target.value) : undefined)}
-                            style={{ width: '100%' }}
+                            style={{
+                              width: '100%',
+                              borderColor: validateBaseline(currentDeliverable, currentSelection) ? '#ff4d4f' : undefined
+                            }}
+                            status={validateBaseline(currentDeliverable, currentSelection) ? 'error' : undefined}
                           />
+                          {/* Real-time validation feedback */}
+                          {validateBaseline(currentDeliverable, currentSelection) && (
+                            <Alert
+                              message={validateBaseline(currentDeliverable, currentSelection)}
+                              type="error"
+                              showIcon
+                              style={{ marginTop: 8 }}
+                            />
+                          )}
                         </div>
 
                         {/* Baseline Source */}
