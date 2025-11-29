@@ -42,6 +42,12 @@ model users {
   teacher_id               Int?                       // Globe API teacher ID
   is_director              Boolean?                   @default(false) // Globe API isDirector flag
   external_role_id         Int?                       // Globe API roleId
+  school_id                Int?                       // Globe API school ID from my-account
+  school_code              String?                    // Globe API school code from my-account
+  province_name_en         String?                    // Globe API province name (English) from my-account
+  district_name_en         String?                    // Globe API district name (English) from my-account
+  qr_token                 String?                    // Globe API QR token from my-account
+  qr_code_image            String?                    // Globe API QR code image (base64) from my-account
   downloads                contract_downloads[]
   contracts_created        contracts[]                @relation("UserContracts")
   reviewed_requests        reconfiguration_requests[] @relation("ReviewerRequests")

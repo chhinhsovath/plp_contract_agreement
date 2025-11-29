@@ -28,6 +28,23 @@ export async function POST(request: Request) {
     // 3. The token is stored for future use, not for immediate verification
     // If additional verification is needed, implement it here with proper error handling
 
+    // Fetch my-account data to get school and location information
+    let myAccountData = null
+    try {
+      const myAccountResponse = await fetch('https://plp-api.moeys.gov.kh/api/v1/users/my-account', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'accept': 'application/json'
+        }
+      })
+      if (myAccountResponse.ok) {
+        myAccountData = await myAccountResponse.json()
+      }
+    } catch (error) {
+      console.error('Failed to fetch my-account data:', error)
+      // Continue without my-account data - it's optional metadata
+    }
+
     // Map external user data to internal user structure
     const externalId = externalUser.id
     const teacherId = externalUser.teacherId
@@ -38,6 +55,17 @@ export async function POST(request: Request) {
     const profilePicture = externalUser.profile_picture
     const isDirector = externalUser.isDirector || false
     const externalRoleId = externalUser.roleId
+
+    // Extract school and location data from my-account
+    const schoolId = myAccountData?.school_id || myAccountData?.school?.schoolId || null
+    const schoolName = myAccountData?.school?.name || null
+    const schoolCode = myAccountData?.school?.code || null
+    const provinceName = myAccountData?.school?.location?.province_name || null
+    const provinceNameEn = myAccountData?.school?.location?.province_name_en || null
+    const districtName = myAccountData?.school?.location?.district_name || null
+    const districtNameEn = myAccountData?.school?.location?.district_name_en || null
+    const qrToken = myAccountData?.qrCode?.qrToken || null
+    const qrCodeImage = myAccountData?.qrCode?.qrCodeImage || null
 
     // Check if user already exists (by external ID or teacherId)
     let user = await prisma.users.findFirst({
@@ -58,7 +86,7 @@ export async function POST(request: Request) {
           passcode: '0000', // Not used for external users
           role: 'PARTNER', // External users are partners (schools)
           contract_type: 5, // Always contract type 5 for external users
-          organization: externalUser.roleKh || externalUser.roleEn || 'សាលារៀន',
+          organization: schoolName || externalUser.roleKh || externalUser.roleEn || 'សាលារៀន',
           position: externalUser.roleKh || externalUser.roleEn,
           email: externalUser.email,
           is_active: true,
@@ -70,6 +98,15 @@ export async function POST(request: Request) {
           teacher_id: teacherId,
           is_director: isDirector,
           external_role_id: externalRoleId,
+          school_id: schoolId,
+          school_name: schoolName,
+          school_code: schoolCode,
+          province_name: provinceName,
+          province_name_en: provinceNameEn,
+          district_name: districtName,
+          district_name_en: districtNameEn,
+          qr_token: qrToken,
+          qr_code_image: qrCodeImage,
           last_login: new Date(),
         }
       })
@@ -84,7 +121,7 @@ export async function POST(request: Request) {
           // Update user info in case it changed
           full_name: fullName,
           email: externalUser.email,
-          organization: externalUser.roleKh || externalUser.roleEn || user.organization,
+          organization: schoolName || externalUser.roleKh || externalUser.roleEn || user.organization,
           position: externalUser.roleKh || externalUser.roleEn || user.position,
           username: username,
           gender: gender,
@@ -92,6 +129,15 @@ export async function POST(request: Request) {
           teacher_id: teacherId,
           is_director: isDirector,
           external_role_id: externalRoleId,
+          school_id: schoolId,
+          school_name: schoolName,
+          school_code: schoolCode,
+          province_name: provinceName,
+          province_name_en: provinceNameEn,
+          district_name: districtName,
+          district_name_en: districtNameEn,
+          qr_token: qrToken,
+          qr_code_image: qrCodeImage,
         }
       })
     }

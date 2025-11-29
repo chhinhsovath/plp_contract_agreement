@@ -69,6 +69,8 @@ export async function POST(request: NextRequest) {
         party_a_signature: partyASignature,
         party_a_signed_date: today,
         party_b_name: user.full_name,
+        party_b_organization: user.school_name || user.organization || 'សាលារៀន',
+        party_b_position: user.position,
         party_b_signature: signature,
         start_date: today,
         end_date: nextYear,
