@@ -147,6 +147,13 @@ export function hasPermission(userRole: UserRole, permission: string): boolean {
 export function canManageUser(managerRole: UserRole, targetRole: UserRole): boolean {
   const managerLevel = ROLE_DEFINITIONS[managerRole]?.level || 0
   const targetLevel = ROLE_DEFINITIONS[targetRole]?.level || 0
+
+  // SUPER_ADMIN can manage users with equal or lower privilege levels
+  if (managerRole === UserRole.SUPER_ADMIN) {
+    return managerLevel >= targetLevel
+  }
+
+  // Other roles can only manage users with lower privilege levels
   return managerLevel > targetLevel
 }
 

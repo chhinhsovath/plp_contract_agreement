@@ -220,8 +220,15 @@ export default function UsersManagementPage() {
     const currentRole = currentUser.role as UserRole
     const currentLevel = ROLE_DEFINITIONS[currentRole]?.level || 0
 
+    // SUPER_ADMIN can assign any role including SUPER_ADMIN
+    // Other roles can only assign roles with lower privilege levels
     return Object.entries(ROLE_DEFINITIONS)
-      .filter(([_, def]) => def.level < currentLevel)
+      .filter(([_, def]) => {
+        if (currentRole === UserRole.SUPER_ADMIN) {
+          return def.level <= currentLevel
+        }
+        return def.level < currentLevel
+      })
       .map(([role, def]) => ({
         value: role,
         label: `${def.nameKhmer} (${def.name})`,
@@ -589,103 +596,103 @@ export default function UsersManagementPage() {
         </Header>
 
         <Content style={{ padding: '16px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
-        {/* Role Statistics - Optimized for Tablet/Desktop */}
-        <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
-          {roleStats.map(({ role, count }) => (
-            <Col xs={24} md={8} lg={6} xl={4} key={role}>
-              <Card hoverable style={{
-                borderRadius: 8,
-                border: '1px solid #f0f0f0',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                height: '100%'
-              }}
-              styles={{ body: { padding: 16 } }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, fontWeight: 'bold', color: '#1890ff' }}>{count}</div>
-                  <div style={{ fontSize: 15, marginTop: 8 }}>{getRoleLabel(role)}</div>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+          {/* Role Statistics - Optimized for Tablet/Desktop */}
+          <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
+            {roleStats.map(({ role, count }) => (
+              <Col xs={24} md={8} lg={6} xl={4} key={role}>
+                <Card hoverable style={{
+                  borderRadius: 8,
+                  border: '1px solid #f0f0f0',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                  height: '100%'
+                }}
+                  styles={{ body: { padding: 16 } }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 32, fontWeight: 'bold', color: '#1890ff' }}>{count}</div>
+                    <div style={{ fontSize: 15, marginTop: 8 }}>{getRoleLabel(role)}</div>
+                  </div>
+                </Card>
+              </Col>
+            ))}
+          </Row>
 
-        <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
-          <Search
-            placeholder="ស្វែងរកតាមឈ្មោះ លេខទូរស័ព្ទ ឬស្ថាប័ន"
-            allowClear
-            enterButton={<SearchOutlined />}
-            size="large"
-            onSearch={setSearchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ minWidth: 400, flex: 1 }}
-          />
-          {hasPermission(currentUser?.role as UserRole, 'users.delete') && selectedRowKeys.length > 0 && (
-            <Button
-              type="primary"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={handleBulkDelete}
+          <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+            <Search
+              placeholder="ស្វែងរកតាមឈ្មោះ លេខទូរស័ព្ទ ឬស្ថាប័ន"
+              allowClear
+              enterButton={<SearchOutlined />}
               size="large"
-            >
-              លុបដែលបានជ្រើសរើស ({selectedRowKeys.length})
-            </Button>
-          )}
-        </div>
-
-        <div style={{ overflowX: 'auto' }}>
-          <Table
-            columns={columns}
-            dataSource={filteredUsers}
-            loading={loading}
-            rowKey="id"
-            rowSelection={rowSelection}
-            pagination={{
-              pageSize: pageSize,
-              showSizeChanger: true,
-              pageSizeOptions: ['10', '20', '50', '100'],
-              showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} អ្នកប្រើប្រាស់`,
-              onShowSizeChange: (_current, size) => setPageSize(size)
-            }}
-            scroll={{ x: 1200 }}
-            size="middle"
-          />
-        </div>
-
-      {/* Edit User Modal */}
-      <Modal
-        title="កែប្រែតួនាទីអ្នកប្រើប្រាស់"
-        open={editModalVisible}
-        onCancel={() => setEditModalVisible(false)}
-        footer={null}
-      >
-        {selectedUser && (
-          <div>
-            <div style={{ marginBottom: 16 }}>
-              <Text strong>ឈ្មោះ: </Text>
-              <Text>{selectedUser.full_name}</Text>
-            </div>
-            <div style={{ marginBottom: 16 }}>
-              <Text strong>លេខទូរស័ព្ទ: </Text>
-              <Text>{selectedUser.phone_number}</Text>
-            </div>
-            <div style={{ marginBottom: 16 }}>
-              <Text strong>តួនាទីបច្ចុប្បន្ន: </Text>
-              <Tag color={getRoleColor(selectedUser.role)}>
-                {getRoleLabel(selectedUser.role)}
-              </Tag>
-            </div>
-            <div style={{ marginBottom: 16 }}>
-              <Text strong>តួនាទីថ្មី: </Text>
-              <Select
-                style={{ width: '100%', marginTop: 8 }}
-                placeholder="ជ្រើសរើសតួនាទីថ្មី"
-                options={getAvailableRoles(selectedUser.role)}
-                onChange={(newRole) => handleUpdateRole(selectedUser.id, newRole as UserRole)}
-              />
-            </div>
+              onSearch={setSearchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ minWidth: 400, flex: 1 }}
+            />
+            {hasPermission(currentUser?.role as UserRole, 'users.delete') && selectedRowKeys.length > 0 && (
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={handleBulkDelete}
+                size="large"
+              >
+                លុបដែលបានជ្រើសរើស ({selectedRowKeys.length})
+              </Button>
+            )}
           </div>
-        )}
-      </Modal>
+
+          <div style={{ overflowX: 'auto' }}>
+            <Table
+              columns={columns}
+              dataSource={filteredUsers}
+              loading={loading}
+              rowKey="id"
+              rowSelection={rowSelection}
+              pagination={{
+                pageSize: pageSize,
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100'],
+                showTotal: (total, range) => `${range[0]}-${range[1]} នៃ ${total} អ្នកប្រើប្រាស់`,
+                onShowSizeChange: (_current, size) => setPageSize(size)
+              }}
+              scroll={{ x: 1200 }}
+              size="middle"
+            />
+          </div>
+
+          {/* Edit User Modal */}
+          <Modal
+            title="កែប្រែតួនាទីអ្នកប្រើប្រាស់"
+            open={editModalVisible}
+            onCancel={() => setEditModalVisible(false)}
+            footer={null}
+          >
+            {selectedUser && (
+              <div>
+                <div style={{ marginBottom: 16 }}>
+                  <Text strong>ឈ្មោះ: </Text>
+                  <Text>{selectedUser.full_name}</Text>
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <Text strong>លេខទូរស័ព្ទ: </Text>
+                  <Text>{selectedUser.phone_number}</Text>
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <Text strong>តួនាទីបច្ចុប្បន្ន: </Text>
+                  <Tag color={getRoleColor(selectedUser.role)}>
+                    {getRoleLabel(selectedUser.role)}
+                  </Tag>
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <Text strong>តួនាទីថ្មី: </Text>
+                  <Select
+                    style={{ width: '100%', marginTop: 8 }}
+                    placeholder="ជ្រើសរើសតួនាទីថ្មី"
+                    options={getAvailableRoles(selectedUser.role)}
+                    onChange={(newRole) => handleUpdateRole(selectedUser.id, newRole as UserRole)}
+                  />
+                </div>
+              </div>
+            )}
+          </Modal>
         </Content>
       </Layout>
     </Layout>
